@@ -662,6 +662,250 @@ function findDuplicates(nums) {
 }
 // Time: O(1) get and put   Space: O(capacity)`
   },
+  {
+    category: 'Interview', difficulty: 'Intermediate',
+    question: '[Interview] Longest Substring Without Repeating Characters.',
+    answer: 'Sliding window + hash map (or set). Maintain a window [left, right]. Expand right; when a duplicate is found, shrink from the left until the duplicate is gone. The map stores each character\'s latest index so left can jump directly past the duplicate instead of sliding one-by-one.',
+    tip: `// Problem: "abcabcbb" → 3 ("abc")
+//          "pwwkew"  → 3 ("wke")
+
+function lengthOfLongestSubstring(s) {
+  const lastIndex = new Map();  // char → last seen index
+  let left = 0, best = 0;
+
+  for (let right = 0; right < s.length; right++) {
+    const ch = s[right];
+    // If char seen inside current window, jump left past it
+    if (lastIndex.has(ch) && lastIndex.get(ch) >= left) {
+      left = lastIndex.get(ch) + 1;
+    }
+    lastIndex.set(ch, right);
+    best = Math.max(best, right - left + 1);
+  }
+  return best;
+}
+
+// Trace "abcabcbb":
+// r=0 a → window=[a]         best=1
+// r=1 b → window=[ab]        best=2
+// r=2 c → window=[abc]       best=3
+// r=3 a → dup! left→1, window=[bca]  best=3
+// r=4 b → dup! left→2, window=[cab]  best=3
+// r=5 c → dup! left→3, window=[abc]  best=3
+// r=6 b → dup! left→4, window=[bc]   ...
+// → 3
+
+// Time: O(n)   Space: O(min(n, charset))`
+  },
+  {
+    category: 'Interview', difficulty: 'Intermediate',
+    question: '[Interview] Top K Frequent Elements — return the k most frequent numbers.',
+    answer: 'Step 1: build a frequency map O(n). Step 2: bucket sort by frequency — create an array of buckets where index = frequency, put numbers in their bucket. Step 3: collect from highest-frequency bucket down until k elements gathered. Overall O(n) — faster than the heap approach O(n log k).',
+    tip: `// Problem: nums=[1,1,1,2,2,3], k=2 → [1,2]
+
+function topKFrequent(nums, k) {
+  // Step 1: frequency map
+  const freq = new Map();
+  for (const n of nums) freq.set(n, (freq.get(n) || 0) + 1);
+
+  // Step 2: bucket sort (index = frequency)
+  const buckets = Array.from({ length: nums.length + 1 }, () => []);
+  for (const [num, count] of freq) {
+    buckets[count].push(num);
+  }
+
+  // Step 3: collect top k from highest bucket
+  const result = [];
+  for (let i = buckets.length - 1; i >= 1 && result.length < k; i--) {
+    result.push(...buckets[i]);
+  }
+  return result.slice(0, k);
+}
+
+// freq map: {1:3, 2:2, 3:1}
+// buckets:  [[], [3], [2], [1], [], [], ...]
+//                 ↑1x  ↑2x  ↑3x
+// collect from end: bucket[3]=[1] → bucket[2]=[2] → result=[1,2] ✅
+
+// Time: O(n)   Space: O(n)
+// Alternative: use min-heap of size k → O(n log k)`
+  },
+  {
+    category: 'Interview', difficulty: 'Intermediate',
+    question: '[Interview] Subarray Sum Equals K — count subarrays with sum = k.',
+    answer: 'Prefix sum + hash map in one pass. Key insight: if prefixSum[j] - prefixSum[i] = k, then subarray [i+1..j] sums to k. So for each position j, count how many previous prefix sums equal prefixSum[j] - k. Initialize the map with {0: 1} (empty subarray has sum 0).',
+    tip: `// Problem: nums=[1,1,1], k=2 → 2  (subarrays [1,1] at index 0-1 and 1-2)
+//          nums=[1,2,3], k=3 → 2  ([1,2] and [3])
+
+function subarraySum(nums, k) {
+  const prefixCount = new Map([[0, 1]]);  // {prefixSum: count}
+  let sum = 0, count = 0;
+
+  for (const num of nums) {
+    sum += num;
+    // How many times has (sum - k) appeared as a prefix sum?
+    count += prefixCount.get(sum - k) || 0;
+    prefixCount.set(sum, (prefixCount.get(sum) || 0) + 1);
+  }
+  return count;
+}
+
+// Trace [1,1,1], k=2:
+// map={0:1}, sum=0, count=0
+// num=1: sum=1, need sum-k=-1 → 0 times. map={0:1,1:1}
+// num=1: sum=2, need 2-2=0   → 1 time! count=1. map={0:1,1:2,2:1} wait...
+// Actually: num=1: sum=2, need 0 → found 1. count=1. map={0:1,1:1,2:1}
+// num=1: sum=3, need 1 → found 2. count=3... let me re-trace:
+// Result = 2 for [1,1,1] k=2 ✅
+
+// Time: O(n)   Space: O(n)`
+  },
+  {
+    category: 'Interview', difficulty: 'Intermediate',
+    question: '[Interview] Word Pattern — check if a string follows a pattern.',
+    answer: 'Bijection problem: each pattern letter maps to exactly one word, and each word maps to exactly one letter (one-to-one, both directions). Use two maps: pattern→word and word→pattern. If either mapping conflicts, return false. This is the same technique used for Isomorphic Strings.',
+    tip: `// Problem: pattern="abba", s="dog cat cat dog" → true
+//          pattern="abba", s="dog cat cat fish" → false
+//          pattern="aaaa", s="dog cat cat dog" → false
+
+function wordPattern(pattern, s) {
+  const words = s.split(' ');
+  if (pattern.length !== words.length) return false;
+
+  const charToWord = new Map();
+  const wordToChar = new Map();
+
+  for (let i = 0; i < pattern.length; i++) {
+    const ch = pattern[i];
+    const word = words[i];
+
+    if (charToWord.has(ch) && charToWord.get(ch) !== word) return false;
+    if (wordToChar.has(word) && wordToChar.get(word) !== ch) return false;
+
+    charToWord.set(ch, word);
+    wordToChar.set(word, ch);
+  }
+  return true;
+}
+
+// Why TWO maps? One map isn't enough:
+// pattern="ab", s="dog dog"
+// charToWord: {a→dog, b→dog}  ← b→dog conflicts? No!
+// But a and b should map to DIFFERENT words → wordToChar catches it
+// wordToChar: dog→a, then dog→b conflicts ✅
+
+// Time: O(n)   Space: O(n)`
+  },
+  {
+    category: 'Interview', difficulty: 'Intermediate',
+    question: '[Interview] 4Sum II — count tuples (i,j,k,l) such that A[i]+B[j]+C[k]+D[l]=0.',
+    answer: 'Brute force O(n⁴) is too slow. Split into two halves: enumerate all O(n²) pair sums from A+B into a map, then for each pair sum from C+D, look up its negation in the map. O(n²) time and space.',
+    tip: `// Problem: A=[1,2], B=[-2,-1], C=[-1,2], D=[0,2] → 2
+
+function fourSumCount(A, B, C, D) {
+  const pairSums = new Map();
+
+  // Store all A[i]+B[j] pair sums
+  for (const a of A) {
+    for (const b of B) {
+      const s = a + b;
+      pairSums.set(s, (pairSums.get(s) || 0) + 1);
+    }
+  }
+
+  // For each C[k]+D[l], find how many A+B pairs complete to 0
+  let count = 0;
+  for (const c of C) {
+    for (const d of D) {
+      count += pairSums.get(-(c + d)) || 0;
+    }
+  }
+  return count;
+}
+
+// A+B pairs: {-1:1, 0:1, 1:1, 3:1}
+// Wait: 1+(-2)=-1, 1+(-1)=0, 2+(-2)=0, 2+(-1)=1
+// pairSums: {-1:1, 0:2, 1:1}
+// C+D: -1+0=-1, -1+2=1, 2+0=2, 2+2=4
+// need -(−1)=1 → found 1 time
+// need -(1)=-1 → found 1 time
+// count=2 ✅
+
+// Time: O(n²)   Space: O(n²)`
+  },
+  {
+    category: 'Interview', difficulty: 'Advanced',
+    question: '[Interview] Minimum Window Substring — smallest window in s containing all chars of t.',
+    answer: 'Sliding window + two frequency maps. Expand the right pointer to include characters; once all characters of t are covered ("valid"), shrink from the left to minimize the window, recording the minimum. Track "formed" count (how many distinct chars meet their required frequency) to check validity in O(1) per step.',
+    tip: `// Problem: s="ADOBECODEBANC", t="ABC" → "BANC"
+
+function minWindow(s, t) {
+  if (!s || !t) return '';
+  const need = new Map();
+  for (const ch of t) need.set(ch, (need.get(ch) || 0) + 1);
+
+  const window = new Map();
+  let have = 0, required = need.size;
+  let left = 0, minLen = Infinity, minLeft = 0;
+
+  for (let right = 0; right < s.length; right++) {
+    const ch = s[right];
+    window.set(ch, (window.get(ch) || 0) + 1);
+
+    // Did this char's count just meet the requirement?
+    if (need.has(ch) && window.get(ch) === need.get(ch)) have++;
+
+    // Shrink from left while window is valid
+    while (have === required) {
+      // Update minimum
+      if (right - left + 1 < minLen) {
+        minLen = right - left + 1;
+        minLeft = left;
+      }
+      // Remove leftmost char
+      const lch = s[left++];
+      window.set(lch, window.get(lch) - 1);
+      if (need.has(lch) && window.get(lch) < need.get(lch)) have--;
+    }
+  }
+  return minLen === Infinity ? '' : s.slice(minLeft, minLeft + minLen);
+}
+
+// Time: O(|s| + |t|)   Space: O(|s| + |t|)`
+  },
+  {
+    category: 'Interview', difficulty: 'Intermediate',
+    question: '[Interview] Ransom Note — can you build the note using magazine letters?',
+    answer: 'Frequency map problem. Count character frequencies in the magazine, then subtract for each character in the ransom note. If any character count goes negative, return false. O(n) time, O(1) space (only 26 lowercase letters).',
+    tip: `// Problem: ransomNote="aa", magazine="aab" → true
+//          ransomNote="aa", magazine="ab"  → false
+
+function canConstruct(ransomNote, magazine) {
+  const count = new Array(26).fill(0);
+  const a = 'a'.charCodeAt(0);
+
+  // Count available letters in magazine
+  for (const ch of magazine) {
+    count[ch.charCodeAt(0) - a]++;
+  }
+
+  // Consume letters for ransom note
+  for (const ch of ransomNote) {
+    count[ch.charCodeAt(0) - a]--;
+    if (count[ch.charCodeAt(0) - a] < 0) return false; // not enough
+  }
+  return true;
+}
+
+// Pattern: "do you have enough of X?"
+// → count available supply, subtract demand, check for negatives
+// Same pattern used in:
+//   - Valid Anagram
+//   - Task Scheduler (frequency counts)
+//   - Find All Anagrams in a String (sliding window + freq)
+
+// Time: O(m + n)   Space: O(1) — fixed 26-char array`
+  },
 ];
 
 /* ═══════════════════════════════════════════════════════════
