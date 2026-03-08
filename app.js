@@ -1159,6 +1159,489 @@ public class UserService
 ];
 
 /* ═══════════════════════════════════════════════════════════
+   SQL — 20 cards  |  Basics → Intermediate → Advanced
+═══════════════════════════════════════════════════════════ */
+const SQL_CARDS = [
+
+  /* ── SQL Basics ── */
+  {
+    category: 'SQL Basics', difficulty: 'Beginner',
+    question: 'What is SQL and what is it used for?',
+    answer: 'SQL (Structured Query Language) is the standard language for managing and querying relational databases. It is used to: create and modify table structures (DDL), insert/update/delete data (DML), query data (DQL), and control access (DCL). Popular databases using SQL: PostgreSQL, MySQL, SQLite, SQL Server, Oracle.',
+    tip: `-- Four main categories of SQL commands:
+-- DDL  (Data Definition)   — CREATE, ALTER, DROP, TRUNCATE
+-- DML  (Data Manipulation) — INSERT, UPDATE, DELETE
+-- DQL  (Data Query)        — SELECT
+-- DCL  (Data Control)      — GRANT, REVOKE
+
+-- Example: create a table and insert a row
+CREATE TABLE users (
+  id    SERIAL PRIMARY KEY,
+  name  VARCHAR(100) NOT NULL,
+  email VARCHAR(255) UNIQUE NOT NULL
+);
+INSERT INTO users (name, email)
+VALUES ('Alice', 'alice@example.com');`
+  },
+  {
+    category: 'SQL Basics', difficulty: 'Beginner',
+    question: 'How does SELECT work? What are WHERE, AND, OR, and LIKE?',
+    answer: '`SELECT` retrieves columns from a table. `WHERE` filters rows by a condition. `AND`/`OR` combine conditions. `LIKE` matches text patterns: `%` means any sequence of characters, `_` means exactly one character. `BETWEEN` checks a range (inclusive). `IN` checks membership in a list. Always use `=` for equality in SQL, not `==`.',
+    tip: `-- Basic SELECT
+SELECT name, email FROM users;
+SELECT * FROM users;                    -- all columns
+
+-- Filtering rows
+SELECT * FROM users
+WHERE age > 18 AND city = 'Hanoi';
+
+-- Pattern matching
+SELECT * FROM products
+WHERE name LIKE 'Apple%';              -- starts with Apple
+WHERE name LIKE '%phone%';             -- contains phone
+
+-- Range and list
+WHERE price BETWEEN 10 AND 50;
+WHERE status IN ('active', 'pending');`
+  },
+  {
+    category: 'SQL Basics', difficulty: 'Beginner',
+    question: 'How do INSERT, UPDATE, and DELETE work?',
+    answer: '`INSERT INTO` adds new rows. `UPDATE ... SET` modifies existing rows — always include `WHERE` or you will update every row. `DELETE FROM` removes rows — always include `WHERE` or you delete everything. `TRUNCATE` removes all rows much faster than DELETE (no row-by-row logging) but cannot be rolled back in some databases.',
+    tip: `-- INSERT — specify columns explicitly
+INSERT INTO users (name, email, age)
+VALUES ('Bob', 'bob@mail.com', 25);
+
+-- INSERT multiple rows at once
+INSERT INTO products (name, price)
+VALUES ('Phone', 999), ('Tablet', 499);
+
+-- UPDATE — always add WHERE!
+UPDATE users
+SET email = 'new@mail.com', age = 26
+WHERE id = 1;
+
+-- DELETE — always add WHERE!
+DELETE FROM users WHERE id = 1;
+
+-- TRUNCATE — remove all rows fast
+TRUNCATE TABLE logs;`
+  },
+  {
+    category: 'SQL Basics', difficulty: 'Beginner',
+    question: 'How does NULL work in SQL?',
+    answer: 'NULL represents an unknown or missing value — it is NOT the same as zero or an empty string. Comparisons with NULL using `=` always return UNKNOWN (not TRUE or FALSE) — so `WHERE col = NULL` never matches anything. Always use `IS NULL` or `IS NOT NULL`. `COALESCE(a, b, c)` returns the first non-NULL value — the most useful NULL-handling function.',
+    tip: `-- WRONG — never matches
+SELECT * FROM users WHERE phone = NULL;
+
+-- CORRECT
+SELECT * FROM users WHERE phone IS NULL;
+SELECT * FROM users WHERE phone IS NOT NULL;
+
+-- COALESCE — return first non-NULL
+SELECT name, COALESCE(phone, email, 'no contact') AS contact
+FROM users;
+
+-- NULLIF — returns NULL if two values are equal
+SELECT NULLIF(score, 0) FROM results; -- prevents divide-by-zero
+
+-- NULL in math/concat always produces NULL
+SELECT NULL + 5;        -- NULL
+SELECT 'hi' || NULL;    -- NULL`
+  },
+  {
+    category: 'SQL Basics', difficulty: 'Beginner',
+    question: 'How do ORDER BY, LIMIT, and OFFSET work?',
+    answer: '`ORDER BY col` sorts results ascending (A→Z, 1→9). `ORDER BY col DESC` sorts descending. You can sort by multiple columns. `LIMIT n` returns only the first n rows. `OFFSET n` skips the first n rows. Together `LIMIT` + `OFFSET` implement pagination. The ORDER BY clause is the ONLY way to guarantee row order in SQL.',
+    tip: `-- Sort by one column
+SELECT * FROM products ORDER BY price DESC;
+
+-- Sort by multiple columns
+SELECT * FROM orders
+ORDER BY status ASC, created_at DESC;
+
+-- Pagination — page 3, 10 items per page
+SELECT * FROM products
+ORDER BY id
+LIMIT 10 OFFSET 20;   -- skip first 20, get next 10
+
+-- Top 5 most expensive
+SELECT name, price FROM products
+ORDER BY price DESC
+LIMIT 5;`
+  },
+  {
+    category: 'SQL Basics', difficulty: 'Beginner',
+    question: 'What are Primary Keys and Foreign Keys?',
+    answer: 'A Primary Key (PK) uniquely identifies each row in a table — it must be unique and NOT NULL. A Foreign Key (FK) is a column that references the PK of another table, enforcing referential integrity. If you try to insert a FK value that does not exist in the parent table, the database rejects it. `ON DELETE CASCADE` automatically deletes child rows when the parent is deleted.',
+    tip: `CREATE TABLE departments (
+  id   SERIAL PRIMARY KEY,
+  name VARCHAR(100) NOT NULL
+);
+
+CREATE TABLE employees (
+  id            SERIAL PRIMARY KEY,
+  name          VARCHAR(100) NOT NULL,
+  department_id INT REFERENCES departments(id)
+                ON DELETE SET NULL,     -- or CASCADE / RESTRICT
+  email         VARCHAR(255) UNIQUE NOT NULL,
+  salary        NUMERIC(10,2) DEFAULT 0
+);
+
+-- Composite primary key
+CREATE TABLE order_items (
+  order_id   INT REFERENCES orders(id),
+  product_id INT REFERENCES products(id),
+  quantity   INT NOT NULL,
+  PRIMARY KEY (order_id, product_id)    -- composite PK
+);`
+  },
+  {
+    category: 'SQL Basics', difficulty: 'Beginner',
+    question: 'What are the most common SQL data types?',
+    answer: 'Choosing the right data type improves storage and query performance. Key types: `INT`/`BIGINT` for whole numbers; `NUMERIC`/`DECIMAL` for exact decimals (money); `FLOAT`/`REAL` for approximate decimals (avoid for money); `VARCHAR(n)` for variable-length text; `TEXT` for unlimited text; `BOOLEAN` for true/false; `DATE`, `TIME`, `TIMESTAMP` for dates/times; `UUID` for globally unique IDs; `JSONB` (PostgreSQL) for semi-structured data.',
+    tip: `CREATE TABLE products (
+  id           UUID        DEFAULT gen_random_uuid() PRIMARY KEY,
+  name         VARCHAR(255) NOT NULL,
+  description  TEXT,
+  price        NUMERIC(10, 2) NOT NULL,   -- exact: 99999999.99
+  in_stock     BOOLEAN DEFAULT true,
+  created_at   TIMESTAMP DEFAULT NOW(),
+  tags         TEXT[],                    -- array (PostgreSQL)
+  metadata     JSONB                      -- JSON column (PostgreSQL)
+);
+
+-- PostgreSQL: SERIAL vs BIGSERIAL vs GENERATED
+id SERIAL PRIMARY KEY          -- auto-increment int
+id BIGSERIAL PRIMARY KEY       -- auto-increment bigint
+id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY  -- SQL standard`
+  },
+
+  /* ── Joins & Aggregation ── */
+  {
+    category: 'Joins & Aggregation', difficulty: 'Intermediate',
+    question: 'What is the difference between INNER JOIN, LEFT JOIN, RIGHT JOIN, and FULL JOIN?',
+    answer: '`INNER JOIN`: returns only rows where the condition matches in BOTH tables. `LEFT JOIN`: returns all rows from the left table + matched rows from the right (NULL if no match). `RIGHT JOIN`: opposite of LEFT JOIN. `FULL OUTER JOIN`: returns all rows from both tables (NULL where no match). LEFT JOIN is by far the most commonly used after INNER JOIN.',
+    tip: `-- INNER JOIN — only matching rows
+SELECT u.name, o.total
+FROM users u
+INNER JOIN orders o ON u.id = o.user_id;
+
+-- LEFT JOIN — all users, even those with no orders
+SELECT u.name, o.total
+FROM users u
+LEFT JOIN orders o ON u.id = o.user_id;
+-- o.total is NULL for users with no orders
+
+-- Find users with NO orders (anti-join pattern)
+SELECT u.name FROM users u
+LEFT JOIN orders o ON u.id = o.user_id
+WHERE o.id IS NULL;
+
+-- FULL OUTER JOIN
+SELECT u.name, o.total FROM users u
+FULL OUTER JOIN orders o ON u.id = o.user_id;`
+  },
+  {
+    category: 'Joins & Aggregation', difficulty: 'Intermediate',
+    question: 'How do aggregate functions work? COUNT, SUM, AVG, MIN, MAX',
+    answer: 'Aggregate functions collapse many rows into a single value. `COUNT(*)` counts all rows; `COUNT(col)` skips NULLs. `SUM`, `AVG`, `MIN`, `MAX` work on numeric columns. They are used with `GROUP BY` to compute per-group statistics. `DISTINCT` inside an aggregate ignores duplicates: `COUNT(DISTINCT email)`. NULL values are ignored by all aggregates except `COUNT(*)`.',
+    tip: `SELECT
+  COUNT(*)                  AS total_orders,
+  COUNT(DISTINCT user_id)   AS unique_customers,
+  SUM(total)                AS revenue,
+  AVG(total)                AS avg_order_value,
+  MIN(total)                AS smallest_order,
+  MAX(total)                AS largest_order,
+  ROUND(AVG(total), 2)      AS avg_rounded
+FROM orders
+WHERE created_at >= '2026-01-01';
+
+-- Per-category statistics
+SELECT
+  category,
+  COUNT(*)        AS product_count,
+  AVG(price)      AS avg_price,
+  MAX(price)      AS max_price
+FROM products
+GROUP BY category
+ORDER BY avg_price DESC;`
+  },
+  {
+    category: 'Joins & Aggregation', difficulty: 'Intermediate',
+    question: 'What is GROUP BY and how does HAVING differ from WHERE?',
+    answer: '`GROUP BY` groups rows sharing the same column values so aggregates are computed per group. `WHERE` filters rows BEFORE grouping — cannot reference aggregate functions. `HAVING` filters groups AFTER aggregation — can reference aggregates like `COUNT(*)` or `SUM()`. Rule: if you need to filter on an aggregate result, use `HAVING`.',
+    tip: `-- Sales per city — only cities with > 100 orders
+SELECT
+  city,
+  COUNT(*)      AS order_count,
+  SUM(total)    AS revenue
+FROM orders
+JOIN users ON orders.user_id = users.id
+WHERE orders.status = 'completed'      -- filter rows BEFORE grouping
+GROUP BY city
+HAVING COUNT(*) > 100                  -- filter groups AFTER aggregation
+ORDER BY revenue DESC;
+
+-- Tip: ORDER OF CLAUSES matters:
+-- SELECT → FROM → JOIN → WHERE → GROUP BY → HAVING → ORDER BY → LIMIT`
+  },
+  {
+    category: 'Joins & Aggregation', difficulty: 'Intermediate',
+    question: 'What is the difference between UNION and UNION ALL?',
+    answer: '`UNION` combines result sets from two queries and removes duplicate rows — requires a sort/dedup pass which is slower. `UNION ALL` combines result sets and keeps ALL rows including duplicates — faster. Both require the same number of columns with compatible types. Use `UNION ALL` by default unless you specifically need deduplication.',
+    tip: `-- UNION — removes duplicates (slower)
+SELECT email FROM customers
+UNION
+SELECT email FROM suppliers;
+
+-- UNION ALL — keeps duplicates (faster)
+SELECT email FROM customers
+UNION ALL
+SELECT email FROM suppliers;
+
+-- Real use case: combine this month's and last month's sales
+SELECT 'current' AS period, SUM(total) FROM orders
+WHERE created_at >= date_trunc('month', NOW())
+UNION ALL
+SELECT 'previous', SUM(total) FROM orders
+WHERE created_at >= date_trunc('month', NOW()) - INTERVAL '1 month'
+  AND created_at <  date_trunc('month', NOW());`
+  },
+  {
+    category: 'Joins & Aggregation', difficulty: 'Intermediate',
+    question: 'What are subqueries and when do you use them?',
+    answer: 'A subquery is a SELECT nested inside another query. Types: Scalar (returns one value), Row (returns one row), Column (returns one column used with `IN`/`ANY`), Table (returns a result set used in `FROM`). Correlated subqueries reference the outer query and run once per row — often slow. JOINs are usually faster than subqueries for large datasets.',
+    tip: `-- Scalar subquery — single value
+SELECT name, salary,
+       (SELECT AVG(salary) FROM employees) AS company_avg
+FROM employees;
+
+-- IN subquery — column of values
+SELECT * FROM orders
+WHERE user_id IN (
+  SELECT id FROM users WHERE city = 'Hanoi'
+);
+
+-- Subquery in FROM (derived table)
+SELECT dept, avg_sal FROM (
+  SELECT department AS dept, AVG(salary) AS avg_sal
+  FROM employees
+  GROUP BY department
+) AS dept_avg
+WHERE avg_sal > 50000;
+
+-- Correlated — runs per row (use with care)
+SELECT name FROM employees e
+WHERE salary > (SELECT AVG(salary) FROM employees
+                WHERE department = e.department);`
+  },
+  {
+    category: 'Joins & Aggregation', difficulty: 'Intermediate',
+    question: 'How do aliases (AS) and calculated columns work?',
+    answer: 'Aliases rename columns or tables in the output using `AS` (the keyword is optional). Table aliases make long queries readable, especially with JOINs. Column aliases can be used in `ORDER BY` but NOT in `WHERE` or `HAVING` (because those are evaluated before SELECT). Calculated columns let you derive new values directly in the query.',
+    tip: `-- Column aliases
+SELECT
+  first_name || ' ' || last_name  AS full_name,
+  salary * 12                      AS annual_salary,
+  salary * 12 * 0.1                AS yearly_bonus,
+  UPPER(email)                     AS email_upper,
+  DATE_PART('year', AGE(birth_date)) AS age
+FROM employees;
+
+-- Table aliases — essential with JOINs
+SELECT u.name, o.total, p.name AS product
+FROM users u
+JOIN orders o     ON o.user_id  = u.id
+JOIN order_items oi ON oi.order_id = o.id
+JOIN products p   ON p.id = oi.product_id;
+
+-- Alias in ORDER BY (valid)
+SELECT salary * 12 AS annual FROM employees
+ORDER BY annual DESC;`
+  },
+
+  /* ── Advanced SQL ── */
+  {
+    category: 'Advanced SQL', difficulty: 'Advanced',
+    question: 'What are Window Functions and how do they work?',
+    answer: 'Window functions compute a value across a "window" of rows related to the current row WITHOUT collapsing rows like GROUP BY does. `OVER (PARTITION BY ... ORDER BY ...)` defines the window. Common functions: `ROW_NUMBER()` (unique sequential number), `RANK()` (same rank for ties, gaps after), `DENSE_RANK()` (no gaps), `LAG()`/`LEAD()` (access previous/next row), `SUM() OVER ()` (running total).',
+    tip: `-- Rank employees by salary within each department
+SELECT
+  name,
+  department,
+  salary,
+  ROW_NUMBER() OVER (PARTITION BY department ORDER BY salary DESC) AS row_num,
+  RANK()       OVER (PARTITION BY department ORDER BY salary DESC) AS rank,
+  DENSE_RANK() OVER (PARTITION BY department ORDER BY salary DESC) AS dense_rank
+FROM employees;
+
+-- Running total of revenue
+SELECT
+  order_date,
+  total,
+  SUM(total) OVER (ORDER BY order_date)           AS running_total,
+  LAG(total)  OVER (ORDER BY order_date)           AS prev_day,
+  total - LAG(total) OVER (ORDER BY order_date)    AS day_over_day
+FROM daily_sales;`
+  },
+  {
+    category: 'Advanced SQL', difficulty: 'Advanced',
+    question: 'What are CTEs (Common Table Expressions) and why use them?',
+    answer: 'A CTE (`WITH name AS (SELECT ...)`) is a named temporary result set you can reference within the same query. CTEs make complex queries readable by breaking them into named steps. Multiple CTEs can be chained. `RECURSIVE` CTEs can reference themselves — useful for hierarchical/tree data (org charts, category trees, BFS).',
+    tip: `-- Multiple CTEs — each builds on the previous
+WITH
+  monthly_sales AS (
+    SELECT
+      DATE_TRUNC('month', created_at) AS month,
+      SUM(total) AS revenue
+    FROM orders WHERE status = 'completed'
+    GROUP BY 1
+  ),
+  ranked AS (
+    SELECT month, revenue,
+           RANK() OVER (ORDER BY revenue DESC) AS rank
+    FROM monthly_sales
+  )
+SELECT * FROM ranked WHERE rank <= 3;   -- top 3 months
+
+-- Recursive CTE — traverse an org chart
+WITH RECURSIVE org AS (
+  SELECT id, name, manager_id, 0 AS depth
+  FROM employees WHERE manager_id IS NULL   -- CEO
+  UNION ALL
+  SELECT e.id, e.name, e.manager_id, o.depth + 1
+  FROM employees e
+  JOIN org o ON e.manager_id = o.id
+)
+SELECT * FROM org ORDER BY depth;`
+  },
+  {
+    category: 'Advanced SQL', difficulty: 'Advanced',
+    question: 'What are indexes and how do they improve performance?',
+    answer: 'An index is a separate data structure (usually a B-tree) that lets the database find rows without scanning the whole table. A full table scan is O(n); a B-tree index lookup is O(log n). Create indexes on columns used in `WHERE`, `JOIN`, `ORDER BY`. Downsides: indexes slow down `INSERT`/`UPDATE`/`DELETE` (the index must be updated too) and consume disk space. A partial index only indexes a subset of rows.',
+    tip: `-- Single column index
+CREATE INDEX idx_users_email ON users(email);
+
+-- Composite index — column ORDER matters
+-- Useful for WHERE city = ? AND age > ?
+CREATE INDEX idx_emp_city_age ON employees(city, age);
+
+-- Partial index — only index active users (smaller, faster)
+CREATE INDEX idx_active_users ON users(email)
+WHERE status = 'active';
+
+-- Check if your query uses an index
+EXPLAIN ANALYZE
+SELECT * FROM users WHERE email = 'alice@example.com';
+-- Look for "Index Scan" (good) vs "Seq Scan" (full table scan)
+
+-- List all indexes on a table (PostgreSQL)
+SELECT indexname, indexdef FROM pg_indexes
+WHERE tablename = 'users';`
+  },
+  {
+    category: 'Advanced SQL', difficulty: 'Advanced',
+    question: 'What are ACID properties and how do transactions work?',
+    answer: 'ACID guarantees that database transactions are reliable: **Atomicity** — all operations succeed or all are rolled back (no partial updates). **Consistency** — the DB moves from one valid state to another. **Isolation** — concurrent transactions do not interfere with each other. **Durability** — committed data survives crashes. Use `BEGIN`/`COMMIT`/`ROLLBACK` to control transaction boundaries.',
+    tip: `-- Transfer money safely using a transaction
+BEGIN;
+
+UPDATE accounts SET balance = balance - 500
+WHERE id = 1;
+
+UPDATE accounts SET balance = balance + 500
+WHERE id = 2;
+
+-- If either UPDATE fails, ROLLBACK undoes both
+COMMIT;   -- or ROLLBACK on error
+
+-- Savepoints — partial rollback
+BEGIN;
+  INSERT INTO orders (...) VALUES (...);
+  SAVEPOINT after_order;
+  INSERT INTO payments (...) VALUES (...);
+  -- something went wrong with payment only
+  ROLLBACK TO SAVEPOINT after_order;
+  -- order still saved, payment rolled back
+COMMIT;`
+  },
+  {
+    category: 'Advanced SQL', difficulty: 'Advanced',
+    question: 'What is database normalization (1NF, 2NF, 3NF)?',
+    answer: 'Normalization organises tables to reduce redundancy and update anomalies. **1NF**: each cell has one atomic value; no repeating groups; rows are unique. **2NF**: 1NF + every non-key column depends on the ENTIRE primary key (eliminates partial dependency — only relevant when PK is composite). **3NF**: 2NF + no non-key column depends on another non-key column (eliminates transitive dependency). Most production schemas aim for 3NF; sometimes intentionally denormalise for read performance.',
+    tip: `-- VIOLATES 1NF — multiple values in one cell
+-- user_id | name  | phones
+-- 1       | Alice | 09x, 08x   ← NOT atomic
+
+-- 1NF fix — one value per cell
+-- user_phones(user_id, phone)
+
+-- VIOLATES 2NF (composite PK: order_id + product_id)
+-- order_id | product_id | qty | product_name ← depends only on product_id
+-- Fix: move product_name to products table
+
+-- VIOLATES 3NF
+-- emp_id | emp_name | dept_id | dept_name  ← dept_name depends on dept_id
+-- Fix: move dept_name to departments table
+
+-- Result of 3NF:
+-- employees(id, name, dept_id FK)
+-- departments(id, name)`
+  },
+  {
+    category: 'Advanced SQL', difficulty: 'Advanced',
+    question: 'What is the difference between a Stored Procedure and a Function in SQL?',
+    answer: 'A **Function** returns a value (scalar, table, or set), can be used inside a SELECT statement, and should have no side effects. A **Stored Procedure** is called with `CALL`/`EXEC`, can return multiple result sets and output parameters, and can modify data and manage transactions. In PostgreSQL, functions are more commonly used. In SQL Server, both are heavily used.',
+    tip: `-- PostgreSQL Function — returns a value, usable in SELECT
+CREATE OR REPLACE FUNCTION get_discount(price NUMERIC, pct NUMERIC)
+RETURNS NUMERIC AS $$
+  SELECT ROUND(price * (1 - pct / 100), 2);
+$$ LANGUAGE sql IMMUTABLE;
+
+-- Use in query
+SELECT name, price, get_discount(price, 10) AS sale_price
+FROM products;
+
+-- PostgreSQL Procedure — for complex logic / transactions
+CREATE OR REPLACE PROCEDURE transfer(from_id INT, to_id INT, amt NUMERIC)
+LANGUAGE plpgsql AS $$
+BEGIN
+  UPDATE accounts SET balance = balance - amt WHERE id = from_id;
+  UPDATE accounts SET balance = balance + amt WHERE id = to_id;
+END;
+$$;
+
+CALL transfer(1, 2, 500.00);`
+  },
+  {
+    category: 'Advanced SQL', difficulty: 'Advanced',
+    question: 'How do you read and use EXPLAIN / EXPLAIN ANALYZE?',
+    answer: '`EXPLAIN` shows the query execution plan the database optimizer chose — without running the query. `EXPLAIN ANALYZE` actually runs the query and shows real timing and row counts. Key things to look for: **Seq Scan** (full table scan — slow on large tables), **Index Scan** (good — using an index), **Nested Loop** vs **Hash Join** vs **Merge Join** (join strategies), and high **cost** estimates. Use this to diagnose slow queries.',
+    tip: `-- See the plan without running
+EXPLAIN
+SELECT * FROM orders WHERE user_id = 42;
+
+-- Run it and see actual vs estimated rows + timing
+EXPLAIN (ANALYZE, BUFFERS, FORMAT TEXT)
+SELECT u.name, COUNT(o.id)
+FROM users u
+JOIN orders o ON o.user_id = u.id
+GROUP BY u.name
+ORDER BY COUNT(o.id) DESC;
+
+-- What to look for:
+-- "Seq Scan on orders" + large rows → add an index
+-- "rows=1000 actual rows=50000" → stale statistics → ANALYZE table
+-- "Hash Join" → fine for large tables
+-- "cost=0.00..99999" → high cost = slow
+
+-- Update statistics so planner makes better choices
+ANALYZE orders;`
+  },
+];
+
+/* ═══════════════════════════════════════════════════════════
    JAVASCRIPT — 50 cards across 6 topics
 ═══════════════════════════════════════════════════════════ */
 const JS_CARDS = [
@@ -1776,6 +2259,7 @@ const SUBJECTS = {
   'DSA':        DSA_CARDS,
   'Python':     PYTHON_CARDS,
   'C#':         CSHARP_CARDS,
+  'SQL':        SQL_CARDS,
   'JavaScript': JS_CARDS,
 };
 
@@ -1786,6 +2270,7 @@ const SUBJECT_COLORS = {
   'DSA':        '#f97316',
   'Python':     '#3b82f6',
   'C#':         '#8b5cf6',
+  'SQL':        '#06b6d4',
   'JavaScript': '#f59e0b',
 };
 
@@ -1795,6 +2280,10 @@ const CATEGORY_COLORS = {
   'Data Structures': '#fb923c',
   'Algorithms':      '#ea580c',
   'Patterns':        '#c2410c',
+  // SQL
+  'SQL Basics':          '#06b6d4',
+  'Joins & Aggregation': '#0891b2',
+  'Advanced SQL':        '#164e63',
   // C#
   'C# Basics':    '#8b5cf6',
   'OOP & Patterns': '#a78bfa',
