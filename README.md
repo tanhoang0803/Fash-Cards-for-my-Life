@@ -4,6 +4,8 @@ A multi-subject developer flash card web app built with vanilla HTML, CSS, and J
 
 **Live Demo:** https://tanhoang0803.github.io/Fash-Cards-for-my-Life/
 
+**Project Spec:** https://roadmap.sh/projects/flash-cards
+
 ---
 
 ## Subjects
