@@ -2095,6 +2095,183 @@ WHERE id = 1 AND version = 5;  -- fails if someone else updated
 -- Check rows affected: if 0, conflict → retry or error
 -- Prisma handles this automatically with @updatedAt or @version`
   },
+
+  /* ── PostgreSQL ── */
+  {
+    category: 'PostgreSQL', difficulty: 'Beginner',
+    question: 'What makes PostgreSQL stand out among relational databases?',
+    answer: 'PostgreSQL is a powerful, open-source object-relational database (ORDBMS) with 35+ years of active development. Key strengths: full ACID compliance, MVCC for concurrency without read locks, native JSON/JSONB support (NoSQL inside SQL), rich indexing (B-tree, Hash, GIN, GiST, BRIN), table inheritance, custom types and functions, full-text search, and a massive extension ecosystem (PostGIS, pgvector, TimescaleDB).',
+    tip: `-- Check version
+SELECT version();
+
+-- Key advantages over MySQL:
+-- ✅ Better SQL standards compliance
+-- ✅ JSONB (binary JSON) — indexed and fast
+-- ✅ Advanced indexing (GIN, GiST, partial, expression)
+-- ✅ Full-text search built-in
+-- ✅ CTEs (WITH queries), window functions
+-- ✅ Table partitioning and inheritance
+-- ✅ PostGIS for geospatial data
+-- ✅ LISTEN/NOTIFY for pub/sub
+
+-- Common PostgreSQL data types
+INTEGER, BIGINT, NUMERIC(p,s)    -- numbers
+TEXT, VARCHAR(n), CHAR(n)        -- strings (prefer TEXT)
+BOOLEAN                          -- true/false
+TIMESTAMP WITH TIME ZONE         -- always use with TZ!
+UUID                             -- universally unique ID
+JSONB                            -- binary JSON (indexable)
+ARRAY                            -- native array columns`
+  },
+  {
+    category: 'PostgreSQL', difficulty: 'Beginner',
+    question: 'How does MVCC (Multi-Version Concurrency Control) work in PostgreSQL?',
+    answer: 'MVCC allows readers and writers to not block each other. Instead of locking rows for reads, PostgreSQL keeps multiple versions of a row — each transaction sees a snapshot of the data as it existed when the transaction started. Readers never block writers, writers never block readers. Old row versions are cleaned up by the VACUUM process.',
+    tip: `-- MVCC in action: no locking between reader and writer
+
+-- Transaction A (long-running read):
+BEGIN;
+SELECT * FROM orders WHERE status = 'pending';
+-- sees 100 rows at time T1
+
+-- Transaction B (concurrent write, commits at T2):
+BEGIN;
+UPDATE orders SET status = 'shipped' WHERE id = 1;
+COMMIT;
+
+-- Transaction A (still in its snapshot):
+SELECT * FROM orders WHERE status = 'pending';
+-- still sees 100 rows! (sees T1 snapshot, not T2)
+COMMIT;
+
+-- Key points:
+-- ✅ Readers never block writers
+-- ✅ Writers never block readers
+-- ⚠️  Old row versions accumulate → VACUUM cleans up
+-- Auto-vacuum runs in background; tune for high-write tables`
+  },
+  {
+    category: 'PostgreSQL', difficulty: 'Intermediate',
+    question: 'What is JSONB in PostgreSQL and when should you use it?',
+    answer: 'JSONB stores JSON as a decomposed binary format — it is parsed on write, stored efficiently, and supports indexing with GIN indexes. This makes JSONB fast to query. Use JSONB when: some attributes vary per row (semi-structured data), you need NoSQL flexibility inside a relational schema, or you are prototyping a schema that may evolve. Prefer dedicated columns for frequently-queried or joined fields.',
+    tip: `-- Create table with JSONB column
+CREATE TABLE products (
+  id      SERIAL PRIMARY KEY,
+  name    TEXT NOT NULL,
+  attrs   JSONB
+);
+
+-- Insert
+INSERT INTO products (name, attrs)
+VALUES ('Laptop', '{"brand":"Dell","ram":16,"tags":["sale","refurb"]}');
+
+-- Query JSONB fields
+SELECT attrs->>'brand'          FROM products;  -- text
+SELECT attrs->'ram'             FROM products;  -- JSON value
+SELECT attrs#>>'{tags,0}'       FROM products;  -- "sale"
+
+-- Filter on JSONB
+SELECT * FROM products WHERE attrs->>'brand' = 'Dell';
+SELECT * FROM products WHERE attrs @> '{"ram": 16}';  -- contains
+
+-- GIN index for fast JSONB queries
+CREATE INDEX idx_products_attrs ON products USING GIN (attrs);
+
+-- Check if key exists
+SELECT * FROM products WHERE attrs ? 'brand';`
+  },
+  {
+    category: 'PostgreSQL', difficulty: 'Intermediate',
+    question: 'What index types does PostgreSQL offer and when do you use each?',
+    answer: 'PostgreSQL has several index types: B-tree (default, for =, <, >, BETWEEN, LIKE prefix), Hash (equality only, rarely needed), GIN (arrays, JSONB, full-text search — many values per row), GiST (geometric data, PostGIS, full-text), BRIN (very large tables with naturally-ordered data like timestamps — tiny size, approximate), Partial (index only rows matching a condition).',
+    tip: `-- B-tree (default) — equality and range queries
+CREATE INDEX idx_orders_created ON orders (created_at);
+CREATE INDEX idx_users_email ON users (email);
+
+-- GIN — JSONB and full-text search
+CREATE INDEX idx_products_attrs ON products USING GIN (attrs);
+CREATE INDEX idx_articles_fts   ON articles
+  USING GIN (to_tsvector('english', title || ' ' || body));
+
+-- Partial index — only index relevant rows
+CREATE INDEX idx_orders_pending
+  ON orders (created_at)
+  WHERE status = 'pending';
+-- Much smaller, faster for queries that filter on status='pending'
+
+-- Expression index
+CREATE INDEX idx_users_lower_email ON users (LOWER(email));
+
+-- Check index usage
+EXPLAIN ANALYZE SELECT * FROM orders WHERE status = 'pending';
+-- Look for "Index Scan" vs "Seq Scan"
+
+-- Find unused indexes
+SELECT * FROM pg_stat_user_indexes WHERE idx_scan = 0;`
+  },
+  {
+    category: 'PostgreSQL', difficulty: 'Intermediate',
+    question: 'How do CTEs and Window Functions work in PostgreSQL?',
+    answer: 'A CTE (Common Table Expression) with the WITH keyword names a temporary result set you can reference like a table — great for breaking complex queries into readable steps. Window Functions (OVER clause) compute aggregates across a set of rows related to the current row without collapsing them into groups — use for running totals, rankings, and moving averages.',
+    tip: `-- CTE: break complex query into named steps
+WITH monthly_revenue AS (
+  SELECT
+    DATE_TRUNC('month', created_at) AS month,
+    SUM(amount)                     AS revenue
+  FROM orders
+  WHERE status = 'completed'
+  GROUP BY 1
+),
+ranked AS (
+  SELECT *, RANK() OVER (ORDER BY revenue DESC) AS rnk
+  FROM monthly_revenue
+)
+SELECT * FROM ranked WHERE rnk <= 3;
+
+-- Window Functions — no row collapsing
+SELECT
+  id,
+  amount,
+  SUM(amount)  OVER (ORDER BY created_at)           AS running_total,
+  AVG(amount)  OVER (PARTITION BY user_id)          AS user_avg,
+  RANK()       OVER (PARTITION BY dept ORDER BY salary DESC) AS rank,
+  LAG(amount)  OVER (ORDER BY created_at)           AS prev_amount,
+  LEAD(amount) OVER (ORDER BY created_at)           AS next_amount,
+  ROW_NUMBER() OVER (ORDER BY created_at)           AS row_num
+FROM orders;`
+  },
+  {
+    category: 'PostgreSQL', difficulty: 'Advanced',
+    question: 'How do you optimize slow queries in PostgreSQL?',
+    answer: 'Use EXPLAIN ANALYZE to see the actual query plan and execution times. Key problem signs: Seq Scan on large tables (missing index), high rows estimate vs actual (stale statistics — run ANALYZE), nested loop on large datasets (may need hash join), high cost nodes. Tune with: proper indexes, partial indexes, rewriting joins, VACUUM/ANALYZE, pg_stat_statements for identifying the slowest queries system-wide.',
+    tip: `-- See query plan with timing
+EXPLAIN ANALYZE
+SELECT * FROM orders o
+JOIN users u ON u.id = o.user_id
+WHERE o.status = 'pending' AND o.created_at > NOW() - INTERVAL '7 days';
+
+-- Key plan nodes to look for:
+-- Seq Scan        → no index used (add one!)
+-- Index Scan      → good
+-- Index Only Scan → best (all data in index)
+-- Hash Join       → good for large sets
+-- Nested Loop     → fast for small sets, slow for large
+-- Bitmap Heap Scan → combines index results
+
+-- Refresh statistics (helps planner make better choices)
+ANALYZE orders;
+
+-- Find slowest queries (enable pg_stat_statements first)
+SELECT query, mean_exec_time, calls
+FROM pg_stat_statements
+ORDER BY mean_exec_time DESC
+LIMIT 10;
+
+-- Kill long-running query
+SELECT pg_cancel_backend(pid)
+FROM pg_stat_activity
+WHERE state = 'active' AND query_start < NOW() - INTERVAL '5 min';`
+  },
 ];
 
 /* ═══════════════════════════════════════════════════════════
@@ -4350,6 +4527,7 @@ const CATEGORY_COLORS = {
   'Relational DB':    '#ec4899',
   'NoSQL':            '#f472b6',
   'DB Design & Perf': '#be185d',
+  'PostgreSQL':       '#0369a1',
   // SQL
   'SQL Basics':          '#06b6d4',
   'Joins & Aggregation': '#0891b2',
