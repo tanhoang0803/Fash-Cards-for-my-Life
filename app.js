@@ -3877,6 +3877,720 @@ Idempotent-Replayed: true
 ];
 
 /* ═══════════════════════════════════════════════════════════
+   NODE.JS — 25 cards across 5 categories
+═══════════════════════════════════════════════════════════ */
+const NODEJS_CARDS = [
+  // ── Node.js Basics ───────────────────────────────────────
+  {
+    category: 'Node.js Basics', difficulty: 'Beginner',
+    question: 'What is Node.js and how does it differ from browser JavaScript?',
+    answer: 'Node.js is a server-side JavaScript runtime built on Chrome\'s V8 engine. It uses an event-driven, non-blocking I/O model — a single thread handles thousands of concurrent connections by delegating I/O to the OS and continuing other work while waiting. Differences from browser JS: no DOM/window, but has fs, http, os, path modules; has process and Buffer globals; uses CommonJS or ESM modules.',
+    tip: `// Node.js architecture:
+//
+//   Your JS Code
+//        ↓
+//   Node.js APIs (fs, http, crypto...)
+//        ↓
+//   libuv  ──→  OS (I/O, timers, networking)
+//        ↓
+//   V8 Engine (executes JS)
+//
+// Single-threaded event loop + async I/O
+// → 1 thread handles 10,000 concurrent connections
+// → never blocks waiting for disk/network
+
+// Check Node.js version
+node --version    // v22.x.x
+node -e "console.log(process.version)"
+
+// Run a file
+node app.js
+
+// REPL (interactive shell)
+node
+> 1 + 1
+> require('os').hostname()`
+  },
+  {
+    category: 'Node.js Basics', difficulty: 'Beginner',
+    question: 'What is the Node.js Event Loop and how does it work?',
+    answer: 'The event loop is what makes Node.js non-blocking. After starting, it processes callbacks in phases: timers (setTimeout/setInterval), pending I/O callbacks, idle/prepare (internal), poll (waits for new I/O), check (setImmediate), close callbacks. Between each phase it drains the microtask queue (Promise callbacks, process.nextTick — nextTick runs before Promises).',
+    tip: `// Event loop phase order:
+//
+//  ┌─────────────────────────────┐
+//  │          timers             │  ← setTimeout, setInterval
+//  │   pending I/O callbacks     │  ← system I/O errors
+//  │       idle, prepare         │  ← internal
+//  │           poll              │  ← fetch new I/O events ← ─┐
+//  │          check              │  ← setImmediate             │
+//  │      close callbacks        │  ← socket.on('close')  ─ ──┘
+//  └─────────────────────────────┘
+//  Between each phase → microtasks:
+//    1. process.nextTick()   (highest priority)
+//    2. Promise.then()
+
+setTimeout(() => console.log('timer'), 0);
+setImmediate(() => console.log('immediate'));
+Promise.resolve().then(() => console.log('promise'));
+process.nextTick(() => console.log('nextTick'));
+
+// Output order:
+// nextTick → promise → timer → immediate`
+  },
+  {
+    category: 'Node.js Basics', difficulty: 'Beginner',
+    question: 'What are the key Node.js global objects?',
+    answer: 'Node.js globals available everywhere without require: process (runtime info, env vars, exit), __dirname / __filename (current file\'s directory/path — CommonJS only), Buffer (binary data), console, setTimeout/setInterval/setImmediate, global (the global object, like window in browsers). In ESM modules use import.meta.url instead of __dirname.',
+    tip: `// process — runtime information
+process.version          // 'v22.0.0'
+process.platform         // 'linux', 'win32', 'darwin'
+process.env.NODE_ENV     // 'production' | 'development'
+process.env.PORT         // read env variables
+process.argv             // ['node', 'app.js', 'arg1']
+process.cwd()            // current working directory
+process.exit(0)          // exit (0 = success, 1 = error)
+process.on('uncaughtException', err => { ... })
+
+// __dirname / __filename (CommonJS)
+console.log(__dirname)   // /home/user/projects/myapp
+console.log(__filename)  // /home/user/projects/myapp/app.js
+
+// Buffer — binary data
+const buf = Buffer.from('hello', 'utf8');
+buf.toString('base64')   // 'aGVsbG8='
+Buffer.alloc(10)         // zero-filled 10-byte buffer
+
+// ESM equivalent of __dirname:
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+const __dirname = dirname(fileURLToPath(import.meta.url));`
+  },
+  {
+    category: 'Node.js Basics', difficulty: 'Beginner',
+    question: 'What is the difference between CommonJS (require) and ES Modules (import)?',
+    answer: 'CommonJS (CJS) is Node\'s original module system: require() is synchronous and dynamic; exports via module.exports. ES Modules (ESM) is the modern standard: import/export, static (resolved at parse time), asynchronous. To use ESM in Node.js: use .mjs extension or set "type": "module" in package.json. CJS and ESM can interop but with restrictions — you can require() a CJS file from ESM via createRequire.',
+    tip: `// CommonJS (default in Node.js)
+const fs   = require('fs');
+const path = require('path');
+const { add, sub } = require('./math');
+
+module.exports = { greet };          // named
+module.exports = function greet() {} // default
+
+// ES Modules (.mjs or "type":"module" in package.json)
+import fs from 'fs';
+import { readFile } from 'fs/promises';
+import { add, sub } from './math.js';  // .js required in ESM
+
+export function greet() {}           // named export
+export default function greet() {}   // default export
+
+// Dynamic import (works in both CJS and ESM)
+const mod = await import('./plugin.js');
+
+// package.json
+{
+  "type": "module"   // all .js files treated as ESM
+}
+// or keep CJS default and use .mjs for ESM files`
+  },
+  {
+    category: 'Node.js Basics', difficulty: 'Intermediate',
+    question: 'What are the key built-in Node.js modules (fs, path, os, crypto)?',
+    answer: 'Node.js ships batteries-included: fs (file system — read, write, watch), path (cross-platform path manipulation), os (operating system info), crypto (hashing, encryption, random), http/https (HTTP server/client), stream (streaming data), url (URL parsing), events (EventEmitter), child_process (spawn subprocesses), util (promisify, inspect).',
+    tip: `// fs — file system (prefer fs/promises)
+import { readFile, writeFile, readdir } from 'fs/promises';
+const data = await readFile('./file.txt', 'utf8');
+await writeFile('./out.txt', 'hello');
+const files = await readdir('./src');
+
+// path — safe cross-platform paths
+import path from 'path';
+path.join(__dirname, 'data', 'file.txt') // correct on Win+Linux
+path.resolve('./config.json')            // absolute path
+path.basename('/usr/local/bin/node')     // 'node'
+path.extname('app.min.js')              // '.js'
+path.dirname('/home/user/app.js')       // '/home/user'
+
+// os — system info
+import os from 'os';
+os.cpus().length    // number of CPU cores
+os.totalmem()       // total RAM in bytes
+os.freemem()        // free RAM
+os.homedir()        // '/home/user'
+os.platform()       // 'linux' | 'win32' | 'darwin'
+
+// crypto — hashing
+import crypto from 'crypto';
+crypto.randomUUID()                          // UUID v4
+crypto.createHash('sha256').update('data').digest('hex')
+crypto.randomBytes(32).toString('hex')       // random token`
+  },
+
+  // ── Modules & npm ────────────────────────────────────────
+  {
+    category: 'Modules & npm', difficulty: 'Beginner',
+    question: 'How do you use npm to manage packages and scripts?',
+    answer: 'npm (Node Package Manager) is the default package manager for Node.js. It installs packages from the npm registry into node_modules, records them in package.json, and locks exact versions in package-lock.json. npm scripts let you define shortcuts for common commands in package.json.',
+    tip: `npm init -y                    // create package.json (yes to all)
+npm install express            // install + add to dependencies
+npm install -D nodemon         // devDependency (dev only)
+npm install -g typescript      // global install
+npm uninstall express          // remove package
+npm update                     // update all packages
+npm outdated                   // list outdated packages
+npm audit                      // security vulnerability check
+npm audit fix                  // auto-fix vulnerabilities
+
+// npm scripts in package.json:
+{
+  "scripts": {
+    "start":   "node dist/index.js",
+    "dev":     "nodemon src/index.js",
+    "build":   "tsc",
+    "test":    "jest",
+    "lint":    "eslint src/**/*.js"
+  }
+}
+npm run dev    // run script
+npm test       // shortcut for npm run test
+npm start      // shortcut for npm run start`
+  },
+  {
+    category: 'Modules & npm', difficulty: 'Beginner',
+    question: 'What is package.json and what do its key fields mean?',
+    answer: 'package.json is the manifest for a Node.js project. It describes the project, lists dependencies, defines scripts, and sets configuration. dependencies are installed in production; devDependencies are only for development; peerDependencies are expected to be installed by the consumer. Semantic versioning (semver) controls version ranges.',
+    tip: `{
+  "name": "my-app",
+  "version": "1.2.3",          // semver: major.minor.patch
+  "description": "My app",
+  "main": "dist/index.js",     // entry point (CJS)
+  "type": "module",            // use ESM by default
+  "engines": { "node": ">=20" },
+  "scripts": {
+    "start": "node dist/index.js",
+    "dev":   "nodemon src/index.js"
+  },
+  "dependencies": {
+    "express": "^4.18.0",      // ^ = compatible (4.x.x)
+    "dotenv":  "~16.0.0"       // ~ = patch only (16.0.x)
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.0",
+    "jest":    "^29.0.0"
+  }
+}
+
+// Semver ranges:
+// "4.18.0"   exact version
+// "^4.18.0"  >= 4.18.0, < 5.0.0  (minor + patch)
+// "~4.18.0"  >= 4.18.0, < 4.19.0 (patch only)
+// "*"        any version (avoid!)
+
+// package-lock.json = exact locked versions → commit this!`
+  },
+  {
+    category: 'Modules & npm', difficulty: 'Beginner',
+    question: 'What is the difference between npm, npx, and pnpm?',
+    answer: 'npm is the package manager — installs and manages packages. npx runs a package binary without installing it globally (great for one-off CLI tools). pnpm is a faster, disk-efficient alternative to npm — it uses a content-addressable store so packages are shared across projects, saving gigabytes of disk space. Yarn is another popular alternative.',
+    tip: `// npx — run without installing globally
+npx create-react-app my-app    // run create-react-app once
+npx prisma migrate dev         // run prisma CLI
+npx cowsay hello               // fun one-off
+
+// Without npx you would need:
+npm install -g create-react-app && create-react-app my-app
+
+// pnpm — fast, disk-efficient npm alternative
+npm install -g pnpm
+pnpm install                   // install deps (much faster!)
+pnpm add express               // install package
+pnpm run dev                   // run script
+
+// pnpm advantages:
+// ✅ Shared package store across all projects
+// ✅ Strict (no phantom deps)
+// ✅ Much faster installs
+// ✅ Monorepo workspace support
+
+// Other alternatives:
+// Yarn (yarn add, yarn.lock)
+// Bun (bun install — fastest, also a runtime)`
+  },
+  {
+    category: 'Modules & npm', difficulty: 'Intermediate',
+    question: 'How do Streams work in Node.js?',
+    answer: 'Streams process data piece by piece (chunks) instead of loading everything into memory. Four types: Readable (source — fs.createReadStream, http.IncomingMessage), Writable (destination — fs.createWriteStream, http.ServerResponse), Duplex (both — TCP sockets), Transform (modify in-transit — zlib.createGzip). Pipe connects streams. Use streams for large files, video, or any data larger than available RAM.',
+    tip: `import { createReadStream, createWriteStream } from 'fs';
+import { createGzip } from 'zlib';
+import { pipeline } from 'stream/promises';
+
+// Read → compress → write (streaming, low memory)
+await pipeline(
+  createReadStream('bigfile.txt'),
+  createGzip(),
+  createWriteStream('bigfile.txt.gz')
+);
+
+// Without streams: entire file loaded into RAM ❌
+// const data = fs.readFileSync('10gb.log'); // out of memory!
+
+// Custom readable stream
+import { Readable } from 'stream';
+const readable = new Readable({
+  read() {
+    this.push('chunk1');
+    this.push('chunk2');
+    this.push(null);  // signal end
+  }
+});
+
+// HTTP response is a writable stream
+http.createServer((req, res) => {
+  const file = createReadStream('./video.mp4');
+  file.pipe(res);  // stream file directly to client
+});`
+  },
+  {
+    category: 'Modules & npm', difficulty: 'Intermediate',
+    question: 'How does the EventEmitter pattern work in Node.js?',
+    answer: 'EventEmitter is Node\'s built-in implementation of the observer/pub-sub pattern. Objects emit named events; listeners subscribe with .on(). Many core Node.js APIs (http.Server, Stream, process) extend EventEmitter. It is the foundation of Node\'s event-driven architecture.',
+    tip: `import { EventEmitter } from 'events';
+
+class OrderService extends EventEmitter {
+  placeOrder(order) {
+    // ... save to DB
+    this.emit('order:placed', order);     // fire event
+    this.emit('order:notify', order.userId);
+  }
+}
+
+const orders = new OrderService();
+
+// Subscribe
+orders.on('order:placed', (order) => {
+  console.log('New order:', order.id);
+});
+orders.once('order:placed', handler);    // fires only once
+
+// Unsubscribe
+orders.off('order:placed', handler);
+
+// Error events — MUST have a listener or Node crashes
+orders.on('error', (err) => console.error(err));
+
+// Count listeners
+orders.listenerCount('order:placed');    // 1
+
+// Max listeners warning threshold (default 10)
+orders.setMaxListeners(20);`
+  },
+
+  // ── Async & Error Handling ───────────────────────────────
+  {
+    category: 'Async & Error Handling', difficulty: 'Intermediate',
+    question: 'How does async code evolve in Node.js: callbacks → Promises → async/await?',
+    answer: 'Node.js started with the error-first callback pattern (err, data). Promises eliminated callback hell with .then()/.catch() chains. async/await (ES2017) makes async code look synchronous — much more readable. Modern Node.js uses fs/promises, util.promisify to wrap old callback APIs, and top-level await (in ESM modules).',
+    tip: `// 1. Callback (old style) — error-first convention
+fs.readFile('data.txt', 'utf8', (err, data) => {
+  if (err) return console.error(err);
+  console.log(data);
+});
+
+// 2. Promise
+import { readFile } from 'fs/promises';
+readFile('data.txt', 'utf8')
+  .then(data => console.log(data))
+  .catch(err => console.error(err));
+
+// 3. async/await (preferred)
+async function loadFile() {
+  try {
+    const data = await readFile('data.txt', 'utf8');
+    console.log(data);
+  } catch (err) {
+    console.error(err);
+  }
+}
+
+// Promisify old callback APIs
+import { promisify } from 'util';
+const sleep = promisify(setTimeout);
+await sleep(1000);
+
+// Run in parallel (don't await one by one!)
+const [users, orders] = await Promise.all([
+  fetchUsers(),
+  fetchOrders()
+]);`
+  },
+  {
+    category: 'Async & Error Handling', difficulty: 'Intermediate',
+    question: 'How do you handle errors properly in Node.js async code?',
+    answer: 'Unhandled promise rejections crash Node.js in v15+. Always: wrap await in try/catch, handle .catch() on promise chains, listen for process "unhandledRejection" and "uncaughtException" as last-resort safety nets (log and exit cleanly — do not try to resume). Use a centralized error handler in Express. Never swallow errors silently.',
+    tip: `// ✅ try/catch for async functions
+async function getUser(id) {
+  try {
+    const user = await db.findUser(id);
+    if (!user) throw new Error('User not found');
+    return user;
+  } catch (err) {
+    logger.error({ err, id }, 'getUser failed');
+    throw err;  // re-throw so caller can handle
+  }
+}
+
+// ✅ Global safety net (log + exit gracefully)
+process.on('unhandledRejection', (reason) => {
+  logger.fatal({ reason }, 'Unhandled rejection');
+  process.exit(1);
+});
+process.on('uncaughtException', (err) => {
+  logger.fatal({ err }, 'Uncaught exception');
+  process.exit(1);
+});
+
+// ✅ Express centralized error handler (4 params!)
+app.use((err, req, res, next) => {
+  const status = err.status || 500;
+  res.status(status).json({
+    error: err.message,
+    requestId: req.id
+  });
+});
+
+// ❌ Never do this — swallowed error!
+try { await riskyOp(); } catch {}  // silent failure`
+  },
+  {
+    category: 'Async & Error Handling', difficulty: 'Advanced',
+    question: 'When do you use Worker Threads vs Child Process in Node.js?',
+    answer: 'Node.js is single-threaded — CPU-intensive work (image processing, heavy computation) blocks the event loop. Worker Threads run JS in parallel threads sharing memory (via SharedArrayBuffer / MessageChannel) — best for CPU work within Node. Child Process spawns a separate OS process — best for running external programs or completely isolated work. Cluster (built on child_process) forks the whole app for multi-core HTTP serving.',
+    tip: `// Worker Threads — CPU-heavy JS work
+import { Worker, isMainThread, parentPort } from 'worker_threads';
+
+if (isMainThread) {
+  const worker = new Worker('./worker.js', {
+    workerData: { input: largeArray }
+  });
+  worker.on('message', result => console.log(result));
+  worker.on('error', err => console.error(err));
+} else {
+  // runs in worker thread
+  const result = heavyComputation(workerData.input);
+  parentPort.postMessage(result);
+}
+
+// Child Process — run external programs
+import { exec, spawn } from 'child_process';
+
+exec('ls -la', (err, stdout) => console.log(stdout));
+
+const proc = spawn('ffmpeg', ['-i', 'in.mp4', 'out.webm']);
+proc.stdout.pipe(process.stdout);
+proc.on('close', code => console.log('exit:', code));
+
+// Use case guide:
+// Worker Threads → heavy JS computation (image resize, crypto)
+// Child Process  → external CLI tools, isolation needed
+// Cluster        → scale HTTP server across all CPU cores`
+  },
+
+  // ── HTTP & Express ───────────────────────────────────────
+  {
+    category: 'HTTP & Express', difficulty: 'Beginner',
+    question: 'How do you create an HTTP server in Node.js without a framework?',
+    answer: 'Node.js has a built-in http module that creates a raw HTTP server. The request and response objects are streams. You read the method, URL, headers from req; write status, headers, and body to res. This is the foundation Express.js is built on. For production apps use Express or Fastify for routing, middleware, and JSON handling.',
+    tip: `import http from 'http';
+
+const server = http.createServer(async (req, res) => {
+  const url = new URL(req.url, 'http://localhost');
+
+  // Route: GET /hello
+  if (req.method === 'GET' && url.pathname === '/hello') {
+    res.writeHead(200, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({ message: 'Hello World' }));
+    return;
+  }
+
+  // Read POST body
+  if (req.method === 'POST') {
+    let body = '';
+    for await (const chunk of req) body += chunk;
+    const data = JSON.parse(body);
+    res.writeHead(201, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({ received: data }));
+    return;
+  }
+
+  res.writeHead(404);
+  res.end('Not Found');
+});
+
+server.listen(3000, () => {
+  console.log('Server running on http://localhost:3000');
+});`
+  },
+  {
+    category: 'HTTP & Express', difficulty: 'Intermediate',
+    question: 'How does Express.js work — routing and middleware?',
+    answer: 'Express is a minimal web framework for Node.js. The middleware chain is the core concept: every request flows through a stack of functions (middleware) in order. Middleware has (req, res, next) — call next() to pass to the next middleware, or send a response to end the chain. Routing maps HTTP method + URL pattern to handler functions.',
+    tip: `import express from 'express';
+const app = express();
+
+// Built-in middleware
+app.use(express.json());             // parse JSON bodies
+app.use(express.urlencoded({ extended: true }));
+
+// Custom middleware (runs for every request)
+app.use((req, res, next) => {
+  console.log(req.method, req.url);
+  next();  // MUST call next() or the request hangs
+});
+
+// Route handlers
+app.get('/users', async (req, res) => {
+  const users = await db.findAll();
+  res.json(users);
+});
+
+app.get('/users/:id', async (req, res) => {
+  const { id } = req.params;          // route params
+  const { fields } = req.query;       // query string
+  const user = await db.findById(id);
+  if (!user) return res.status(404).json({ error: 'Not found' });
+  res.json(user);
+});
+
+app.post('/users', async (req, res) => {
+  const user = await db.create(req.body);
+  res.status(201).json(user);
+});
+
+app.listen(3000);`
+  },
+  {
+    category: 'HTTP & Express', difficulty: 'Intermediate',
+    question: 'How do you structure a real Express.js REST API project?',
+    answer: 'A well-structured Express API separates concerns: routes define URL patterns, controllers handle request/response logic, services contain business logic, and the data layer handles DB access. Use express.Router() to split routes into modules. This keeps files small and testable — business logic can be tested without HTTP.',
+    tip: `// Project structure:
+// src/
+//   index.js          ← start server
+//   app.js            ← create Express app (no listen)
+//   routes/
+//     users.js        ← router for /users
+//   controllers/
+//     userController.js
+//   services/
+//     userService.js  ← business logic
+//   middleware/
+//     auth.js, errorHandler.js
+
+// routes/users.js
+import { Router } from 'express';
+import * as ctrl from '../controllers/userController.js';
+import { auth } from '../middleware/auth.js';
+
+const router = Router();
+router.get('/',     auth, ctrl.listUsers);
+router.get('/:id',  auth, ctrl.getUser);
+router.post('/',    auth, ctrl.createUser);
+router.patch('/:id',auth, ctrl.updateUser);
+export default router;
+
+// app.js
+import usersRouter from './routes/users.js';
+app.use('/api/v1/users', usersRouter);
+
+// Error handler LAST
+app.use((err, req, res, next) => {
+  res.status(err.status || 500).json({ error: err.message });
+});`
+  },
+  {
+    category: 'HTTP & Express', difficulty: 'Intermediate',
+    question: 'How do you use environment variables and configuration in Node.js?',
+    answer: 'Never hard-code secrets or environment-specific values in code. Use environment variables (process.env) and a .env file for local development (loaded by the dotenv package). In production, set env vars through your platform (Docker, Heroku, AWS, etc.). Validate required env vars at startup so the app fails fast with a clear message rather than crashing later.',
+    tip: `// .env file (never commit to git!)
+PORT=3000
+NODE_ENV=development
+DATABASE_URL=postgres://user:pass@localhost:5432/mydb
+JWT_SECRET=supersecretkey123
+REDIS_URL=redis://localhost:6379
+
+// Load .env in development
+import 'dotenv/config';         // npm install dotenv
+
+// Access env vars
+const port = process.env.PORT || 3000;
+const dbUrl = process.env.DATABASE_URL;
+
+// Validate at startup — fail fast!
+const required = ['DATABASE_URL', 'JWT_SECRET'];
+for (const key of required) {
+  if (!process.env[key]) {
+    console.error('Missing required env var:', key);
+    process.exit(1);
+  }
+}
+
+// .gitignore — MUST include:
+// .env
+// .env.local
+// .env.production
+
+// Config module pattern
+export const config = {
+  port:   parseInt(process.env.PORT) || 3000,
+  dbUrl:  process.env.DATABASE_URL,
+  jwtSecret: process.env.JWT_SECRET,
+  isProd: process.env.NODE_ENV === 'production',
+};`
+  },
+
+  // ── Performance & Production ─────────────────────────────
+  {
+    category: 'Performance & Production', difficulty: 'Intermediate',
+    question: 'How do you run Node.js in production with PM2?',
+    answer: 'PM2 is a production process manager for Node.js. It keeps your app alive (auto-restarts on crash), clusters it across CPU cores, manages logs, and enables zero-downtime reloads. It is the standard tool for deploying Node.js apps on bare metal or VMs.',
+    tip: `npm install -g pm2
+
+// Start app
+pm2 start dist/index.js --name "my-api"
+pm2 start ecosystem.config.js
+
+// ecosystem.config.js
+module.exports = {
+  apps: [{
+    name:      'my-api',
+    script:    'dist/index.js',
+    instances: 'max',        // one per CPU core
+    exec_mode: 'cluster',    // cluster mode
+    env: {
+      NODE_ENV: 'production',
+      PORT: 3000
+    },
+    max_memory_restart: '1G' // restart if memory > 1GB
+  }]
+};
+
+pm2 status                   // show all processes
+pm2 logs my-api              // tail logs
+pm2 logs my-api --lines 200  // last 200 lines
+pm2 reload my-api            // zero-downtime reload
+pm2 restart my-api           // full restart
+pm2 stop my-api              // stop
+pm2 startup                  // auto-start on server reboot
+pm2 save                     // save current process list`
+  },
+  {
+    category: 'Performance & Production', difficulty: 'Intermediate',
+    question: 'How do you add security best practices to a Node.js/Express API?',
+    answer: 'Key Express security practices: use helmet (sets security HTTP headers), rate-limit with express-rate-limit, validate + sanitize all input (never trust req.body), use parameterized queries (never string-concatenate SQL), store passwords with bcrypt (never plain text), keep dependencies updated (npm audit), disable X-Powered-By, use HTTPS in production.',
+    tip: `import helmet from 'helmet';            // npm install helmet
+import rateLimit from 'express-rate-limit'; // npm install express-rate-limit
+import { body, validationResult } from 'express-validator';
+
+// helmet — set security headers automatically
+app.use(helmet());
+// Sets: X-Content-Type-Options, X-Frame-Options,
+//       Content-Security-Policy, HSTS, etc.
+
+// Rate limiting
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000,  // 15 minutes
+  max: 100,                   // max 100 requests per window
+  standardHeaders: true,
+  message: { error: 'Too many requests' }
+});
+app.use('/api/', limiter);
+
+// Input validation with express-validator
+app.post('/users', [
+  body('email').isEmail().normalizeEmail(),
+  body('password').isLength({ min: 8 }),
+  body('age').isInt({ min: 0, max: 150 }),
+], (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) return res.status(422).json({ errors: errors.array() });
+  // safe to use req.body here
+});`
+  },
+  {
+    category: 'Performance & Production', difficulty: 'Advanced',
+    question: 'How does Node.js clustering work and when should you use it?',
+    answer: 'A single Node.js process uses one CPU core. The Cluster module forks multiple worker processes (one per core) that all share the same port. The master process distributes incoming connections across workers using round-robin. PM2 cluster mode does this automatically. For containerized deployments (Docker/Kubernetes), it is usually better to run one process per container and scale with replicas.',
+    tip: `import cluster from 'cluster';
+import os from 'os';
+import http from 'http';
+
+if (cluster.isPrimary) {
+  const numCPUs = os.cpus().length;
+  console.log('Primary PID:', process.pid, 'CPUs:', numCPUs);
+
+  // Fork one worker per CPU
+  for (let i = 0; i < numCPUs; i++) {
+    cluster.fork();
+  }
+
+  // Restart dead workers
+  cluster.on('exit', (worker, code) => {
+    console.log('Worker', worker.pid, 'died — restarting');
+    cluster.fork();
+  });
+
+} else {
+  // Each worker runs its own HTTP server
+  http.createServer((req, res) => {
+    res.end('Worker PID: ' + process.pid);
+  }).listen(3000);
+
+  console.log('Worker started PID:', process.pid);
+}
+
+// Easier with PM2:
+// pm2 start app.js -i max --exec-mode cluster
+// → PM2 handles forking, restarts, and zero-downtime reloads`
+  },
+  {
+    category: 'Performance & Production', difficulty: 'Advanced',
+    question: 'How do you diagnose and fix performance issues in Node.js?',
+    answer: 'The most common Node.js performance issues: (1) CPU-blocking sync operations (fs.readFileSync, heavy JSON.parse on large objects), (2) Memory leaks (global collections that grow, uncleaned timers/listeners), (3) unoptimized database queries (N+1 problem), (4) too many small I/O calls (batch instead). Use clinic.js or --prof to profile, heapdump for memory snapshots.',
+    tip: `// ❌ Blocks event loop — all requests stall
+app.get('/data', (req, res) => {
+  const data = fs.readFileSync('big.json'); // SYNC!
+  res.json(JSON.parse(data));
+});
+
+// ✅ Non-blocking
+app.get('/data', async (req, res) => {
+  const data = await readFile('big.json', 'utf8');
+  res.json(JSON.parse(data));
+});
+
+// Memory leak patterns to avoid:
+const cache = {};                // grows forever if not pruned
+setInterval(() => {}, 1000);    // uncleaned interval leaks
+
+// Monitor event loop lag
+import { monitorEventLoopDelay } from 'perf_hooks';
+const h = monitorEventLoopDelay({ resolution: 20 });
+h.enable();
+setInterval(() => {
+  console.log('EL delay p99:', h.p99 / 1e6, 'ms');
+}, 5000);
+
+// Profile with built-in profiler
+node --prof app.js
+node --prof-process isolate-*.log > profile.txt
+
+// clinic.js (npm install -g clinic)
+clinic doctor -- node app.js    // detect CPU, I/O, memory issues
+clinic flame  -- node app.js    // flame graph`
+  },
+];
+
+/* ═══════════════════════════════════════════════════════════
    JAVASCRIPT — 50 cards across 6 topics
 ═══════════════════════════════════════════════════════════ */
 const JS_CARDS = [
@@ -4500,6 +5214,7 @@ const SUBJECTS = {
   'Internet':   INTERNET_CARDS,
   'Linux':      LINUX_CARDS,
   'API':        API_CARDS,
+  'Node.js':    NODEJS_CARDS,
 };
 
 /* ═══════════════════════════════════════════════════════════
@@ -4515,6 +5230,7 @@ const SUBJECT_COLORS = {
   'Internet':   '#10b981',
   'Linux':      '#f97316',
   'API':        '#6366f1',
+  'Node.js':    '#68a063',
 };
 
 const CATEGORY_COLORS = {
@@ -4547,6 +5263,12 @@ const CATEGORY_COLORS = {
   'CSS':             '#ec4899',
   'Performance':     '#8b5cf6',
   'Security':        '#ef4444',
+  // Node.js
+  'Node.js Basics':           '#68a063',
+  'Modules & npm':            '#4ade80',
+  'Async & Error Handling':   '#16a34a',
+  'HTTP & Express':           '#15803d',
+  'Performance & Production': '#14532d',
   // API
   'JSON Basics':       '#6366f1',
   'REST Fundamentals': '#818cf8',
