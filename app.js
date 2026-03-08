@@ -3149,6 +3149,557 @@ EOF`
 ];
 
 /* ═══════════════════════════════════════════════════════════
+   API — RESTful API & JSON  (20 cards across 4 categories)
+═══════════════════════════════════════════════════════════ */
+const API_CARDS = [
+  // ── JSON Basics ──────────────────────────────────────────
+  {
+    category: 'JSON Basics', difficulty: 'Beginner',
+    question: 'What is JSON and why is it the standard format for APIs?',
+    answer: 'JSON (JavaScript Object Notation) is a lightweight, text-based data format derived from JavaScript object syntax. It is language-agnostic, human-readable, and natively supported by every major programming language. APIs use JSON because it is compact, easy to parse, and maps naturally to objects/arrays that most languages understand.',
+    tip: `{
+  "name": "Alice",
+  "age": 30,
+  "isAdmin": false,
+  "scores": [95, 87, 100],
+  "address": {
+    "city": "Hanoi",
+    "zip": "10000"
+  },
+  "nickname": null
+}
+
+// JSON rules:
+// - Keys MUST be double-quoted strings
+// - Strings MUST use double quotes (not single)
+// - No trailing commas
+// - No comments
+// - Values: string, number, boolean, null, object, array`
+  },
+  {
+    category: 'JSON Basics', difficulty: 'Beginner',
+    question: 'What are the 6 JSON data types?',
+    answer: 'JSON supports exactly 6 value types: (1) string — text in double quotes, (2) number — integer or float, no NaN/Infinity, (3) boolean — true or false, (4) null — represents absence of value, (5) object — unordered key-value pairs in {}, (6) array — ordered list of values in []. All JSON values must be one of these types.',
+    tip: `{
+  "type_string":  "hello world",
+  "type_number":  42,
+  "type_float":   3.14,
+  "type_bool":    true,
+  "type_null":    null,
+  "type_object":  { "key": "value" },
+  "type_array":   [1, "two", true, null]
+}
+
+// NOT valid JSON values:
+// undefined      -- JS-only
+// NaN            -- not allowed
+// Infinity       -- not allowed
+// functions      -- not allowed
+// Date objects   -- serialize as string: "2026-03-08T00:00:00Z"`
+  },
+  {
+    category: 'JSON Basics', difficulty: 'Beginner',
+    question: 'How do you parse and serialize JSON in JavaScript, Python, and C#?',
+    answer: 'Parsing converts a JSON string into a native data structure. Serialization (stringify) converts a native object into a JSON string. Every major language has built-in support. Always wrap parsing in try/catch because malformed JSON throws an exception.',
+    tip: `// JavaScript
+const obj  = JSON.parse('{"name":"Alice","age":30}');
+const json = JSON.stringify(obj, null, 2);  // 2 = indent spaces
+obj.name;   // "Alice"
+
+// Python
+import json
+obj  = json.loads('{"name": "Alice", "age": 30}')
+text = json.dumps(obj, indent=2)
+obj["name"]  # "Alice"
+
+# C#
+using System.Text.Json;
+var obj  = JsonSerializer.Deserialize<MyClass>(jsonString);
+var json = JsonSerializer.Serialize(obj);
+
+// Always handle parse errors:
+try {
+  const data = JSON.parse(raw);
+} catch (e) {
+  console.error("Invalid JSON:", e.message);
+}`
+  },
+  {
+    category: 'JSON Basics', difficulty: 'Intermediate',
+    question: 'What is JSON Schema and how does it validate API payloads?',
+    answer: 'JSON Schema is a vocabulary for describing and validating JSON documents. It defines the expected shape: required fields, types, formats, min/max values, patterns, and more. API gateways and validators use it to reject malformed requests before they hit business logic. OpenAPI (Swagger) uses JSON Schema internally.',
+    tip: `// JSON Schema example
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "required": ["name", "email", "age"],
+  "properties": {
+    "name": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 100
+    },
+    "email": {
+      "type": "string",
+      "format": "email"
+    },
+    "age": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 150
+    },
+    "role": {
+      "type": "string",
+      "enum": ["admin", "user", "guest"]
+    }
+  },
+  "additionalProperties": false
+}`
+  },
+  {
+    category: 'JSON Basics', difficulty: 'Intermediate',
+    question: 'What is the difference between JSON and JSON5 / NDJSON / JSON:API?',
+    answer: 'JSON is strict — no comments, no trailing commas, double-quoted keys only. JSON5 relaxes these rules for config files (supports comments, single quotes, trailing commas). NDJSON (Newline-Delimited JSON) puts one JSON object per line — ideal for streaming and log files. JSON:API is a specification for structuring REST API responses with relationships, pagination, and links.',
+    tip: `// JSON5 (config files, not wire format)
+{
+  // comment allowed
+  name: 'Alice',       // single quotes OK
+  scores: [95, 87,],  // trailing comma OK
+}
+
+// NDJSON — one JSON object per line (streaming)
+{"id":1,"event":"click","ts":"2026-01-01"}
+{"id":2,"event":"scroll","ts":"2026-01-01"}
+{"id":3,"event":"submit","ts":"2026-01-01"}
+
+// JSON:API response structure
+{
+  "data": {
+    "type": "articles",
+    "id": "1",
+    "attributes": { "title": "Hello" },
+    "relationships": {
+      "author": { "data": { "type": "people", "id": "9" } }
+    }
+  },
+  "links": { "self": "https://api.example.com/articles/1" }
+}`
+  },
+
+  // ── REST Fundamentals ────────────────────────────────────
+  {
+    category: 'REST Fundamentals', difficulty: 'Beginner',
+    question: 'What is REST and what are its 6 architectural constraints?',
+    answer: 'REST (Representational State Transfer) is an architectural style for distributed systems defined by Roy Fielding in 2000. Its 6 constraints: (1) Client-Server — UI and data storage are separate, (2) Stateless — each request has all info needed; no server session, (3) Cacheable — responses declare cacheability, (4) Uniform Interface — consistent resource-based URLs, (5) Layered System — client does not know if it talks to a proxy or server, (6) Code on Demand (optional) — server can send executable code.',
+    tip: `// Stateless = key principle
+// Each request must carry all context:
+
+// ✅ RESTful — state in request
+GET /orders?userId=123&status=pending
+Authorization: Bearer <token>
+
+// ❌ NOT RESTful — server tracks session
+GET /my-orders        // relies on server-side session
+
+// Uniform Interface — resource-based URLs:
+GET    /users          -- list users
+GET    /users/42       -- get user 42
+POST   /users          -- create user
+PUT    /users/42       -- replace user 42
+PATCH  /users/42       -- partial update
+DELETE /users/42       -- delete user 42`
+  },
+  {
+    category: 'REST Fundamentals', difficulty: 'Beginner',
+    question: 'What do the HTTP methods mean in a REST API, and which are safe/idempotent?',
+    answer: 'GET retrieves a resource (safe + idempotent). POST creates a new resource (neither). PUT replaces a resource completely (idempotent). PATCH partially updates a resource. DELETE removes a resource (idempotent). Safe means no side effects. Idempotent means repeating the request has the same outcome as doing it once.',
+    tip: `Method  | Body | Safe | Idempotent | Typical use
+--------|------|------|------------|------------------
+GET     |  No  |  ✅  |     ✅     | Read resource
+POST    |  Yes |  ❌  |     ❌     | Create resource
+PUT     |  Yes |  ❌  |     ✅     | Full replace
+PATCH   |  Yes |  ❌  |     ❌*    | Partial update
+DELETE  |  No  |  ❌  |     ✅     | Delete resource
+HEAD    |  No  |  ✅  |     ✅     | Headers only (no body)
+OPTIONS |  No  |  ✅  |     ✅     | CORS preflight, capabilities
+
+// * PATCH can be designed idempotent but is not required to be
+
+// Idempotent: calling N times = calling once
+// DELETE /users/42 → 200 first time, 404 after — still idempotent
+// POST   /users    → creates a NEW user each call — not idempotent`
+  },
+  {
+    category: 'REST Fundamentals', difficulty: 'Beginner',
+    question: 'What are the most important HTTP status codes for REST APIs?',
+    answer: '2xx = success, 3xx = redirection, 4xx = client error, 5xx = server error. Most used: 200 OK, 201 Created (after POST), 204 No Content (after DELETE), 400 Bad Request, 401 Unauthorized (not authenticated), 403 Forbidden (authenticated but not allowed), 404 Not Found, 409 Conflict, 422 Unprocessable Entity (validation failed), 429 Too Many Requests, 500 Internal Server Error.',
+    tip: `// Success
+200 OK                -- GET, PUT, PATCH success
+201 Created           -- POST created a resource
+  Location: /users/42 -- header pointing to new resource
+204 No Content        -- DELETE success (no body)
+
+// Client errors (fix your request)
+400 Bad Request       -- malformed syntax
+401 Unauthorized      -- missing/invalid auth token
+403 Forbidden         -- authenticated but no permission
+404 Not Found         -- resource does not exist
+405 Method Not Allowed
+409 Conflict          -- duplicate, version mismatch
+422 Unprocessable Entity  -- valid syntax, fails validation
+429 Too Many Requests -- rate limit hit
+  Retry-After: 60     -- header: seconds to wait
+
+// Server errors (not your fault)
+500 Internal Server Error
+502 Bad Gateway
+503 Service Unavailable
+  Retry-After: 30`
+  },
+  {
+    category: 'REST Fundamentals', difficulty: 'Beginner',
+    question: 'What are the key HTTP headers used in REST APIs?',
+    answer: 'Request headers carry metadata about the request: Authorization (auth token), Content-Type (body format), Accept (desired response format), Accept-Language, If-None-Match (cache validation). Response headers carry metadata about the response: Content-Type, Cache-Control, ETag, Location (after 201), X-RateLimit-* for rate limiting.',
+    tip: `// Common REQUEST headers
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9...
+Content-Type: application/json
+Accept: application/json
+Accept-Language: en-US
+If-None-Match: "abc123"   -- conditional GET (cache)
+Idempotency-Key: uuid-v4  -- safe to retry POST
+
+// Common RESPONSE headers
+Content-Type: application/json; charset=utf-8
+Cache-Control: no-store
+Cache-Control: public, max-age=3600
+ETag: "abc123"            -- version fingerprint
+Location: /users/42       -- after 201 Created
+X-RateLimit-Limit: 1000
+X-RateLimit-Remaining: 42
+X-RateLimit-Reset: 1700000000
+Retry-After: 60           -- after 429 or 503`
+  },
+  {
+    category: 'REST Fundamentals', difficulty: 'Intermediate',
+    question: 'How does REST compare to GraphQL and gRPC?',
+    answer: 'REST uses fixed endpoints returning fixed shapes — simple but can over-fetch or under-fetch. GraphQL uses a single endpoint where clients query exactly the fields they need — great for complex, client-driven data requirements. gRPC uses Protocol Buffers (binary) over HTTP/2 — extremely fast for internal service-to-service communication but harder to use from browsers.',
+    tip: `// REST — fixed endpoint, fixed response shape
+GET /users/42
+// → returns ALL user fields whether needed or not
+
+// GraphQL — one endpoint, client picks fields
+POST /graphql
+{
+  "query": "{ user(id: 42) { name email } }"
+}
+// → returns ONLY name and email
+
+// gRPC — binary protocol, defined in .proto files
+// service UserService {
+//   rpc GetUser (UserRequest) returns (UserResponse);
+// }
+
+Feature     | REST       | GraphQL    | gRPC
+------------|------------|------------|----------
+Protocol    | HTTP/1.1+  | HTTP       | HTTP/2
+Format      | JSON       | JSON       | Protobuf (binary)
+Typing      | Loose      | Strong     | Strong
+Over-fetch  | Common     | Solved     | N/A
+Browser use | ✅ Easy    | ✅ Easy    | ❌ Hard
+Best for    | Public API | Flexible   | Microservices`
+  },
+
+  // ── REST Design ──────────────────────────────────────────
+  {
+    category: 'REST Design', difficulty: 'Intermediate',
+    question: 'What are the best practices for naming REST API endpoints?',
+    answer: 'Use nouns (resources), not verbs — the HTTP method IS the verb. Use plural nouns (/users, /orders). Use lowercase kebab-case. Nest related resources to show relationships (/users/42/orders). Never put actions in the URL (/users/42/activate is acceptable as a last resort for non-CRUD actions). Keep URLs intuitive and consistent.',
+    tip: `// ✅ Good REST URL design
+GET    /users                    -- list users
+GET    /users/42                 -- get user 42
+POST   /users                    -- create user
+PUT    /users/42                 -- replace user 42
+PATCH  /users/42                 -- partial update
+DELETE /users/42                 -- delete user 42
+GET    /users/42/orders          -- user 42's orders
+GET    /users/42/orders/7        -- specific order
+
+// ❌ Bad — verbs in URL
+POST   /createUser
+GET    /getUser?id=42
+POST   /users/42/delete
+PUT    /updateUser/42
+
+// ✅ Non-CRUD actions (last resort)
+POST   /users/42/activate
+POST   /orders/7/cancel
+POST   /payments/capture`
+  },
+  {
+    category: 'REST Design', difficulty: 'Intermediate',
+    question: 'How do you implement pagination, filtering, and sorting in REST APIs?',
+    answer: 'Never return unbounded lists — always paginate. Offset pagination uses ?page=2&limit=20 (simple but slow for large offsets). Cursor pagination uses ?cursor=<token> (scalable, used by Facebook/Twitter). Filtering uses query params (?status=active&role=admin). Sorting uses ?sort=createdAt&order=desc. Include pagination metadata in the response.',
+    tip: `// Offset pagination
+GET /orders?page=2&limit=20&sort=createdAt&order=desc
+
+// Response with pagination metadata
+{
+  "data": [...],
+  "meta": {
+    "total": 500,
+    "page": 2,
+    "limit": 20,
+    "totalPages": 25
+  },
+  "links": {
+    "self":  "/orders?page=2&limit=20",
+    "prev":  "/orders?page=1&limit=20",
+    "next":  "/orders?page=3&limit=20",
+    "first": "/orders?page=1&limit=20",
+    "last":  "/orders?page=25&limit=20"
+  }
+}
+
+// Cursor pagination (scalable)
+GET /feed?cursor=eyJpZCI6MTAwfQ&limit=20
+
+// Filtering
+GET /products?category=shoes&minPrice=50&maxPrice=200
+GET /users?role=admin&status=active&createdAfter=2026-01-01`
+  },
+  {
+    category: 'REST Design', difficulty: 'Intermediate',
+    question: 'How do you version a REST API?',
+    answer: 'API versioning lets you evolve an API without breaking existing clients. Three strategies: (1) URL path versioning (/v1/users) — most common, visible, easy to route, (2) Header versioning (Accept: application/vnd.api.v1+json) — cleaner URLs but harder to test, (3) Query param (?version=1) — easy but pollutes URLs. Never delete v1 without proper deprecation notice.',
+    tip: `// 1. URL path versioning (most common)
+GET /api/v1/users
+GET /api/v2/users
+
+// 2. Header versioning
+GET /api/users
+Accept: application/vnd.myapi.v2+json
+// or custom header:
+API-Version: 2
+
+// 3. Query param
+GET /api/users?version=2
+
+// Deprecation best practices:
+// 1. Add Deprecation header before removal
+Deprecation: true
+Sunset: Sat, 31 Dec 2026 23:59:59 GMT
+Link: <https://docs.api.com/migrate-v2>; rel="successor-version"
+
+// 2. Communicate a timeline to API consumers
+// 3. Keep v1 running during migration window
+// 4. Log v1 usage to contact active consumers`
+  },
+  {
+    category: 'REST Design', difficulty: 'Intermediate',
+    question: 'How should REST APIs return errors consistently?',
+    answer: 'Never return 200 OK with an error body. Use the correct HTTP status code. Return a consistent error object with: an error code (machine-readable), a message (human-readable), details (for validation errors — field-level errors), and a request ID (for debugging). RFC 7807 "Problem Details" is the standard format.',
+    tip: `// RFC 7807 Problem Details format
+HTTP/1.1 422 Unprocessable Entity
+Content-Type: application/problem+json
+
+{
+  "type":     "https://api.example.com/errors/validation",
+  "title":    "Validation Failed",
+  "status":   422,
+  "detail":   "The request body contains invalid fields.",
+  "instance": "/users",
+  "errors": [
+    { "field": "email",    "message": "Invalid email format" },
+    { "field": "age",      "message": "Must be at least 18" }
+  ],
+  "requestId": "req_abc123xyz"
+}
+
+// Never do this:
+HTTP/1.1 200 OK
+{ "success": false, "error": "something went wrong" }
+// ❌ wrong status code, vague message, not machine-readable`
+  },
+  {
+    category: 'REST Design', difficulty: 'Advanced',
+    question: 'What is HATEOAS and why does it matter for REST maturity?',
+    answer: 'HATEOAS (Hypermedia As The Engine Of Application State) is the highest level of REST maturity (Richardson Maturity Model level 3). The server embeds links in responses so clients discover actions dynamically — they do not hard-code URLs. The client only needs to know the root URL; all other endpoints are discovered through links returned in responses.',
+    tip: `// Richardson Maturity Model:
+// Level 0 — one endpoint, POST everything (SOAP-style)
+// Level 1 — multiple resources (separate URLs)
+// Level 2 — HTTP verbs + status codes used correctly
+// Level 3 — HATEOAS (hypermedia links in responses)
+
+// Level 3 response example:
+GET /orders/42
+{
+  "id": 42,
+  "status": "pending",
+  "total": 150.00,
+  "_links": {
+    "self":    { "href": "/orders/42" },
+    "pay":     { "href": "/orders/42/payment",  "method": "POST" },
+    "cancel":  { "href": "/orders/42/cancel",   "method": "POST" },
+    "customer":{ "href": "/users/7" }
+  }
+}
+// Client follows "_links" — no URL hard-coding needed
+// If "cancel" link is absent, the action is not available`
+  },
+
+  // ── API in Practice ──────────────────────────────────────
+  {
+    category: 'API in Practice', difficulty: 'Intermediate',
+    question: 'What are the main API authentication methods (API keys, JWT, OAuth2)?',
+    answer: 'API Key — simple secret token sent in a header or query param, good for server-to-server. JWT (JSON Web Token) — a signed, self-contained token carrying claims; the server verifies the signature without a DB lookup. OAuth2 — a delegation framework where users grant third-party apps limited access (Authorization Code flow for web apps, Client Credentials for machine-to-machine).',
+    tip: `// 1. API Key (simple, server-to-server)
+GET /data
+X-API-Key: sk-abc123xyz
+
+// 2. Bearer Token / JWT
+GET /profile
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+
+// JWT structure: header.payload.signature (base64url)
+// Payload (decoded):
+{
+  "sub": "42",
+  "name": "Alice",
+  "role": "admin",
+  "iat": 1700000000,
+  "exp": 1700003600    // expires in 1 hour
+}
+// Server verifies signature — no DB lookup needed
+
+// 3. OAuth2 Authorization Code Flow
+// 1. User → App → redirect to Auth Server
+// 2. User logs in + grants permission
+// 3. Auth Server → redirect back with code
+// 4. App exchanges code for access_token + refresh_token
+// 5. App calls API with: Authorization: Bearer <access_token>`
+  },
+  {
+    category: 'API in Practice', difficulty: 'Intermediate',
+    question: 'How does rate limiting protect APIs and how do you implement it?',
+    answer: 'Rate limiting caps how many requests a client can make in a time window to prevent abuse, DoS, and runaway clients. Common algorithms: Fixed Window (simple, bursty), Sliding Window (smoother), Token Bucket (allows bursts, refills over time — used by most APIs). Responses should return X-RateLimit headers so clients can back off gracefully.',
+    tip: `// Response headers a well-designed API returns
+HTTP/1.1 200 OK
+X-RateLimit-Limit:     1000    -- max requests per window
+X-RateLimit-Remaining: 42      -- requests left
+X-RateLimit-Reset:     1700000000  -- Unix timestamp of reset
+
+// When limit hit:
+HTTP/1.1 429 Too Many Requests
+Retry-After: 60                -- seconds to wait
+
+// Rate limit strategies:
+// Fixed Window  — reset counter at fixed intervals (bursty)
+// Sliding Window — smooth rolling count
+// Token Bucket  — accumulate tokens; burst allowed up to bucket size
+// Leaky Bucket  — smooth output rate regardless of input bursts
+
+// Keys for limiting (choose per use case):
+// - Per IP address        (anonymous public APIs)
+// - Per API key / user    (authenticated APIs)
+// - Per endpoint          (expensive operations get tighter limits)
+// - Per tenant            (multi-tenant SaaS)`
+  },
+  {
+    category: 'API in Practice', difficulty: 'Intermediate',
+    question: 'What is CORS and how do you configure it correctly for an API?',
+    answer: 'CORS (Cross-Origin Resource Sharing) is a browser security mechanism that blocks JavaScript from making requests to a different origin (protocol + domain + port) than the page. Browsers send a preflight OPTIONS request first for non-simple requests. The server must respond with the right Access-Control-* headers. CORS is enforced by browsers only — curl and server-to-server calls are not affected.',
+    tip: `// Browser sends preflight (OPTIONS) for non-simple requests:
+OPTIONS /api/users
+Origin: https://myapp.com
+Access-Control-Request-Method: POST
+Access-Control-Request-Headers: Authorization, Content-Type
+
+// Server response — allow it:
+HTTP/1.1 204 No Content
+Access-Control-Allow-Origin: https://myapp.com
+Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS
+Access-Control-Allow-Headers: Authorization, Content-Type
+Access-Control-Max-Age: 86400   -- cache preflight for 24h
+
+// For public APIs (any origin):
+Access-Control-Allow-Origin: *
+// Note: * cannot be used with credentials (cookies/auth)
+
+// With credentials:
+Access-Control-Allow-Origin: https://myapp.com  -- must be specific
+Access-Control-Allow-Credentials: true`
+  },
+  {
+    category: 'API in Practice', difficulty: 'Intermediate',
+    question: 'How do you document a REST API with OpenAPI / Swagger?',
+    answer: 'OpenAPI (formerly Swagger) is the industry standard for describing REST APIs in a machine-readable YAML or JSON file. Tools generate interactive docs (Swagger UI, ReDoc), client SDKs, mock servers, and validation from a single source of truth. The spec describes endpoints, request/response schemas, authentication, and examples.',
+    tip: `# openapi.yaml — minimal example
+openapi: 3.1.0
+info:
+  title: User API
+  version: 1.0.0
+
+paths:
+  /users/{id}:
+    get:
+      summary: Get a user by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: User found
+          content:
+            application/json:
+              schema:
+                ref: "#/components/schemas/User"
+        "404":
+          description: Not found
+
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        id:    { type: integer }
+        name:  { type: string }
+        email: { type: string, format: email }`
+  },
+  {
+    category: 'API in Practice', difficulty: 'Advanced',
+    question: 'What are idempotency keys and why are critical API operations need them?',
+    answer: 'An idempotency key is a client-generated unique ID (usually UUID v4) sent with a request. The server stores the result against that key and returns the same response if the same key is resent — safely handling retries after network failures. Essential for payment processing, order creation, and any operation where duplicate execution causes harm.',
+    tip: `// Client generates a UUID and sends it with POST
+POST /payments
+Idempotency-Key: 550e8400-e29b-41d4-a716-446655440000
+Authorization: Bearer <token>
+Content-Type: application/json
+
+{
+  "amount": 5000,
+  "currency": "USD",
+  "to": "account_xyz"
+}
+
+// Server behavior:
+// 1st call  → process payment → store result against key → 200 OK
+// 2nd call (same key) → lookup key → return SAME stored response
+// (no duplicate charge!)
+
+// Server response on duplicate:
+HTTP/1.1 200 OK
+Idempotent-Replayed: true
+
+// Key expiry: typically 24h to 7 days
+// Storage: Redis with TTL is ideal
+// Real-world use: Stripe, Braintree, all payment APIs require this`
+  },
+];
+
+/* ═══════════════════════════════════════════════════════════
    JAVASCRIPT — 50 cards across 6 topics
 ═══════════════════════════════════════════════════════════ */
 const JS_CARDS = [
@@ -3771,6 +4322,7 @@ const SUBJECTS = {
   'JavaScript': JS_CARDS,
   'Internet':   INTERNET_CARDS,
   'Linux':      LINUX_CARDS,
+  'API':        API_CARDS,
 };
 
 /* ═══════════════════════════════════════════════════════════
@@ -3785,6 +4337,7 @@ const SUBJECT_COLORS = {
   'JavaScript': '#f59e0b',
   'Internet':   '#10b981',
   'Linux':      '#f97316',
+  'API':        '#6366f1',
 };
 
 const CATEGORY_COLORS = {
@@ -3816,6 +4369,11 @@ const CATEGORY_COLORS = {
   'CSS':             '#ec4899',
   'Performance':     '#8b5cf6',
   'Security':        '#ef4444',
+  // API
+  'JSON Basics':       '#6366f1',
+  'REST Fundamentals': '#818cf8',
+  'REST Design':       '#4f46e5',
+  'API in Practice':   '#3730a3',
   // Linux
   'Linux Basics':        '#f97316',
   'Files & Permissions': '#fb923c',
