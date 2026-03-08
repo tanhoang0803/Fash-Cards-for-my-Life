@@ -276,6 +276,392 @@ function minCoins(coins, amount) {
   return dist;
 }`
   },
+
+  // ── Hashing ──────────────────────────────────────────────
+  {
+    category: 'Hashing', difficulty: 'Beginner',
+    question: 'How does a Hash Table work internally?',
+    answer: 'A hash table maps keys to values via a hash function that converts any key into an array index. Ideal case: O(1) average for insert, lookup, delete. The hash function must be deterministic and distribute keys uniformly. When two keys map to the same index (collision), the table resolves it via chaining (linked list per bucket) or open addressing (probe for next empty slot). Load factor = items / buckets; rehash when it exceeds ~0.7.',
+    tip: `// How hashing works step by step:
+// key "alice"
+//   → hash("alice") = 92847263
+//   → 92847263 % 16 (bucket count) = 7
+//   → store value at bucket[7]
+
+// Chaining collision resolution:
+// bucket[7] → [("alice", 25)] → [("charlie", 30)] → null
+
+// Open addressing (linear probe):
+// bucket[7] taken → try 8 → try 9 → ...
+
+// Load factor & rehashing
+const map = new Map();         // JS built-in hash map
+map.set('alice', 25);
+map.get('alice');              // O(1)
+map.has('alice');              // O(1)
+map.delete('alice');           // O(1)
+map.size;                      // number of entries
+
+// Object as hash map (string keys only)
+const freq = {};
+for (const ch of 'hello') freq[ch] = (freq[ch] || 0) + 1;
+// { h:1, e:1, l:2, o:1 }`
+  },
+  {
+    category: 'Hashing', difficulty: 'Intermediate',
+    question: 'What are the most common hashing patterns for solving array/string problems?',
+    answer: 'Three core patterns: (1) Frequency Map — count occurrences of each element in O(n), (2) Seen Set — detect duplicates or check membership in O(1), (3) Prefix-Sum + Hash Map — find subarray with a target sum in O(n). These patterns solve dozens of interview problems in linear time that naive solutions would do in O(n²).',
+    tip: `// 1. Frequency Map — count occurrences
+function topKFrequent(nums, k) {
+  const freq = new Map();
+  for (const n of nums) freq.set(n, (freq.get(n) || 0) + 1);
+  return [...freq.entries()]
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, k)
+    .map(([n]) => n);
+}
+
+// 2. Seen Set — first duplicate
+function findDuplicate(nums) {
+  const seen = new Set();
+  for (const n of nums) {
+    if (seen.has(n)) return n;
+    seen.add(n);
+  }
+}
+
+// 3. Prefix Sum + Map — subarray sum equals k
+function subarraySum(nums, k) {
+  const prefixCount = new Map([[0, 1]]);
+  let sum = 0, count = 0;
+  for (const n of nums) {
+    sum += n;
+    count += prefixCount.get(sum - k) || 0;
+    prefixCount.set(sum, (prefixCount.get(sum) || 0) + 1);
+  }
+  return count;
+}`
+  },
+  {
+    category: 'Hashing', difficulty: 'Intermediate',
+    question: 'How do you use hashing to group and match patterns?',
+    answer: 'Hash maps excel at grouping items by a computed key — the canonical form of the data. Group anagrams by sorted characters; group by first letter; detect isomorphic strings by mapping structure. The key insight: transform each item into a canonical representation and use that as the map key.',
+    tip: `// Group Anagrams — canonical key = sorted chars
+function groupAnagrams(strs) {
+  const map = new Map();
+  for (const s of strs) {
+    const key = s.split('').sort().join('');
+    if (!map.has(key)) map.set(key, []);
+    map.get(key).push(s);
+  }
+  return [...map.values()];
+}
+// ["eat","tea","tan","ate","nat","bat"]
+// → [["eat","tea","ate"],["tan","nat"],["bat"]]
+
+// Two Sum — O(n) with hash map
+function twoSum(nums, target) {
+  const seen = new Map();   // value → index
+  for (let i = 0; i < nums.length; i++) {
+    const complement = target - nums[i];
+    if (seen.has(complement)) return [seen.get(complement), i];
+    seen.set(nums[i], i);
+  }
+}
+
+// Isomorphic Strings — map char-to-char in both directions
+function isIsomorphic(s, t) {
+  const st = new Map(), ts = new Map();
+  for (let i = 0; i < s.length; i++) {
+    if (st.get(s[i]) !== t[i] || ts.get(t[i]) !== s[i])
+      if (st.has(s[i]) || ts.has(t[i])) return false;
+    st.set(s[i], t[i]);
+    ts.set(t[i], s[i]);
+  }
+  return true;
+}`
+  },
+
+  // ── Recursion ─────────────────────────────────────────────
+  {
+    category: 'Recursion', difficulty: 'Beginner',
+    question: 'What is recursion and what are the two required parts?',
+    answer: 'Recursion is when a function calls itself to solve a smaller version of the same problem. Every correct recursive function has: (1) Base case — the condition that stops the recursion (without it, you get infinite recursion / stack overflow), (2) Recursive case — the function calls itself with a simpler input, moving toward the base case. Think: "trust the recursion" — assume the recursive call correctly solves the smaller problem.',
+    tip: `// Factorial: n! = n × (n-1)!
+function factorial(n) {
+  if (n <= 1) return 1;          // ← base case
+  return n * factorial(n - 1);   // ← recursive case
+}
+factorial(5) = 5 * factorial(4)
+             = 5 * 4 * factorial(3)
+             = 5 * 4 * 3 * 2 * 1 = 120
+
+// Call stack visualization:
+// factorial(5)
+//   factorial(4)
+//     factorial(3)
+//       factorial(2)
+//         factorial(1) → 1  ← base case hit, unwind
+//       → 2
+//     → 6
+//   → 24
+// → 120
+
+// Fibonacci
+function fib(n) {
+  if (n <= 1) return n;           // base cases: fib(0)=0, fib(1)=1
+  return fib(n - 1) + fib(n - 2);// recursive case
+}
+// ⚠️ Naive fib is O(2ⁿ) — use memoization!`
+  },
+  {
+    category: 'Recursion', difficulty: 'Intermediate',
+    question: 'What is memoization and how does it optimize recursive solutions?',
+    answer: 'Memoization caches the result of a function call so repeated calls with the same arguments return instantly. It converts naive exponential recursive solutions (like Fibonacci O(2ⁿ)) to linear O(n) by ensuring each unique subproblem is solved only once. This is the top-down approach of Dynamic Programming.',
+    tip: `// Naive fib: O(2ⁿ) — recalculates same values repeatedly
+//         fib(5)
+//        /       \\
+//     fib(4)   fib(3)    ← fib(3) called twice!
+//    /    \\   /    \\
+// fib(3) fib(2)...      ← fib(2) called 3 times!
+
+// Memoized fib: O(n) — each value computed once
+function fib(n, memo = new Map()) {
+  if (n <= 1) return n;
+  if (memo.has(n)) return memo.get(n);  // cache hit!
+  const result = fib(n - 1, memo) + fib(n - 2, memo);
+  memo.set(n, result);                  // cache result
+  return result;
+}
+
+// Generic memoize helper
+function memoize(fn) {
+  const cache = new Map();
+  return function(...args) {
+    const key = JSON.stringify(args);
+    if (cache.has(key)) return cache.get(key);
+    const result = fn.apply(this, args);
+    cache.set(key, result);
+    return result;
+  };
+}
+const memoFib = memoize(fib);`
+  },
+  {
+    category: 'Recursion', difficulty: 'Intermediate',
+    question: 'What is backtracking and how does it differ from plain recursion?',
+    answer: 'Backtracking explores all possible solutions by building candidates incrementally and abandoning ("pruning") a candidate as soon as it cannot lead to a valid solution. Pattern: choose → explore → unchoose (undo). Used for: permutations, combinations, subsets, N-Queens, Sudoku solver, word search. Backtracking prunes branches early, making it much faster than brute force.',
+    tip: `// Permutations using backtracking
+function permutations(nums) {
+  const result = [];
+  function backtrack(current, remaining) {
+    if (remaining.length === 0) {   // base: no more to pick
+      result.push([...current]);
+      return;
+    }
+    for (let i = 0; i < remaining.length; i++) {
+      current.push(remaining[i]);                      // choose
+      backtrack(current, remaining.filter((_, j) => j !== i)); // explore
+      current.pop();                                   // unchoose ← backtrack!
+    }
+  }
+  backtrack([], nums);
+  return result;
+}
+
+// Subsets (power set)
+function subsets(nums) {
+  const result = [];
+  function backtrack(start, current) {
+    result.push([...current]);          // every state is a valid subset
+    for (let i = start; i < nums.length; i++) {
+      current.push(nums[i]);            // choose
+      backtrack(i + 1, current);        // explore
+      current.pop();                    // unchoose
+    }
+  }
+  backtrack(0, []);
+  return result;
+}`
+  },
+
+  // ── Interview ─────────────────────────────────────────────
+  {
+    category: 'Interview', difficulty: 'Intermediate',
+    question: '[Interview] Two Sum — find indices of two numbers that add to a target.',
+    answer: 'Classic hash map problem. Naive O(n²): check every pair. Optimal O(n): for each number, check if its complement (target - num) already exists in a map. If yes → found the pair. If no → store current number and its index in the map. One pass, O(n) time, O(n) space.',
+    tip: `// Problem: nums = [2,7,11,15], target = 9 → [0,1]
+// 2+7=9, return indices [0,1]
+
+function twoSum(nums, target) {
+  const seen = new Map();        // value → index
+  for (let i = 0; i < nums.length; i++) {
+    const complement = target - nums[i];
+    if (seen.has(complement)) {
+      return [seen.get(complement), i];
+    }
+    seen.set(nums[i], i);
+  }
+}
+
+// Trace through [2,7,11,15], target=9:
+// i=0: complement=7, seen={}, not found → seen={2:0}
+// i=1: complement=2, seen has 2! → return [0,1] ✅
+
+// Time:  O(n)   — one pass
+// Space: O(n)   — map stores up to n entries
+// Key insight: instead of searching for the pair,
+// ask "have I SEEN the complement before?"`
+  },
+  {
+    category: 'Interview', difficulty: 'Intermediate',
+    question: '[Interview] Valid Anagram — check if two strings are anagrams.',
+    answer: 'Two strings are anagrams if they contain the same characters with the same frequencies. Approach 1: sort both strings and compare O(n log n). Approach 2 (optimal): build a frequency map for s, then subtract for t — if all counts reach zero, they\'re anagrams. O(n) time, O(1) space (only 26 letters).',
+    tip: `// Problem: s="anagram", t="nagaram" → true
+//          s="rat",     t="car"    → false
+
+// Approach 1: sort (simple, O(n log n))
+function isAnagram(s, t) {
+  if (s.length !== t.length) return false;
+  return s.split('').sort().join('') ===
+         t.split('').sort().join('');
+}
+
+// Approach 2: frequency map (optimal O(n))
+function isAnagram(s, t) {
+  if (s.length !== t.length) return false;
+  const count = new Array(26).fill(0);
+  const a = 'a'.charCodeAt(0);
+  for (let i = 0; i < s.length; i++) {
+    count[s.charCodeAt(i) - a]++;   // increment for s
+    count[t.charCodeAt(i) - a]--;   // decrement for t
+  }
+  return count.every(c => c === 0); // all zero = anagram
+}
+
+// Time:  O(n)
+// Space: O(1) — fixed 26-char array
+// Follow-up: Unicode → use Map instead of fixed array`
+  },
+  {
+    category: 'Interview', difficulty: 'Intermediate',
+    question: '[Interview] Longest Consecutive Sequence — find longest run of consecutive numbers.',
+    answer: 'Given [100,4,200,1,3,2] → answer is 4 (sequence 1,2,3,4). Naive sorting: O(n log n). Optimal using hash set: only start counting from the beginning of a sequence (num-1 not in set). Each number is visited at most twice → O(n).',
+    tip: `// Problem: [100,4,200,1,3,2] → 4  (1,2,3,4)
+
+function longestConsecutive(nums) {
+  const set = new Set(nums);    // O(1) lookup
+  let best = 0;
+
+  for (const num of set) {
+    // Only start a sequence from its beginning
+    if (set.has(num - 1)) continue;  // not a start → skip
+
+    let current = num;
+    let length  = 1;
+    while (set.has(current + 1)) {
+      current++;
+      length++;
+    }
+    best = Math.max(best, length);
+  }
+  return best;
+}
+
+// Trace [100,4,200,1,3,2]:
+// set = {100,4,200,1,3,2}
+// num=100: 99 not in set → start, 101 not in set → length=1
+// num=4:   3 in set → skip (not a start)
+// num=200: 199 not in set → length=1
+// num=1:   0 not in set → start: 1→2→3→4, length=4 ✅
+// num=3,2: predecessors in set → skip
+
+// Time:  O(n)   — each num visited at most twice
+// Space: O(n)   — hash set`
+  },
+  {
+    category: 'Interview', difficulty: 'Intermediate',
+    question: '[Interview] Contains Duplicate / Find All Duplicates using hashing.',
+    answer: 'Contains Duplicate: return true if any value appears at least twice — one-liner with Set. Find All Duplicates: in an array of n integers where 1 ≤ nums[i] ≤ n, find all duplicates in O(n) time and O(1) extra space by using the array itself as a hash map (negate values at visited indices).',
+    tip: `// Contains Duplicate — O(n) time, O(n) space
+function containsDuplicate(nums) {
+  return nums.length !== new Set(nums).size;
+}
+// Or:
+function containsDuplicate(nums) {
+  const seen = new Set();
+  for (const n of nums) {
+    if (seen.has(n)) return true;
+    seen.add(n);
+  }
+  return false;
+}
+
+// Find All Duplicates — O(n) time, O(1) space
+// Key trick: use sign of nums[abs(num)-1] as visited marker
+function findDuplicates(nums) {
+  const result = [];
+  for (const num of nums) {
+    const idx = Math.abs(num) - 1;
+    if (nums[idx] < 0) {
+      result.push(Math.abs(num));  // visited twice → duplicate!
+    } else {
+      nums[idx] = -nums[idx];      // mark as visited
+    }
+  }
+  return result;
+}
+// [4,3,2,7,8,2,3,1] → [2,3]`
+  },
+  {
+    category: 'Interview', difficulty: 'Advanced',
+    question: '[Interview] LRU Cache — design a data structure with O(1) get and put.',
+    answer: 'LRU (Least Recently Used) cache evicts the least recently accessed item when capacity is full. Optimal O(1) design: combine a HashMap (key → node, for O(1) lookup) with a Doubly Linked List (maintains access order — head = most recent, tail = least recent). On access/update, move the node to the head. On eviction, remove the tail.',
+    tip: `class LRUCache {
+  #cap; #map; #head; #tail;
+
+  constructor(capacity) {
+    this.#cap  = capacity;
+    this.#map  = new Map();             // key → node
+    this.#head = { key: 0, val: 0 };   // dummy head (MRU side)
+    this.#tail = { key: 0, val: 0 };   // dummy tail (LRU side)
+    this.#head.next = this.#tail;
+    this.#tail.prev = this.#head;
+  }
+
+  #remove(node) {
+    node.prev.next = node.next;
+    node.next.prev = node.prev;
+  }
+  #insertFront(node) {
+    node.next = this.#head.next;
+    node.prev = this.#head;
+    this.#head.next.prev = node;
+    this.#head.next = node;
+  }
+
+  get(key) {
+    if (!this.#map.has(key)) return -1;
+    const node = this.#map.get(key);
+    this.#remove(node);
+    this.#insertFront(node);            // move to MRU
+    return node.val;
+  }
+
+  put(key, val) {
+    if (this.#map.has(key)) this.#remove(this.#map.get(key));
+    const node = { key, val };
+    this.#insertFront(node);
+    this.#map.set(key, node);
+    if (this.#map.size > this.#cap) {
+      const lru = this.#tail.prev;     // evict LRU
+      this.#remove(lru);
+      this.#map.delete(lru.key);
+    }
+  }
+}
+// Time: O(1) get and put   Space: O(capacity)`
+  },
 ];
 
 /* ═══════════════════════════════════════════════════════════
@@ -5239,6 +5625,9 @@ const CATEGORY_COLORS = {
   'Data Structures': '#fb923c',
   'Algorithms':      '#ea580c',
   'Patterns':        '#c2410c',
+  'Hashing':         '#fbbf24',
+  'Recursion':       '#f59e0b',
+  'Interview':       '#d97706',
   // Database
   'Relational DB':    '#ec4899',
   'NoSQL':            '#f472b6',
