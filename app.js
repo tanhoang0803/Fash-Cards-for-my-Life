@@ -2569,6 +2569,586 @@ Response: 304 Not Modified  -- use your cached copy (no body sent!)
 ];
 
 /* ═══════════════════════════════════════════════════════════
+   LINUX — 25 cards across 5 categories
+═══════════════════════════════════════════════════════════ */
+const LINUX_CARDS = [
+  // ── Linux Basics ─────────────────────────────────────────
+  {
+    category: 'Linux Basics', difficulty: 'Beginner',
+    question: 'What is Linux and how does the kernel relate to the OS?',
+    answer: 'Linux is an open-source, Unix-like operating system kernel written by Linus Torvalds in 1991. The kernel is the core layer that manages CPU scheduling, memory, device drivers, and system calls. A Linux "distro" (Ubuntu, Fedora, Arch…) bundles the kernel with a package manager, init system (systemd), shell, and user-space tools to form a complete OS.',
+    tip: `Kernel space  →  manages hardware, memory, scheduling
+User  space   →  your shell, apps, libraries
+
+         ┌─────────────────────────────┐
+         │   User Applications         │
+         ├─────────────────────────────┤
+         │   Shell / Standard Library  │
+         ├─────────────────────────────┤
+         │   Linux Kernel              │
+         ├─────────────────────────────┤
+         │   Hardware                  │
+         └─────────────────────────────┘
+
+uname -r       -- print running kernel version
+uname -a       -- all system info
+cat /etc/os-release   -- distro name & version`
+  },
+  {
+    category: 'Linux Basics', difficulty: 'Beginner',
+    question: 'What is the Linux Filesystem Hierarchy Standard (FHS)?',
+    answer: 'The FHS defines where files live in a Linux system. Everything hangs off the root /. Key directories: /bin (essential binaries), /etc (config files), /home (user home dirs), /var (logs, databases), /tmp (temp files cleared on boot), /usr (user programs & libs), /proc (virtual FS exposing kernel/process info), /dev (device files).',
+    tip: `/            -- root of everything
+/bin         -- essential commands (ls, cp, bash)
+/sbin        -- system binaries (mount, iptables)
+/etc         -- config files (nginx.conf, fstab)
+/home/user   -- your personal files
+/var/log     -- system & app logs
+/tmp         -- temp space, wiped on reboot
+/proc        -- live kernel & process data (virtual)
+/dev         -- device files (disk, tty, null, random)
+/usr/local   -- manually installed programs`
+  },
+  {
+    category: 'Linux Basics', difficulty: 'Beginner',
+    question: 'What are the essential file-navigation commands in Linux?',
+    answer: 'pwd (print working directory), cd (change directory), ls (list files), mkdir (make directory), rm / rmdir (remove file/dir), cp (copy), mv (move/rename), cat (print file), less (page through file), touch (create empty file or update timestamp).',
+    tip: `pwd                  -- /home/user/projects
+ls -lah              -- long list, all files, human sizes
+cd ~                 -- go home
+cd -                 -- go to previous directory
+mkdir -p a/b/c       -- create nested dirs at once
+rm -rf dir/          -- remove dir recursively (careful!)
+cp -r src/ dst/      -- recursive copy
+mv old.txt new.txt   -- rename
+cat file.txt         -- print to terminal
+less file.txt        -- scroll through (q to quit)`
+  },
+  {
+    category: 'Linux Basics', difficulty: 'Beginner',
+    question: 'How do you get help for any Linux command?',
+    answer: 'Three layers of help: (1) --help flag for a quick summary, (2) man <command> for the full manual page (press q to quit, / to search), (3) info <command> for GNU-style docs. For built-ins (cd, alias) use help <builtin>. tldr pages give practical examples via the tldr npm package.',
+    tip: `ls --help            -- quick flag summary
+man ls               -- full manual (q=quit, /=search, n=next)
+man 5 crontab        -- section 5 = file formats
+info bash            -- GNU info for bash
+help cd              -- built-in shell commands
+tldr tar             -- community cheat-sheet (install separately)
+
+# Man page sections:
+# 1 = user commands   2 = system calls
+# 3 = library funcs   5 = file formats
+# 8 = admin commands`
+  },
+  {
+    category: 'Linux Basics', difficulty: 'Beginner',
+    question: 'How do Linux package managers work, and which distro uses which?',
+    answer: 'A package manager downloads, installs, updates, and removes software along with its dependencies. Debian/Ubuntu use apt (packages are .deb). RHEL/Fedora/CentOS use dnf/yum (packages are .rpm). Arch uses pacman. All query central repositories. snap and flatpak are universal sandboxed alternatives that work across distros.',
+    tip: `# Debian / Ubuntu (apt)
+sudo apt update          -- refresh package index
+sudo apt upgrade         -- upgrade all installed packages
+sudo apt install nginx   -- install
+sudo apt remove nginx    -- uninstall
+sudo apt search redis    -- search
+
+# RHEL / Fedora (dnf)
+sudo dnf install nginx
+sudo dnf update
+
+# Arch (pacman)
+sudo pacman -Syu         -- sync + upgrade
+sudo pacman -S nginx     -- install
+sudo pacman -Ss redis    -- search`
+  },
+
+  // ── Files & Permissions ──────────────────────────────────
+  {
+    category: 'Files & Permissions', difficulty: 'Beginner',
+    question: 'How do Linux file permissions work (rwx, chmod, chown)?',
+    answer: 'Every file has three permission sets: owner (u), group (g), others (o). Each set has read (r=4), write (w=2), execute (x=1). chmod changes permissions; chown changes owner/group. Directories need execute permission to be entered (cd). Permissions display as -rwxr-xr-- in ls -l.',
+    tip: `ls -l file.sh
+# -rwxr-xr--  1  alice  dev  1024  Mar 1 file.sh
+#  |||||||||        ^     ^
+#  rwx = owner(alice) has read+write+execute
+#   r-x = group(dev) has read+execute
+#    r-- = others have read only
+
+chmod 755 file.sh    -- rwxr-xr-x  (owner=7, group=5, others=5)
+chmod +x  file.sh    -- add execute for all
+chmod u-w file.sh    -- remove write from owner
+chown alice:dev file.sh   -- change owner and group
+chown -R alice dir/       -- recursive`
+  },
+  {
+    category: 'Files & Permissions', difficulty: 'Intermediate',
+    question: 'What is the difference between hard links and symbolic (soft) links?',
+    answer: 'A hard link is a second directory entry pointing to the same inode (same file data). Deleting the original leaves the hard link intact. A symlink (symbolic link) is a separate file that stores a path to the target — like a shortcut. If the target is deleted, the symlink becomes dangling. Hard links cannot span filesystems or link to directories.',
+    tip: `# Hard link — same inode, survives original deletion
+ln original.txt hard.txt
+ls -li   -- both show the same inode number
+
+# Symbolic link — stores a path
+ln -s /etc/nginx/nginx.conf nginx.conf
+ls -la   -- nginx.conf -> /etc/nginx/nginx.conf
+
+# Check inode numbers
+stat original.txt
+stat hard.txt      -- same inode!
+
+# Find all hard links to a file
+find / -inum <inode_number> 2>/dev/null`
+  },
+  {
+    category: 'Files & Permissions', difficulty: 'Intermediate',
+    question: 'How do you search for files with the find command?',
+    answer: 'find recursively traverses a directory tree and filters by name, type, size, time, permissions, and more. It can also execute actions on matches with -exec. It is very powerful but can be slow on large trees — locate (using a pre-built index) is faster for name-only searches.',
+    tip: `find /var/log -name "*.log"          -- by name pattern
+find . -type f -size +10M            -- files > 10 MB
+find . -type d -name "node_modules"  -- directories
+find /home -user alice               -- owned by alice
+find . -mtime -7                     -- modified in last 7 days
+find . -perm 777                     -- exact permission match
+find . -name "*.tmp" -delete         -- find and delete
+find . -name "*.js" -exec wc -l {} + -- exec on matches
+
+# Faster name search (uses daily index)
+locate nginx.conf`
+  },
+  {
+    category: 'Files & Permissions', difficulty: 'Intermediate',
+    question: 'How do grep, awk, and sed work for text processing?',
+    answer: 'grep searches for patterns in text (regex supported). awk is a field-based text processor — great for columnar data. sed is a stream editor for substitution and deletion. Together they form the backbone of Linux text processing pipelines.',
+    tip: `# grep — find matching lines
+grep "ERROR" app.log              -- basic search
+grep -i "error" app.log           -- case-insensitive
+grep -r "TODO" ./src              -- recursive in dir
+grep -v "DEBUG" app.log           -- invert (exclude)
+grep -n "fail" app.log            -- show line numbers
+
+# awk — field processor (default delimiter: whitespace)
+awk '{print $1, $3}' file         -- print cols 1 and 3
+awk -F: '{print $1}' /etc/passwd  -- colon-delimited, col 1
+awk '$3 > 100 {print}' data.csv   -- filter by value
+
+# sed — stream edit
+sed 's/foo/bar/g' file            -- replace all foo→bar
+sed -i 's/foo/bar/g' file         -- in-place edit
+sed '/^#/d' file                  -- delete comment lines`
+  },
+  {
+    category: 'Files & Permissions', difficulty: 'Advanced',
+    question: 'What are special permissions: setuid, setgid, and sticky bit?',
+    answer: 'setuid (s on owner execute): program runs as file owner, not the invoking user — used by /usr/bin/passwd to write /etc/shadow as root. setgid (s on group execute): on files, runs as group; on directories, new files inherit the group. Sticky bit (t on others execute): on directories, only the file owner can delete their files — used on /tmp.',
+    tip: `# setuid — run as file owner (e.g. root)
+chmod u+s /usr/bin/passwd
+ls -la /usr/bin/passwd
+# -rwsr-xr-x   ← 's' replaces 'x' for owner
+
+# setgid — inherit group on dir
+chmod g+s /shared
+# New files in /shared get /shared's group
+
+# Sticky bit — only owner can delete
+chmod +t /tmp
+ls -la /
+# drwxrwxrwt  ← 't' at end
+
+# Numeric: 4=setuid, 2=setgid, 1=sticky
+chmod 4755 file     -- setuid + rwxr-xr-x
+chmod 1777 /tmp     -- sticky + full rwx`
+  },
+
+  // ── Processes & System ───────────────────────────────────
+  {
+    category: 'Processes & System', difficulty: 'Beginner',
+    question: 'How do you view and manage processes in Linux (ps, top, kill)?',
+    answer: 'ps lists running processes (snapshot). top / htop show a live, sortable process table with CPU/memory. Every process has a PID. kill sends signals — SIGTERM (15) asks the process to exit gracefully; SIGKILL (9) forces immediate termination. kill -9 should be a last resort.',
+    tip: `ps aux              -- all processes, BSD style
+ps -ef              -- all processes, POSIX style
+ps aux | grep nginx -- find nginx process
+
+top                 -- live view (q=quit, k=kill by PID)
+htop                -- friendlier (needs install)
+
+kill 1234           -- SIGTERM to PID 1234 (graceful)
+kill -9 1234        -- SIGKILL (force)
+kill -l             -- list all signal names
+killall nginx       -- kill all processes named nginx
+pkill -u alice      -- kill all processes owned by alice
+
+# Background jobs
+sleep 60 &          -- run in background
+jobs                -- list background jobs
+fg %1               -- bring job 1 to foreground`
+  },
+  {
+    category: 'Processes & System', difficulty: 'Intermediate',
+    question: 'How does systemd manage services (systemctl)?',
+    answer: 'systemd is the init system on most modern Linux distros. It starts processes at boot and manages services as "units". systemctl is the control interface. Services are defined in unit files at /etc/systemd/system/ or /lib/systemd/system/. journald collects all logs — query with journalctl.',
+    tip: `systemctl status nginx         -- check service state
+systemctl start nginx          -- start now
+systemctl stop nginx           -- stop now
+systemctl restart nginx        -- restart
+systemctl reload nginx         -- reload config (no downtime)
+systemctl enable nginx         -- start on boot
+systemctl disable nginx        -- don't start on boot
+systemctl list-units --type=service   -- all services
+
+# Logs via journald
+journalctl -u nginx            -- logs for nginx
+journalctl -u nginx -f         -- follow (tail -f style)
+journalctl --since "1 hour ago"
+journalctl -p err              -- errors only`
+  },
+  {
+    category: 'Processes & System', difficulty: 'Intermediate',
+    question: 'How do you schedule tasks with cron?',
+    answer: 'cron is a daemon that runs commands on a schedule defined in crontab files. Each line is: minute hour day-of-month month day-of-week command. * means "every". User crontabs live in /var/spool/cron/; system crontabs live in /etc/cron.d/ and /etc/crontab. Use crontab -e to edit safely.',
+    tip: `# Cron field order:
+# .---------------- minute (0-59)
+# |   .------------ hour (0-23)
+# |   |   .-------- day of month (1-31)
+# |   |   |   .---- month (1-12)
+# |   |   |   |   . day of week (0-6, 0=Sun)
+# |   |   |   |   |
+# *   *   *   *   *  command
+
+# Examples:
+0 2 * * *  /usr/bin/backup.sh          -- 2 AM daily
+*/5 * * * * /usr/bin/check.sh          -- every 5 min
+0 9 * * 1   /usr/bin/report.sh         -- Mon 9 AM
+@reboot     /usr/bin/startup.sh        -- on boot
+
+crontab -e     -- edit your crontab
+crontab -l     -- list current crontab
+crontab -r     -- remove crontab`
+  },
+  {
+    category: 'Processes & System', difficulty: 'Intermediate',
+    question: 'How do environment variables work in Linux?',
+    answer: 'Environment variables are key=value pairs inherited by child processes. export makes a variable available to subprocesses. PATH tells the shell where to find executables. Startup files: ~/.bashrc runs for interactive shells; ~/.bash_profile / ~/.profile runs for login shells; /etc/environment is system-wide.',
+    tip: `echo $PATH                     -- print search path for binaries
+echo $HOME                     -- home directory
+printenv                       -- list all env vars
+printenv USER                  -- single var
+
+MY_VAR="hello"                 -- set local var
+export MY_VAR                  -- export to child processes
+export MY_VAR="hello"          -- set + export at once
+unset MY_VAR                   -- remove variable
+
+# Persist across sessions — add to ~/.bashrc:
+export JAVA_HOME=/usr/lib/jvm/java-17
+export PATH="$HOME/.local/bin:$PATH"
+
+source ~/.bashrc               -- reload without restart
+env VAR=value command          -- set var for one command only`
+  },
+  {
+    category: 'Processes & System', difficulty: 'Advanced',
+    question: 'How do you monitor system resources and diagnose bottlenecks?',
+    answer: 'Use top/htop for CPU+memory, vmstat for memory and I/O rates, iostat for disk throughput, df/du for disk space, free for memory details, lsof for open file descriptors. High load average (>CPU count) means CPU-bound or I/O-wait. Check wa% in top for I/O wait.',
+    tip: `free -h                -- RAM: total/used/free/cache/swap
+df -h                  -- disk space per filesystem
+du -sh ./dir           -- size of a directory
+du -sh * | sort -rh | head  -- largest items in CWD
+
+vmstat 1 5             -- memory, swap, I/O every 1s x5
+iostat -xz 1           -- per-disk stats (await=latency ms)
+iotop                  -- live per-process disk I/O
+
+lsof -p 1234           -- open files for PID
+lsof -i :80            -- what's on port 80
+ss -tlnp               -- listening TCP sockets
+uptime                 -- load average (1/5/15 min)
+
+# Load average > CPU cores = overloaded
+nproc                  -- number of CPUs`
+  },
+
+  // ── Networking & SSH ────────────────────────────────────
+  {
+    category: 'Networking & SSH', difficulty: 'Beginner',
+    question: 'How do you connect to a remote server via SSH and set up key-based auth?',
+    answer: 'SSH (Secure Shell) creates an encrypted tunnel to a remote host. Password auth is convenient but weaker. Key-based auth uses a private key (stays on your machine) and public key (added to ~/.ssh/authorized_keys on the server). Use ssh-keygen to generate a key pair and ssh-copy-id to deploy the public key.',
+    tip: `# Connect
+ssh user@192.168.1.10
+ssh -p 2222 user@host     -- custom port
+ssh -i ~/.ssh/mykey user@host  -- specific key
+
+# Generate key pair (Ed25519 = recommended)
+ssh-keygen -t ed25519 -C "my laptop"
+# Creates: ~/.ssh/id_ed25519 (private) + id_ed25519.pub (public)
+
+# Deploy public key to server
+ssh-copy-id user@host
+# or manually:
+cat ~/.ssh/id_ed25519.pub | ssh user@host "mkdir -p ~/.ssh && cat >> ~/.ssh/authorized_keys"
+
+# SSH config file (~/.ssh/config)
+Host myserver
+  HostName 192.168.1.10
+  User alice
+  IdentityFile ~/.ssh/id_ed25519
+
+ssh myserver              -- now works with alias`
+  },
+  {
+    category: 'Networking & SSH', difficulty: 'Intermediate',
+    question: 'What are the essential Linux networking commands?',
+    answer: 'ip (modern replacement for ifconfig/route) manages interfaces and routing. ss (replacement for netstat) shows socket stats. ping tests connectivity. curl / wget make HTTP requests. dig / nslookup query DNS. traceroute maps the network path.',
+    tip: `ip addr show               -- network interfaces & IPs
+ip route show              -- routing table
+ip addr add 192.168.1.5/24 dev eth0  -- add IP
+
+ss -tlnp                   -- TCP listening sockets + process
+ss -s                      -- socket summary
+
+ping -c 4 google.com       -- 4 ICMP packets
+traceroute google.com      -- hop-by-hop path
+mtr google.com             -- traceroute + ping (live)
+
+curl -I https://example.com     -- HTTP headers only
+curl -o file.zip URL            -- download
+wget -q URL                     -- quiet download
+
+dig google.com                  -- DNS A record
+dig google.com MX               -- MX records
+dig @8.8.8.8 google.com         -- query specific DNS server
+nslookup google.com`
+  },
+  {
+    category: 'Networking & SSH', difficulty: 'Intermediate',
+    question: 'How do you transfer files between servers with scp and rsync?',
+    answer: 'scp (secure copy) transfers files over SSH — simple but copies everything every time. rsync is smarter: it only transfers differences (delta sync), supports compression, and preserves permissions. rsync is preferred for backups and large transfers.',
+    tip: `# scp — simple copy over SSH
+scp file.txt user@host:/remote/path/    -- local to remote
+scp user@host:/remote/file.txt ./       -- remote to local
+scp -r ./dir user@host:/remote/         -- recursive
+
+# rsync — delta sync (only changed bytes)
+rsync -avz ./src/ user@host:/dst/       -- sync dir
+# -a = archive (preserve perms/times/symlinks)
+# -v = verbose
+# -z = compress in transit
+
+rsync -avz --delete ./src/ user@host:/dst/
+# --delete removes files on remote not in source
+
+rsync -avz --progress large_file user@host:/dst/
+# --progress shows transfer speed
+
+# Dry run first (see what would change)
+rsync -avz --dry-run ./src/ user@host:/dst/`
+  },
+  {
+    category: 'Networking & SSH', difficulty: 'Advanced',
+    question: 'How does the Linux firewall work (iptables / ufw)?',
+    answer: 'iptables is the low-level netfilter interface that processes packets through chains (INPUT, OUTPUT, FORWARD) with rules (ACCEPT, DROP, REJECT). ufw (Uncomplicated Firewall) is a frontend for iptables that simplifies common rules. firewalld is another frontend used on RHEL/Fedora.',
+    tip: `# ufw — simple firewall (Ubuntu default)
+sudo ufw enable
+sudo ufw status verbose
+sudo ufw allow 22/tcp          -- allow SSH
+sudo ufw allow 80/tcp          -- allow HTTP
+sudo ufw allow 443/tcp         -- allow HTTPS
+sudo ufw deny 3306             -- block MySQL from outside
+sudo ufw delete allow 80/tcp   -- remove a rule
+
+# iptables — low level
+sudo iptables -L -v -n         -- list all rules
+sudo iptables -A INPUT -p tcp --dport 80 -j ACCEPT
+sudo iptables -A INPUT -p tcp --dport 22 -j ACCEPT
+sudo iptables -A INPUT -j DROP  -- drop everything else
+sudo iptables-save > /etc/iptables/rules.v4  -- persist`
+  },
+  {
+    category: 'Networking & SSH', difficulty: 'Advanced',
+    question: 'What is SSH port forwarding and tunneling?',
+    answer: 'SSH tunneling forwards TCP ports through an encrypted SSH connection. Local forwarding brings a remote port to your local machine (access a DB behind a firewall). Remote forwarding exposes a local port on the remote server. Dynamic forwarding creates a SOCKS proxy. Useful for secure access to services not exposed to the internet.',
+    tip: `# Local forwarding: localhost:5432 → remote DB
+ssh -L 5432:db-server:5432 user@jump-host
+# Now connect to localhost:5432 to reach db-server
+
+# Remote forwarding: expose local port on remote server
+ssh -R 8080:localhost:3000 user@public-server
+# Remote:8080 → your local:3000
+
+# Dynamic (SOCKS proxy)
+ssh -D 1080 user@remote-host
+# Configure browser to use SOCKS5 proxy at localhost:1080
+
+# Keep alive / background tunnel
+ssh -fNL 5432:db:5432 user@jump-host
+# -f = background, -N = no remote command
+
+# Jump host / ProxyJump (bastion)
+ssh -J user@bastion user@internal-server`
+  },
+
+  // ── Shell Scripting ──────────────────────────────────────
+  {
+    category: 'Shell Scripting', difficulty: 'Beginner',
+    question: 'What are the basics of writing a Bash script?',
+    answer: 'A Bash script starts with a shebang line (#!/bin/bash) so the OS knows the interpreter. Variables are set without spaces (VAR=value) and read with $VAR. Command output is captured with $() (command substitution). Always quote variables "$VAR" to handle spaces. Make the script executable with chmod +x.',
+    tip: `#!/bin/bash
+# script.sh — basic template
+
+NAME="World"
+echo "Hello, $NAME!"
+
+# Command substitution
+TODAY=$(date +%Y-%m-%d)
+FILES=$(ls *.log | wc -l)
+echo "Today: $TODAY, log files: $FILES"
+
+# User input
+read -p "Enter your name: " USERNAME
+echo "Hi, $USERNAME"
+
+# Special variables
+echo "$0"   -- script name
+echo "$1"   -- first argument
+echo "$#"   -- number of arguments
+echo "$@"   -- all arguments
+echo "$$"   -- current PID
+
+chmod +x script.sh
+./script.sh arg1`
+  },
+  {
+    category: 'Shell Scripting', difficulty: 'Intermediate',
+    question: 'How do conditionals and loops work in Bash?',
+    answer: 'if/elif/else uses test conditions (or [[ ]] / [ ]). Numeric comparisons use -eq, -lt, -gt etc. String comparisons use == and !=. for loops iterate over lists or ranges. while loops run until a condition is false. break and continue work as expected.',
+    tip: `#!/bin/bash
+
+# if / elif / else
+if [[ $USER == "root" ]]; then
+  echo "Running as root"
+elif [[ -f /etc/nginx/nginx.conf ]]; then
+  echo "Nginx config found"
+else
+  echo "Normal user"
+fi
+
+# Numeric test
+COUNT=5
+if [[ $COUNT -gt 3 ]]; then echo "big"; fi
+# -eq -ne -lt -le -gt -ge
+
+# for loop
+for f in *.log; do
+  echo "Processing $f"
+done
+
+for i in {1..5}; do echo "Item $i"; done
+
+# C-style for
+for ((i=0; i<5; i++)); do echo $i; done
+
+# while loop
+while [[ $COUNT -gt 0 ]]; do
+  echo $COUNT
+  ((COUNT--))
+done`
+  },
+  {
+    category: 'Shell Scripting', difficulty: 'Intermediate',
+    question: 'How do pipes and redirection work in the shell?',
+    answer: 'Redirection sends I/O to/from files. > overwrites, >> appends, < reads from file. 2> redirects stderr, 2>&1 merges stderr into stdout. Pipes (|) connect stdout of one command to stdin of the next — enabling powerful one-liners. /dev/null is the black hole that discards output.',
+    tip: `# Redirect stdout
+ls -la > listing.txt           -- overwrite
+ls -la >> listing.txt          -- append
+cat < input.txt                -- read from file
+
+# Redirect stderr
+command 2> error.log           -- stderr to file
+command 2>/dev/null            -- discard errors
+command > out.txt 2>&1         -- stdout+stderr to file
+command &> out.txt             -- shorthand (bash only)
+
+# Pipes — chain commands
+ls -la | grep ".log"           -- filter output
+cat /var/log/syslog | grep ERROR | wc -l
+ps aux | sort -k3 -rn | head   -- top CPU processes
+
+# tee — output to file AND stdout
+command | tee output.txt       -- split stream
+command | tee -a output.txt    -- append mode
+
+# Process substitution
+diff <(ls dir1) <(ls dir2)    -- compare command outputs`
+  },
+  {
+    category: 'Shell Scripting', difficulty: 'Advanced',
+    question: 'How do you handle errors and exit codes in Bash scripts?',
+    answer: 'Every command returns an exit code: 0 = success, non-zero = failure. $? holds the last exit code. set -e makes the script exit on any error; set -u treats unset variables as errors; set -o pipefail catches pipe failures. Use trap to clean up resources on exit or error.',
+    tip: `#!/bin/bash
+set -euo pipefail
+# -e  exit on error
+# -u  error on unset variable
+# -o pipefail  catch pipe failures
+
+# Manual exit code check
+if ! cp src.txt dst.txt; then
+  echo "Copy failed!" >&2
+  exit 1
+fi
+
+# Trap for cleanup
+TMP=$(mktemp)
+trap "rm -f $TMP" EXIT   -- runs on exit (even on error)
+
+# Custom exit codes
+readonly E_BADARGS=65
+[[ $# -eq 0 ]] && { echo "Usage: $0 <file>"; exit $E_BADARGS; }
+
+# Log to stderr (good practice)
+log_error() { echo "[ERROR] $*" >&2; }
+log_info()  { echo "[INFO]  $*"; }
+
+# Check command exists
+command -v docker &>/dev/null || { log_error "docker not found"; exit 1; }`
+  },
+  {
+    category: 'Shell Scripting', difficulty: 'Advanced',
+    question: 'What are useful Bash scripting patterns for real-world automation?',
+    answer: 'Real scripts use functions, argument parsing, locks to prevent duplicate runs, and logging. getopts parses flags. flock ensures only one instance runs. Heredocs write multi-line strings. Arrays handle lists of items. Subshells () isolate environment changes.',
+    tip: `#!/bin/bash
+set -euo pipefail
+
+# Functions
+usage() { echo "Usage: $0 [-v] [-f FILE] TARGET"; exit 1; }
+
+# getopts — parse flags
+VERBOSE=0; FILE=""
+while getopts "vf:" opt; do
+  case $opt in
+    v) VERBOSE=1 ;;
+    f) FILE="$OPTARG" ;;
+    *) usage ;;
+  esac
+done
+shift $((OPTIND-1))   -- remaining args start at $1
+
+# Prevent duplicate instances (lock file)
+LOCK=/tmp/myscript.lock
+exec 9>"$LOCK"
+flock -n 9 || { echo "Already running"; exit 1; }
+
+# Arrays
+FILES=("a.txt" "b.txt" "c.txt")
+for f in "\${FILES[@]}"; do echo "$f"; done
+echo "Count: \${#FILES[@]}"
+
+# Heredoc
+cat <<'EOF' > /tmp/config.yaml
+key: value
+port: 8080
+EOF`
+  },
+];
+
+/* ═══════════════════════════════════════════════════════════
    JAVASCRIPT — 50 cards across 6 topics
 ═══════════════════════════════════════════════════════════ */
 const JS_CARDS = [
@@ -3190,6 +3770,7 @@ const SUBJECTS = {
   'Database':   DATABASE_CARDS,
   'JavaScript': JS_CARDS,
   'Internet':   INTERNET_CARDS,
+  'Linux':      LINUX_CARDS,
 };
 
 /* ═══════════════════════════════════════════════════════════
@@ -3203,6 +3784,7 @@ const SUBJECT_COLORS = {
   'Database':   '#ec4899',
   'JavaScript': '#f59e0b',
   'Internet':   '#10b981',
+  'Linux':      '#f97316',
 };
 
 const CATEGORY_COLORS = {
@@ -3234,6 +3816,12 @@ const CATEGORY_COLORS = {
   'CSS':             '#ec4899',
   'Performance':     '#8b5cf6',
   'Security':        '#ef4444',
+  // Linux
+  'Linux Basics':        '#f97316',
+  'Files & Permissions': '#fb923c',
+  'Processes & System':  '#ea580c',
+  'Networking & SSH':    '#c2410c',
+  'Shell Scripting':     '#9a3412',
   // Internet
   'How Internet Works': '#10b981',
   'HTTP & Web':         '#059669',
