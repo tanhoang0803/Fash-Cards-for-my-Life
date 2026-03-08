@@ -1642,6 +1642,462 @@ ANALYZE orders;`
 ];
 
 /* ═══════════════════════════════════════════════════════════
+   DATABASE — Relational + NoSQL  |  20 cards  Beginner → Advanced
+═══════════════════════════════════════════════════════════ */
+const DATABASE_CARDS = [
+
+  /* ── Relational DB ── */
+  {
+    category: 'Relational DB', difficulty: 'Beginner',
+    question: 'What is a relational database and how does it work?',
+    answer: 'A relational database stores data in tables (relations) made of rows and columns. Tables are linked via foreign keys. A DBMS (Database Management System) like PostgreSQL, MySQL, or SQL Server enforces data integrity, handles concurrent access, and uses SQL as the query language. Data is stored on disk durably; queries are executed by the query planner/optimizer which finds the most efficient execution plan.',
+    tip: `-- Core concepts at a glance:
+-- Table  = relation (like a spreadsheet with schema)
+-- Row    = record / tuple
+-- Column = attribute (has a fixed data type)
+-- Schema = the structure definition
+
+-- Popular relational databases:
+-- PostgreSQL — open-source, feature-rich, ACID, JSON support
+-- MySQL      — fast reads, widely hosted, web apps
+-- SQLite     — embedded, zero-config, local/mobile apps
+-- SQL Server — Microsoft, enterprise, Azure integration
+-- Oracle     — enterprise, high-volume, complex queries`
+  },
+  {
+    category: 'Relational DB', difficulty: 'Intermediate',
+    question: 'What are ACID properties and why do they matter?',
+    answer: '**Atomicity**: a transaction is all-or-nothing — if any step fails, all changes are rolled back. **Consistency**: a transaction brings the DB from one valid state to another, respecting all constraints. **Isolation**: concurrent transactions behave as if executed serially — one cannot see another\'s uncommitted changes. **Durability**: once committed, data survives crashes (written to disk/WAL). ACID prevents data corruption in concurrent, failure-prone environments.',
+    tip: `-- Classic example: bank transfer
+BEGIN;
+  UPDATE accounts SET balance = balance - 500 WHERE id = 1;
+  UPDATE accounts SET balance = balance + 500 WHERE id = 2;
+  -- If the second UPDATE fails, the first is rolled back (Atomicity)
+  -- Both updates are invisible to others until COMMIT (Isolation)
+COMMIT;
+-- After COMMIT the data is on disk (Durability)
+-- Both accounts still satisfy balance >= 0 constraint (Consistency)
+
+-- Isolation levels (weakest → strongest):
+-- READ UNCOMMITTED  — sees dirty reads (rare to use)
+-- READ COMMITTED    — default in PostgreSQL/SQL Server
+-- REPEATABLE READ   — default in MySQL
+-- SERIALIZABLE      — strongest, no anomalies, slowest`
+  },
+  {
+    category: 'Relational DB', difficulty: 'Intermediate',
+    question: 'What is the difference between normalization and denormalization?',
+    answer: 'Normalization organises tables to eliminate redundancy (splitting data into related tables). Benefits: no update anomalies, smaller storage. Downside: requires JOINs for reads. Denormalization intentionally adds redundancy (duplicating data, pre-joining tables) to speed up frequent reads at the cost of harder writes. OLTP systems favour normalization; OLAP/analytics systems often denormalize into star schemas or wide tables.',
+    tip: `-- Normalized (3NF) — no redundancy, JOINs needed for reads
+-- employees(id, name, dept_id FK)
+-- departments(id, name, location)
+
+-- Denormalized — faster reads, redundant data
+-- employees(id, name, dept_name, dept_location)  ← duplicated!
+-- Problem: if dept moves, update EVERY employee row
+
+-- Practical middle ground:
+-- Normalize the write model (OLTP tables)
+-- Denormalize for read models (materialized views, read replicas)
+
+-- Materialized view — pre-computed JOIN stored on disk
+CREATE MATERIALIZED VIEW emp_dept AS
+  SELECT e.name, d.name AS dept, d.location
+  FROM employees e JOIN departments d ON e.dept_id = d.id;
+REFRESH MATERIALIZED VIEW emp_dept;  -- update it`
+  },
+  {
+    category: 'Relational DB', difficulty: 'Intermediate',
+    question: 'How do database indexes work under the hood?',
+    answer: 'The default index type is a **B-tree** (balanced tree): O(log n) lookup, range queries, ORDER BY. **Hash index**: O(1) equality lookup only — no range queries. **GIN** (PostgreSQL): full-text search, array/JSONB containment. **GiST**: geometric data, nearest-neighbour. Indexes trade write speed and disk space for read speed. A composite index `(a, b)` helps queries on `a` or `(a, b)` but NOT on `b` alone (leftmost prefix rule).',
+    tip: `-- B-tree (default) — equality + range + ORDER BY
+CREATE INDEX idx_orders_date ON orders(created_at);
+
+-- Composite — left-prefix rule
+CREATE INDEX idx_name_age ON users(last_name, age);
+-- Helps: WHERE last_name = ?
+-- Helps: WHERE last_name = ? AND age > ?
+-- DOES NOT help: WHERE age > ?  (missing left prefix)
+
+-- Partial — index only what you query
+CREATE INDEX idx_pending ON orders(created_at)
+WHERE status = 'pending';
+
+-- Covering index — includes extra columns, avoids table lookup
+CREATE INDEX idx_cover ON orders(user_id) INCLUDE (total, status);
+
+-- Check index usage
+EXPLAIN ANALYZE SELECT * FROM orders WHERE created_at > NOW() - INTERVAL '7 days';`
+  },
+  {
+    category: 'Relational DB', difficulty: 'Intermediate',
+    question: 'What is connection pooling and why is it essential?',
+    answer: 'Opening a database connection is expensive (~50–100ms, memory per connection). Connection pooling maintains a pool of pre-opened connections that are reused across requests. Without pooling, a high-traffic app opens hundreds of connections simultaneously, overwhelming the DB. Tools: **PgBouncer** (PostgreSQL), built-in pools in ORMs. Key settings: `min_pool`, `max_pool`, `timeout`, `idle_timeout`.',
+    tip: `-- PostgreSQL can handle ~100-300 connections before degrading
+-- A Node.js app with 10 workers each opening 10 conns = 100 conns
+
+-- pg (Node.js) — built-in pool
+import { Pool } from 'pg';
+const pool = new Pool({
+  host:     'localhost',
+  database: 'myapp',
+  max:      20,          // max connections in pool
+  idleTimeoutMillis: 30000,
+  connectionTimeoutMillis: 2000,
+});
+
+// Reuse connection from pool
+const { rows } = await pool.query('SELECT * FROM users WHERE id = $1', [id]);
+
+-- PgBouncer sits between app and Postgres:
+-- App → PgBouncer (thousands of connections ok)
+-- PgBouncer → Postgres (small fixed pool, e.g. 50)`
+  },
+  {
+    category: 'Relational DB', difficulty: 'Intermediate',
+    question: 'What is an ORM and what are its trade-offs?',
+    answer: 'An ORM (Object-Relational Mapper) maps database tables to classes/objects in code, letting you query the DB using your language instead of raw SQL. Examples: **Prisma**, **TypeORM**, **Sequelize** (Node.js); **SQLAlchemy** (Python); **Entity Framework** (C#); **Hibernate** (Java). Trade-offs: ORMs boost productivity and prevent SQL injection by default, but can generate inefficient queries, hide performance issues, and are harder to optimise for complex queries.',
+    tip: `// Prisma (Node.js) — type-safe ORM
+const user = await prisma.user.findUnique({
+  where:   { id: 1 },
+  include: { orders: { where: { status: 'completed' } } }
+});
+
+// Equivalent raw SQL Prisma generates:
+// SELECT u.*, o.* FROM users u
+// LEFT JOIN orders o ON o.user_id = u.id
+// WHERE u.id = 1 AND o.status = 'completed'
+
+// When to drop to raw SQL (Prisma example)
+const result = await prisma.$queryRaw\`
+  SELECT department, AVG(salary) FROM employees
+  GROUP BY department HAVING AVG(salary) > 50000
+\`;`
+  },
+  {
+    category: 'Relational DB', difficulty: 'Advanced',
+    question: 'What are transaction isolation levels and what anomalies do they prevent?',
+    answer: 'Isolation levels control what a transaction can "see" from concurrent transactions. Anomalies: **Dirty Read** (reading uncommitted data), **Non-repeatable Read** (same query returns different rows in one transaction), **Phantom Read** (new rows appear in a re-executed query). Higher isolation = fewer anomalies but more locking/blocking. Most apps work fine with READ COMMITTED.',
+    tip: `--                    Dirty   Non-repeatable  Phantom
+-- READ UNCOMMITTED      ✅ possible  ✅ possible    ✅ possible
+-- READ COMMITTED        ❌ prevented ✅ possible    ✅ possible  ← PG default
+-- REPEATABLE READ       ❌ prevented ❌ prevented   ✅ possible  ← MySQL default
+-- SERIALIZABLE          ❌ prevented ❌ prevented   ❌ prevented (slowest)
+
+-- Set isolation level for a transaction
+BEGIN;
+SET TRANSACTION ISOLATION LEVEL REPEATABLE READ;
+  SELECT balance FROM accounts WHERE id = 1;
+  -- ... do calculations ...
+  UPDATE accounts SET balance = ... WHERE id = 1;
+COMMIT;`
+  },
+
+  /* ── NoSQL ── */
+  {
+    category: 'NoSQL', difficulty: 'Beginner',
+    question: 'What is NoSQL and why does it exist?',
+    answer: 'NoSQL ("Not Only SQL") databases were created to solve problems relational DBs struggle with: horizontal scaling (sharding across many machines), flexible/schema-less data, and very high write throughput. Types: **Document** (MongoDB), **Key-Value** (Redis, DynamoDB), **Column-family** (Cassandra), **Graph** (Neo4j). NoSQL sacrifices some ACID guarantees for availability and scale. Choose based on your data model, access patterns, and scale needs.',
+    tip: `-- When NoSQL makes sense:
+-- ✅ Schema changes frequently (products with different attributes)
+-- ✅ Massive horizontal scale (billions of writes/day)
+-- ✅ Simple key-based lookups at very high speed (caching)
+-- ✅ Hierarchical/document-shaped data (avoid JOIN hell)
+-- ✅ Graph relationships (social networks, recommendations)
+
+-- When relational is better:
+-- ✅ Complex relationships + JOINs
+-- ✅ Strong consistency required (financial, medical)
+-- ✅ Ad-hoc queries and reporting
+-- ✅ Rich query language (SQL)
+
+-- Many modern systems use BOTH (polyglot persistence)`
+  },
+  {
+    category: 'NoSQL', difficulty: 'Beginner',
+    question: 'What is MongoDB and how does it model data?',
+    answer: 'MongoDB is a document database. Data is stored as BSON documents (Binary JSON) inside collections (like tables). Documents in the same collection can have different fields — schema-less by default. Embed related data inside one document to avoid joins. Reference (store an ID) when data is large, shared, or needs independent updates. MongoDB supports rich queries, aggregation pipelines, and indexes.',
+    tip: `// Document — a JSON-like object
+{
+  "_id": ObjectId("507f1f77bcf86cd799439011"),
+  "name": "Alice",
+  "email": "alice@mail.com",
+  "address": {                    // embedded document
+    "city": "Hanoi",
+    "zip": "10000"
+  },
+  "orders": [                     // embedded array
+    { "product": "Phone", "price": 999 },
+    { "product": "Case",  "price": 19  }
+  ],
+  "createdAt": ISODate("2026-03-01")
+}
+
+// Query in Node.js (Mongoose)
+const users = await User.find({ "address.city": "Hanoi" })
+                        .sort({ createdAt: -1 })
+                        .limit(10);`
+  },
+  {
+    category: 'NoSQL', difficulty: 'Intermediate',
+    question: 'What is Redis and what is it used for?',
+    answer: 'Redis is an in-memory key-value store (also supports disk persistence). Sub-millisecond read/write latency. Data structures: strings, hashes, lists, sets, sorted sets, streams, bitmaps. Common uses: **caching** (reduce DB load), **session storage**, **rate limiting**, **pub/sub messaging**, **leaderboards** (sorted sets), **job queues** (lists/streams). Data fits in RAM — not for large datasets as primary storage.',
+    tip: `// Node.js — ioredis
+import Redis from 'ioredis';
+const redis = new Redis();
+
+// Cache-aside pattern
+async function getUser(id) {
+  const cached = await redis.get('user:' + id);
+  if (cached) return JSON.parse(cached);     // cache hit
+
+  const user = await db.findUser(id);        // cache miss
+  await redis.setex('user:' + id, 3600, JSON.stringify(user)); // TTL 1hr
+  return user;
+}
+
+// Rate limiting — 100 requests per minute per IP
+const key = 'ratelimit:' + ip;
+const count = await redis.incr(key);
+if (count === 1) await redis.expire(key, 60);
+if (count > 100) throw new Error('Rate limit exceeded');
+
+// Leaderboard with sorted set
+await redis.zadd('leaderboard', score, userId);
+await redis.zrevrange('leaderboard', 0, 9, 'WITHSCORES'); // top 10`
+  },
+  {
+    category: 'NoSQL', difficulty: 'Intermediate',
+    question: 'What is Apache Cassandra and when should you use it?',
+    answer: 'Cassandra is a wide-column distributed database designed for massive write throughput and high availability with no single point of failure. Data is partitioned across nodes by a partition key. It has no JOINs and limited query flexibility — you design tables around query patterns (query-first design). Best for: time-series data (IoT, logs, metrics), write-heavy workloads, and data that spans multiple data centres.',
+    tip: `-- Cassandra CQL — SQL-like but very different rules
+-- Table design must match your query exactly
+
+-- Time-series: sensor readings per device per hour
+CREATE TABLE sensor_readings (
+  device_id  UUID,
+  recorded   TIMESTAMP,
+  temp       FLOAT,
+  humidity   FLOAT,
+  PRIMARY KEY (device_id, recorded)  -- device_id = partition key
+) WITH CLUSTERING ORDER BY (recorded DESC);
+
+-- Query — MUST include partition key
+SELECT * FROM sensor_readings
+WHERE device_id = ? AND recorded > ? AND recorded < ?;
+
+-- Cassandra guarantees: AP (Available + Partition tolerant)
+-- Eventual consistency by default; tunable per query
+-- Handles millions of writes/second across clusters`
+  },
+  {
+    category: 'NoSQL', difficulty: 'Intermediate',
+    question: 'What is a Graph database and when does it excel?',
+    answer: 'Graph databases store data as nodes (entities) and edges (relationships) with properties on both. Queries traverse relationships in O(1) per hop regardless of total data size — unlike SQL JOINs which slow down as the table grows. Use cases: social networks (friends of friends), recommendation engines, fraud detection, knowledge graphs, access control (who has permission to what). **Neo4j** is the most popular; AWS Neptune, ArangoDB are alternatives.',
+    tip: `// Neo4j — Cypher query language
+
+// Create nodes and relationship
+CREATE (alice:Person {name: 'Alice', age: 30})
+CREATE (bob:Person {name: 'Bob', age: 25})
+CREATE (alice)-[:FOLLOWS {since: 2024}]->(bob);
+
+// Find friends of friends (2 hops)
+MATCH (me:Person {name: 'Alice'})-[:FOLLOWS*2]->(fof)
+WHERE NOT (me)-[:FOLLOWS]->(fof)
+RETURN fof.name;
+
+// Shortest path between two people
+MATCH path = shortestPath(
+  (a:Person {name:'Alice'})-[:FOLLOWS*]-(b:Person {name:'Charlie'})
+)
+RETURN path;
+
+// SQL equivalent of "friends of friends" degrades at scale
+// Graph DB traversal stays fast regardless of data volume`
+  },
+  {
+    category: 'NoSQL', difficulty: 'Intermediate',
+    question: 'What is the CAP Theorem?',
+    answer: 'CAP Theorem states that a distributed system can guarantee at most 2 of 3 properties simultaneously. **Consistency**: every read gets the most recent write. **Availability**: every request receives a response (not necessarily latest data). **Partition Tolerance**: system works despite network failures between nodes. Since network partitions always happen in reality, the real choice is **CP** (consistent, may be unavailable) vs **AP** (available, may return stale data).',
+    tip: `-- CP systems — prioritise Consistency
+-- MongoDB (with majority write concern)
+-- HBase, Zookeeper, etcd
+-- → Returns error rather than stale data during partition
+-- → Good for: financial data, inventory
+
+-- AP systems — prioritise Availability
+-- Cassandra, DynamoDB, CouchDB
+-- → Returns possibly stale data during partition
+-- → Good for: social feeds, shopping carts, DNS
+
+-- CA systems — only possible without partitions (single node)
+-- Traditional RDBMS on one server
+
+-- PACELC (extension of CAP):
+-- Even without partition, choose: Latency vs Consistency
+-- DynamoDB: configurable per-request consistency level`
+  },
+  {
+    category: 'NoSQL', difficulty: 'Beginner',
+    question: 'When should you choose SQL vs NoSQL?',
+    answer: 'Choose **SQL** when: data has clear relationships, you need JOINs, strong consistency is required (financial, medical), schema is stable, ad-hoc queries are needed. Choose **NoSQL** when: schema evolves frequently, need to scale horizontally to many machines, data is document/graph/time-series shaped, you need very high write throughput or low latency at scale. Many production systems use both (polyglot persistence).',
+    tip: `-- Use SQL (PostgreSQL) for:
+✅ User accounts, orders, payments (relational + ACID)
+✅ Reporting & analytics (rich SQL aggregations)
+✅ Any data needing complex queries
+
+-- Use MongoDB for:
+✅ Product catalog (varying attributes per product)
+✅ CMS / blog posts (flexible document structure)
+✅ Event logs with nested data
+
+-- Use Redis for:
+✅ Session storage, caching, rate limiting
+✅ Real-time leaderboards
+
+-- Use Cassandra for:
+✅ IoT time-series, clickstream, audit logs
+✅ Billions of writes/day across regions
+
+-- Real architecture: PostgreSQL + Redis + maybe MongoDB
+-- Start with PostgreSQL — scale to NoSQL only when needed`
+  },
+
+  /* ── DB Design & Perf ── */
+  {
+    category: 'DB Design & Perf', difficulty: 'Intermediate',
+    question: 'What is the N+1 query problem and how do you fix it?',
+    answer: 'The N+1 problem occurs when code executes 1 query to fetch N records, then N more queries to fetch related data — one per record. For 100 users, that\'s 101 queries instead of 2. It is the most common ORM performance pitfall. Fix with eager loading (`JOIN` or `include`) to fetch related data in one query, or batch loading (DataLoader pattern).',
+    tip: `// N+1 problem (bad) — 1 + N queries
+const users = await User.findAll();          // query 1
+for (const user of users) {
+  const orders = await user.getOrders();     // query per user → N queries!
+}
+
+// Fix 1: eager loading (JOIN) — 2 queries total
+const users = await User.findAll({
+  include: [{ model: Order }]                // single JOIN query
+});
+
+// Fix 2: DataLoader (batch + cache per request)
+const loader = new DataLoader(async (userIds) => {
+  const orders = await Order.findAll({ where: { userId: userIds } });
+  return userIds.map(id => orders.filter(o => o.userId === id));
+});
+
+// Fix 3: raw SQL with JOIN
+SELECT u.*, o.* FROM users u
+LEFT JOIN orders o ON o.user_id = u.id;`
+  },
+  {
+    category: 'DB Design & Perf', difficulty: 'Advanced',
+    question: 'What is database sharding and when do you need it?',
+    answer: 'Sharding horizontally partitions data across multiple database servers (shards). Each shard holds a subset of rows, determined by a shard key (e.g. user_id % N). Enables horizontal scaling beyond a single server\'s limits. Challenges: cross-shard JOINs are hard/impossible, shard key choice is critical (avoid hotspots), rebalancing requires careful migration. Consider sharding only after exhausting: indexing, query optimization, read replicas, and vertical scaling.',
+    tip: `-- Sharding by user_id (hash-based)
+-- Shard 0: users where user_id % 4 = 0  → DB server 0
+-- Shard 1: users where user_id % 4 = 1  → DB server 1
+-- Shard 2: users where user_id % 4 = 2  → DB server 2
+-- Shard 3: users where user_id % 4 = 3  → DB server 3
+
+-- Range-based sharding
+-- Shard 0: user_id 1       → 10,000,000
+-- Shard 1: user_id 10M+1   → 20,000,000
+
+-- Problems to watch for:
+-- Hotspot: shard 0 gets all new users (time-based key)
+-- Cross-shard: "find users in Hanoi" → query ALL shards
+-- Joins: impossible across shards at DB level
+
+-- Alternatives before sharding:
+-- 1. Read replicas     (scale reads)
+-- 2. Vertical scaling  (bigger machine)
+-- 3. Caching (Redis)   (reduce DB load)
+-- 4. Table partitioning (within one server)`
+  },
+  {
+    category: 'DB Design & Perf', difficulty: 'Intermediate',
+    question: 'What is database replication and what types exist?',
+    answer: 'Replication copies data from a primary (leader) server to one or more replicas (followers). Types: **Primary-Replica** (most common) — all writes go to primary, reads can go to replicas; if primary fails, a replica is promoted. **Multi-Primary** — multiple writable nodes, risk of write conflicts. **Synchronous** replication waits for replica acknowledgment (safe but slower). **Asynchronous** is faster but replica may lag.',
+    tip: `-- Primary-Replica setup (most common)
+-- App writes → Primary DB
+-- App reads  → Replica 1 / Replica 2  (load balanced)
+
+-- Benefits:
+-- ✅ Scale read traffic (replicas handle SELECT queries)
+-- ✅ High availability (promote replica if primary dies)
+-- ✅ Backups on replica (no impact on primary performance)
+
+-- Replication lag — replica may be seconds behind primary
+-- Problem: user writes then immediately reads — sees old data
+-- Solution: read-your-own-writes (route user to primary for 1s after write)
+
+-- PostgreSQL replication (postgresql.conf)
+-- wal_level = replica
+-- max_wal_senders = 5
+
+-- Connection routing example (Node.js)
+const writeDb = new Pool({ host: 'primary.db.com' });
+const readDb  = new Pool({ host: 'replica.db.com' });`
+  },
+  {
+    category: 'DB Design & Perf', difficulty: 'Intermediate',
+    question: 'What are database migrations and how do you manage them?',
+    answer: 'A database migration is a versioned, incremental change to the database schema (adding a column, creating a table, adding an index). Migrations are stored as files in version control alongside code. This ensures every environment (dev, staging, prod) has the same schema. Tools: **Flyway**, **Liquibase** (Java), **Alembic** (Python), **Prisma Migrate**, **Knex.js** (Node). Always write both `up` (apply) and `down` (rollback) migrations.',
+    tip: `-- Migration file: 001_create_users.sql
+-- UP
+CREATE TABLE users (
+  id         SERIAL PRIMARY KEY,
+  email      VARCHAR(255) UNIQUE NOT NULL,
+  created_at TIMESTAMP DEFAULT NOW()
+);
+CREATE INDEX idx_users_email ON users(email);
+
+-- DOWN (rollback)
+DROP TABLE IF EXISTS users;
+
+-- Knex.js migration (Node.js)
+exports.up = knex =>
+  knex.schema.createTable('users', t => {
+    t.increments('id').primary();
+    t.string('email', 255).unique().notNullable();
+    t.timestamp('created_at').defaultTo(knex.fn.now());
+  });
+
+exports.down = knex => knex.schema.dropTable('users');
+
+-- Run migrations
+-- knex migrate:latest    (apply all pending)
+-- knex migrate:rollback  (undo last batch)`
+  },
+  {
+    category: 'DB Design & Perf', difficulty: 'Advanced',
+    question: 'What is the difference between optimistic and pessimistic locking?',
+    answer: '**Pessimistic locking**: lock the row when you read it — no one else can modify it until you release. Safe but reduces concurrency and can cause deadlocks. **Optimistic locking**: read without locking, check at write time that no one modified it (using a version number or timestamp). If it changed, retry or reject. Better for low-contention workloads. Most web apps use optimistic locking; pessimistic for high-contention or critical sections.',
+    tip: `-- Pessimistic locking — lock row on SELECT
+BEGIN;
+SELECT * FROM accounts WHERE id = 1 FOR UPDATE;  -- locks the row
+-- Now safe to read + update, no one else can touch it
+UPDATE accounts SET balance = balance - 500 WHERE id = 1;
+COMMIT;  -- lock released
+
+-- Optimistic locking — version column pattern
+-- Schema: ADD COLUMN version INT DEFAULT 1
+
+-- Read
+SELECT id, balance, version FROM accounts WHERE id = 1;
+-- Returns: id=1, balance=1000, version=5
+
+-- Write — only if version hasn't changed
+UPDATE accounts
+SET balance = 500, version = version + 1
+WHERE id = 1 AND version = 5;  -- fails if someone else updated
+
+-- Check rows affected: if 0, conflict → retry or error
+-- Prisma handles this automatically with @updatedAt or @version`
+  },
+];
+
+/* ═══════════════════════════════════════════════════════════
    JAVASCRIPT — 50 cards across 6 topics
 ═══════════════════════════════════════════════════════════ */
 const JS_CARDS = [
@@ -2260,6 +2716,7 @@ const SUBJECTS = {
   'Python':     PYTHON_CARDS,
   'C#':         CSHARP_CARDS,
   'SQL':        SQL_CARDS,
+  'Database':   DATABASE_CARDS,
   'JavaScript': JS_CARDS,
 };
 
@@ -2271,6 +2728,7 @@ const SUBJECT_COLORS = {
   'Python':     '#3b82f6',
   'C#':         '#8b5cf6',
   'SQL':        '#06b6d4',
+  'Database':   '#ec4899',
   'JavaScript': '#f59e0b',
 };
 
@@ -2280,6 +2738,10 @@ const CATEGORY_COLORS = {
   'Data Structures': '#fb923c',
   'Algorithms':      '#ea580c',
   'Patterns':        '#c2410c',
+  // Database
+  'Relational DB':    '#ec4899',
+  'NoSQL':            '#f472b6',
+  'DB Design & Perf': '#be185d',
   // SQL
   'SQL Basics':          '#06b6d4',
   'Joins & Aggregation': '#0891b2',
