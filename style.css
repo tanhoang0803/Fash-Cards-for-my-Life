@@ -330,6 +330,11 @@ footer {
   font-size: 0.75rem;
   color: #334155;
 }
+.author-credit {
+  font-size: 0.72rem;
+  color: #1e293b;
+  margin-top: 0.4rem;
+}
 kbd {
   display: inline-block;
   font-family: inherit;
