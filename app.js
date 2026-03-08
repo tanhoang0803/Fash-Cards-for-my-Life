@@ -2098,6 +2098,477 @@ WHERE id = 1 AND version = 5;  -- fails if someone else updated
 ];
 
 /* ═══════════════════════════════════════════════════════════
+   INTERNET — 20 cards  |  Beginner → Intermediate → Advanced
+   How Internet Works · HTTP & Web · DNS & Domains · Browsers
+═══════════════════════════════════════════════════════════ */
+const INTERNET_CARDS = [
+
+  /* ── How Internet Works ── */
+  {
+    category: 'How Internet Works', difficulty: 'Beginner',
+    question: 'How does the Internet actually work?',
+    answer: 'The Internet is a global network of computers connected by physical cables (fibre optic, copper, coaxial) and wireless links. Data travels as small packets routed through routers across the network. Each device has a unique IP address used for addressing. The Internet is not owned by anyone — it is a network of networks (ISPs, universities, companies) following shared standards called protocols (TCP/IP, HTTP, DNS).',
+    tip: `-- Journey of a request: typing google.com in your browser
+1. Browser checks local DNS cache
+2. OS asks DNS resolver (your ISP or 8.8.8.8) → gets IP address
+3. Browser opens TCP connection to that IP (3-way handshake)
+4. TLS handshake (if HTTPS) — negotiate encryption
+5. Browser sends HTTP GET request
+6. Server processes → sends HTTP response (HTML)
+7. Browser parses HTML → requests CSS, JS, images
+8. Browser renders the page
+
+-- Physical path of a packet:
+Your PC → Router → ISP → Internet backbone
+→ Google's ISP → Google's data centre → server`
+  },
+  {
+    category: 'How Internet Works', difficulty: 'Beginner',
+    question: 'What is TCP/IP and what is the difference between TCP and UDP?',
+    answer: 'TCP/IP is the foundational protocol suite of the Internet. **IP** (Internet Protocol) handles addressing and routing packets. **TCP** (Transmission Control Protocol) adds reliability on top: ordered delivery, error checking, retransmission of lost packets, flow control — at the cost of latency. **UDP** (User Datagram Protocol) is faster but unreliable: no retransmission, no ordering. Use TCP for web, email, file transfer. Use UDP for live video, gaming, DNS, VoIP.',
+    tip: `-- TCP 3-way handshake (connection setup)
+Client → Server : SYN
+Server → Client : SYN-ACK
+Client → Server : ACK
+-- Connection established — data can flow
+
+-- TCP guarantees:
+✅ All packets arrive (retransmit if lost)
+✅ Arrive in correct order
+✅ No duplicates
+❌ Adds latency (RTT per connection)
+
+-- UDP — fire and forget
+✅ Very low latency
+✅ No connection overhead
+❌ Packets may be lost or arrive out of order
+-- Used by: DNS, video streaming (YouTube), gaming, VoIP
+
+-- TCP Layer 4 (Transport)
+-- IP  Layer 3 (Network)
+-- HTTP Layer 7 (Application)`
+  },
+  {
+    category: 'How Internet Works', difficulty: 'Beginner',
+    question: 'What is an IP address? What is the difference between IPv4 and IPv6?',
+    answer: 'An IP address is a unique numerical label assigned to every device on a network. **IPv4**: 32-bit, written as 4 octets (e.g. `192.168.1.1`), ~4.3 billion addresses — nearly exhausted. **IPv6**: 128-bit, written in hex groups (e.g. `2001:0db8::1`), ~340 undecillion addresses. **Public IP**: globally routable, assigned by ISP. **Private IP**: used inside local networks (192.168.x.x, 10.x.x.x). NAT (Network Address Translation) lets many private IPs share one public IP.',
+    tip: `-- IPv4 address classes (simplified)
+192.168.x.x   — private (home/office LAN)
+10.x.x.x      — private (large organisations)
+172.16-31.x.x — private (mid-size)
+127.0.0.1     — loopback (localhost — your own machine)
+8.8.8.8       — Google's public DNS
+1.1.1.1       — Cloudflare's public DNS
+
+-- IPv6 example
+2001:0db8:85a3:0000:0000:8a2e:0370:7334
+-- Can be shortened:
+2001:db8:85a3::8a2e:370:7334  (:: = consecutive zeros)
+
+-- Check your IP
+curl ifconfig.me           -- public IP
+ipconfig / ip addr show    -- local IP`
+  },
+  {
+    category: 'How Internet Works', difficulty: 'Beginner',
+    question: 'What is a port number and why does it matter?',
+    answer: 'A port is a 16-bit number (0–65535) that identifies a specific service/process on a host. IP gets the packet to the right machine; the port gets it to the right application. Ports 0–1023 are well-known (reserved for system services). A server "listens" on a port; a client connects from a random ephemeral port. Firewalls filter traffic by port number.',
+    tip: `-- Well-known port numbers to memorise:
+20, 21  — FTP (file transfer)
+22      — SSH (secure shell / remote login)
+25      — SMTP (send email)
+53      — DNS (domain name resolution)
+80      — HTTP (unencrypted web)
+110     — POP3 (receive email)
+143     — IMAP (receive email)
+443     — HTTPS (encrypted web)
+3000    — common Node.js dev server
+3306    — MySQL
+5432    — PostgreSQL
+6379    — Redis
+27017   — MongoDB
+
+-- Full address = IP + Port
+192.168.1.10:5432  — PostgreSQL on local machine
+8.8.8.8:53         — Google DNS`
+  },
+  {
+    category: 'How Internet Works', difficulty: 'Intermediate',
+    question: 'What is a CDN (Content Delivery Network) and how does it work?',
+    answer: 'A CDN is a globally distributed network of servers (edge nodes/PoPs) that cache and serve content from locations close to users. Instead of all traffic hitting your origin server in one data centre, users get files from the nearest edge node — reducing latency, load on origin, and improving availability. CDNs are essential for static assets (images, JS, CSS), video streaming, and DDoS protection. Popular CDNs: Cloudflare, AWS CloudFront, Fastly, Akamai.',
+    tip: `-- Without CDN:
+User in Hanoi → server in USA → 250ms latency
+
+-- With CDN:
+User in Hanoi → Cloudflare edge in Singapore → 20ms
+
+-- What CDN caches:
+✅ Static files: .js, .css, .jpg, .png, fonts
+✅ HTML pages (with short TTL)
+✅ API responses (carefully — avoid caching user data)
+❌ Dynamic, user-specific data (usually bypassed)
+
+-- Cache-Control header controls CDN behaviour:
+Cache-Control: public, max-age=31536000   -- cache 1 year
+Cache-Control: no-store                   -- never cache
+Cache-Control: s-maxage=3600             -- CDN caches 1hr
+
+-- Cache busting — change filename when content changes
+app.abc123.js  -- hash in filename forces fresh fetch`
+  },
+
+  /* ── HTTP & Web ── */
+  {
+    category: 'HTTP & Web', difficulty: 'Beginner',
+    question: 'What is HTTP and what is the difference between HTTP and HTTPS?',
+    answer: 'HTTP (HyperText Transfer Protocol) is the application-layer protocol used to transfer data on the web — it defines how browsers and servers communicate. It is stateless (each request is independent). HTTPS = HTTP + TLS encryption. TLS provides: **Confidentiality** (data is encrypted, not readable by third parties), **Integrity** (data cannot be tampered with in transit), **Authentication** (certificate proves the server is who it claims to be). HTTPS is required for passwords, payments, and any sensitive data.',
+    tip: `-- TLS Handshake (simplified)
+1. Client → Server: "ClientHello" (supported TLS versions, cipher suites)
+2. Server → Client: "ServerHello" + Certificate (public key + identity)
+3. Client verifies cert against trusted Certificate Authorities (CAs)
+4. Both derive session keys using asymmetric crypto
+5. All further communication encrypted with session key
+
+-- HTTP/1.1 → HTTP/2 → HTTP/3 evolution
+-- HTTP/1.1: one request per TCP connection (slow, head-of-line blocking)
+-- HTTP/2:   multiplexing — many requests on one connection, header compression
+-- HTTP/3:   runs on QUIC (UDP-based), faster connection setup, no HOL blocking
+
+-- Check certificate in browser: click 🔒 in address bar
+-- Let's Encrypt: free, automated TLS certificates`
+  },
+  {
+    category: 'HTTP & Web', difficulty: 'Beginner',
+    question: 'What are HTTP methods and when do you use each one?',
+    answer: '**GET**: retrieve data, no body, should be safe and idempotent. **POST**: create a resource, has a body, not idempotent. **PUT**: replace an entire resource. **PATCH**: partially update a resource. **DELETE**: remove a resource. **HEAD**: like GET but response has no body — useful for checking if a resource exists. **OPTIONS**: asks what methods are allowed (used in CORS preflight). Idempotent = same result no matter how many times you call it.',
+    tip: `-- RESTful API convention:
+GET    /users          -- list all users
+GET    /users/1        -- get user with id=1
+POST   /users          -- create a new user (body: {name, email})
+PUT    /users/1        -- replace user 1 entirely
+PATCH  /users/1        -- update only provided fields of user 1
+DELETE /users/1        -- delete user 1
+
+-- Idempotent?
+GET    ✅  (safe + idempotent)
+POST   ❌  (creates new resource each call)
+PUT    ✅  (same result if called multiple times)
+PATCH  ⚠️  (usually idempotent, depends on operation)
+DELETE ✅  (deleting already-deleted = same end state)
+
+-- Safe = no side effects (GET, HEAD, OPTIONS)`
+  },
+  {
+    category: 'HTTP & Web', difficulty: 'Beginner',
+    question: 'What do HTTP status codes mean?',
+    answer: 'HTTP status codes are 3-digit numbers grouped by category. **1xx** Informational. **2xx** Success. **3xx** Redirection. **4xx** Client error (you did something wrong). **5xx** Server error (server failed). Knowing the common ones is essential for debugging APIs.',
+    tip: `-- 2xx Success
+200 OK              -- standard success
+201 Created         -- resource created (after POST)
+204 No Content      -- success, no body (after DELETE)
+
+-- 3xx Redirection
+301 Moved Permanently  -- URL changed forever (update bookmarks)
+302 Found              -- temporary redirect
+304 Not Modified       -- cached version is still valid
+
+-- 4xx Client Errors
+400 Bad Request     -- malformed request / invalid input
+401 Unauthorized    -- not authenticated (no/bad token)
+403 Forbidden       -- authenticated but not permitted
+404 Not Found       -- resource doesn't exist
+409 Conflict        -- e.g. duplicate email on register
+422 Unprocessable   -- validation failed
+429 Too Many Req.   -- rate limited
+
+-- 5xx Server Errors
+500 Internal Server Error -- unhandled exception
+502 Bad Gateway           -- upstream server error
+503 Service Unavailable   -- server overloaded / down`
+  },
+  {
+    category: 'HTTP & Web', difficulty: 'Intermediate',
+    question: 'What are HTTP headers and which ones should you know?',
+    answer: 'HTTP headers are key-value pairs sent in request and response to pass metadata: content type, auth tokens, caching rules, CORS permissions, cookies. **Request headers**: what the client sends. **Response headers**: what the server sends back. Headers control caching, security, content negotiation, and authentication.',
+    tip: `-- Important Request Headers
+Accept:          application/json       -- what format I want back
+Content-Type:    application/json       -- format of my request body
+Authorization:   Bearer eyJhbGci...     -- JWT or API key
+Cookie:          session=abc123         -- browser cookies
+User-Agent:      Mozilla/5.0 ...        -- browser/client identity
+Origin:          https://myapp.com      -- for CORS
+
+-- Important Response Headers
+Content-Type:    application/json; charset=utf-8
+Cache-Control:   public, max-age=3600   -- caching rules
+Set-Cookie:      session=abc; HttpOnly; Secure; SameSite=Strict
+X-Rate-Limit-Remaining: 95             -- API quota
+Access-Control-Allow-Origin: *         -- CORS permission
+Strict-Transport-Security: max-age=31536000  -- force HTTPS
+Content-Security-Policy: default-src 'self'  -- XSS protection`
+  },
+  {
+    category: 'HTTP & Web', difficulty: 'Intermediate',
+    question: 'What is the difference between REST and GraphQL?',
+    answer: '**REST** (Representational State Transfer): multiple endpoints, each returns a fixed data shape. Simple, widely understood, HTTP-native caching works naturally. **GraphQL**: single endpoint (`/graphql`), client specifies exactly what data it needs in the query — no over-fetching or under-fetching. Better for complex UIs with varying data needs. Downsides of GraphQL: harder to cache (POST requests), N+1 risk, more complex setup. REST is the default choice; use GraphQL when clients have very different data needs.',
+    tip: `-- REST — multiple endpoints, fixed response shape
+GET /users/1              -- always returns full user object
+GET /users/1/posts        -- separate request for posts
+GET /users/1/followers    -- another request
+
+-- GraphQL — one endpoint, client defines shape
+POST /graphql
+{
+  "query": "{ user(id: 1) { name posts { title } followers { name } } }"
+}
+-- Gets user + posts + followers in ONE request
+-- Only the fields you asked for
+
+-- REST pros: simple, cacheable, widely understood
+-- GraphQL pros: no over/under-fetching, great for mobile
+-- GraphQL cons: complex caching, N+1 problem, learning curve`
+  },
+  {
+    category: 'HTTP & Web', difficulty: 'Intermediate',
+    question: 'What are WebSockets and how do they differ from HTTP?',
+    answer: 'HTTP is a request-response protocol — the client must initiate every interaction. WebSockets provide a persistent, full-duplex (bidirectional) communication channel over a single TCP connection. After an HTTP upgrade handshake, both client and server can push messages at any time. Essential for: real-time chat, live notifications, collaborative editing, live dashboards, online gaming.',
+    tip: `-- HTTP: client always initiates
+Client → "GET /messages" → Server → response → connection closes
+Client → "GET /messages" → Server → (polling every 2 seconds)
+
+-- WebSocket: persistent bidirectional channel
+Client → "GET /chat" + "Upgrade: websocket" → Server
+Server → "101 Switching Protocols"
+-- Now both sides can send messages freely:
+Server → Client: "User Bob joined"
+Client → Server: "Hello everyone!"
+Server → Client: "Alice: Hello everyone!"
+
+// Browser WebSocket API
+const ws = new WebSocket('wss://chat.example.com');
+ws.onopen    = () => ws.send(JSON.stringify({ text: 'hi' }));
+ws.onmessage = e => console.log(JSON.parse(e.data));
+ws.onclose   = () => console.log('disconnected');
+ws.onerror   = e => console.error(e);`
+  },
+
+  /* ── DNS & Domains ── */
+  {
+    category: 'DNS & Domains', difficulty: 'Beginner',
+    question: 'What is DNS and how does domain resolution work step by step?',
+    answer: 'DNS (Domain Name System) is the Internet\'s phonebook — it translates human-readable domain names (google.com) into IP addresses (142.250.80.46) that routers understand. DNS is a hierarchical, distributed database. Resolution order: local cache → OS cache → Recursive Resolver (your ISP or 1.1.1.1) → Root Nameserver → TLD Nameserver → Authoritative Nameserver → final IP. Responses are cached at each level with a TTL.',
+    tip: `-- DNS resolution step by step for "github.com"
+
+1. Browser cache        → not found
+2. OS hosts file        → /etc/hosts, not found
+3. Recursive resolver   → (your ISP / 1.1.1.1 / 8.8.8.8)
+4. Resolver asks Root nameserver (.)
+   → "I don't know, ask .com TLD server"
+5. Resolver asks .com TLD server
+   → "I don't know, ask GitHub's nameserver: ns1.github.com"
+6. Resolver asks ns1.github.com (Authoritative)
+   → Returns: github.com → 140.82.121.4  TTL=60s
+7. Resolver caches + returns IP to browser
+8. Browser connects to 140.82.121.4
+
+-- Total time: ~10-50ms first time, instant from cache
+-- Diagnose DNS: dig github.com  /  nslookup github.com`
+  },
+  {
+    category: 'DNS & Domains', difficulty: 'Intermediate',
+    question: 'What are the most important DNS record types?',
+    answer: '**A**: maps domain → IPv4 address. **AAAA**: maps domain → IPv6 address. **CNAME**: alias — maps domain → another domain (not to an IP). **MX**: mail exchange — where to deliver email for this domain. **TXT**: arbitrary text — used for domain verification (Google, GitHub), SPF (email anti-spam), DKIM. **NS**: nameserver — which servers are authoritative for this domain. **SOA**: Start of Authority — administrative info.',
+    tip: `-- Common DNS records (zone file format):
+@           A       140.82.121.4          -- github.com → IP
+www         CNAME   github.com.           -- www → github.com
+@           AAAA    2606:50c0:8000::153   -- IPv6
+
+-- Email records
+@           MX 10   mail.github.com.      -- primary mail server
+@           MX 20   mail2.github.com.     -- fallback
+
+-- TXT records
+@           TXT     "v=spf1 include:sendgrid.net ~all"  -- SPF
+@           TXT     "google-site-verification=abc123"   -- verify ownership
+
+-- Nameservers
+@           NS      ns1.github.com.
+@           NS      ns2.github.com.
+
+-- Check records:
+dig A github.com
+dig MX gmail.com
+dig TXT github.com`
+  },
+  {
+    category: 'DNS & Domains', difficulty: 'Beginner',
+    question: 'What is a domain name? Explain TLDs, subdomains, and domain hierarchy.',
+    answer: 'A domain name is a human-readable address for a website. Structure: `subdomain.second-level.TLD`. **TLD** (Top-Level Domain): the rightmost part — `.com`, `.org`, `.net`, `.io`, `.vn`. **Second-level domain**: the name you register — `github`, `google`. **Subdomain**: prefix you control — `www`, `api`, `blog`, `mail`. Domain registrars (Namecheap, GoDaddy, Google Domains) sell domain registrations for ~$10–15/year.',
+    tip: `-- Anatomy of a URL:
+https://api.github.com:443/users/tanhoang?tab=repos#code
+  │      │   │          │   │              │         └── Fragment
+  │      │   │          │   │              └── Query string
+  │      │   │          │   └── Path
+  │      │   │          └── Port
+  │      │   └── Domain (subdomain.second-level.TLD)
+  │      └── Host
+  └── Protocol (scheme)
+
+-- Examples:
+blog.mysite.com      -- subdomain=blog, domain=mysite, TLD=.com
+app.mysite.com.vn    -- TLD=.com.vn (country code TLD)
+localhost:3000       -- no TLD, local development
+
+-- Common TLDs:
+.com  commercial    .org  non-profit    .edu  education
+.io   tech/startups .vn   Vietnam       .dev  developers`
+  },
+  {
+    category: 'DNS & Domains', difficulty: 'Beginner',
+    question: 'What is web hosting and what are the different types?',
+    answer: 'Web hosting is a service that stores your website files on servers connected to the Internet. Types: **Shared hosting** — many sites on one server (cheap, limited). **VPS** (Virtual Private Server) — your own isolated virtual machine, more control. **Dedicated server** — entire physical machine for you (expensive). **Cloud hosting** — scale on demand (AWS, GCP, Azure). **Managed hosting** — provider handles server config (Heroku, Render, Railway). **Static hosting** — serve only HTML/CSS/JS files, no server (Netlify, Vercel, GitHub Pages — often free).',
+    tip: `-- Hosting options by use case:
+
+Static sites (HTML/CSS/JS only):
+✅ GitHub Pages — free, great for portfolios
+✅ Netlify / Vercel — free tier, CI/CD, custom domain
+
+Backend apps / APIs:
+✅ Railway / Render — easy deploy, free tier
+✅ Heroku — easy but expensive now
+✅ AWS EC2 / GCP / Azure — full control, production
+
+Databases:
+✅ Supabase — Postgres, free tier, + auth + realtime
+✅ PlanetScale — MySQL, serverless, free tier
+✅ MongoDB Atlas — managed MongoDB, free 512MB
+
+Full-stack (this flash card app → GitHub Pages):
+git push → GitHub Actions → deployed automatically
+URL: https://tanhoang0803.github.io/Fash-Cards-for-my-Life/`
+  },
+
+  /* ── Browsers ── */
+  {
+    category: 'Browsers', difficulty: 'Intermediate',
+    question: 'What happens when you type a URL in the browser and press Enter?',
+    answer: 'This is one of the most famous interview questions. The full journey: URL parsing → DNS resolution → TCP connection → TLS handshake (HTTPS) → HTTP request → Server processes request → HTTP response → HTML parsing → CSS + JS fetched → DOM + CSSOM built → Render tree → Layout → Paint → Composite → Page displayed. Understanding this shows deep knowledge of networking, HTTP, and browser internals.',
+    tip: `-- Full journey: "https://google.com" → page displayed
+
+1.  Parse URL          → scheme=https, host=google.com, path=/
+2.  HSTS check         → browser knows to use HTTPS
+3.  DNS lookup         → google.com → 142.250.80.46
+4.  TCP handshake      → SYN → SYN-ACK → ACK  (3 round trips)
+5.  TLS handshake      → negotiate cipher, verify cert, session key
+6.  HTTP GET /         → request sent encrypted
+7.  Server responds    → 200 OK + HTML body
+8.  Parse HTML         → builds DOM tree
+9.  Fetch sub-resources → CSS, JS, images (parallel)
+10. Parse CSS          → builds CSSOM
+11. Execute JS         → may modify DOM/CSSOM
+12. Render tree        → DOM + CSSOM combined
+13. Layout (Reflow)    → calculate element positions/sizes
+14. Paint              → draw pixels to layers
+15. Composite          → GPU merges layers → screen`
+  },
+  {
+    category: 'Browsers', difficulty: 'Intermediate',
+    question: 'How do browsers render a web page? What is the Critical Rendering Path?',
+    answer: 'The Critical Rendering Path (CRP) is the sequence of steps to convert HTML/CSS/JS into visible pixels. CSS is render-blocking — the browser cannot paint without the CSSOM. JS is parser-blocking — it stops HTML parsing unless marked `async`/`defer`. Optimising the CRP means: minimising render-blocking resources, inlining critical CSS, deferring non-critical JS, reducing resource sizes, and using HTTP/2 for parallel loading.',
+    tip: `-- Critical Rendering Path:
+HTML  → DOM
+CSS   → CSSOM              ← render-blocking
+DOM + CSSOM → Render Tree
+Render Tree → Layout (reflow) → Paint → Composite
+
+-- JS can block HTML parsing AND modify DOM/CSSOM
+<script src="app.js"></script>          -- blocks parsing!
+<script src="app.js" defer></script>    -- parse first, run after
+<script src="app.js" async></script>    -- download async, run immediately
+
+-- Avoid layout thrashing (forces synchronous layout):
+-- BAD:
+for (const el of elements) {
+  el.style.width = el.offsetWidth + 10 + 'px'; // read then write!
+}
+-- GOOD: batch reads, then batch writes (or use requestAnimationFrame)`
+  },
+  {
+    category: 'Browsers', difficulty: 'Intermediate',
+    question: 'What is the difference between cookies, localStorage, and sessionStorage?',
+    answer: '**Cookies**: sent automatically with every HTTP request to the server, 4KB limit, can have expiry, can be `HttpOnly` (not accessible via JS) and `Secure`. Controlled by server via `Set-Cookie`. **localStorage**: key-value storage in browser, ~5MB, persists until explicitly cleared, only accessible to JS (not sent to server). **sessionStorage**: same as localStorage but cleared when tab closes. Use cookies for session tokens; localStorage for user preferences/app state.',
+    tip: `-- Cookies — server sets via HTTP header
+Set-Cookie: token=abc123; HttpOnly; Secure; SameSite=Strict; Max-Age=3600
+
+// JS can read cookies (unless HttpOnly)
+document.cookie = 'theme=dark; max-age=86400';
+
+-- localStorage — persists across tabs and sessions
+localStorage.setItem('theme', 'dark');
+localStorage.getItem('theme');     // 'dark'
+localStorage.removeItem('theme');
+localStorage.clear();
+
+-- sessionStorage — cleared when tab closes
+sessionStorage.setItem('step', '2');   // form wizard step
+sessionStorage.getItem('step');
+
+-- Security comparison:
+-- Cookies:        ✅ HttpOnly blocks XSS  ⚠️ CSRF risk
+-- localStorage:   ❌ XSS can steal tokens  ✅ no CSRF
+-- Best practice:  use HttpOnly + SameSite cookies for auth tokens`
+  },
+  {
+    category: 'Browsers', difficulty: 'Intermediate',
+    question: 'What is CORS and why does the browser enforce it?',
+    answer: 'CORS (Cross-Origin Resource Sharing) is a browser security mechanism that blocks JavaScript from making requests to a different origin (protocol + domain + port) than the page it runs on. Without CORS, a malicious site could read your bank data using your session cookie. The server must explicitly allow cross-origin requests via `Access-Control-Allow-Origin` headers. CORS is enforced by the BROWSER only — server-to-server calls are never blocked.',
+    tip: `-- Same origin = same protocol + domain + port
+-- https://myapp.com/api and https://myapp.com/user → SAME ORIGIN ✅
+-- https://myapp.com and http://myapp.com           → different protocol ❌
+-- https://myapp.com and https://api.myapp.com      → different subdomain ❌
+-- https://myapp.com and https://myapp.com:8080     → different port ❌
+
+-- Simple request: browser adds Origin header
+-- Server must respond with:
+Access-Control-Allow-Origin: https://myapp.com
+
+-- Preflight (OPTIONS) sent for: non-simple methods, custom headers
+OPTIONS /api/data HTTP/1.1
+Origin: https://myapp.com
+Access-Control-Request-Method: DELETE
+
+-- Server must respond:
+Access-Control-Allow-Origin: https://myapp.com
+Access-Control-Allow-Methods: GET, POST, DELETE
+Access-Control-Allow-Headers: Content-Type, Authorization`
+  },
+  {
+    category: 'Browsers', difficulty: 'Intermediate',
+    question: 'What is browser caching and how do Cache-Control headers work?',
+    answer: 'Browser caching stores copies of resources (JS, CSS, images) locally to avoid re-downloading. The `Cache-Control` response header controls caching behaviour. `max-age` sets how long (seconds) to use the cached version without checking the server. `ETag` and `Last-Modified` enable conditional requests — the browser asks "has this changed?" and the server returns `304 Not Modified` if not, saving bandwidth.',
+    tip: `-- Response headers that control caching:
+Cache-Control: public, max-age=31536000    -- cache 1 year (CDN + browser)
+Cache-Control: private, max-age=3600      -- browser only, 1 hour
+Cache-Control: no-cache                   -- always revalidate with server
+Cache-Control: no-store                   -- never cache (sensitive data)
+Cache-Control: s-maxage=86400             -- CDN caches 1 day, browser uses max-age
+
+-- ETag conditional request
+-- First request:
+Response: ETag: "abc123"
+
+-- Subsequent request:
+Request:  If-None-Match: "abc123"
+Response: 304 Not Modified  -- use your cached copy (no body sent!)
+
+-- Cache busting strategy for JS/CSS bundles:
+-- Use content hash in filename: app.a1b2c3d4.js
+-- When file changes, hash changes → new URL → fresh fetch
+-- Set max-age=31536000 safely because URL changes on update`
+  },
+];
+
+/* ═══════════════════════════════════════════════════════════
    JAVASCRIPT — 50 cards across 6 topics
 ═══════════════════════════════════════════════════════════ */
 const JS_CARDS = [
@@ -2718,6 +3189,7 @@ const SUBJECTS = {
   'SQL':        SQL_CARDS,
   'Database':   DATABASE_CARDS,
   'JavaScript': JS_CARDS,
+  'Internet':   INTERNET_CARDS,
 };
 
 /* ═══════════════════════════════════════════════════════════
@@ -2730,6 +3202,7 @@ const SUBJECT_COLORS = {
   'SQL':        '#06b6d4',
   'Database':   '#ec4899',
   'JavaScript': '#f59e0b',
+  'Internet':   '#10b981',
 };
 
 const CATEGORY_COLORS = {
@@ -2761,6 +3234,11 @@ const CATEGORY_COLORS = {
   'CSS':             '#ec4899',
   'Performance':     '#8b5cf6',
   'Security':        '#ef4444',
+  // Internet
+  'How Internet Works': '#10b981',
+  'HTTP & Web':         '#059669',
+  'DNS & Domains':      '#34d399',
+  'Browsers':           '#065f46',
 };
 
 const DIFFICULTY_CONFIG = {
