@@ -1,0 +1,2076 @@
+/* ═══════════════════════════════════════════════════════════
+   DSA — Data Structures & Algorithms  (14 cards)
+═══════════════════════════════════════════════════════════ */
+const DSA_CARDS = [
+  {
+    category: 'Complexity', difficulty: 'Beginner',
+    question: 'What is Big O notation?',
+    answer: 'Big O describes the worst-case growth rate of an algorithm\'s time or space as input size n grows. Constants and low-order terms are dropped — only the dominant term matters. It lets you compare algorithms independently of hardware and predict how they scale.',
+    tip: `O(1)       — hash lookup, array index access
+O(log n)   — binary search, balanced BST
+O(n)       — linear scan
+O(n log n) — merge sort, heap sort
+O(n²)      — bubble/insertion sort (nested loops)
+O(2ⁿ)      — brute-force subset enumeration`
+  },
+  {
+    category: 'Data Structures', difficulty: 'Beginner',
+    question: 'What is the difference between an Array and a Linked List?',
+    answer: 'Array: contiguous memory, O(1) random access by index, O(n) insert/delete at arbitrary position (elements shift). Linked List: nodes connected by pointers, O(n) access by index, O(1) insert/delete at a known node. Choose arrays for fast reads; linked lists for frequent head/middle insertions.',
+    tip: `// Array — O(1) index access
+const arr = [10, 20, 30];
+arr[1];               // 20 — instant
+arr.splice(1, 0, 99); // O(n) — shifts all elements
+
+// Singly Linked List node
+class Node {
+  constructor(val) {
+    this.val  = val;
+    this.next = null; // pointer to next node
+  }
+}`
+  },
+  {
+    category: 'Data Structures', difficulty: 'Beginner',
+    question: 'What is a Stack and what are its real-world use cases?',
+    answer: 'A Stack is LIFO (Last-In, First-Out). Core operations — push, pop, peek — are all O(1). Used for: call stack / recursion tracking, undo/redo in editors, balanced brackets validation, DFS graph traversal, expression parsing (postfix evaluation).',
+    tip: `class Stack {
+  #data = [];
+  push(val)  { this.#data.push(val); }
+  pop()      { return this.#data.pop(); }
+  peek()     { return this.#data.at(-1); }
+  isEmpty()  { return this.#data.length === 0; }
+}
+
+// Classic: validate balanced brackets
+function isValid(s) {
+  const st = [], map = { ')': '(', ']': '[', '}': '{' };
+  for (const c of s) {
+    if ('([{'.includes(c)) st.push(c);
+    else if (st.pop() !== map[c]) return false;
+  }
+  return st.length === 0;
+}`
+  },
+  {
+    category: 'Data Structures', difficulty: 'Beginner',
+    question: 'What is a Queue and when do you use it?',
+    answer: 'A Queue is FIFO (First-In, First-Out). Enqueue adds to the back; dequeue removes from the front. O(1) for both with a proper implementation. Used for: BFS graph traversal, task/job schedulers, message brokers (Kafka, RabbitMQ), rate-limiting request buffers, print queues.',
+    tip: `// Efficient O(1) Queue using two stacks
+class Queue {
+  #in = []; #out = [];
+  enqueue(v) { this.#in.push(v); }
+  dequeue() {
+    if (!this.#out.length)
+      while (this.#in.length)
+        this.#out.push(this.#in.pop());
+    return this.#out.pop();
+  }
+  peek()    { return this.#out.at(-1) ?? this.#in[0]; }
+  isEmpty() { return !this.#in.length && !this.#out.length; }
+}`
+  },
+  {
+    category: 'Data Structures', difficulty: 'Intermediate',
+    question: 'What is a Hash Table and how does it handle collisions?',
+    answer: 'A Hash Table maps keys to values via a hash function that computes an array index. Average O(1) for get/set/delete. Collisions (two keys → same index) are resolved by: Chaining (each slot holds a linked list of entries) or Open Addressing (probe for next empty slot). A load factor above ~0.7 triggers resizing (rehashing).',
+    tip: `// Frequency map — quintessential hash table use
+function wordFreq(text) {
+  const freq = new Map();
+  for (const w of text.split(' '))
+    freq.set(w, (freq.get(w) ?? 0) + 1);
+  return freq;
+}
+
+// Two Sum — O(n) using hash map
+function twoSum(nums, target) {
+  const seen = new Map();
+  for (let i = 0; i < nums.length; i++) {
+    const need = target - nums[i];
+    if (seen.has(need)) return [seen.get(need), i];
+    seen.set(nums[i], i);
+  }
+}`
+  },
+  {
+    category: 'Data Structures', difficulty: 'Intermediate',
+    question: 'What is a Binary Search Tree (BST)?',
+    answer: 'A BST is a binary tree where: left child < parent < right child for every node. Average O(log n) for search, insert, delete on a balanced tree; worst case O(n) if unbalanced (e.g. inserting sorted data). Self-balancing variants (AVL, Red-Black) guarantee O(log n). In-order traversal always yields sorted output.',
+    tip: `function insert(root, val) {
+  if (!root) return { val, left: null, right: null };
+  if (val < root.val) root.left  = insert(root.left,  val);
+  else               root.right = insert(root.right, val);
+  return root;
+}
+
+// In-order => sorted sequence
+function inOrder(node, res = []) {
+  if (!node) return res;
+  inOrder(node.left, res);
+  res.push(node.val);
+  inOrder(node.right, res);
+  return res;
+}`
+  },
+  {
+    category: 'Algorithms', difficulty: 'Intermediate',
+    question: 'How does Binary Search work?',
+    answer: 'Binary Search finds a target in a SORTED array in O(log n) by halving the search space each step: compare target to the middle element — equal → found; less → search left half; greater → search right half. For n = 1,000,000 it takes ≤ 20 comparisons. The array MUST be sorted first.',
+    tip: `function binarySearch(arr, target) {
+  let lo = 0, hi = arr.length - 1;
+  while (lo <= hi) {
+    const mid = (lo + hi) >> 1;   // fast floor divide
+    if      (arr[mid] === target) return mid;
+    else if (arr[mid] < target)  lo = mid + 1;
+    else                         hi = mid - 1;
+  }
+  return -1; // not found
+}
+
+// After loop: lo = correct insertion index
+// Useful for: first/last occurrence,
+//             "search on answer" problems`
+  },
+  {
+    category: 'Algorithms', difficulty: 'Intermediate',
+    question: 'What is the difference between BFS and DFS?',
+    answer: 'BFS (Breadth-First Search) uses a Queue and explores nodes level by level — guarantees shortest path in an unweighted graph. DFS (Depth-First Search) uses a Stack/recursion and goes as deep as possible before backtracking. BFS: shortest path, level-order traversal. DFS: cycle detection, topological sort, connected components, maze solving.',
+    tip: `// BFS — level-by-level, shortest path
+function bfs(graph, start) {
+  const visited = new Set([start]);
+  const queue   = [start];
+  while (queue.length) {
+    const node = queue.shift();
+    for (const nb of graph[node])
+      if (!visited.has(nb)) { visited.add(nb); queue.push(nb); }
+  }
+}
+
+// DFS — depth-first, recursive
+function dfs(graph, node, visited = new Set()) {
+  if (visited.has(node)) return;
+  visited.add(node);
+  for (const nb of graph[node]) dfs(graph, nb, visited);
+}`
+  },
+  {
+    category: 'Algorithms', difficulty: 'Intermediate',
+    question: 'What is Merge Sort and what are its trade-offs?',
+    answer: 'Merge Sort uses divide-and-conquer: split array in half recursively, sort each half, merge. Time: O(n log n) guaranteed. Space: O(n) extra. Stable sort (preserves relative order of equal elements). Preferred for linked lists and when stability matters. Quick Sort is usually faster in practice (better cache locality) but O(n²) worst case.',
+    tip: `function mergeSort(arr) {
+  if (arr.length <= 1) return arr;
+  const mid = arr.length >> 1;
+  const L   = mergeSort(arr.slice(0, mid));
+  const R   = mergeSort(arr.slice(mid));
+  return merge(L, R);
+}
+function merge(L, R) {
+  const out = []; let i = 0, j = 0;
+  while (i < L.length && j < R.length)
+    out.push(L[i] <= R[j] ? L[i++] : R[j++]);
+  return out.concat(L.slice(i), R.slice(j));
+}
+// Time: O(n log n) all cases | Space: O(n)`
+  },
+  {
+    category: 'Patterns', difficulty: 'Intermediate',
+    question: 'What is the Two Pointers technique?',
+    answer: 'Two Pointers uses two indices moving through a sorted array or string — usually from both ends toward each other, or both moving forward at different speeds. Reduces O(n²) brute-force pair checks to O(n). Common problems: pair sum in sorted array, palindrome check, remove duplicates, container with most water, three-sum.',
+    tip: `// Pair with target sum — O(n) on sorted array
+function hasPairSum(arr, target) {
+  let lo = 0, hi = arr.length - 1;
+  while (lo < hi) {
+    const sum = arr[lo] + arr[hi];
+    if      (sum === target) return true;
+    else if (sum <  target) lo++;  // need bigger
+    else                    hi--;  // need smaller
+  }
+  return false;
+}
+
+// Palindrome check — O(n)
+const isPalin = s => {
+  let l = 0, r = s.length - 1;
+  while (l < r) if (s[l++] !== s[r--]) return false;
+  return true;
+};`
+  },
+  {
+    category: 'Patterns', difficulty: 'Intermediate',
+    question: 'What is the Sliding Window technique?',
+    answer: 'Sliding Window maintains a contiguous subarray/substring as a "window" that expands or shrinks as it moves through the input. Avoids recomputing the whole window each step — O(n) instead of O(n²). Common problems: max sum subarray of size k, longest substring without repeating characters, minimum window substring, count anagrams in string.',
+    tip: `// Longest substring without repeating chars — O(n)
+function maxUniqueLen(s) {
+  const seen = new Map();
+  let max = 0, left = 0;
+  for (let r = 0; r < s.length; r++) {
+    if (seen.has(s[r]) && seen.get(s[r]) >= left)
+      left = seen.get(s[r]) + 1;  // shrink window
+    seen.set(s[r], r);
+    max = Math.max(max, r - left + 1);
+  }
+  return max;
+}
+// "abcabcbb" => 3 ("abc")`
+  },
+  {
+    category: 'Patterns', difficulty: 'Intermediate',
+    question: 'What is Dynamic Programming (DP)?',
+    answer: 'DP solves problems with overlapping sub-problems and optimal substructure by caching intermediate results. Top-down (memoization): recursion + cache — easy to write, computes only needed states. Bottom-up (tabulation): fill a table iteratively from base cases — no recursion overhead. Common DP: Fibonacci, coin change, longest common subsequence, 0/1 knapsack, edit distance.',
+    tip: `// Memoization — top-down O(n)
+const memo = {};
+function fib(n) {
+  if (n <= 1) return n;
+  return memo[n] ??= fib(n - 1) + fib(n - 2);
+}
+
+// Coin change — min coins (bottom-up tabulation)
+function minCoins(coins, amount) {
+  const dp = Array(amount + 1).fill(Infinity);
+  dp[0] = 0;
+  for (let i = 1; i <= amount; i++)
+    for (const c of coins)
+      if (c <= i) dp[i] = Math.min(dp[i], dp[i - c] + 1);
+  return dp[amount] === Infinity ? -1 : dp[amount];
+}`
+  },
+  {
+    category: 'Data Structures', difficulty: 'Advanced',
+    question: 'What is a Heap (Priority Queue) and what is it used for?',
+    answer: 'A Heap is a complete binary tree with the heap property. Min-Heap: parent ≤ children (root = minimum). Max-Heap: parent ≥ children (root = maximum). Insert and extract-min/max are O(log n); peek is O(1). Stored as an array (node i has children at 2i+1 and 2i+2). Used for: priority queues, Dijkstra\'s algorithm, heap sort, top-K elements.',
+    tip: `// Array representation of a Min-Heap:
+// index:  0   1   2   3   4   5
+// value: [1,  3,  2,  7,  4,  5]
+// Node i: parent = floor((i-1)/2)
+//         left   = 2*i + 1
+//         right  = 2*i + 2
+
+// Top-K largest numbers (min-heap of size k):
+// If heap.size < k  → push element
+// Else if elem > heap.min → pop + push
+// Result: k largest in O(n log k) time`
+  },
+  {
+    category: 'Algorithms', difficulty: 'Advanced',
+    question: "What is Dijkstra's algorithm and when does it fail?",
+    answer: "Dijkstra's finds shortest paths from a source node to all others in a weighted graph with non-negative weights. It greedily picks the unvisited node with the smallest known distance, then relaxes its neighbours. Time: O((V + E) log V) with a min-heap. Fails with negative edge weights — use Bellman-Ford O(VE) instead.",
+    tip: `function dijkstra(graph, src) {
+  // graph: { node: [[neighbor, weight], ...] }
+  const dist = {}; const visited = new Set();
+  dist[src] = 0;
+  const pq = [[0, src]]; // [cost, node]
+
+  while (pq.length) {
+    pq.sort((a, b) => a[0] - b[0]); // use real min-heap
+    const [cost, node] = pq.shift();
+    if (visited.has(node)) continue;
+    visited.add(node);
+    for (const [nb, w] of graph[node] ?? []) {
+      const d = cost + w;
+      if (d < (dist[nb] ?? Infinity)) {
+        dist[nb] = d;
+        pq.push([d, nb]);
+      }
+    }
+  }
+  return dist;
+}`
+  },
+];
+
+/* ═══════════════════════════════════════════════════════════
+   PYTHON — 14 cards across 3 categories
+═══════════════════════════════════════════════════════════ */
+const PYTHON_CARDS = [
+  {
+    category: 'Core Python', difficulty: 'Beginner',
+    question: 'What are Python\'s basic data types?',
+    answer: 'Python has 5 built-in primitive types: `int` (whole numbers), `float` (decimals), `str` (text, immutable), `bool` (`True`/`False`, subclass of int), and `NoneType` (`None` — absence of value). Everything in Python is an object. Use `type()` to check a value\'s type and `isinstance()` to check inheritance.',
+    tip: `x   = 42          # int
+y   = 3.14        # float
+s   = 'hello'     # str
+b   = True        # bool (True == 1, False == 0)
+n   = None        # NoneType — represents "no value"
+
+type(x)           # <class 'int'>
+isinstance(b, int)# True  (bool is subclass of int)
+
+# Dynamic typing — variable can change type
+x = 'now a string'`
+  },
+  {
+    category: 'Core Python', difficulty: 'Beginner',
+    question: 'How do f-strings work in Python?',
+    answer: 'f-strings (formatted string literals, Python 3.6+) let you embed expressions directly inside strings by prefixing with `f` and wrapping expressions in `{}`. They are faster than `.format()` and `%` formatting. You can run any valid Python expression inside the braces, including method calls, arithmetic, and conditionals.',
+    tip: `name  = 'Alice'
+age   = 30
+score = 95.678
+
+print(f'Name: {name}, Age: {age}')         # Name: Alice, Age: 30
+print(f'Score: {score:.2f}')               # Score: 95.68
+print(f'Next year: {age + 1}')             # Next year: 31
+print(f'{name.upper()!r}')                 # 'ALICE'
+
+# Debug shorthand (Python 3.8+)
+print(f'{age = }')                         # age = 30`
+  },
+  {
+    category: 'Core Python', difficulty: 'Beginner',
+    question: 'How do `if`, `elif`, and `else` work in Python?',
+    answer: 'Python uses indentation (4 spaces) instead of braces for code blocks. `if` evaluates a condition; `elif` checks additional conditions; `else` is the fallback. Conditions can use comparison operators (`==`, `!=`, `<`, `>`, `<=`, `>=`) and logical operators (`and`, `or`, `not`). Python also supports a one-line ternary: `value if condition else other`.',
+    tip: `score = 75
+
+if score >= 90:
+    grade = 'A'
+elif score >= 80:
+    grade = 'B'
+elif score >= 70:
+    grade = 'C'
+else:
+    grade = 'F'
+
+# Ternary (one-liner)
+status = 'pass' if score >= 60 else 'fail'
+
+# Truthy / falsy — these are all falsy:
+# None, 0, 0.0, '', [], {}, set()`
+  },
+  {
+    category: 'Core Python', difficulty: 'Beginner',
+    question: 'How do `for` and `while` loops work in Python?',
+    answer: '`for` iterates over any iterable (list, string, range, dict, file…). `while` loops as long as a condition is `True`. `break` exits the loop early; `continue` skips to the next iteration; `else` on a loop runs if the loop finished without a `break`. Use `enumerate()` to get index+value, `zip()` to pair iterables.',
+    tip: `# for — iterate over any iterable
+fruits = ['apple', 'banana', 'cherry']
+for i, fruit in enumerate(fruits):
+    print(i, fruit)        # 0 apple, 1 banana ...
+
+# range
+for n in range(0, 10, 2):  # 0, 2, 4, 6, 8
+    print(n)
+
+# while
+count = 0
+while count < 5:
+    count += 1
+
+# zip — pair two lists
+for name, score in zip(names, scores):
+    print(f'{name}: {score}')`
+  },
+  {
+    category: 'Core Python', difficulty: 'Beginner',
+    question: 'How do you define and call functions in Python?',
+    answer: 'Use `def` to define a function. Parameters can have default values, making them optional. Functions always return `None` if there is no `return` statement. Python supports positional args, keyword args, default args, and variable args (`*args`, `**kwargs`). Lambda creates a small anonymous function for simple expressions.',
+    tip: `# Basic function with default argument
+def greet(name, greeting='Hello'):
+    return f'{greeting}, {name}!'
+
+greet('Alice')              # 'Hello, Alice!'
+greet('Bob', 'Hi')          # 'Hi, Bob!'
+greet(greeting='Hey', name='Carol')  # keyword args
+
+# Multiple return values (returns a tuple)
+def min_max(nums):
+    return min(nums), max(nums)
+
+lo, hi = min_max([3, 1, 4, 1, 5])   # lo=1, hi=5
+
+# Lambda
+square = lambda x: x ** 2
+square(4)  # 16`
+  },
+  {
+    category: 'Core Python', difficulty: 'Beginner',
+    question: 'What are the most useful Python string methods?',
+    answer: 'Strings in Python are immutable sequences of characters. They come with a rich set of built-in methods. Common ones: `.strip()` trims whitespace, `.split()` splits into a list, `.join()` joins a list into a string, `.replace()` substitutes substrings, `.upper()`/`.lower()` changes case, `.startswith()`/`.endswith()` checks prefix/suffix, `.find()` returns index or -1.',
+    tip: `s = '  Hello, World!  '
+
+s.strip()                  # 'Hello, World!'
+s.lower()                  # '  hello, world!  '
+s.upper()                  # '  HELLO, WORLD!  '
+s.replace('World', 'Python') # '  Hello, Python!  '
+s.strip().split(', ')      # ['Hello', 'World!']
+
+# Join — opposite of split
+words = ['Python', 'is', 'great']
+' '.join(words)            # 'Python is great'
+
+s.strip().startswith('Hello')  # True
+s.strip().find('World')        # 7`
+  },
+  {
+    category: 'Core Python', difficulty: 'Beginner',
+    question: 'How do you handle errors in Python with try/except?',
+    answer: 'Python uses `try/except` for exception handling. `try` contains code that might raise. `except ExceptionType` catches specific exceptions — always catch specific types, not bare `except`. `else` runs if no exception occurred. `finally` always runs (cleanup). Raise your own with `raise`. Custom exceptions extend `Exception`.',
+    tip: `def divide(a, b):
+    try:
+        result = a / b
+    except ZeroDivisionError:
+        print('Cannot divide by zero')
+        return None
+    except TypeError as e:
+        print(f'Wrong type: {e}')
+        return None
+    else:
+        print('Success!')   # runs only if no exception
+        return result
+    finally:
+        print('Done')        # always runs
+
+# Custom exception
+class InsufficientFundsError(Exception):
+    def __init__(self, amount):
+        super().__init__(f'Need {amount} more')
+        self.amount = amount`
+  },
+  {
+    category: 'Core Python', difficulty: 'Beginner',
+    question: 'What are Python\'s comparison and logical operators?',
+    answer: 'Comparison operators return `True` or `False`: `==` (equal), `!=` (not equal), `<`, `>`, `<=`, `>=`. Logical operators: `and` (both true), `or` (either true), `not` (inverts). Identity: `is` checks if two variables point to the same object in memory (use for `None` checks). Membership: `in` / `not in` checks if a value exists in an iterable.',
+    tip: `# Chained comparisons (Pythonic — unique to Python)
+x = 5
+1 < x < 10          # True — equivalent to 1<x and x<10
+
+# Identity vs equality
+a = [1, 2, 3]
+b = [1, 2, 3]
+a == b              # True  (same value)
+a is b              # False (different objects)
+
+# Always use 'is' for None checks
+if result is None:
+    ...
+
+# 'in' membership test
+'py' in 'python'    # True
+3 in [1, 2, 3]      # True
+'key' in {'key': 1} # True (checks dict keys)`
+  },
+  {
+    category: 'Core Python', difficulty: 'Beginner',
+    question: 'What are the differences between List, Tuple, Set, and Dict?',
+    answer: 'List `[1,2,3]`: ordered, mutable, allows duplicates. Tuple `(1,2,3)`: ordered, immutable, allows duplicates — faster and hashable, usable as dict keys. Set `{1,2,3}`: unordered, mutable, no duplicates, O(1) membership test. Dict `{"k":v}`: ordered (Python 3.7+), mutable, unique keys, O(1) lookup. Pick the right structure: tuples for fixed data, sets for uniqueness/membership, dicts for mappings.',
+    tip: `# List — ordered, mutable
+nums = [1, 2, 2, 3]
+nums.append(4)
+
+# Tuple — immutable, hashable, slightly faster
+point = (10, 20)
+coords = {point: 'origin'}  # valid dict key
+
+# Set — O(1) lookup, no duplicates
+unique = {1, 2, 3}
+print(2 in unique)  # True
+
+# Dict — key-value mapping
+user = {'name': 'Alice', 'age': 30}
+user.get('email', 'N/A')  # safe default`
+  },
+  {
+    category: 'Core Python', difficulty: 'Beginner',
+    question: 'What are list comprehensions and generator expressions?',
+    answer: 'List comprehensions `[expr for x in iter if cond]` build a full list in memory — faster than a for-loop because optimised at the C level. Generator expressions `(expr for x in iter if cond)` are lazy — they produce values one at a time without storing the full result. Use generators for large or infinite sequences to save memory.',
+    tip: `# List comprehension — builds full list in memory
+squares = [x**2 for x in range(10) if x % 2 == 0]
+
+# Generator expression — lazy, memory-efficient
+big = (x**2 for x in range(10**8))
+next(big)  # 0 — computed on demand
+
+# Dict & set comprehensions
+lengths  = {w: len(w) for w in ['hi', 'hello']}
+uniq_chr = {c.lower() for c in 'Hello World' if c.isalpha()}`
+  },
+  {
+    category: 'Core Python', difficulty: 'Intermediate',
+    question: 'What are *args and **kwargs?',
+    answer: '`*args` collects extra positional arguments into a tuple. `**kwargs` collects extra keyword arguments into a dict. On the calling side, `*iterable` unpacks an iterable as positional args and `**mapping` unpacks a dict as keyword args. They enable flexible, variadic function signatures.',
+    tip: `def log(level, *args, **kwargs):
+    print(f'[{level}]', *args, **kwargs)
+
+log('INFO', 'Server', 'started', sep='-', end='\\n')
+# [INFO] Server-started
+
+# Unpacking on the call side
+def add(a, b, c): return a + b + c
+add(*[1, 2, 3])                  # positional unpack
+add(**{'a': 1, 'b': 2, 'c': 3}) # keyword unpack`
+  },
+  {
+    category: 'Core Python', difficulty: 'Intermediate',
+    question: 'What is a Python decorator and how does it work?',
+    answer: 'A decorator is a higher-order function that wraps another function to extend its behaviour without modifying it. `@decorator` is syntactic sugar for `fn = decorator(fn)`. Always use `@functools.wraps(fn)` inside the wrapper to preserve the original function\'s name, docstring, and metadata. Common uses: caching (`@lru_cache`), logging, timing, authentication, retry logic.',
+    tip: `import functools
+
+def retry(times=3):
+    def decorator(fn):
+        @functools.wraps(fn)
+        def wrapper(*args, **kwargs):
+            for attempt in range(times):
+                try:
+                    return fn(*args, **kwargs)
+                except Exception:
+                    if attempt == times - 1: raise
+        return wrapper
+    return decorator
+
+@retry(times=3)
+def call_api(): ...`
+  },
+  {
+    category: 'Core Python', difficulty: 'Intermediate',
+    question: 'What are generators and how does `yield` work?',
+    answer: 'A generator function uses `yield` to produce values lazily, pausing execution between calls. Calling the function returns a generator object (an iterator) — it does not run the body. Each `next()` resumes until the next `yield`. Benefits: memory-efficient (no full list stored), natural for pipelines, can represent infinite sequences.',
+    tip: `def chunked(iterable, size):
+    chunk = []
+    for item in iterable:
+        chunk.append(item)
+        if len(chunk) == size:
+            yield chunk
+            chunk = []
+    if chunk:
+        yield chunk  # final partial chunk
+
+# Process a huge file in 100-line batches
+for batch in chunked(open('big.log'), 100):
+    process(batch)`
+  },
+  {
+    category: 'Core Python', difficulty: 'Intermediate',
+    question: 'What is a context manager and what does `with` do?',
+    answer: 'A context manager guarantees setup and teardown code runs — even if an exception occurs. `with obj as x:` calls `__enter__()` on entry and `__exit__()` on exit. Standard uses: file I/O (auto-close), DB connections (auto-commit/rollback), threading locks (auto-release). Build custom ones with `@contextlib.contextmanager`.',
+    tip: `from contextlib import contextmanager
+import sqlite3
+
+@contextmanager
+def get_db(path):
+    conn = sqlite3.connect(path)
+    try:
+        yield conn
+        conn.commit()
+    except Exception:
+        conn.rollback()
+        raise
+    finally:
+        conn.close()
+
+with get_db('app.db') as conn:
+    conn.execute('INSERT INTO users VALUES (?)', ('Alice',))`
+  },
+  {
+    category: 'Core Python', difficulty: 'Intermediate',
+    question: 'What are type hints and why use them?',
+    answer: 'Type hints (PEP 484+) annotate variables and function signatures with expected types. Python does NOT enforce them at runtime — use `mypy` or `pyright` for static analysis. Benefits: better IDE autocomplete, catch type errors before runtime, self-documenting code. Python 3.10+ supports `X | Y` union syntax.',
+    tip: `from typing import Optional
+
+def get_user(user_id: int) -> Optional[dict]:
+    ...
+
+# Python 3.10+ union shorthand
+def parse(val: str | int | None) -> float:
+    if val is None: return 0.0
+    return float(val)
+
+# Typed collections
+def process(items: list[str]) -> dict[str, int]:
+    return {item: len(item) for item in items}
+
+# TypedDict for structured dicts
+from typing import TypedDict
+class User(TypedDict):
+    name: str
+    age: int`
+  },
+  {
+    category: 'Core Python', difficulty: 'Advanced',
+    question: 'What is the GIL (Global Interpreter Lock)?',
+    answer: 'The GIL is a mutex in CPython that allows only one thread to execute Python bytecode at a time. It simplifies memory management but prevents true CPU-parallelism with threads. I/O-bound tasks (HTTP, file, DB) are not affected — the GIL is released during I/O. For CPU-bound work, use `multiprocessing` or `ProcessPoolExecutor`. Python 3.13+ allows disabling the GIL (free-threaded build, experimental).',
+    tip: `# I/O-bound → threads or asyncio work fine (GIL released during I/O)
+from concurrent.futures import ThreadPoolExecutor
+with ThreadPoolExecutor(max_workers=10) as ex:
+    results = list(ex.map(fetch_url, urls))
+
+# CPU-bound → use separate processes (each has own GIL)
+from concurrent.futures import ProcessPoolExecutor
+def heavy(n): return sum(range(n))
+with ProcessPoolExecutor() as ex:
+    results = list(ex.map(heavy, [10**7] * 4))`
+  },
+  {
+    category: 'OOP & Design', difficulty: 'Intermediate',
+    question: 'What are Python dunder (magic) methods?',
+    answer: 'Dunder methods (double-underscore) define how objects integrate with Python\'s syntax and built-ins. Key ones: `__init__` (constructor), `__repr__`/`__str__` (string representation), `__eq__`/`__lt__` (comparisons), `__len__` (`len()`), `__add__` (`+`), `__iter__`/`__next__` (iteration), `__getitem__` (`obj[key]`), `__enter__`/`__exit__` (context manager), `__call__` (call instance as function).',
+    tip: `class Vector:
+    def __init__(self, x, y):
+        self.x, self.y = x, y
+    def __repr__(self):
+        return f'Vector({self.x}, {self.y})'
+    def __add__(self, other):
+        return Vector(self.x + other.x, self.y + other.y)
+    def __len__(self):
+        return 2
+    def __eq__(self, other):
+        return self.x == other.x and self.y == other.y
+    def __iter__(self):
+        yield self.x; yield self.y`
+  },
+  {
+    category: 'OOP & Design', difficulty: 'Intermediate',
+    question: 'What is the difference between `@classmethod`, `@staticmethod`, and instance methods?',
+    answer: 'Instance method: first arg is `self` (the instance) — accesses and modifies instance state. `@classmethod`: first arg is `cls` (the class itself) — used for factory/alternative constructors and class-level state. `@staticmethod`: no implicit first arg — a plain utility function namespaced inside the class, no access to class or instance.',
+    tip: `class Date:
+    def __init__(self, y, m, d):
+        self.y, self.m, self.d = y, m, d
+
+    def display(self):            # instance method
+        return f'{self.y}-{self.m:02d}-{self.d:02d}'
+
+    @classmethod
+    def from_iso(cls, s):         # factory — alternative constructor
+        y, m, d = map(int, s.split('-'))
+        return cls(y, m, d)
+
+    @staticmethod
+    def is_leap(year):            # utility — no cls/self needed
+        return year % 4 == 0 and (year % 100 != 0 or year % 400 == 0)
+
+Date.from_iso('2026-03-08').display()  # '2026-03-08'
+Date.is_leap(2024)                     # True`
+  },
+  {
+    category: 'OOP & Design', difficulty: 'Intermediate',
+    question: 'What is a Python dataclass?',
+    answer: '`@dataclass` (Python 3.7+) auto-generates `__init__`, `__repr__`, and `__eq__` from annotated fields — eliminating boilerplate for data-holding classes. Options: `frozen=True` makes it immutable and hashable; `order=True` adds `<`, `>` comparison methods; `slots=True` (Python 3.10+) reduces memory per instance. Prefer dataclasses over plain dicts for structured data.',
+    tip: `from dataclasses import dataclass, field
+
+@dataclass(frozen=True)   # immutable + hashable
+class Point:
+    x: float
+    y: float
+    label: str = 'origin'
+    tags: list = field(default_factory=list)
+
+    @property
+    def distance(self) -> float:
+        return (self.x**2 + self.y**2) ** 0.5
+
+p1 = Point(3.0, 4.0)
+p2 = Point(3.0, 4.0)
+print(p1 == p2)      # True (value equality)
+print(p1.distance)   # 5.0
+print(p1)            # Point(x=3.0, y=4.0, label='origin', tags=[])`
+  },
+  {
+    category: 'OOP & Design', difficulty: 'Intermediate',
+    question: 'How does Python inheritance and `super()` work?',
+    answer: 'Python supports single and multiple inheritance. `super()` calls the next class in the Method Resolution Order (MRO) — not necessarily the direct parent. MRO is determined by the C3 linearisation algorithm. Always call `super().__init__()` when extending a parent to ensure proper initialisation across the chain.',
+    tip: `class Animal:
+    def __init__(self, name):
+        self.name = name
+    def speak(self): return '...'
+
+class Dog(Animal):
+    def __init__(self, name, breed):
+        super().__init__(name)   # calls Animal.__init__
+        self.breed = breed
+    def speak(self): return 'Woof'
+
+class GuideDog(Dog):
+    pass
+
+# MRO
+GuideDog.__mro__
+# (GuideDog, Dog, Animal, object)
+
+d = Dog('Rex', 'Labrador')
+print(d.speak())  # 'Woof'`
+  },
+  {
+    category: 'Ecosystem', difficulty: 'Beginner',
+    question: 'What is a virtual environment and why use one?',
+    answer: 'A virtual environment is an isolated Python installation with its own packages, separate from the system Python and other projects. This prevents version conflicts between projects. `venv` is built into Python 3.3+. Modern tools like `uv` (ultra-fast, Rust-based) and `poetry` handle both environments and dependency resolution.',
+    tip: `# Built-in venv
+python -m venv .venv
+source .venv/bin/activate        # Linux / Mac
+.venv\\Scripts\\activate           # Windows
+
+pip install fastapi uvicorn
+pip freeze > requirements.txt    # pin versions
+pip install -r requirements.txt  # restore
+
+# Modern: uv (recommended for speed)
+uv init my-project
+uv add fastapi                   # installs + updates pyproject.toml
+uv run python main.py`
+  },
+  {
+    category: 'Ecosystem', difficulty: 'Intermediate',
+    question: 'What is asyncio in Python and when should you use it?',
+    answer: 'asyncio provides cooperative concurrency on a single thread using an event loop. `async def` defines a coroutine. `await` suspends the coroutine and yields control to the event loop until the awaitable completes. Use for I/O-bound work (HTTP, DB queries, file I/O) — handles thousands of concurrent connections with minimal overhead. For CPU-bound work, use `multiprocessing` instead.',
+    tip: `import asyncio, aiohttp
+
+async def fetch(session, url):
+    async with session.get(url) as r:
+        return await r.json()
+
+async def main():
+    urls = ['https://api.example.com/1',
+            'https://api.example.com/2',
+            'https://api.example.com/3']
+    async with aiohttp.ClientSession() as session:
+        # Fetch all concurrently — not sequentially
+        results = await asyncio.gather(
+            *[fetch(session, u) for u in urls]
+        )
+    return results
+
+asyncio.run(main())`
+  },
+];
+
+/* ═══════════════════════════════════════════════════════════
+   C# — 18 cards across 3 categories
+═══════════════════════════════════════════════════════════ */
+const CSHARP_CARDS = [
+
+  /* ── C# Basics ── */
+  {
+    category: 'C# Basics', difficulty: 'Beginner',
+    question: 'What are the basic data types in C#?',
+    answer: 'C# is statically typed — every variable must have a declared type. Common types: `int` (32-bit integer), `long` (64-bit), `double` (64-bit float), `decimal` (high-precision money), `bool` (`true`/`false`), `char` (single character), `string` (immutable text, reference type). Use `var` to let the compiler infer the type — it is still statically typed.',
+    tip: `int    age    = 30;
+double price  = 9.99;
+decimal tax   = 0.08m;   // 'm' suffix for decimal
+bool   active = true;
+char   grade  = 'A';
+string name   = "Alice";
+
+// Type inference — compiler knows it's an int
+var count = 42;
+
+// Checking type
+Console.WriteLine(age.GetType());  // System.Int32
+Console.WriteLine(name is string); // True`
+  },
+  {
+    category: 'C# Basics', difficulty: 'Beginner',
+    question: 'What is the difference between value types and reference types?',
+    answer: 'Value types (`int`, `double`, `bool`, `struct`, `enum`) store data directly on the stack — assignment copies the value. Reference types (`class`, `string`, `array`, `interface`) store a reference (pointer) on the stack; the actual object lives on the heap — assignment copies the reference, so both variables point to the same object. `string` is immutable despite being a reference type.',
+    tip: `// Value type — copy on assign
+int a = 5;
+int b = a;
+b = 10;
+Console.WriteLine(a); // 5 (unchanged)
+
+// Reference type — shared reference
+var list1 = new List<int> { 1, 2 };
+var list2 = list1;         // same object!
+list2.Add(3);
+Console.WriteLine(list1.Count); // 3
+
+// Copy a list properly
+var list3 = new List<int>(list1);  // independent copy`
+  },
+  {
+    category: 'C# Basics', difficulty: 'Beginner',
+    question: 'How does string interpolation and string formatting work in C#?',
+    answer: 'C# offers several ways to format strings. `$"..."` (string interpolation, C# 6+) is the most readable — embed any expression in `{}`. `string.Format()` is the classic approach. Verbatim strings `@"..."` treat backslashes literally (useful for file paths and regex). Raw string literals `"""..."""` (C# 11+) need no escaping at all.',
+    tip: `string name  = "Alice";
+int    age   = 30;
+double score = 95.678;
+
+// String interpolation (preferred)
+Console.WriteLine($"Name: {name}, Age: {age}");
+Console.WriteLine($"Score: {score:F2}");      // 95.68
+Console.WriteLine($"Upper: {name.ToUpper()}");
+
+// Verbatim — backslashes are literal
+string path = @"C:\\Users\\Alice\\file.txt";
+
+// Useful string methods
+"  hello  ".Trim()          // "hello"
+"a,b,c".Split(',')          // ["a","b","c"]
+string.Join("-", new[]{"a","b"}) // "a-b"`
+  },
+  {
+    category: 'C# Basics', difficulty: 'Beginner',
+    question: 'How do `if/else` and `switch` work in C#?',
+    answer: 'C# supports classic `if/else if/else` blocks and `switch` statements. Modern C# (8+) adds `switch expressions` — concise, expression-based pattern matching that returns a value. The `when` keyword adds a condition guard to a case. Switch expressions are exhaustive — the compiler warns if cases are missing.',
+    tip: `int score = 85;
+
+// Classic if/else
+if      (score >= 90) Console.WriteLine("A");
+else if (score >= 80) Console.WriteLine("B");
+else                  Console.WriteLine("C");
+
+// Switch expression (C# 8+) — returns a value
+string grade = score switch
+{
+    >= 90 => "A",
+    >= 80 => "B",
+    >= 70 => "C",
+    _     => "F"   // _ is the default/discard
+};
+
+// With when guard
+string label = score switch
+{
+    100            => "Perfect",
+    >= 90 and < 100=> "Excellent",
+    _              => "Keep going"
+};`
+  },
+  {
+    category: 'C# Basics', difficulty: 'Beginner',
+    question: 'How do loops work in C#?',
+    answer: 'C# has four loop constructs. `for`: classic index-based loop. `foreach`: iterates any `IEnumerable` — cleanest for collections. `while`: condition-first loop. `do/while`: body runs at least once. Use `break` to exit early, `continue` to skip to the next iteration. LINQ methods (`Where`, `Select`) often replace explicit loops.',
+    tip: `// for — index-based
+for (int i = 0; i < 5; i++)
+    Console.WriteLine(i);
+
+// foreach — clean collection iteration
+var fruits = new List<string> { "apple", "banana" };
+foreach (var fruit in fruits)
+    Console.WriteLine(fruit);
+
+// while
+int n = 0;
+while (n < 5) n++;
+
+// do/while — runs body at least once
+do {
+    Console.WriteLine("runs once even if false");
+} while (false);
+
+// Range (C# 9+)
+foreach (var i in 1..=5)  // 1,2,3,4,5
+    Console.WriteLine(i);`
+  },
+  {
+    category: 'C# Basics', difficulty: 'Beginner',
+    question: 'How do methods work in C#?',
+    answer: 'Methods are defined with an access modifier, return type, name, and parameters. `void` means no return value. Parameters can have default values (optional), be passed by reference (`ref`/`out`), or collected with `params`. Method overloading allows multiple methods with the same name but different parameter signatures.',
+    tip: `// Basic method
+public int Add(int a, int b) => a + b;  // expression body
+
+// Optional parameters with defaults
+public string Greet(string name, string greeting = "Hello")
+    => $"{greeting}, {name}!";
+
+// out parameter — return multiple values
+public bool TryParse(string s, out int result)
+{
+    return int.TryParse(s, out result);
+}
+
+// params — variable number of arguments
+public int Sum(params int[] nums)
+    => nums.Sum();
+
+Sum(1, 2, 3, 4, 5);  // 15
+
+// Overloading
+public double Add(double a, double b) => a + b;`
+  },
+  {
+    category: 'C# Basics', difficulty: 'Beginner',
+    question: 'How do arrays and `List<T>` work in C#?',
+    answer: 'Arrays are fixed-size, contiguous memory — fast but inflexible. `List<T>` is a dynamic array that grows automatically — preferred for most use cases. Both offer O(1) random access by index. `List<T>` has methods like `Add`, `Remove`, `Contains`, `Sort`, `Find`. Use `Dictionary<K,V>` for key-value lookup and `HashSet<T>` for unique collections.',
+    tip: `// Array — fixed size
+int[] nums = { 1, 2, 3, 4, 5 };
+int[] arr  = new int[3];     // [0, 0, 0]
+arr[0] = 10;
+
+// List<T> — dynamic, preferred
+var list = new List<string> { "a", "b" };
+list.Add("c");
+list.Remove("a");
+list.Contains("b");  // true
+list.Count;          // 2
+
+// Dictionary<K,V>
+var scores = new Dictionary<string, int>
+{
+    ["Alice"] = 95,
+    ["Bob"]   = 87
+};
+scores.TryGetValue("Alice", out int score); // safe lookup`
+  },
+  {
+    category: 'C# Basics', difficulty: 'Beginner',
+    question: 'How does exception handling work in C#?',
+    answer: 'Use `try/catch/finally`. `try` wraps risky code. `catch(ExceptionType ex)` handles specific exceptions — always catch the most specific type first. `finally` always runs (cleanup, closing resources). `throw` re-throws the current exception (preserves stack trace). `when` adds a filter condition. `using` is the preferred way to auto-dispose `IDisposable` resources.',
+    tip: `try
+{
+    var text = await File.ReadAllTextAsync(path);
+    var data = JsonSerializer.Deserialize<Config>(text);
+}
+catch (FileNotFoundException ex)
+{
+    _logger.LogWarning("Missing: {File}", ex.FileName);
+}
+catch (JsonException ex) when (ex.Message.Contains("token"))
+{
+    throw new InvalidConfigException("Bad JSON", ex); // wrap
+}
+finally
+{
+    _logger.LogInformation("Done"); // always runs
+}
+
+// using — auto-disposes (calls Dispose on exit)
+using var conn = new SqlConnection(connectionString);
+await conn.OpenAsync();`
+  },
+
+  /* ── OOP & Patterns ── */
+  {
+    category: 'OOP & Patterns', difficulty: 'Beginner',
+    question: 'How do classes and objects work in C#?',
+    answer: 'A class is a blueprint; an object is an instance created with `new`. Classes have fields (data), properties (encapsulated fields), methods (behaviour), and constructors (initialisation). C# supports access modifiers: `public`, `private`, `protected`, `internal`. Use `static` for members that belong to the class itself rather than any instance.',
+    tip: `public class BankAccount
+{
+    // Property with private setter
+    public string Owner  { get; }
+    public decimal Balance { get; private set; }
+
+    // Constructor
+    public BankAccount(string owner, decimal initial = 0)
+    {
+        Owner   = owner;
+        Balance = initial;
+    }
+
+    // Method
+    public void Deposit(decimal amount)
+    {
+        if (amount <= 0) throw new ArgumentException("Must be positive");
+        Balance += amount;
+    }
+}
+
+// Usage
+var account = new BankAccount("Alice", 1000m);
+account.Deposit(500m);
+Console.WriteLine(account.Balance); // 1500`
+  },
+  {
+    category: 'OOP & Patterns', difficulty: 'Intermediate',
+    question: 'What is the difference between an interface and an abstract class?',
+    answer: 'Interface: defines a contract (method/property signatures) with no state. A class can implement multiple interfaces. Abstract class: can have concrete methods, fields, and constructors — but only single inheritance. Rule of thumb: use interfaces for capabilities (`IDisposable`, `ILogger`); use abstract classes for shared base behaviour with some implementation provided.',
+    tip: `// Interface — multiple allowed
+public interface ILogger {
+    void Log(string message);
+    void LogError(string msg) => Log($"ERROR: {msg}"); // default impl (C#8+)
+}
+public interface ISaveable { void Save(); }
+
+// Abstract class — single inheritance, shared logic
+public abstract class Shape {
+    public string Color { get; set; } = "Red";
+    public abstract double Area();          // must override
+    public void Print() => Console.WriteLine($"{Color}: {Area():F2}");
+}
+
+public class Circle : Shape, ILogger, ISaveable {
+    public double Radius { get; init; }
+    public override double Area() => Math.PI * Radius * Radius;
+    public void Log(string m)  => Console.WriteLine(m);
+    public void Save()         => Console.WriteLine("Saved");
+}`
+  },
+  {
+    category: 'OOP & Patterns', difficulty: 'Intermediate',
+    question: 'What are properties in C# and how do they differ from fields?',
+    answer: 'A field is a plain variable on a class. A property wraps a field with `get`/`set` accessors, enabling validation, computed values, and change notification. Auto-properties generate the backing field automatically. `init` (C# 9+) allows setting only during object initialisation. Properties are the standard for public data — they allow implementation changes without breaking the API.',
+    tip: `public class Person
+{
+    // Auto-property
+    public string Name { get; set; }
+
+    // Init-only — set in constructor or object initializer
+    public string Id { get; init; }
+
+    // Private setter — only class can change it
+    public int Age { get; private set; }
+
+    // Computed (no backing field)
+    public bool IsAdult => Age >= 18;
+
+    // Full property with validation
+    private decimal _salary;
+    public decimal Salary {
+        get => _salary;
+        set => _salary = value >= 0 ? value
+            : throw new ArgumentOutOfRangeException(nameof(value));
+    }
+}
+
+// Object initializer syntax
+var p = new Person { Name = "Alice", Id = "001" };`
+  },
+  {
+    category: 'OOP & Patterns', difficulty: 'Intermediate',
+    question: 'What are generics in C# and why use them?',
+    answer: 'Generics allow classes, methods, and interfaces to be parameterised by type, providing compile-time type safety without boxing/unboxing overhead. `List<T>` is a generic class — you get type-safe collections without casting. Constraints (`where T : class`, `where T : IComparable<T>`, `where T : new()`) restrict valid type arguments.',
+    tip: `// Generic class
+public class Stack<T>
+{
+    private readonly List<T> _data = new();
+    public void Push(T item) => _data.Add(item);
+    public T    Pop()  { var v = _data[^1]; _data.RemoveAt(_data.Count-1); return v; }
+    public T    Peek() => _data[^1];
+    public bool IsEmpty => _data.Count == 0;
+}
+
+// Generic method with constraint
+public T Max<T>(T a, T b) where T : IComparable<T>
+    => a.CompareTo(b) >= 0 ? a : b;
+
+Max(3, 7);          // 7
+Max("apple","banana"); // "banana"
+
+var stack = new Stack<string>();
+stack.Push("hello");`
+  },
+  {
+    category: 'OOP & Patterns', difficulty: 'Intermediate',
+    question: 'What are records in C# and when should you use them?',
+    answer: 'Records (C# 9+) are types designed for immutable data. They auto-generate value-based equality (`==` compares all properties), `ToString()`, and `GetHashCode()`. `with` expressions create modified copies non-destructively. Use records for DTOs, API response models, value objects, and command/query objects — anywhere immutability and equality by value matter.',
+    tip: `// Positional record — concise syntax
+public record Point(double X, double Y);
+
+var p1 = new Point(1, 2);
+var p2 = p1 with { Y = 5 };  // copy with one change
+
+Console.WriteLine(p1 == new Point(1, 2)); // true (value equality)
+Console.WriteLine(p2);                    // Point { X = 1, Y = 5 }
+
+// Extended record with methods
+public record Person(string Name, int Age)
+{
+    public bool IsAdult => Age >= 18;
+}
+
+// record struct (C# 10+) — value type record
+public record struct Coordinate(float Lat, float Lng);`
+  },
+  {
+    category: 'OOP & Patterns', difficulty: 'Intermediate',
+    question: 'What are delegates and events in C#?',
+    answer: 'A delegate is a type-safe function pointer — it holds references to methods matching a specific signature. `event` wraps a delegate and enforces the publish-subscribe pattern: only the declaring class can invoke it; subscribers can only `+=` or `-=`. `Action<T>` (void return) and `Func<T, TResult>` are built-in generic delegates. Events are the foundation of the Observer pattern.',
+    tip: `// Built-in delegates: Func & Action
+Func<int, int, int> add = (a, b) => a + b;
+Action<string>       log = Console.WriteLine;
+add(3, 4);  // 7
+
+// Event — publish/subscribe
+public class Button
+{
+    public event EventHandler<string> Clicked;
+
+    public void Click(string label)
+        => Clicked?.Invoke(this, label);  // null-safe invoke
+}
+
+var btn = new Button();
+btn.Clicked += (sender, label) =>
+    Console.WriteLine($"Clicked: {label}");
+
+btn.Click("Submit");  // Clicked: Submit`
+  },
+
+  /* ── LINQ & Async ── */
+  {
+    category: 'LINQ & Async', difficulty: 'Intermediate',
+    question: 'What is LINQ and how do you use it?',
+    answer: 'LINQ (Language Integrated Query) provides a uniform syntax to query collections, databases (EF Core), XML, and more. Queries are lazy — they execute only when iterated (`ToList()`, `foreach`). Two styles: method syntax (lambda chains, preferred) and query syntax (SQL-like). Core methods: `Where`, `Select`, `OrderBy`, `GroupBy`, `Join`, `First`, `Any`, `All`, `Count`, `Sum`, `Aggregate`.',
+    tip: `var people = new List<Person> { ... };
+
+// Method syntax (preferred)
+var result = people
+    .Where(p => p.Age > 18)
+    .OrderBy(p => p.Name)
+    .Select(p => new { p.Name, p.Age })
+    .ToList();
+
+// Query syntax (SQL-like)
+var result2 = from p in people
+              where p.Age > 18
+              orderby p.Name
+              select new { p.Name, p.Age };
+
+// Useful aggregates
+people.Any(p => p.Age > 65);             // bool
+people.Count(p => p.IsActive);           // int
+people.Max(p => p.Salary);              // decimal
+people.GroupBy(p => p.Department);      // grouped`
+  },
+  {
+    category: 'LINQ & Async', difficulty: 'Intermediate',
+    question: 'How does async/await work in C#?',
+    answer: '`async` marks a method asynchronous — it returns `Task` or `Task<T>`. `await` suspends the method and releases the thread back to the thread pool until the awaited task completes, then resumes. Avoid `.Result` or `.Wait()` — they block the thread and can deadlock. Use `Task.WhenAll` to run tasks in parallel. Use `ConfigureAwait(false)` in library code.',
+    tip: `public async Task<string> GetDataAsync(string url)
+{
+    using var client = new HttpClient();
+    // Thread is freed while waiting — not blocked
+    var response = await client.GetAsync(url);
+    response.EnsureSuccessStatusCode();
+    return await response.Content.ReadAsStringAsync();
+}
+
+// Run two tasks in parallel
+var t1 = GetDataAsync(url1);
+var t2 = GetDataAsync(url2);
+await Task.WhenAll(t1, t2);
+
+// Async stream (C# 8+)
+await foreach (var item in GetItemsAsync())
+    Console.WriteLine(item);`
+  },
+  {
+    category: 'LINQ & Async', difficulty: 'Intermediate',
+    question: 'What is Dependency Injection in C# / ASP.NET Core?',
+    answer: 'DI is a pattern where a class receives its dependencies from outside rather than creating them. ASP.NET Core has a built-in DI container. Register services with lifetimes: `Singleton` (one instance for the app), `Scoped` (one per HTTP request), `Transient` (new instance every time). Inject via constructor — the container resolves the whole dependency graph automatically.',
+    tip: `// Register in Program.cs
+builder.Services.AddSingleton<IConfig, AppConfig>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddTransient<IEmailService, SmtpEmailService>();
+
+// Inject via constructor (preferred)
+public class UserService
+{
+    private readonly IUserRepository _repo;
+    private readonly IEmailService   _email;
+
+    public UserService(IUserRepository repo, IEmailService email)
+    {
+        _repo  = repo;
+        _email = email;
+    }
+
+    public async Task RegisterAsync(string email)
+    {
+        var user = await _repo.CreateAsync(email);
+        await _email.SendWelcomeAsync(user);
+    }
+}`
+  },
+];
+
+/* ═══════════════════════════════════════════════════════════
+   JAVASCRIPT — 50 cards across 6 topics
+═══════════════════════════════════════════════════════════ */
+const JS_CARDS = [
+  {
+    category: 'JavaScript Core', difficulty: 'Beginner',
+    question: 'What is a closure?',
+    answer: 'A closure is a function that retains access to its outer (lexical) scope even after that scope has finished executing. The inner function "closes over" variables from the enclosing scope.',
+    tip: `function makeCounter() {
+  let count = 0;
+  return () => ++count;   // closes over 'count'
+}
+const counter = makeCounter();
+counter(); // 1
+counter(); // 2`
+  },
+  {
+    category: 'JavaScript Core', difficulty: 'Beginner',
+    question: 'What are the differences between `var`, `let`, and `const`?',
+    answer: '`var` is function-scoped, hoisted, and re-declarable. `let` is block-scoped, not hoisted to a usable value (temporal dead zone), and can be reassigned. `const` is block-scoped, cannot be reassigned, but objects/arrays it references can still be mutated.',
+    tip: `if (true) {
+  var x = 1;   // leaks to function scope
+  let y = 2;   // block-scoped
+  const z = 3; // block-scoped, no re-assign
+}
+console.log(x); // 1
+console.log(y); // ReferenceError`
+  },
+  {
+    category: 'JavaScript Core', difficulty: 'Beginner',
+    question: 'What is the difference between `==` and `===`?',
+    answer: '`==` (loose equality) performs type coercion before comparing — it converts operands to the same type first. `===` (strict equality) compares value AND type with no conversion. Always prefer `===` to avoid unexpected bugs.',
+    tip: `0 == "0"   // true  (coercion)
+0 === "0"  // false (strict)
+null == undefined   // true
+null === undefined  // false`
+  },
+  {
+    category: 'JavaScript Core', difficulty: 'Intermediate',
+    question: 'What is hoisting and what gets hoisted?',
+    answer: 'Hoisting is JS\'s behaviour of moving declarations to the top of their scope before execution. Function declarations are fully hoisted. `var` declarations are hoisted but initialised as `undefined`. `let`/`const` are hoisted but stay in a Temporal Dead Zone (TDZ) — accessing them before declaration throws a ReferenceError.',
+    tip: `console.log(a); // undefined (hoisted)
+var a = 5;
+
+console.log(b); // ReferenceError (TDZ)
+let b = 5;
+
+greet(); // works — function declaration hoisted
+function greet() { console.log('hi'); }`
+  },
+  {
+    category: 'JavaScript Core', difficulty: 'Beginner',
+    question: 'What does the spread operator (`...`) do?',
+    answer: 'The spread operator expands an iterable (array, string, Set) or object into its individual elements. Common uses: copying arrays/objects, merging them, and spreading array items as function arguments.',
+    tip: `const a = [1, 2];
+const b = [...a, 3, 4];   // [1, 2, 3, 4]
+
+const obj = { x: 1 };
+const clone = { ...obj, y: 2 }; // { x:1, y:2 }
+
+Math.max(...a); // 2`
+  },
+  {
+    category: 'JavaScript Core', difficulty: 'Beginner',
+    question: 'What is destructuring?',
+    answer: 'Destructuring is syntax that unpacks values from arrays or properties from objects into individual variables. It supports default values, renaming, and rest patterns.',
+    tip: `const { name, age = 18 } = person;       // object
+const [first, , third] = [1, 2, 3];     // array
+const { a: renamed } = { a: 42 };       // rename
+const { x, ...rest } = { x:1, y:2 };   // rest`
+  },
+  {
+    category: 'JavaScript Core', difficulty: 'Intermediate',
+    question: 'How does `this` work in JavaScript?',
+    answer: '`this` is determined at call time, not definition time. In a regular function: `this` = the caller object, or `undefined` in strict mode. In an arrow function: `this` is inherited from the enclosing lexical scope. In a method: `this` = the object before the dot. In class constructor: `this` = the new instance.',
+    tip: `const obj = {
+  name: 'Alice',
+  greet() { console.log(this.name); }, // 'Alice'
+  arrow: () => console.log(this),      // outer this
+};
+obj.greet();         // 'Alice'
+const fn = obj.greet;
+fn();                // undefined (strict mode)`
+  },
+  {
+    category: 'JavaScript Core', difficulty: 'Intermediate',
+    question: 'What is the difference between `call`, `apply`, and `bind`?',
+    answer: 'All three set the `this` value of a function. `call(thisArg, a, b)` invokes immediately with individual arguments. `apply(thisArg, [a, b])` invokes immediately with an array. `bind(thisArg, a)` returns a new permanently-bound function without calling it.',
+    tip: `function greet(greeting, punct) {
+  return greeting + ' ' + this.name + punct;
+}
+const user = { name: 'Alice' };
+greet.call(user, 'Hi', '!');      // 'Hi Alice!'
+greet.apply(user, ['Hi', '!']);   // 'Hi Alice!'
+const hi = greet.bind(user, 'Hi');
+hi('.');                          // 'Hi Alice.'`
+  },
+  {
+    category: 'JavaScript Core', difficulty: 'Beginner',
+    question: 'What is the difference between `null` and `undefined`?',
+    answer: '`undefined` means a variable was declared but never assigned a value — it is the default. `null` is an explicit, intentional absence of a value. Notably, `typeof null === "object"` is a long-standing JS bug. Use `=== null` to check for null.',
+    tip: `let a;              // undefined
+let b = null;       // explicit empty value
+
+typeof undefined    // "undefined"
+typeof null         // "object" (quirk!)
+
+null == undefined   // true (loose)
+null === undefined  // false`
+  },
+  {
+    category: 'JavaScript Core', difficulty: 'Intermediate',
+    question: 'What is prototypal inheritance?',
+    answer: 'Objects in JS have an internal `[[Prototype]]` link to another object. When you access a property, JS walks up the prototype chain until it finds it or reaches `null`. Classes in JS are syntactic sugar over this prototype system.',
+    tip: `const animal = { breathe() { return true; } };
+const dog = Object.create(animal);
+dog.bark = () => 'woof';
+
+dog.bark();    // 'woof'   (own property)
+dog.breathe(); // true     (from prototype)
+Object.getPrototypeOf(dog) === animal; // true`
+  },
+  {
+    category: 'JavaScript Core', difficulty: 'Intermediate',
+    question: 'What is a higher-order function?',
+    answer: 'A higher-order function either takes one or more functions as arguments, or returns a function. They enable composition, abstraction, and functional programming patterns. `map`, `filter`, `reduce`, and `setTimeout` are all higher-order functions.',
+    tip: `// Takes a function
+[1,2,3].map(x => x * 2);       // [2, 4, 6]
+
+// Returns a function
+const multiply = n => x => x * n;
+const double = multiply(2);
+double(5); // 10`
+  },
+  {
+    category: 'JavaScript Core', difficulty: 'Intermediate',
+    question: 'What is the difference between `map`, `filter`, and `reduce`?',
+    answer: '`map` transforms every element and returns a new array of the same length. `filter` returns a new array with only elements that pass a test. `reduce` accumulates all elements into a single value of any type.',
+    tip: `const nums = [1, 2, 3, 4];
+nums.map(n => n * 2);              // [2, 4, 6, 8]
+nums.filter(n => n % 2 === 0);    // [2, 4]
+nums.reduce((acc, n) => acc + n, 0); // 10`
+  },
+  {
+    category: 'JavaScript Core', difficulty: 'Advanced',
+    question: 'What is a generator function?',
+    answer: 'A generator function (declared with `function*`) can pause execution at each `yield` and resume later. Calling it returns an iterator. Useful for lazy sequences, infinite data streams, and async control flow.',
+    tip: `function* range(start, end) {
+  for (let i = start; i <= end; i++) yield i;
+}
+const gen = range(1, 3);
+gen.next(); // { value: 1, done: false }
+gen.next(); // { value: 2, done: false }
+gen.next(); // { value: 3, done: false }
+gen.next(); // { value: undefined, done: true }`
+  },
+  {
+    category: 'JavaScript Core', difficulty: 'Intermediate',
+    question: 'What is nullish coalescing (`??`) vs logical OR (`||`)?',
+    answer: '`||` returns the right-hand side when the left is any falsy value (`0`, `""`, `false`, `null`, `undefined`). `??` only falls back when the left side is `null` or `undefined`, preserving legitimate falsy values like `0` or `""`. Use `??` when `0` or empty string are valid values.',
+    tip: `const a = 0 || 'default';   // 'default' (0 is falsy)
+const b = 0 ?? 'default';   // 0  (not null/undef)
+
+const c = null ?? 'fallback'; // 'fallback'
+const d = '' ?? 'fallback';   // ''`
+  },
+  {
+    category: 'Async JavaScript', difficulty: 'Beginner',
+    question: 'What is a Promise?',
+    answer: 'A Promise is an object representing the eventual completion or failure of an async operation. It has three states: `pending` (initial), `fulfilled` (succeeded), or `rejected` (failed). You attach callbacks with `.then()`, `.catch()`, and `.finally()`.',
+    tip: `const p = new Promise((resolve, reject) => {
+  setTimeout(() => resolve('done'), 1000);
+});
+
+p.then(val => console.log(val))  // 'done'
+ .catch(err => console.error(err))
+ .finally(() => console.log('cleanup'));`
+  },
+  {
+    category: 'Async JavaScript', difficulty: 'Beginner',
+    question: 'What does `async`/`await` do?',
+    answer: '`async` marks a function to always return a Promise. `await` pauses execution inside that function until the awaited Promise settles, then returns its resolved value. It makes asynchronous code look synchronous. Errors are caught with `try/catch`.',
+    tip: `async function fetchUser(id) {
+  try {
+    const res  = await fetch('/api/users/' + id);
+    const data = await res.json();
+    return data;
+  } catch (err) {
+    console.error('Failed:', err);
+  }
+}`
+  },
+  {
+    category: 'Async JavaScript', difficulty: 'Advanced',
+    question: 'How does the JavaScript event loop work?',
+    answer: 'JS is single-threaded. The event loop continuously checks: if the call stack is empty, it first drains the microtask queue (Promises, queueMicrotask), then picks one task from the macrotask queue (setTimeout, setInterval, I/O). Microtasks always run before the next macrotask.',
+    tip: `console.log('1');                        // call stack
+setTimeout(() => console.log('4'), 0);  // macrotask
+Promise.resolve().then(() => console.log('3')); // microtask
+console.log('2');                        // call stack
+// Output order: 1 → 2 → 3 → 4`
+  },
+  {
+    category: 'Async JavaScript', difficulty: 'Intermediate',
+    question: 'What is the difference between microtasks and macrotasks?',
+    answer: 'Macrotasks: `setTimeout`, `setInterval`, `setImmediate`, I/O, UI events. Microtasks: Promise `.then`/`.catch`, `queueMicrotask`, `MutationObserver`. After each macrotask the entire microtask queue is drained before the next macrotask. Promise callbacks always resolve before the next timer.',
+  },
+  {
+    category: 'Async JavaScript', difficulty: 'Intermediate',
+    question: 'What is the difference between `Promise.all`, `Promise.allSettled`, and `Promise.race`?',
+    answer: '`Promise.all([...])` — resolves when ALL resolve; rejects immediately if ANY rejects. `Promise.allSettled([...])` — waits for ALL to settle; returns array of `{status, value/reason}`. `Promise.race([...])` — resolves/rejects as soon as the FIRST one settles.',
+    tip: `await Promise.all([p1, p2]);        // fails fast on error
+await Promise.allSettled([p1, p2]); // always waits for all
+await Promise.race([p1, timeout]);  // first settled wins
+// Also: Promise.any() — first fulfilled (ignores rejects)`
+  },
+  {
+    category: 'Async JavaScript', difficulty: 'Intermediate',
+    question: 'What is callback hell and how do you avoid it?',
+    answer: 'Callback hell (pyramid of doom) occurs when async operations are deeply nested, making code unreadable and error-prone. Solutions: Promises with `.then()` chaining, `async`/`await`, or extracting callbacks into named functions.',
+    tip: `// Callback hell ❌
+fs.readFile(f, (err, data) => {
+  parse(data, (err, result) => {
+    save(result, (err) => { ... });
+  });
+});
+
+// async/await ✅
+const data   = await fs.promises.readFile(f);
+const result = await parse(data);
+await save(result);`
+  },
+  {
+    category: 'Async JavaScript', difficulty: 'Advanced',
+    question: 'What is `AbortController` and when do you use it?',
+    answer: 'AbortController lets you cancel in-flight async operations (like `fetch` requests). Create a controller, pass its `.signal` to the request, and call `.abort()` to cancel. The fetch rejects with a `DOMException` named `"AbortError"`. Useful for cancelling stale requests in search-as-you-type or on component unmount.',
+    tip: `const controller = new AbortController();
+
+fetch('/api/data', { signal: controller.signal })
+  .then(r => r.json())
+  .catch(err => {
+    if (err.name === 'AbortError') return; // cancelled
+    throw err;
+  });
+
+controller.abort(); // cancel the request`
+  },
+  {
+    category: 'Async JavaScript', difficulty: 'Intermediate',
+    question: 'What does `setTimeout(fn, 0)` actually do?',
+    answer: 'It schedules `fn` as a macrotask to run after the current call stack AND all microtasks are cleared, with at least 0 ms delay (browsers enforce ~1–4 ms minimum). Does NOT run immediately. Used to defer work until after the browser paints, or to yield control to the event loop.',
+    tip: `console.log('A');
+setTimeout(() => console.log('C'), 0);
+Promise.resolve().then(() => console.log('B'));
+// Output: A → B → C
+// Microtask (Promise) always runs before macrotask (setTimeout)`
+  },
+  {
+    category: 'DOM & Browser', difficulty: 'Intermediate',
+    question: 'What is event delegation?',
+    answer: 'Event delegation places a single listener on a parent element instead of on every child. Because events bubble up the DOM, you check `event.target` to act on the specific child. Benefits: fewer listeners, works for dynamically added elements, lower memory usage.',
+    tip: `document.querySelector('#list').addEventListener('click', e => {
+  const item = e.target.closest('li');
+  if (!item) return;
+  console.log('Clicked:', item.textContent);
+});`
+  },
+  {
+    category: 'DOM & Browser', difficulty: 'Intermediate',
+    question: 'What is the difference between event bubbling and event capturing?',
+    answer: 'Events travel in three phases: capture (top → target), target, bubble (target → top). By default, listeners fire in the bubble phase. Pass `true` (or `{ capture: true }`) as the third argument to listen in the capture phase. `stopPropagation()` halts propagation in either direction.',
+    tip: `// Bubble (default) — inner to outer
+el.addEventListener('click', fn);
+
+// Capture — outer to inner
+el.addEventListener('click', fn, true);
+
+// Stop propagation
+el.addEventListener('click', e => {
+  e.stopPropagation(); // stops travelling up/down
+});`
+  },
+  {
+    category: 'DOM & Browser', difficulty: 'Beginner',
+    question: 'What is the difference between `preventDefault()` and `stopPropagation()`?',
+    answer: '`preventDefault()` cancels the browser\'s default action (e.g. prevents a link from navigating, a form from submitting). `stopPropagation()` stops the event from travelling further up/down the DOM tree. They are independent — you can call one, both, or neither.',
+    tip: `link.addEventListener('click', e => {
+  e.preventDefault();    // don't follow href
+  e.stopPropagation();   // don't bubble to parent
+});`
+  },
+  {
+    category: 'DOM & Browser', difficulty: 'Intermediate',
+    question: 'What is `MutationObserver` and when is it useful?',
+    answer: '`MutationObserver` watches for changes to the DOM (added/removed nodes, attribute changes, text content changes) and fires a callback asynchronously. Useful for reacting to third-party DOM mutations, tracking when elements appear/disappear, building component frameworks.',
+    tip: `const observer = new MutationObserver(mutations => {
+  mutations.forEach(m => console.log(m.type));
+});
+observer.observe(document.body, {
+  childList: true,   // watch added/removed nodes
+  subtree: true,     // include all descendants
+  attributes: true,  // watch attribute changes
+});
+observer.disconnect(); // stop observing`
+  },
+  {
+    category: 'DOM & Browser', difficulty: 'Intermediate',
+    question: 'What is `IntersectionObserver` and what is it used for?',
+    answer: '`IntersectionObserver` asynchronously observes when an element enters or exits the viewport. It fires a callback with intersection ratio data. Used for: lazy-loading images, infinite scroll, triggering CSS animations on scroll, sticky header activation.',
+    tip: `const observer = new IntersectionObserver(entries => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.src = entry.target.dataset.src; // lazy load
+      observer.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.1 });
+
+document.querySelectorAll('img[data-src]')
+  .forEach(img => observer.observe(img));`
+  },
+  {
+    category: 'DOM & Browser', difficulty: 'Beginner',
+    question: 'What is the difference between `localStorage` and `sessionStorage`?',
+    answer: 'Both Web Storage APIs store key-value pairs as strings. `localStorage` persists until explicitly cleared — survives browser restarts. `sessionStorage` is cleared when the browser tab closes. Both are synchronous, limited to ~5 MB, and scoped to the origin.',
+    tip: `localStorage.setItem('theme', 'dark');
+localStorage.getItem('theme');     // 'dark'
+localStorage.removeItem('theme');
+localStorage.clear();
+
+// sessionStorage: same API, tab-scoped
+sessionStorage.setItem('token', 'abc');`
+  },
+  {
+    category: 'DOM & Browser', difficulty: 'Intermediate',
+    question: 'What is `requestAnimationFrame` and why use it for animations?',
+    answer: '`requestAnimationFrame(callback)` schedules a callback to run just before the browser\'s next repaint (~60 fps). Syncs with the display refresh rate, pauses when the tab is hidden, and avoids layout thrashing. Always use it for JS-driven animations instead of `setInterval`.',
+    tip: `function animate(timestamp) {
+  const progress = timestamp / 1000; // seconds
+  element.style.left = progress * 100 + 'px';
+
+  if (progress < 5) {
+    requestAnimationFrame(animate); // loop
+  }
+}
+requestAnimationFrame(animate);`
+  },
+  {
+    category: 'DOM & Browser', difficulty: 'Intermediate',
+    question: 'What is the Virtual DOM?',
+    answer: 'The Virtual DOM is a lightweight in-memory JS representation of the real DOM, used by frameworks like React. On state change, a new virtual tree is created, diffed against the previous one (reconciliation), and only changed nodes are updated in the real DOM. This batches updates and avoids costly full re-renders.',
+  },
+  {
+    category: 'CSS', difficulty: 'Beginner',
+    question: 'What is the CSS box model?',
+    answer: 'Every element is a rectangular box: Content → Padding → Border → Margin (inside out). `box-sizing: content-box` (default) makes `width`/`height` apply to content only. `box-sizing: border-box` includes padding and border in stated dimensions — far more intuitive and recommended.',
+    tip: `/* Apply globally (recommended) */
+*, *::before, *::after { box-sizing: border-box; }
+
+.box {
+  width: 200px;   /* includes padding + border */
+  padding: 20px;
+  border: 2px solid;
+  margin: 10px;   /* outside the element */
+}`
+  },
+  {
+    category: 'CSS', difficulty: 'Beginner',
+    question: 'What is Flexbox and when should you use it?',
+    answer: 'Flexbox is a one-dimensional layout model — distributing space along a row OR a column. Use it for: navigation bars, centering items, equal-height columns, spacing with `gap`, and any layout where items should flex to fill space. Set `display: flex` on the parent container.',
+    tip: `.container {
+  display: flex;
+  flex-direction: row;            /* or column */
+  justify-content: space-between; /* main axis */
+  align-items: center;            /* cross axis */
+  gap: 1rem;
+  flex-wrap: wrap;                /* allow wrapping */
+}`
+  },
+  {
+    category: 'CSS', difficulty: 'Intermediate',
+    question: 'What is CSS Grid and how does it differ from Flexbox?',
+    answer: 'CSS Grid is two-dimensional — rows AND columns simultaneously. Use Grid for overall page layouts, image galleries, and complex two-axis positioning. Use Flexbox for one-dimensional layouts (a row OR a column). They complement each other and can be nested freely.',
+    tip: `.grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+}
+
+.item-wide {
+  grid-column: span 2; /* spans 2 columns */
+}
+
+/* Named areas */
+grid-template-areas:
+  "header header"
+  "sidebar main"
+  "footer footer";`
+  },
+  {
+    category: 'CSS', difficulty: 'Intermediate',
+    question: 'How does CSS specificity work?',
+    answer: 'Specificity is a score (A, B, C): A = inline styles, B = ID selectors, C = class/attribute/pseudo-class selectors + element selectors (lowest). Higher specificity always wins, regardless of source order. When tied, last rule wins. Avoid `!important` — it breaks the cascade.',
+    tip: `/* Specificity: A  B  C  */
+style=""            /* 1, 0, 0 — inline */
+#nav                /* 0, 1, 0 — ID */
+.nav-link           /* 0, 0, 1 — class */
+nav a.link          /* 0, 0, 2 — element + class */
+nav                 /* 0, 0, 1 — element */`
+  },
+  {
+    category: 'CSS', difficulty: 'Beginner',
+    question: 'What are CSS Custom Properties (variables)?',
+    answer: 'CSS Custom Properties (`--name: value`) are variables that cascade and inherit like regular CSS. Define on `:root` for global scope. Use `var(--name)` to reference. Ideal for theming and design tokens — change one variable and it propagates everywhere.',
+    tip: `:root {
+  --color-primary: #38bdf8;
+  --spacing-md: 1rem;
+}
+.button {
+  background: var(--color-primary);
+  padding: var(--spacing-md);
+}
+@media (prefers-color-scheme: dark) {
+  :root { --color-primary: #7dd3fc; }
+}`
+  },
+  {
+    category: 'CSS', difficulty: 'Intermediate',
+    question: 'What is the difference between `position: relative`, `absolute`, `fixed`, and `sticky`?',
+    answer: '`relative`: offset from normal position, stays in flow. `absolute`: removed from flow, positioned relative to nearest positioned ancestor. `fixed`: removed from flow, positioned relative to viewport — stays on scroll. `sticky`: stays in flow until it hits a threshold, then acts like `fixed` within its parent.',
+    tip: `.parent { position: relative; } /* anchor for absolute child */
+
+.tooltip {
+  position: absolute;
+  top: 100%; left: 0; /* relative to .parent */
+}
+.header {
+  position: sticky;
+  top: 0;       /* sticks when scrolled to top */
+  z-index: 100;
+}`
+  },
+  {
+    category: 'CSS', difficulty: 'Intermediate',
+    question: 'What is a stacking context and how does `z-index` work?',
+    answer: 'A stacking context is an isolated layer where elements are painted in z-order. `z-index` only works within the same stacking context — a child with `z-index: 9999` cannot appear above a sibling stacking context with lower z-index. New stacking contexts are created by: `position` + `z-index`, `opacity < 1`, `transform`, `filter`, `will-change`, etc.',
+  },
+  {
+    category: 'CSS', difficulty: 'Intermediate',
+    question: 'What is BEM methodology?',
+    answer: 'BEM (Block, Element, Modifier) is a CSS naming convention: `.block`, `.block__element`, `.block--modifier`. Creates self-documenting, low-specificity class names. Avoids style leaks and makes component-based CSS scalable across large teams without naming conflicts.',
+    tip: `/* Block */           .card {}
+/* Element */        .card__title {}
+/* Element */        .card__image {}
+/* Modifier */       .card--featured {}
+/* Elem+Modifier */  .card__title--large {}
+
+<article class="card card--featured">
+  <h2 class="card__title card__title--large">
+    Hello
+  </h2>
+</article>`
+  },
+  {
+    category: 'Performance', difficulty: 'Intermediate',
+    question: 'What is the difference between debounce and throttle?',
+    answer: 'Both limit how often a function runs. `debounce` delays execution until after a pause — fires once after the user stops triggering. Best for: search-as-you-type, window resize. `throttle` fires at most once per interval — events in-between are ignored. Best for: scroll handlers, mousemove, game loops.',
+    tip: `// Debounce — fires after 300ms pause
+const search = debounce(q => fetchResults(q), 300);
+input.addEventListener('input', e => search(e.target.value));
+
+// Throttle — fires at most once per 100ms
+const onScroll = throttle(() => updateHeader(), 100);
+window.addEventListener('scroll', onScroll);`
+  },
+  {
+    category: 'Performance', difficulty: 'Beginner',
+    question: 'What is lazy loading and why does it matter?',
+    answer: 'Lazy loading defers loading of resources (images, scripts, components) until they are needed (e.g. entering the viewport). Reduces initial page load time, bandwidth, and memory usage. Native HTML: `loading="lazy"` on `<img>` and `<iframe>`.',
+    tip: `<!-- Native lazy loading -->
+<img src="photo.jpg" loading="lazy" alt="..." />
+
+<!-- React lazy component -->
+const Chart = React.lazy(() => import('./Chart'));
+
+// IntersectionObserver approach
+if (entry.isIntersecting) {
+  img.src = img.dataset.src; // load on demand
+}`
+  },
+  {
+    category: 'Performance', difficulty: 'Advanced',
+    question: 'What is the Critical Rendering Path?',
+    answer: 'The CRP is the sequence of steps the browser takes to render pixels: Parse HTML → Build DOM → Parse CSS → Build CSSOM → Combine into Render Tree → Layout → Paint → Composite. Optimise by: minimising render-blocking resources, reducing CSS/JS sizes, eliminating layout thrashing, using `async`/`defer` on scripts.',
+  },
+  {
+    category: 'Performance', difficulty: 'Advanced',
+    question: 'What are Web Workers?',
+    answer: 'Web Workers run JavaScript in a background thread, separate from the main UI thread. Cannot access the DOM directly; communicate via `postMessage`/`onmessage`. Use for CPU-intensive tasks (image processing, data crunching, parsing) that would otherwise freeze the UI.',
+    tip: `// main.js
+const worker = new Worker('worker.js');
+worker.postMessage({ data: heavyArray });
+worker.onmessage = e => console.log('Result:', e.data);
+
+// worker.js
+self.onmessage = e => {
+  const result = e.data.data.map(heavyCalc);
+  self.postMessage(result);
+};`
+  },
+  {
+    category: 'Performance', difficulty: 'Advanced',
+    question: 'What is tree shaking?',
+    answer: 'Tree shaking is dead-code elimination by bundlers (Webpack, Rollup, Vite). It statically analyses ES module `import`/`export` statements and removes code that is never imported. Only works with ES modules — not CommonJS `require`. Results in smaller production bundles.',
+    tip: `// math.js
+export const add      = (a, b) => a + b;
+export const multiply = (a, b) => a * b; // unused
+
+// main.js — only 'add' is bundled
+import { add } from './math.js';
+
+// multiply() is tree-shaken out of the final bundle`
+  },
+  {
+    category: 'Performance', difficulty: 'Advanced',
+    question: 'What is code splitting?',
+    answer: 'Code splitting divides a JS bundle into smaller chunks loaded on demand instead of all at once. Reduces initial bundle size and improves Time to Interactive (TTI). Implemented via dynamic `import()`, `React.lazy`, or bundler entry-point/vendor chunk configuration.',
+    tip: `// Dynamic import — chunk loaded on click
+button.addEventListener('click', async () => {
+  const { Chart } = await import('./chart.js');
+  new Chart(canvas, config);
+});
+
+// React lazy-loaded route
+const Dashboard = React.lazy(() => import('./Dashboard'));`
+  },
+  {
+    category: 'Security', difficulty: 'Intermediate',
+    question: 'What is XSS (Cross-Site Scripting)?',
+    answer: 'XSS is an attack where malicious scripts are injected into pages viewed by other users. Types: Stored (saved in DB), Reflected (in URL), DOM-based (unsafe client-side DOM manipulation). Prevent with: output encoding, CSP headers, avoid `innerHTML` with untrusted data.',
+    tip: `// VULNERABLE ❌
+element.innerHTML = userInput;
+
+// SAFE ✅ — use textContent
+element.textContent = userInput;
+
+// Safe encoding helper
+function encode(str) {
+  return str
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
+}`
+  },
+  {
+    category: 'Security', difficulty: 'Intermediate',
+    question: 'What is CSRF (Cross-Site Request Forgery)?',
+    answer: 'CSRF tricks an authenticated user\'s browser into making an unwanted request to a site they\'re logged into. Since cookies are sent automatically, the server sees a valid session. Defences: CSRF tokens in forms, `SameSite` cookie attribute (`Strict`/`Lax`), checking `Origin`/`Referer` headers.',
+    tip: `// Server sets SameSite cookie
+Set-Cookie: session=abc; SameSite=Strict; Secure; HttpOnly
+
+// CSRF token in HTML form (server-rendered)
+<input type="hidden" name="csrf_token"
+       value="{{ csrf_token }}">`
+  },
+  {
+    category: 'Security', difficulty: 'Beginner',
+    question: 'What is HTTPS and why does it matter?',
+    answer: 'HTTPS uses TLS (Transport Layer Security) to encrypt data between client and server, providing: Confidentiality (data unreadable in transit), Integrity (data can\'t be tampered with), Authentication (certificate proves server identity). Without HTTPS, passwords and tokens are transmitted in plaintext.',
+  },
+  {
+    category: 'Security', difficulty: 'Intermediate',
+    question: 'What is Content Security Policy (CSP)?',
+    answer: 'CSP is an HTTP response header that tells the browser which sources are allowed to load scripts, styles, images, etc. One of the most effective XSS defences — even if a script is injected, the browser refuses to execute it if it violates the policy.',
+    tip: `Content-Security-Policy:
+  default-src 'self';
+  script-src 'self' https://cdn.example.com;
+  style-src 'self' 'unsafe-inline';
+  img-src *;
+  frame-ancestors 'none';`
+  },
+  {
+    category: 'Security', difficulty: 'Intermediate',
+    question: 'What is CORS (Cross-Origin Resource Sharing)?',
+    answer: 'CORS is a browser security mechanism that restricts cross-origin HTTP requests. By default, browsers block fetch/XHR to a different origin. The server must include `Access-Control-Allow-Origin` and related headers to grant access. CORS is enforced by the browser only — it does not protect server-to-server calls.',
+    tip: `# Server response headers
+Access-Control-Allow-Origin: https://app.example.com
+Access-Control-Allow-Methods: GET, POST
+Access-Control-Allow-Headers: Content-Type, Authorization
+
+# Preflight OPTIONS sent for:
+# - non-simple methods (PUT, DELETE, PATCH)
+# - custom headers`
+  },
+  {
+    category: 'Security', difficulty: 'Beginner',
+    question: 'What is SQL Injection and how do you prevent it?',
+    answer: 'SQL Injection occurs when untrusted user input is embedded directly in a SQL query, letting attackers read unauthorised data, bypass authentication, or delete records. Prevention: always use parameterised queries / prepared statements. Never concatenate user input into SQL strings.',
+    tip: `// VULNERABLE ❌
+const q = "SELECT * FROM users WHERE id = " + userId;
+
+// SAFE ✅ — parameterised query
+db.query('SELECT * FROM users WHERE id = ?', [userId]);
+
+// Node.js (pg)
+const { rows } = await pool.query(
+  'SELECT * FROM users WHERE id = $1', [userId]
+);`
+  },
+];
+
+/* ═══════════════════════════════════════════════════════════
+   SUBJECTS
+═══════════════════════════════════════════════════════════ */
+const SUBJECTS = {
+  'DSA':        DSA_CARDS,
+  'Python':     PYTHON_CARDS,
+  'C#':         CSHARP_CARDS,
+  'JavaScript': JS_CARDS,
+};
+
+/* ═══════════════════════════════════════════════════════════
+   CONFIG
+═══════════════════════════════════════════════════════════ */
+const SUBJECT_COLORS = {
+  'DSA':        '#f97316',
+  'Python':     '#3b82f6',
+  'C#':         '#8b5cf6',
+  'JavaScript': '#f59e0b',
+};
+
+const CATEGORY_COLORS = {
+  // DSA
+  'Complexity':      '#f97316',
+  'Data Structures': '#fb923c',
+  'Algorithms':      '#ea580c',
+  'Patterns':        '#c2410c',
+  // C#
+  'C# Basics':    '#8b5cf6',
+  'OOP & Patterns': '#a78bfa',
+  'LINQ & Async': '#7c3aed',
+  // Python
+  'Core Python': '#3b82f6',
+  'OOP & Design': '#60a5fa',
+  'Ecosystem':   '#1d4ed8',
+  // JavaScript
+  'JavaScript Core': '#f59e0b',
+  'Async JavaScript':'#3b82f6',
+  'DOM & Browser':   '#10b981',
+  'CSS':             '#ec4899',
+  'Performance':     '#8b5cf6',
+  'Security':        '#ef4444',
+};
+
+const DIFFICULTY_CONFIG = {
+  'Beginner':     { bg: '#10b981' },
+  'Intermediate': { bg: '#f59e0b' },
+  'Advanced':     { bg: '#ef4444' },
+};
+
+/* ═══════════════════════════════════════════════════════════
+   STATE
+═══════════════════════════════════════════════════════════ */
+const state = {
+  activeSubject: 'DSA',
+  activeFilter:  'All',
+  currentIndex:  0,
+  isFlipped:     false,
+  known:         new Set(), // stores "Subject|index" strings
+  deck:          [],
+};
+
+/* ═══════════════════════════════════════════════════════════
+   DOM REFS
+═══════════════════════════════════════════════════════════ */
+const cardEl         = document.getElementById('card');
+const questionText   = document.getElementById('questionText');
+const answerText     = document.getElementById('answerText');
+const tipBlock       = document.getElementById('tipBlock');
+const tipCode        = document.getElementById('tipCode');
+const progressBar    = document.getElementById('progressBar');
+const progressInd    = document.getElementById('progressIndicator');
+const statsBadge     = document.getElementById('statsBadge');
+const catBadgeFront  = document.getElementById('catBadgeFront');
+const diffBadgeFront = document.getElementById('diffBadgeFront');
+const catBadgeBack   = document.getElementById('catBadgeBack');
+const diffBadgeBack  = document.getElementById('diffBadgeBack');
+const knownBtnFront  = document.getElementById('knownBtnFront');
+const knownBtnBack   = document.getElementById('knownBtnBack');
+
+/* ═══════════════════════════════════════════════════════════
+   UTILS
+═══════════════════════════════════════════════════════════ */
+function formatText(str) {
+  return str.replace(/`([^`\n]+)`/g, '<code>$1</code>');
+}
+
+function cardId(card) {
+  const idx = SUBJECTS[state.activeSubject].indexOf(card);
+  return `${state.activeSubject}|${idx}`;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   BUILD SUBJECT MENU
+═══════════════════════════════════════════════════════════ */
+function buildSubjectMenu() {
+  const nav = document.getElementById('subjectMenu');
+  nav.innerHTML = '';
+
+  Object.keys(SUBJECTS).forEach(subject => {
+    const btn = document.createElement('button');
+    btn.className   = 'subject-btn' + (subject === state.activeSubject ? ' active' : '');
+    btn.textContent = subject;
+
+    const color = SUBJECT_COLORS[subject] || '#64748b';
+    if (subject === state.activeSubject) {
+      btn.style.background = color;
+    } else {
+      btn.addEventListener('mouseenter', () => { btn.style.borderColor = color; btn.style.color = color; });
+      btn.addEventListener('mouseleave', () => { btn.style.borderColor = ''; btn.style.color = ''; });
+    }
+
+    btn.addEventListener('click', () => {
+      if (subject === state.activeSubject) return;
+      state.activeSubject = subject;
+      state.activeFilter  = 'All';
+      state.currentIndex  = 0;
+      state.isFlipped     = false;
+      buildDeck();
+      buildSubjectMenu();
+      buildFilterBar();
+      render();
+    });
+
+    nav.appendChild(btn);
+  });
+}
+
+/* ═══════════════════════════════════════════════════════════
+   BUILD CATEGORY FILTER BAR
+═══════════════════════════════════════════════════════════ */
+function buildFilterBar() {
+  const nav = document.getElementById('categoryFilter');
+  nav.innerHTML = '';
+
+  const subjectCards = SUBJECTS[state.activeSubject] || [];
+  const cats = ['All', ...new Set(subjectCards.map(c => c.category).filter(Boolean))];
+
+  cats.forEach(cat => {
+    const btn = document.createElement('button');
+    btn.className   = 'filter-btn' + (cat === state.activeFilter ? ' active' : '');
+    btn.textContent = cat;
+
+    const color = cat === 'All'
+      ? SUBJECT_COLORS[state.activeSubject]
+      : (CATEGORY_COLORS[cat] || SUBJECT_COLORS[state.activeSubject]);
+
+    if (state.activeFilter === cat) {
+      btn.style.background = color;
+      btn.style.color      = '#0a0e1a';
+    }
+
+    btn.addEventListener('click', () => {
+      state.activeFilter = cat;
+      state.currentIndex = 0;
+      state.isFlipped    = false;
+      buildDeck();
+      buildFilterBar();
+      render();
+    });
+
+    nav.appendChild(btn);
+  });
+}
+
+/* ═══════════════════════════════════════════════════════════
+   BUILD DECK
+═══════════════════════════════════════════════════════════ */
+function buildDeck() {
+  const all = SUBJECTS[state.activeSubject] || [];
+  state.deck = state.activeFilter === 'All'
+    ? [...all]
+    : all.filter(c => c.category === state.activeFilter);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   RENDER
+═══════════════════════════════════════════════════════════ */
+function render() {
+  if (state.deck.length === 0) return;
+
+  const card = state.deck[state.currentIndex];
+  const id   = cardId(card);
+
+  // Text
+  questionText.innerHTML = formatText(card.question);
+  answerText.innerHTML   = formatText(card.answer);
+
+  // Code tip block
+  if (card.tip) {
+    tipCode.textContent    = card.tip;
+    tipBlock.style.display = 'block';
+  } else {
+    tipBlock.style.display = 'none';
+  }
+
+  // Flip
+  cardEl.classList.toggle('flipped', state.isFlipped);
+
+  // Progress
+  const pct = ((state.currentIndex + 1) / state.deck.length) * 100;
+  progressBar.style.width = pct + '%';
+  progressInd.textContent = `${state.currentIndex + 1} of ${state.deck.length}`;
+
+  // Stats
+  const knownCount = state.deck.filter(c => state.known.has(cardId(c))).length;
+  statsBadge.textContent = `${knownCount} / ${state.deck.length} known`;
+
+  // Category badges
+  const catColor = CATEGORY_COLORS[card.category] || SUBJECT_COLORS[state.activeSubject] || '#94a3b8';
+  [catBadgeFront, catBadgeBack].forEach(b => {
+    b.textContent        = card.category;
+    b.style.background   = catColor + '22';
+    b.style.color        = catColor;
+    b.style.border       = `1px solid ${catColor}55`;
+  });
+
+  // Difficulty badges
+  const diffColor = (DIFFICULTY_CONFIG[card.difficulty] || { bg: '#64748b' }).bg;
+  [diffBadgeFront, diffBadgeBack].forEach(b => {
+    b.textContent        = card.difficulty;
+    b.style.background   = diffColor + '33';
+    b.style.color        = diffColor;
+    b.style.border       = `1px solid ${diffColor}66`;
+  });
+
+  // Known buttons
+  const isKnown = state.known.has(id);
+  [knownBtnFront, knownBtnBack].forEach(btn => {
+    btn.textContent = isKnown ? '✓ Known!' : '✓ Got it';
+    btn.classList.toggle('is-known', isKnown);
+  });
+
+  // Disable Prev / Next at boundaries
+  document.querySelectorAll('.nav-buttons button:first-child').forEach(btn => {
+    btn.disabled = state.currentIndex === 0;
+  });
+  document.querySelectorAll('.nav-buttons button:last-child').forEach(btn => {
+    btn.disabled = state.currentIndex === state.deck.length - 1;
+  });
+}
+
+/* ═══════════════════════════════════════════════════════════
+   ACTIONS
+═══════════════════════════════════════════════════════════ */
+function navigate(direction) {
+  const next = state.currentIndex + direction;
+  if (next < 0 || next >= state.deck.length) return;
+  state.currentIndex = next;
+  state.isFlipped    = false;
+  render();
+}
+
+function flip(show) {
+  state.isFlipped = show;
+  render();
+}
+
+function toggleKnown() {
+  const id = cardId(state.deck[state.currentIndex]);
+  if (state.known.has(id)) state.known.delete(id);
+  else                     state.known.add(id);
+  render();
+}
+
+function shuffleDeck() {
+  for (let i = state.deck.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [state.deck[i], state.deck[j]] = [state.deck[j], state.deck[i]];
+  }
+  state.currentIndex = 0;
+  state.isFlipped    = false;
+  render();
+}
+
+function resetAll() {
+  state.known.clear();
+  buildDeck();
+  state.currentIndex = 0;
+  state.isFlipped    = false;
+  render();
+}
+
+/* ═══════════════════════════════════════════════════════════
+   KEYBOARD
+═══════════════════════════════════════════════════════════ */
+document.addEventListener('keydown', e => {
+  if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+  switch (e.key) {
+    case 'ArrowLeft':  navigate(-1); break;
+    case 'ArrowRight': navigate(1);  break;
+    case ' ':
+      e.preventDefault();
+      flip(!state.isFlipped);
+      break;
+    case 'k': case 'K': toggleKnown(); break;
+  }
+});
+
+/* ═══════════════════════════════════════════════════════════
+   INIT
+═══════════════════════════════════════════════════════════ */
+buildDeck();
+buildSubjectMenu();
+buildFilterBar();
+render();

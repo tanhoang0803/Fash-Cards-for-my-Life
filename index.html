@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dev Flash Cards</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <header>
+    <div class="header-top">
+      <h1>Dev Flash Cards</h1>
+      <div class="header-tools">
+        <span class="stats-badge" id="statsBadge">0 known</span>
+        <button class="tool-btn" onclick="shuffleDeck()" title="Shuffle cards">⇄ Shuffle</button>
+        <button class="tool-btn" onclick="resetAll()" title="Reset progress">↺ Reset</button>
+      </div>
+    </div>
+    <div class="progress-bar-container">
+      <div class="progress-bar" id="progressBar"></div>
+    </div>
+    <p class="progress-indicator" id="progressIndicator">1 of 50</p>
+  </header>
+
+  <nav class="subject-menu" id="subjectMenu"></nav>
+  <nav class="category-filter" id="categoryFilter"></nav>
+
+  <main>
+    <div class="flashcard-container">
+      <div class="card" id="card">
+
+        <!-- Question Face -->
+        <div class="card-face card-front">
+          <div class="card-meta">
+            <div class="badges">
+              <span class="badge-category" id="catBadgeFront"></span>
+              <span class="badge-difficulty" id="diffBadgeFront"></span>
+            </div>
+            <button class="btn-known" id="knownBtnFront" onclick="toggleKnown()">✓ Got it</button>
+          </div>
+          <p class="face-label">Question</p>
+          <div class="card-text" id="questionText"></div>
+          <div class="nav-buttons">
+            <button onclick="navigate(-1)">&#8592; Prev</button>
+            <button class="btn-action" onclick="flip(true)">Show Answer</button>
+            <button onclick="navigate(1)">Next &#8594;</button>
+          </div>
+        </div>
+
+        <!-- Answer Face -->
+        <div class="card-face card-back">
+          <div class="card-meta">
+            <div class="badges">
+              <span class="badge-category" id="catBadgeBack"></span>
+              <span class="badge-difficulty" id="diffBadgeBack"></span>
+            </div>
+            <button class="btn-known" id="knownBtnBack" onclick="toggleKnown()">✓ Got it</button>
+          </div>
+          <p class="face-label">Answer</p>
+          <div class="card-text" id="answerText"></div>
+          <pre class="tip-block" id="tipBlock"><code id="tipCode"></code></pre>
+          <div class="nav-buttons">
+            <button onclick="navigate(-1)">&#8592; Prev</button>
+            <button class="btn-action" onclick="flip(false)">Hide Answer</button>
+            <button onclick="navigate(1)">Next &#8594;</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <p class="keyboard-hint">
+      <kbd>←</kbd> <kbd>→</kbd> navigate &nbsp;·&nbsp;
+      <kbd>Space</kbd> flip &nbsp;·&nbsp;
+      <kbd>K</kbd> mark known
+    </p>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
