@@ -23,8 +23,9 @@ A multi-subject developer flash card web app built with vanilla HTML, CSS, and J
 | **API** | 30+ | JSON Basics, REST Fundamentals, REST Design, API in Practice, JWT, OAuth2 |
 | **Node.js** | 25 | Node.js Basics, Modules & npm, Async & Error Handling, HTTP & Express, Performance & Production |
 | **React & SSR** | 25 | React Basics, Hooks, Performance, SSR & Next.js |
+| **Testing & Containers** | 20 | Testing, Docker, Kubernetes |
 
-**Total: 300+ cards**
+**Total: 320+ cards**
 
 ---
 

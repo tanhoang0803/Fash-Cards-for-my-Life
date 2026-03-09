@@ -7,6 +7,7 @@ shuffle the deck, and navigate with keyboard shortcuts.
 
 **Live URL:** https://tanhoang0803.github.io/Fash-Cards-for-my-Life/
 **Repo:** https://github.com/tanhoang0803/Fash-Cards-for-my-Life
+**Project Spec:** https://roadmap.sh/projects/flash-cards
 
 ## Tech Stack
 - HTML5, CSS3, vanilla JavaScript (ES2022) — no framework, no build step
@@ -72,6 +73,9 @@ Flash Cards Page
 | API | 30+ | JSON Basics, REST Fundamentals, REST Design, API in Practice, JWT, OAuth2 |
 | Node.js | 25 | Node.js Basics, Modules & npm, Async & Error Handling, HTTP & Express, Performance & Production |
 | React & SSR | 25 | React Basics, Hooks, Performance, SSR & Next.js |
+| Testing & Containers | 20 | Testing, Docker, Kubernetes |
+
+**Total: 320+ cards**
 
 ---
 
@@ -127,6 +131,7 @@ const state = {
 ```
 
 ### Key Functions
+
 | Function | Purpose |
 |---|---|
 | `cardId(card)` | Returns `"Subject\|originalIndex"` — stable ID even after shuffle |
