@@ -28,11 +28,13 @@ Flash Cards Page
 │   ├── Progress Bar
 │   └── Progress Indicator ("X of Y")
 │
-├── Subject Menu (nav#subjectMenu)
-│   └── One button per subject — active button gets subject color background
+├── Subject Menu (nav#subjectMenu) — 3 grouped bars
+│   ├── [CORE]     DSA · Internet · Linux
+│   ├── [BACKEND]  Python · C# · SQL · Database · API · Node.js · Testing & Containers
+│   └── [FRONTEND] JavaScript · React & SSR · CSS & Tailwind
 │
 ├── Category Filter (nav#categoryFilter)
-│   └── "All" button + one button per category in active subject
+│   └── "All" + one button per category in the active subject
 │
 └── Main — Flashcard Container
     └── .card (3D flip container)
@@ -60,22 +62,32 @@ Flash Cards Page
 
 ## All Subjects & Card Counts
 
+### Core
 | Subject | Cards | Categories |
 |---|---|---|
 | DSA | 40+ | Complexity, Data Structures, Algorithms, Patterns, Hashing, Recursion, Interview |
+| Internet | 20 | How Internet Works, HTTP & Web, DNS & Domains, Browsers |
+| Linux | 25 | Linux Basics, Files & Permissions, Processes & System, Networking & SSH, Shell Scripting |
+
+### Backend
+| Subject | Cards | Categories |
+|---|---|---|
 | Python | 22 | Core Python, OOP & Design, Ecosystem |
 | C# | 18 | C# Basics, OOP & Patterns, LINQ & Async |
 | SQL | 20 | SQL Basics, Joins & Aggregation, Advanced SQL |
 | Database | 26+ | Relational DB, NoSQL, DB Design & Perf, PostgreSQL |
-| JavaScript | 50 | JavaScript Core, Async JavaScript, DOM & Browser, CSS, Performance, Security |
-| Internet | 20 | How Internet Works, HTTP & Web, DNS & Domains, Browsers |
-| Linux | 25 | Linux Basics, Files & Permissions, Processes & System, Networking & SSH, Shell Scripting |
 | API | 30+ | JSON Basics, REST Fundamentals, REST Design, API in Practice, JWT, OAuth2 |
 | Node.js | 25 | Node.js Basics, Modules & npm, Async & Error Handling, HTTP & Express, Performance & Production |
-| React & SSR | 25 | React Basics, Hooks, Performance, SSR & Next.js |
 | Testing & Containers | 20 | Testing, Docker, Kubernetes |
 
-**Total: 320+ cards**
+### Frontend
+| Subject | Cards | Categories |
+|---|---|---|
+| JavaScript | 50 | JavaScript Core, Async JavaScript, DOM & Browser, CSS, Performance, Security |
+| React & SSR | 25 | React Basics, Hooks, Performance, SSR & Next.js |
+| CSS & Tailwind | 20 | CSS Fundamentals, CSS Layouts, Tailwind CSS |
+
+**Total: 340+ cards**
 
 ---
 
@@ -96,20 +108,28 @@ Each card object:
 
 ### Config Objects
 ```js
-const SUBJECTS = {
-  'SubjectName': SUBJECT_CARDS,   // controls menu order
-  ...
+// Controls menu order
+const SUBJECTS = { 'SubjectName': SUBJECT_CARDS, ... };
+
+// Subject menu grouped into labeled bars
+const SUBJECT_GROUPS = {
+  'Core':     ['DSA', 'Internet', 'Linux'],
+  'Backend':  ['Python', 'C#', 'SQL', 'Database', 'API', 'Node.js', 'Testing & Containers'],
+  'Frontend': ['JavaScript', 'React & SSR', 'CSS & Tailwind'],
 };
 
-const SUBJECT_COLORS = {
-  'SubjectName': '#hexcolor',     // button background when active
-  ...
+// Group label pill colors
+const GROUP_COLORS = {
+  'Core':     '#f97316',
+  'Backend':  '#6366f1',
+  'Frontend': '#61dafb',
 };
 
-const CATEGORY_COLORS = {
-  'CategoryName': '#hexcolor',    // badge color
-  ...
-};
+// Active subject button background color
+const SUBJECT_COLORS = { 'SubjectName': '#hexcolor', ... };
+
+// Category badge colors
+const CATEGORY_COLORS = { 'CategoryName': '#hexcolor', ... };
 
 const DIFFICULTY_CONFIG = {
   'Beginner':     { bg: '#10b981' },
@@ -135,7 +155,7 @@ const state = {
 | Function | Purpose |
 |---|---|
 | `cardId(card)` | Returns `"Subject\|originalIndex"` — stable ID even after shuffle |
-| `buildSubjectMenu()` | Clears and rebuilds subject nav buttons |
+| `buildSubjectMenu()` | Renders grouped subject nav (Core/Backend/Frontend bars) |
 | `buildFilterBar()` | Clears and rebuilds category filter for active subject |
 | `buildDeck()` | Filters `SUBJECTS[activeSubject]` by `activeFilter` into `state.deck` |
 | `render()` | Updates all DOM elements from current state |
@@ -154,14 +174,15 @@ const state = {
 - **Never use backtick characters inside a tip template literal** — they terminate the string early
   - ❌ `` `closes over `count`` ` ``
   - ✅ `` `closes over 'count'` ``
-- **Escape `${...}` in shell/bash tip blocks** — JS template engine will try to evaluate them
+- **Escape `${...}` in shell/bash tip blocks** — JS template engine evaluates them
   - ❌ `${FILES[@]}`
   - ✅ `\${FILES[@]}`
 
 ### Other Conventions
 - State lives in a single `state` object
-- `known` Set uses `cardId()` — survives shuffle because it references original array index
+- `known` Set uses `cardId()` — survives shuffle (references original array index)
 - Subject color = active button background; category color = badge background
+- Group label color comes from `GROUP_COLORS`, not `SUBJECT_COLORS`
 - Always run `node --check app.js` before committing
 
 ---
@@ -171,9 +192,10 @@ const state = {
 1. Add `const NEWSUBJECT_CARDS = [...]` array in `app.js` (before the `SUBJECTS` object)
 2. Add `'New Subject': NEWSUBJECT_CARDS` to `SUBJECTS`
 3. Add `'New Subject': '#color'` to `SUBJECT_COLORS`
-4. Add each category's color to `CATEGORY_COLORS`
-5. Run `node --check app.js` — fix any syntax errors before continuing
-6. `git add app.js && git commit && git push` → CI validates + deploys
+4. Add each category color to `CATEGORY_COLORS`
+5. Add `'New Subject'` to the correct group in `SUBJECT_GROUPS`
+6. Run `node --check app.js` — fix any syntax errors before continuing
+7. `git add app.js && git commit && git push` → CI validates + deploys
 
 ---
 

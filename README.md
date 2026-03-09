@@ -10,28 +10,38 @@ A multi-subject developer flash card web app built with vanilla HTML, CSS, and J
 
 ## Subjects & Cards
 
+### Core
 | Subject | Cards | Categories |
 |---|---|---|
 | **DSA** | 40+ | Complexity, Data Structures, Algorithms, Patterns, Hashing, Recursion, Interview |
+| **Internet** | 20 | How Internet Works, HTTP & Web, DNS & Domains, Browsers |
+| **Linux** | 25 | Linux Basics, Files & Permissions, Processes & System, Networking & SSH, Shell Scripting |
+
+### Backend
+| Subject | Cards | Categories |
+|---|---|---|
 | **Python** | 22 | Core Python, OOP & Design, Ecosystem |
 | **C#** | 18 | C# Basics, OOP & Patterns, LINQ & Async |
 | **SQL** | 20 | SQL Basics, Joins & Aggregation, Advanced SQL |
 | **Database** | 26+ | Relational DB, NoSQL, DB Design & Perf, PostgreSQL |
-| **JavaScript** | 50 | JavaScript Core, Async JavaScript, DOM & Browser, CSS, Performance, Security |
-| **Internet** | 20 | How Internet Works, HTTP & Web, DNS & Domains, Browsers |
-| **Linux** | 25 | Linux Basics, Files & Permissions, Processes & System, Networking & SSH, Shell Scripting |
 | **API** | 30+ | JSON Basics, REST Fundamentals, REST Design, API in Practice, JWT, OAuth2 |
 | **Node.js** | 25 | Node.js Basics, Modules & npm, Async & Error Handling, HTTP & Express, Performance & Production |
-| **React & SSR** | 25 | React Basics, Hooks, Performance, SSR & Next.js |
 | **Testing & Containers** | 20 | Testing, Docker, Kubernetes |
 
-**Total: 320+ cards**
+### Frontend
+| Subject | Cards | Categories |
+|---|---|---|
+| **JavaScript** | 50 | JavaScript Core, Async JavaScript, DOM & Browser, CSS, Performance, Security |
+| **React & SSR** | 25 | React Basics, Hooks, Performance, SSR & Next.js |
+| **CSS & Tailwind** | 20 | CSS Fundamentals, CSS Layouts, Tailwind CSS |
+
+**Total: 340+ cards**
 
 ---
 
 ## Features
 
-- Multi-subject navigation bar with per-subject color themes
+- Multi-subject navigation grouped into **Core / Backend / Frontend** bars
 - Category filter bar — drill into specific topics within a subject
 - 3D card flip animation (CSS `transform-style: preserve-3d`)
 - **"Got it"** button — track known cards, persists across shuffle
