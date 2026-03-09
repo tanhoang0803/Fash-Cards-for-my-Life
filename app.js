@@ -7473,6 +7473,21 @@ const SUBJECTS = {
 };
 
 /* ═══════════════════════════════════════════════════════════
+   SUBJECT GROUPS  (controls menu bar sections)
+═══════════════════════════════════════════════════════════ */
+const SUBJECT_GROUPS = {
+  'Core':     ['DSA', 'Internet', 'Linux'],
+  'Backend':  ['Python', 'C#', 'SQL', 'Database', 'API', 'Node.js', 'Testing & Containers'],
+  'Frontend': ['JavaScript', 'React & SSR'],
+};
+
+const GROUP_COLORS = {
+  'Core':     '#f97316',
+  'Backend':  '#6366f1',
+  'Frontend': '#61dafb',
+};
+
+/* ═══════════════════════════════════════════════════════════
    CONFIG
 ═══════════════════════════════════════════════════════════ */
 const SUBJECT_COLORS = {
@@ -7613,32 +7628,61 @@ function buildSubjectMenu() {
   const nav = document.getElementById('subjectMenu');
   nav.innerHTML = '';
 
-  Object.keys(SUBJECTS).forEach(subject => {
-    const btn = document.createElement('button');
-    btn.className   = 'subject-btn' + (subject === state.activeSubject ? ' active' : '');
-    btn.textContent = subject;
+  Object.entries(SUBJECT_GROUPS).forEach(([groupName, subjects], groupIdx) => {
+    const groupEl = document.createElement('div');
+    groupEl.className = 'subject-group';
 
-    const color = SUBJECT_COLORS[subject] || '#64748b';
-    if (subject === state.activeSubject) {
-      btn.style.background = color;
-    } else {
-      btn.addEventListener('mouseenter', () => { btn.style.borderColor = color; btn.style.color = color; });
-      btn.addEventListener('mouseleave', () => { btn.style.borderColor = ''; btn.style.color = ''; });
-    }
+    // Group label bar
+    const label = document.createElement('span');
+    label.className = 'group-label';
+    label.textContent = groupName;
+    label.style.color = GROUP_COLORS[groupName] || '#94a3b8';
+    label.style.borderColor = GROUP_COLORS[groupName] || '#94a3b8';
+    groupEl.appendChild(label);
 
-    btn.addEventListener('click', () => {
-      if (subject === state.activeSubject) return;
-      state.activeSubject = subject;
-      state.activeFilter  = 'All';
-      state.currentIndex  = 0;
-      state.isFlipped     = false;
-      buildDeck();
-      buildSubjectMenu();
-      buildFilterBar();
-      render();
+    // Subject buttons for this group
+    const btnRow = document.createElement('div');
+    btnRow.className = 'group-btns';
+
+    subjects.forEach(subject => {
+      const btn = document.createElement('button');
+      btn.className   = 'subject-btn' + (subject === state.activeSubject ? ' active' : '');
+      btn.textContent = subject;
+
+      const color = SUBJECT_COLORS[subject] || '#64748b';
+      if (subject === state.activeSubject) {
+        btn.style.background = color;
+        btn.style.color      = '#0a0e1a';
+        btn.style.borderColor = color;
+      } else {
+        btn.addEventListener('mouseenter', () => { btn.style.borderColor = color; btn.style.color = color; });
+        btn.addEventListener('mouseleave', () => { btn.style.borderColor = ''; btn.style.color = ''; });
+      }
+
+      btn.addEventListener('click', () => {
+        if (subject === state.activeSubject) return;
+        state.activeSubject = subject;
+        state.activeFilter  = 'All';
+        state.currentIndex  = 0;
+        state.isFlipped     = false;
+        buildDeck();
+        buildSubjectMenu();
+        buildFilterBar();
+        render();
+      });
+
+      btnRow.appendChild(btn);
     });
 
-    nav.appendChild(btn);
+    groupEl.appendChild(btnRow);
+    nav.appendChild(groupEl);
+
+    // Divider between groups (not after last)
+    if (groupIdx < Object.keys(SUBJECT_GROUPS).length - 1) {
+      const divider = document.createElement('div');
+      divider.className = 'group-divider';
+      nav.appendChild(divider);
+    }
   });
 }
 
