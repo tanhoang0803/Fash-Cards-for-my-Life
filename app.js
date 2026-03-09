@@ -6181,6 +6181,669 @@ export default function BlogPost({ params, searchParams }) {
 ];
 
 /* ═══════════════════════════════════════════════════════════
+   TESTING & CONTAINERS — Docker + Kubernetes  (20 cards)
+═══════════════════════════════════════════════════════════ */
+const DEVOPS_CARDS = [
+
+  // ── Testing ──────────────────────────────────────────────
+  {
+    category: 'Testing', difficulty: 'Beginner',
+    question: 'What are the three levels of software testing: unit, integration, and E2E?',
+    answer: 'Unit tests verify isolated functions/components in memory — fast, numerous, no external dependencies (mocked). Integration tests verify multiple units working together (e.g. controller + service + database) — slower, catch wiring bugs. End-to-End (E2E) tests drive a real browser through real user flows — slowest, most realistic, most expensive to write. The Testing Trophy: write mostly integration tests, a solid base of unit tests, and a small suite of E2E tests.',
+    tip: `// Testing Trophy (Kent C. Dodds):
+//
+//          /\\   E2E (few, high confidence)
+//         /  \\
+//        / Integration (most — good ROI)
+//       /──────\\
+//      /  Unit   \\  (many, fast, isolated)
+//     /────────────\\
+//    /   Static     \\  (TypeScript, ESLint — free!)
+
+// Unit test  → test a pure function in isolation
+// Integration → test API endpoint hitting real DB
+// E2E         → Playwright opens Chrome, clicks through checkout
+
+// Tools:
+// Jest / Vitest      — unit + integration (JS/TS)
+// React Testing Library — component integration tests
+// Playwright / Cypress  — E2E browser automation
+// Supertest          — HTTP integration tests for Express`
+  },
+  {
+    category: 'Testing', difficulty: 'Beginner',
+    question: 'How do you write unit tests with Jest / Vitest?',
+    answer: 'Jest and Vitest share the same API. A test file groups tests in describe() blocks. Each test() or it() asserts expected behaviour with expect() matchers. Arrange-Act-Assert (AAA) is the standard pattern: set up test data, call the function, assert the output. beforeEach / afterEach run setup/teardown around each test.',
+    tip: `// sum.js
+export function sum(a, b) { return a + b; }
+export function divide(a, b) {
+  if (b === 0) throw new Error('Division by zero');
+  return a / b;
+}
+
+// sum.test.js
+import { sum, divide } from './sum';
+
+describe('Math utilities', () => {
+  // Arrange-Act-Assert
+  it('adds two numbers', () => {
+    const result = sum(2, 3);     // Act
+    expect(result).toBe(5);       // Assert
+  });
+
+  it('throws on divide by zero', () => {
+    expect(() => divide(10, 0)).toThrow('Division by zero');
+  });
+
+  it('returns correct division', () => {
+    expect(divide(10, 2)).toBe(5);
+  });
+});
+
+// Common matchers:
+// .toBe(val)           strict equality (Object.is)
+// .toEqual(obj)        deep equality for objects/arrays
+// .toBeNull() / .toBeUndefined()
+// .toBeTruthy() / .toBeFalsy()
+// .toContain(item)     array/string contains
+// .toHaveLength(n)
+// .toThrow('message')  error thrown`
+  },
+  {
+    category: 'Testing', difficulty: 'Intermediate',
+    question: 'How does mocking work in Jest — jest.fn(), jest.mock(), and spies?',
+    answer: 'Mocking replaces real dependencies with controlled fakes so unit tests are fast and isolated. jest.fn() creates a mock function that records calls. jest.mock() replaces an entire module. jest.spyOn() wraps a real method to observe/override calls. Always restore mocks after tests to prevent state leaking between tests.',
+    tip: `// jest.fn() — create a standalone mock
+const mockSend = jest.fn().mockResolvedValue({ ok: true });
+await mockSend('payload');
+expect(mockSend).toHaveBeenCalledWith('payload');
+expect(mockSend).toHaveBeenCalledTimes(1);
+
+// jest.mock() — replace entire module
+jest.mock('./emailService', () => ({
+  sendEmail: jest.fn().mockResolvedValue(true)
+}));
+import { sendEmail } from './emailService';
+// sendEmail is now a mock — real email never sent
+
+// jest.spyOn() — wrap a real method
+const spy = jest.spyOn(console, 'error').mockImplementation(() => {});
+// ... run code that calls console.error ...
+expect(spy).toHaveBeenCalled();
+spy.mockRestore();  // restore original
+
+// Cleanup — reset all mocks between tests
+afterEach(() => jest.clearAllMocks());
+
+// Mock return values
+mockFn.mockReturnValue(42);
+mockFn.mockReturnValueOnce(99);      // once then default
+mockFn.mockResolvedValue({ data }); // for async functions
+mockFn.mockRejectedValue(new Error('fail'));`
+  },
+  {
+    category: 'Testing', difficulty: 'Intermediate',
+    question: 'How do you test React components with React Testing Library?',
+    answer: 'React Testing Library (RTL) tests components the way users interact with them — by finding elements via accessible queries (role, label, text) rather than implementation details (class names, IDs). Core principle: the more your tests resemble how users use the software, the more confidence they give. Use userEvent for realistic interactions, waitFor for async updates.',
+    tip: `import { render, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import LoginForm from './LoginForm';
+
+describe('LoginForm', () => {
+  it('calls onLogin with email and password on submit', async () => {
+    const onLogin = jest.fn();
+    render(<LoginForm onLogin={onLogin} />);
+
+    // Query by accessible role/label — like a real user would
+    await userEvent.type(screen.getByLabelText(/email/i), 'alice@test.com');
+    await userEvent.type(screen.getByLabelText(/password/i), 'secret123');
+    await userEvent.click(screen.getByRole('button', { name: /login/i }));
+
+    expect(onLogin).toHaveBeenCalledWith({
+      email: 'alice@test.com',
+      password: 'secret123'
+    });
+  });
+
+  it('shows error when email is invalid', async () => {
+    render(<LoginForm onLogin={jest.fn()} />);
+    await userEvent.type(screen.getByLabelText(/email/i), 'bad-email');
+    await userEvent.click(screen.getByRole('button', { name: /login/i }));
+    expect(await screen.findByText(/invalid email/i)).toBeInTheDocument();
+  });
+});
+
+// Query priority (most to least preferred):
+// getByRole > getByLabelText > getByPlaceholderText > getByText
+// ❌ Avoid: getByClassName, getByTestId (implementation detail)`
+  },
+  {
+    category: 'Testing', difficulty: 'Intermediate',
+    question: 'What is TDD (Test-Driven Development) and what is the Red-Green-Refactor cycle?',
+    answer: 'TDD is a development practice where you write a failing test BEFORE writing implementation code. Cycle: Red — write a test that fails (feature does not exist yet), Green — write the minimum code to make the test pass, Refactor — clean up code while keeping tests green. Benefits: forces clear requirements upfront, produces 100% test coverage naturally, creates a safety net for refactoring.',
+    tip: `// TDD example: build a stack data structure
+// Step 1 — RED: write failing test first
+it('push adds item and pop returns it', () => {
+  const stack = new Stack();
+  stack.push(10);
+  expect(stack.pop()).toBe(10);  // fails — Stack doesn't exist yet
+});
+
+// Step 2 — GREEN: minimum code to pass
+class Stack {
+  #data = [];
+  push(val) { this.#data.push(val); }
+  pop()     { return this.#data.pop(); }
+}
+
+// Step 3 — REFACTOR: improve without breaking tests
+// (add peek(), isEmpty(), size, etc. — each with its own TDD cycle)
+
+// TDD benefits:
+// ✅ Tests document intended behaviour
+// ✅ Forces small, focused functions
+// ✅ 100% coverage by construction
+// ✅ Confidence to refactor anything
+// ✅ Catches regressions instantly
+
+// TDD mantra:
+// "Never write a line of production code
+//  without a failing test to justify it"`
+  },
+  {
+    category: 'Testing', difficulty: 'Intermediate',
+    question: 'How does E2E testing work with Playwright?',
+    answer: 'Playwright automates real browsers (Chromium, Firefox, WebKit) to test full user journeys. Tests navigate pages, fill forms, click buttons, and assert on visible content — just like a real user. Playwright auto-waits for elements before interacting (no flaky sleep() calls), supports screenshots/video on failure, and can run tests in parallel across browsers.',
+    tip: `// playwright.config.ts
+import { defineConfig } from '@playwright/test';
+export default defineConfig({
+  use: { baseURL: 'http://localhost:3000', headless: true },
+  projects: [
+    { name: 'chromium', use: { ...devices['Desktop Chrome'] } },
+    { name: 'firefox',  use: { ...devices['Desktop Firefox'] } },
+  ]
+});
+
+// tests/login.spec.ts
+import { test, expect } from '@playwright/test';
+
+test('user can log in and see dashboard', async ({ page }) => {
+  await page.goto('/login');
+
+  // Fill form
+  await page.getByLabel('Email').fill('alice@example.com');
+  await page.getByLabel('Password').fill('secret123');
+  await page.getByRole('button', { name: 'Login' }).click();
+
+  // Assert redirect and content
+  await expect(page).toHaveURL('/dashboard');
+  await expect(page.getByText('Welcome, Alice')).toBeVisible();
+});
+
+// Run tests
+// npx playwright test
+// npx playwright test --headed     -- see the browser
+// npx playwright test --ui         -- interactive UI mode
+// npx playwright show-report       -- HTML report`
+  },
+
+  // ── Docker ───────────────────────────────────────────────
+  {
+    category: 'Docker', difficulty: 'Beginner',
+    question: 'What is Docker and how do containers differ from virtual machines?',
+    answer: 'Docker is a platform for packaging applications and their dependencies into containers — lightweight, portable, isolated units. Containers share the host OS kernel (no full OS per container) making them start in milliseconds and use far less RAM than VMs. VMs virtualise the entire hardware stack including a full OS — heavier but stronger isolation. "Works on my machine" → never again with containers.',
+    tip: `// Virtual Machine vs Container:
+//
+// ┌─────────────────┐    ┌─────────────────┐
+// │   VM            │    │   Container      │
+// ├─────────────────┤    ├─────────────────┤
+// │  App            │    │  App            │
+// │  Libraries      │    │  Libraries      │
+// │  Guest OS       │    │  (no guest OS!) │
+// ├─────────────────┤    ├─────────────────┤
+// │  Hypervisor     │    │  Docker Engine  │
+// ├─────────────────┤    ├─────────────────┤
+// │  Host OS        │    │  Host OS        │
+// │  Hardware       │    │  Hardware       │
+// └─────────────────┘    └─────────────────┘
+// Startup: minutes          Startup: milliseconds
+// Size:    GBs              Size:    MBs
+// Isolation: strong         Isolation: process-level
+
+// Key Docker concepts:
+// Image     — read-only blueprint (like a class)
+// Container — running instance of an image (like an object)
+// Registry  — image storage (Docker Hub, AWS ECR, GHCR)
+// Dockerfile— recipe to build an image`
+  },
+  {
+    category: 'Docker', difficulty: 'Beginner',
+    question: 'How do you write a Dockerfile to containerise a Node.js app?',
+    answer: 'A Dockerfile is a series of instructions that builds a Docker image layer by layer. Each instruction (FROM, COPY, RUN, etc.) creates a new cached layer. Order matters — put infrequently-changing layers first (dependencies) and frequently-changing layers last (source code) so Docker can reuse cached layers and rebuild only what changed.',
+    tip: `# Dockerfile — Node.js app example
+FROM node:20-alpine          # base image (alpine = tiny Linux)
+
+WORKDIR /app                 # set working directory inside container
+
+# Copy package files FIRST — separate layer for dependency install
+# Docker caches this layer if package.json hasn't changed
+COPY package*.json ./
+RUN npm ci --omit=dev        # install prod dependencies only
+
+# Copy source code LAST (changes most often)
+COPY . .
+
+# Expose port (documentation only — does not publish to host)
+EXPOSE 3000
+
+# Non-root user for security
+USER node
+
+# Start command
+CMD ["node", "dist/index.js"]
+
+# Build and run:
+# docker build -t my-app:1.0 .
+# docker run -p 3000:3000 my-app:1.0
+
+# Layer caching benefit:
+# Source code changes → only last COPY layer rebuilds
+# npm packages unchanged → npm ci layer hits cache ✅`
+  },
+  {
+    category: 'Docker', difficulty: 'Beginner',
+    question: 'What are the essential Docker CLI commands?',
+    answer: 'The Docker CLI covers the full container lifecycle: build images, run containers, inspect state, view logs, and clean up resources. docker run combines pull + create + start. Containers are ephemeral — data is lost when removed unless stored in a volume.',
+    tip: `# Images
+docker build -t myapp:1.0 .          # build from Dockerfile
+docker pull nginx:alpine             # pull from registry
+docker images                        # list local images
+docker rmi myapp:1.0                 # remove image
+docker push myapp:1.0                # push to registry
+
+# Containers
+docker run -d -p 8080:80 nginx       # run detached, map port
+docker run -it ubuntu bash           # interactive terminal
+docker run --rm myapp node test.js   # auto-remove on exit
+docker run --env-file .env myapp     # load env vars from file
+
+docker ps                            # running containers
+docker ps -a                         # all containers (incl. stopped)
+docker stop  <id>                    # graceful stop (SIGTERM)
+docker kill  <id>                    # force stop (SIGKILL)
+docker rm    <id>                    # remove container
+docker logs  <id>                    # view stdout/stderr
+docker logs  <id> -f                 # follow logs (tail -f style)
+docker exec -it <id> sh             # shell into running container
+
+# Cleanup
+docker system prune                  # remove all unused resources
+docker system prune -a               # remove everything unused`
+  },
+  {
+    category: 'Docker', difficulty: 'Intermediate',
+    question: 'How do Docker Compose and multi-container apps work?',
+    answer: 'Docker Compose defines and runs multi-container apps in a single YAML file. Services, networks, and volumes are all declared together. `docker compose up` starts everything; Compose creates a shared network so services reach each other by service name (DNS). Perfect for local development — run your app, database, and cache with one command.',
+    tip: `# docker-compose.yml
+version: '3.9'
+services:
+  api:
+    build: .                         # build from local Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
+      - DATABASE_URL=postgres://postgres:secret@db:5432/mydb
+      - REDIS_URL=redis://cache:6379
+    depends_on:
+      db:    { condition: service_healthy }
+      cache: { condition: service_started }
+    volumes:
+      - .:/app                       # mount source for hot-reload
+      - /app/node_modules            # exclude node_modules
+
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_PASSWORD: secret
+      POSTGRES_DB: mydb
+    volumes:
+      - postgres_data:/var/lib/postgresql/data  # persist data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      retries: 5
+
+  cache:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+
+volumes:
+  postgres_data:
+
+# Commands:
+# docker compose up -d       start all services in background
+# docker compose logs -f api follow api logs
+# docker compose down        stop and remove containers
+# docker compose down -v     also remove volumes (wipes DB!)`
+  },
+  {
+    category: 'Docker', difficulty: 'Intermediate',
+    question: 'What are Docker volumes and networking?',
+    answer: 'Volumes persist data outside the container filesystem — survive container restarts and removals. Three storage types: volumes (Docker-managed, best for DBs), bind mounts (map host directory into container, best for dev hot-reload), tmpfs (in-memory, temporary). Networks allow containers to communicate. Compose auto-creates a bridge network; containers reach each other by service name.',
+    tip: `# Volumes — persistent data storage
+docker volume create mydata
+docker run -v mydata:/data nginx       # named volume
+docker run -v /host/path:/app/data nginx  # bind mount
+docker volume ls                       # list volumes
+docker volume inspect mydata
+
+# Volume types:
+# Named volume   → Docker manages location, best for prod
+# Bind mount     → maps host path, best for dev (hot reload)
+# tmpfs mount    → in-memory, wiped on restart
+
+# Networking
+docker network create mynet
+docker run --network mynet --name api myapp
+docker run --network mynet --name db postgres
+# api container can reach db at hostname "db" ✅
+
+# Network types:
+# bridge  → default, containers on same host talk by name
+# host    → container shares host network (no isolation)
+# none    → no networking (fully isolated)
+# overlay → multi-host (Swarm / Kubernetes)
+
+# Compose networking — automatic:
+# All services in docker-compose.yml share one bridge network
+# Service named "db" reachable at hostname "db" ✅
+# No manual network commands needed`
+  },
+  {
+    category: 'Docker', difficulty: 'Intermediate',
+    question: 'What are Docker best practices: multi-stage builds and .dockerignore?',
+    answer: 'Multi-stage builds use multiple FROM instructions in one Dockerfile — build in one stage (full toolchain), copy only the output to a minimal final stage. This produces tiny production images with no build tools, source code, or dev dependencies. .dockerignore excludes files from the build context — speeds up builds and prevents secrets from leaking into images.',
+    tip: `# Multi-stage Dockerfile — Node.js TypeScript example
+# Stage 1: build (has TypeScript compiler, full node_modules)
+FROM node:20-alpine AS builder
+WORKDIR /app
+COPY package*.json ./
+RUN npm ci                           # install ALL deps including devDeps
+COPY . .
+RUN npm run build                    # compile TypeScript → dist/
+
+# Stage 2: production (tiny — only runtime needs)
+FROM node:20-alpine AS production
+WORKDIR /app
+COPY package*.json ./
+RUN npm ci --omit=dev                # only production deps
+COPY --from=builder /app/dist ./dist # copy compiled output only
+USER node
+EXPOSE 3000
+CMD ["node", "dist/index.js"]
+
+# Result: image has NO TypeScript, NO src/, NO devDeps
+# Size: 400 MB → 80 MB ✅
+
+# .dockerignore — exclude from build context
+node_modules/
+.git/
+.env
+.env.*
+*.log
+dist/
+coverage/
+README.md
+.dockerignore
+# Prevents: secrets leaking, large build contexts, cache busting`
+  },
+
+  // ── Kubernetes ───────────────────────────────────────────
+  {
+    category: 'Kubernetes', difficulty: 'Intermediate',
+    question: 'What is Kubernetes and what problems does it solve?',
+    answer: 'Kubernetes (K8s) is an open-source container orchestration platform — it automates deploying, scaling, and managing containerised applications across a cluster of machines. It solves: automatic bin-packing (schedule containers on available nodes), self-healing (restart failed containers, replace unhealthy ones), horizontal scaling (scale up/down based on load), rolling updates (deploy new versions with zero downtime), service discovery, and load balancing.',
+    tip: `// Why K8s after Docker?
+// Docker runs containers on ONE machine
+// K8s runs containers across MANY machines (a cluster)
+
+// K8s cluster architecture:
+//
+// Control Plane (master):
+//   API Server   — gateway for all commands (kubectl talks here)
+//   Scheduler    — decides which Node to run a Pod on
+//   etcd         — distributed key-value store (cluster state)
+//   Controller   — watches cluster state, reconciles to desired state
+//
+// Worker Nodes:
+//   kubelet      — agent on each node, runs pods
+//   kube-proxy   — handles networking rules
+//   Container Runtime (containerd / Docker)
+//   Pods         — your running containers
+
+// K8s self-healing example:
+// You say: "I want 3 replicas of my-api"
+// K8s schedules 3 Pods across nodes
+// Node crashes → K8s detects, reschedules Pods on healthy nodes
+// Auto-healed, no manual intervention ✅`
+  },
+  {
+    category: 'Kubernetes', difficulty: 'Intermediate',
+    question: 'What are the core Kubernetes objects: Pod, Deployment, and Service?',
+    answer: 'Pod: smallest deployable unit — one or more containers sharing network/storage. Never create Pods directly. Deployment: manages a ReplicaSet to keep N identical Pod replicas running; handles rolling updates and rollbacks. Service: gives a stable DNS name and IP to a set of Pods (which come and go) so other services can reliably reach them. Services load-balance across all matching Pods.',
+    tip: `# Deployment — manage N replicas of a Pod
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-api
+spec:
+  replicas: 3                          # keep 3 Pods running
+  selector:
+    matchLabels:
+      app: my-api
+  template:
+    metadata:
+      labels:
+        app: my-api
+    spec:
+      containers:
+        - name: api
+          image: myregistry/my-api:1.5
+          ports:
+            - containerPort: 3000
+          resources:
+            requests: { cpu: "100m", memory: "128Mi" }
+            limits:   { cpu: "500m", memory: "512Mi" }
+          env:
+            - name: NODE_ENV
+              value: production
+
+---
+# Service — stable endpoint for the Deployment
+apiVersion: v1
+kind: Service
+metadata:
+  name: my-api-svc
+spec:
+  selector:
+    app: my-api           # routes to all Pods with this label
+  ports:
+    - port: 80
+      targetPort: 3000
+  type: ClusterIP         # internal only (use LoadBalancer for external)`
+  },
+  {
+    category: 'Kubernetes', difficulty: 'Intermediate',
+    question: 'What are the essential kubectl commands?',
+    answer: 'kubectl is the CLI to interact with a Kubernetes cluster. You apply YAML manifests to declare desired state; K8s reconciles the real state to match. Key commands cover: applying config, checking status, viewing logs, exec-ing into pods, and scaling.',
+    tip: `# Apply manifests (declarative — preferred)
+kubectl apply -f deployment.yaml
+kubectl apply -f ./k8s/              # apply whole directory
+
+# View resources
+kubectl get pods                     # list pods
+kubectl get pods -w                  # watch (live updates)
+kubectl get all                      # pods, services, deployments
+kubectl get pods -o wide             # show node assignment
+kubectl describe pod my-api-abc123   # detailed info + events
+
+# Logs
+kubectl logs my-api-abc123           # stdout of pod
+kubectl logs my-api-abc123 -f        # follow logs
+kubectl logs -l app=my-api           # all pods with label
+
+# Debug
+kubectl exec -it my-api-abc123 -- sh   # shell into pod
+kubectl port-forward svc/my-api 3000:80 # forward to localhost
+
+# Scale
+kubectl scale deployment my-api --replicas=5
+
+# Rolling update
+kubectl set image deployment/my-api api=myregistry/my-api:1.6
+kubectl rollout status deployment/my-api
+kubectl rollout undo   deployment/my-api   # rollback!
+
+# Delete
+kubectl delete -f deployment.yaml
+kubectl delete pod my-api-abc123`
+  },
+  {
+    category: 'Kubernetes', difficulty: 'Intermediate',
+    question: 'How do you manage configuration and secrets in Kubernetes?',
+    answer: 'ConfigMap stores non-sensitive configuration (env vars, config files). Secret stores sensitive data (passwords, tokens, TLS certs) — base64-encoded at rest (use sealed-secrets or Vault for encryption at rest in production). Both can be injected as environment variables or mounted as files. Never hardcode config in container images.',
+    tip: `# ConfigMap — non-sensitive config
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app-config
+data:
+  NODE_ENV: production
+  LOG_LEVEL: info
+  API_URL: https://api.example.com
+
+---
+# Secret — sensitive data (base64 encoded)
+apiVersion: v1
+kind: Secret
+metadata:
+  name: app-secrets
+type: Opaque
+data:
+  # echo -n "mysecret" | base64
+  DB_PASSWORD: bXlzZWNyZXQ=
+  JWT_SECRET:  c3VwZXJzZWNyZXQ=
+
+---
+# Use in Deployment — inject as env vars
+spec:
+  containers:
+    - name: api
+      image: my-api:1.0
+      envFrom:
+        - configMapRef:
+            name: app-config        # all keys → env vars
+        - secretRef:
+            name: app-secrets       # all keys → env vars
+      env:
+        - name: DB_HOST             # individual key
+          valueFrom:
+            configMapKeyRef:
+              name: app-config
+              key: DB_HOST`
+  },
+  {
+    category: 'Kubernetes', difficulty: 'Intermediate',
+    question: 'What is a Kubernetes Ingress and how does it manage external traffic?',
+    answer: 'A Service of type LoadBalancer exposes one service with one cloud load balancer (expensive). Ingress is a single entry point that routes HTTP/HTTPS traffic to multiple services based on host name or URL path — one load balancer for all services. An Ingress Controller (nginx-ingress, Traefik, AWS ALB) watches Ingress resources and configures the actual load balancer.',
+    tip: `# Ingress — route external traffic to internal services
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: main-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  ingressClassName: nginx
+  tls:
+    - hosts:
+        - api.example.com
+      secretName: tls-secret       # TLS certificate stored in a Secret
+  rules:
+    # Route by hostname
+    - host: api.example.com
+      http:
+        paths:
+          - path: /v1/users
+            pathType: Prefix
+            backend:
+              service:
+                name: users-svc
+                port: { number: 80 }
+          - path: /v1/orders
+            pathType: Prefix
+            backend:
+              service:
+                name: orders-svc
+                port: { number: 80 }
+
+# Install nginx Ingress Controller:
+# kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/...
+# or: helm install ingress-nginx ingress-nginx/ingress-nginx`
+  },
+  {
+    category: 'Kubernetes', difficulty: 'Advanced',
+    question: 'How do Kubernetes liveness/readiness probes and HPA work?',
+    answer: 'Probes: Liveness probe — K8s restarts the container if it fails (app is stuck/deadlocked). Readiness probe — K8s removes the pod from Service endpoints if it fails (app not ready to serve traffic — e.g. still warming up). HPA (Horizontal Pod Autoscaler) automatically scales the number of Pod replicas based on CPU/memory usage or custom metrics, between a configured min and max.',
+    tip: `# Probes + HPA in a Deployment
+spec:
+  containers:
+    - name: api
+      image: my-api:1.0
+      # Readiness — remove from Service if fails
+      readinessProbe:
+        httpGet:
+          path: /health/ready
+          port: 3000
+        initialDelaySeconds: 10    # wait before first check
+        periodSeconds: 5
+        failureThreshold: 3        # fail 3x → mark not ready
+
+      # Liveness — restart container if fails
+      livenessProbe:
+        httpGet:
+          path: /health/live
+          port: 3000
+        initialDelaySeconds: 30
+        periodSeconds: 10
+        failureThreshold: 3        # fail 3x → kill + restart
+
+---
+# Horizontal Pod Autoscaler
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: my-api-hpa
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: my-api
+  minReplicas: 2
+  maxReplicas: 20
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 70   # scale up if CPU > 70%`
+  },
+];
+
+/* ═══════════════════════════════════════════════════════════
    JAVASCRIPT — 50 cards across 6 topics
 ═══════════════════════════════════════════════════════════ */
 const JS_CARDS = [
@@ -6806,6 +7469,7 @@ const SUBJECTS = {
   'API':        API_CARDS,
   'Node.js':    NODEJS_CARDS,
   'React & SSR': REACT_CARDS,
+  'Testing & Containers': DEVOPS_CARDS,
 };
 
 /* ═══════════════════════════════════════════════════════════
@@ -6823,6 +7487,7 @@ const SUBJECT_COLORS = {
   'API':        '#6366f1',
   'Node.js':    '#68a063',
   'React & SSR': '#61dafb',
+  'Testing & Containers': '#14b8a6',
 };
 
 const CATEGORY_COLORS = {
@@ -6858,6 +7523,10 @@ const CATEGORY_COLORS = {
   'CSS':             '#ec4899',
   'Performance':     '#8b5cf6',
   'Security':        '#ef4444',
+  // Testing & Containers
+  'Testing':    '#14b8a6',
+  'Docker':     '#0891b2',
+  'Kubernetes': '#0e7490',
   // React & SSR
   'React Basics': '#61dafb',
   'Hooks':        '#38bdf8',
