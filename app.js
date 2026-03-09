@@ -5545,6 +5545,642 @@ clinic flame  -- node app.js    // flame graph`
 ];
 
 /* ═══════════════════════════════════════════════════════════
+   REACT & SSR — 25 cards across 5 categories
+═══════════════════════════════════════════════════════════ */
+const REACT_CARDS = [
+
+  // ── React Basics ─────────────────────────────────────────
+  {
+    category: 'React Basics', difficulty: 'Beginner',
+    question: 'What is React and how does the Virtual DOM work?',
+    answer: 'React is a JavaScript library for building UIs as a tree of components. Instead of updating the real DOM directly (slow), React maintains a Virtual DOM — a lightweight JS object copy of the DOM. On each state change, React re-renders the virtual tree, diffs it against the previous version (reconciliation), and applies only the minimal real DOM mutations needed. This batching and diffing is what makes React fast.',
+    tip: `// Virtual DOM flow:
+//
+// State changes
+//       ↓
+// React re-renders component → new Virtual DOM tree
+//       ↓
+// Diffing (reconciliation) — find what changed
+//       ↓
+// Commit — apply only the changes to real DOM
+//       ↓
+// Browser paints
+
+// Real DOM manipulation is slow because:
+// - Layout recalculation
+// - Style recalculation
+// - Repaint / reflow
+// React batches updates to minimize DOM touches
+
+// React 18+ Concurrent Mode:
+// React can pause, interrupt, and resume rendering
+// → keeps UI responsive during heavy work
+// → enabled by createRoot() instead of ReactDOM.render()`
+  },
+  {
+    category: 'React Basics', difficulty: 'Beginner',
+    question: 'What is JSX and how does it compile?',
+    answer: 'JSX (JavaScript XML) is a syntax extension that looks like HTML inside JavaScript. Babel/TypeScript compiles it to React.createElement() calls. JSX is not required — you could write React.createElement() manually — but JSX makes component trees readable. Key JSX rules: use className (not class), camelCase event names (onClick not onclick), self-close empty tags, wrap multiple elements in a fragment (<> </>) or a parent element.',
+    tip: `// JSX
+const el = (
+  <div className="card">
+    <h1 onClick={handleClick}>Hello, {name}!</h1>
+    <input type="text" />
+  </div>
+);
+
+// Compiled by Babel to:
+const el = React.createElement(
+  'div',
+  { className: 'card' },
+  React.createElement('h1', { onClick: handleClick }, 'Hello, ', name, '!'),
+  React.createElement('input', { type: 'text' })
+);
+
+// JSX rules:
+// ✅ className not class
+// ✅ htmlFor not for
+// ✅ camelCase events: onClick, onChange, onSubmit
+// ✅ Self-close: <img /> <input /> <br />
+// ✅ Expressions in {}: {user.name}, {isOpen ? 'Yes' : 'No'}
+// ✅ Multiple elements → fragment: <> ... </>
+// ❌ Statements in JSX (no if/for — use ternary or .map())`
+  },
+  {
+    category: 'React Basics', difficulty: 'Beginner',
+    question: 'What are components and props in React?',
+    answer: 'A component is a reusable function that accepts props and returns JSX. Props (properties) are the inputs — read-only data passed from parent to child. Components must be pure: same props → same output, no side effects during render. Data flows one way: parent → child. To send data up, pass a callback function as a prop.',
+    tip: `// Function component — preferred modern style
+function UserCard({ name, role, onSelect }) {
+  return (
+    <div className="card">
+      <h2>{name}</h2>
+      <span>{role}</span>
+      <button onClick={() => onSelect(name)}>Select</button>
+    </div>
+  );
+}
+
+// Usage — parent passes props
+function App() {
+  const handleSelect = (name) => console.log('Selected:', name);
+  return (
+    <UserCard
+      name="Alice"
+      role="Admin"
+      onSelect={handleSelect}  // callback for upward data flow
+    />
+  );
+}
+
+// Props rules:
+// ✅ Props are READ-ONLY — never mutate props
+// ✅ Any JS value: string, number, object, array, function, JSX
+// ✅ Destructure in params: ({ name, role }) instead of (props)
+// ✅ Default values: function Card({ size = 'md' }) {}
+// ✅ children prop: content between opening/closing tags`
+  },
+  {
+    category: 'React Basics', difficulty: 'Beginner',
+    question: 'How does conditional rendering and list rendering work in React?',
+    answer: 'React renders JSX expressions — so you use JavaScript for logic. Conditionals: ternary operator (? :) or short-circuit (&&) inside JSX. Lists: .map() returns an array of JSX elements. Every list item needs a unique key prop so React can track items during reconciliation and avoid unnecessary re-renders.',
+    tip: `function Feed({ isLoading, error, posts }) {
+  // Early return pattern for loading/error states
+  if (isLoading) return <Spinner />;
+  if (error)     return <ErrorMsg message={error} />;
+
+  return (
+    <div>
+      {/* Conditional rendering */}
+      {posts.length === 0 && <p>No posts yet.</p>}
+
+      {posts.length > 0 ? (
+        <p>{posts.length} posts found</p>
+      ) : null}
+
+      {/* List rendering — key is required! */}
+      <ul>
+        {posts.map(post => (
+          <li key={post.id}>          {/* key must be unique & stable */}
+            <h3>{post.title}</h3>
+            <p>{post.body}</p>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+// ❌ Bad key — index changes on sort/filter → wrong re-renders
+posts.map((p, i) => <li key={i}>{p.title}</li>)
+
+// ✅ Good key — stable unique ID from data
+posts.map(p => <li key={p.id}>{p.title}</li>)`
+  },
+  {
+    category: 'React Basics', difficulty: 'Beginner',
+    question: 'What are controlled vs uncontrolled components in React forms?',
+    answer: 'Controlled component: React state is the single source of truth for the input value. Every keystroke triggers onChange → updates state → re-renders input. Full control for validation, formatting, disabling. Uncontrolled component: the DOM manages its own state; you read the value via a ref when needed (e.g. on submit). Simpler for basic forms but less flexible.',
+    tip: `// Controlled component — React drives the value
+function LoginForm() {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    // email and password are always in sync with state
+    login(email, password);
+  };
+
+  return (
+    <form onSubmit={handleSubmit}>
+      <input
+        value={email}                          // controlled by state
+        onChange={e => setEmail(e.target.value)}
+        type="email"
+      />
+      <input
+        value={password}
+        onChange={e => setPassword(e.target.value)}
+        type="password"
+      />
+      <button type="submit">Login</button>
+    </form>
+  );
+}
+
+// Uncontrolled component — ref reads DOM value on demand
+function SimpleForm() {
+  const emailRef = useRef();
+  const onSubmit = (e) => {
+    e.preventDefault();
+    console.log(emailRef.current.value);  // read on submit
+  };
+  return <form onSubmit={onSubmit}><input ref={emailRef} /></form>;
+}`
+  },
+
+  // ── Hooks ────────────────────────────────────────────────
+  {
+    category: 'Hooks', difficulty: 'Beginner',
+    question: 'How does useState work and what are the rules of Hooks?',
+    answer: 'useState returns [currentValue, setterFn]. Calling the setter triggers a re-render with the new value. State updates are asynchronous and batched. For objects/arrays, always pass a new reference — React uses Object.is() for comparison, so mutating the existing object will not trigger a re-render. Rules of Hooks: only call at the top level (not inside conditions/loops), only call from React function components or custom hooks.',
+    tip: `import { useState } from 'react';
+
+// Primitive state
+const [count, setCount] = useState(0);
+setCount(5);                          // set directly
+setCount(prev => prev + 1);          // updater function (safe for batching)
+
+// Object state — ALWAYS spread to create new reference
+const [user, setUser] = useState({ name: 'Alice', age: 25 });
+setUser(prev => ({ ...prev, age: 26 }));  // ✅ new object
+// user.age = 26; setUser(user);            // ❌ same ref, no re-render!
+
+// Array state
+const [items, setItems] = useState([]);
+setItems(prev => [...prev, newItem]);     // ✅ add
+setItems(prev => prev.filter(i => i.id !== id)); // ✅ remove
+
+// Lazy initial state (expensive computation runs only once)
+const [data, setData] = useState(() => JSON.parse(localStorage.getItem('data')) ?? []);
+
+// Rules of Hooks:
+// ✅ Only call at the TOP LEVEL of a component
+// ✅ Only call from function components or custom hooks
+// ❌ Never call inside if, for, nested functions`
+  },
+  {
+    category: 'Hooks', difficulty: 'Intermediate',
+    question: 'How does useEffect work and how do you control when it runs?',
+    answer: 'useEffect runs side effects after the component renders. The dependency array controls when it re-runs: no array = every render, [] = once on mount, [dep1, dep2] = when deps change. Return a cleanup function to cancel subscriptions, timers, or fetch requests. useEffect does not run during SSR, which matters for Next.js.',
+    tip: `import { useEffect, useState } from 'react';
+
+// Run once on mount (empty deps)
+useEffect(() => {
+  document.title = 'My App';
+}, []);
+
+// Run when userId changes
+useEffect(() => {
+  setLoading(true);
+  fetchUser(userId)
+    .then(data => setUser(data))
+    .finally(() => setLoading(false));
+}, [userId]);  // re-runs whenever userId changes
+
+// Cleanup — cancel on unmount or before re-run
+useEffect(() => {
+  const controller = new AbortController();
+  fetch('/api/data', { signal: controller.signal })
+    .then(r => r.json()).then(setData);
+  return () => controller.abort();  // cleanup!
+}, []);
+
+// Event listener
+useEffect(() => {
+  const handler = (e) => setKey(e.key);
+  window.addEventListener('keydown', handler);
+  return () => window.removeEventListener('keydown', handler); // cleanup!
+}, []);
+
+// ⚠️ Avoid: missing deps → stale closures
+// ⚠️ Avoid: objects/arrays as deps → infinite loop (new ref every render)`
+  },
+  {
+    category: 'Hooks', difficulty: 'Intermediate',
+    question: 'When do you use useRef, useCallback, and useMemo?',
+    answer: 'useRef: persists a mutable value across renders without causing re-renders — used for DOM element access and storing previous values/timers. useCallback: memoizes a function reference so it is not recreated on every render — useful when passing callbacks to child components wrapped in React.memo. useMemo: memoizes an expensive computed value — recalculates only when deps change.',
+    tip: `// useRef — mutable box that survives renders, no re-render on change
+const inputRef = useRef(null);
+const timerRef = useRef(null);
+<input ref={inputRef} />
+inputRef.current.focus();               // access DOM node
+timerRef.current = setTimeout(fn, 1000);// store timer id
+
+// useCallback — stable function reference
+const handleClick = useCallback((id) => {
+  deleteItem(id);
+}, []);  // recreated only when deps change
+// Useful: passing to React.memo child, useEffect dep
+
+// useMemo — memoize expensive calculation
+const sortedList = useMemo(() =>
+  [...items].sort((a, b) => a.price - b.price),
+[items]);  // only re-sorts when items changes
+
+// When to use:
+// useRef      → DOM refs, previous value, instance variables
+// useCallback → stable function for React.memo / useEffect
+// useMemo     → heavy computation, derived data, stable object refs
+
+// ❌ Don't over-memoize — has its own cost
+// Only use when profiling shows a real performance problem`
+  },
+  {
+    category: 'Hooks', difficulty: 'Intermediate',
+    question: 'How do you use useContext and create custom hooks?',
+    answer: 'useContext reads a context value without prop drilling — any component in the tree can access it. createContext provides the context; a Provider component sets the value. Custom hooks are plain functions starting with "use" that call other hooks — they extract reusable stateful logic out of components (data fetching, form state, debounce, etc.).',
+    tip: `// Context — share data without prop drilling
+const ThemeContext = createContext('light');
+
+function App() {
+  const [theme, setTheme] = useState('dark');
+  return (
+    <ThemeContext.Provider value={{ theme, setTheme }}>
+      <Navbar />   {/* can access theme without props */}
+      <Main />
+    </ThemeContext.Provider>
+  );
+}
+
+function Navbar() {
+  const { theme, setTheme } = useContext(ThemeContext);
+  return <button onClick={() => setTheme('light')}>{theme}</button>;
+}
+
+// Custom hook — extract reusable logic
+function useFetch(url) {
+  const [data, setData]       = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError]     = useState(null);
+
+  useEffect(() => {
+    const ctrl = new AbortController();
+    fetch(url, { signal: ctrl.signal })
+      .then(r => r.json()).then(setData).catch(setError)
+      .finally(() => setLoading(false));
+    return () => ctrl.abort();
+  }, [url]);
+
+  return { data, loading, error };
+}
+
+// Usage — clean component
+function UserProfile({ id }) {
+  const { data, loading, error } = useFetch('/api/users/' + id);
+  if (loading) return <Spinner />;
+  return <div>{data?.name}</div>;
+}`
+  },
+  {
+    category: 'Hooks', difficulty: 'Intermediate',
+    question: 'How does useReducer work and when should you prefer it over useState?',
+    answer: 'useReducer manages complex state with a reducer function: (state, action) → newState. Use it when: multiple sub-values are related, next state depends on the previous state in complex ways, or state transitions follow clear action patterns. It is the same pattern as Redux but local to a component.',
+    tip: `import { useReducer } from 'react';
+
+const initialState = { count: 0, step: 1, history: [] };
+
+function reducer(state, action) {
+  switch (action.type) {
+    case 'INCREMENT':
+      return {
+        ...state,
+        count:   state.count + state.step,
+        history: [...state.history, state.count + state.step]
+      };
+    case 'DECREMENT':
+      return { ...state, count: state.count - state.step };
+    case 'SET_STEP':
+      return { ...state, step: action.payload };
+    case 'RESET':
+      return initialState;
+    default:
+      throw new Error('Unknown action: ' + action.type);
+  }
+}
+
+function Counter() {
+  const [state, dispatch] = useReducer(reducer, initialState);
+  return (
+    <>
+      <p>Count: {state.count}</p>
+      <button onClick={() => dispatch({ type: 'INCREMENT' })}>+</button>
+      <button onClick={() => dispatch({ type: 'DECREMENT' })}>-</button>
+      <button onClick={() => dispatch({ type: 'SET_STEP', payload: 5 })}>Step=5</button>
+    </>
+  );
+}
+
+// Prefer useReducer over useState when:
+// → state has 3+ related fields that update together
+// → next state depends on previous in multiple ways
+// → you want predictable, testable state transitions`
+  },
+
+  // ── Performance ──────────────────────────────────────────
+  {
+    category: 'Performance', difficulty: 'Intermediate',
+    question: 'How does React.memo prevent unnecessary re-renders?',
+    answer: 'By default, when a parent re-renders, all child components re-render too — even if their props did not change. React.memo wraps a component and shallow-compares its props; if props are the same, the previous render output is reused. Combine with useCallback (stable function props) and useMemo (stable object/array props) for maximum effect. Do not use blindly — profile first.',
+    tip: `// Without React.memo — re-renders every time parent renders
+function ExpensiveList({ items }) {
+  return <ul>{items.map(i => <li key={i.id}>{i.name}</li>)}</ul>;
+}
+
+// With React.memo — skips re-render if items reference unchanged
+const ExpensiveList = React.memo(function ExpensiveList({ items }) {
+  return <ul>{items.map(i => <li key={i.id}>{i.name}</li>)}</ul>;
+});
+
+// ⚠️ Shallow comparison — objects/functions fail unless memoized
+function Parent() {
+  const [count, setCount] = useState(0);
+
+  // ❌ New function every render → memo is bypassed
+  const handleDelete = (id) => deleteItem(id);
+
+  // ✅ Stable reference with useCallback
+  const handleDelete = useCallback((id) => deleteItem(id), []);
+
+  // ❌ New array every render → memo bypassed
+  const filtered = items.filter(i => i.active);
+
+  // ✅ Stable reference with useMemo
+  const filtered = useMemo(() => items.filter(i => i.active), [items]);
+
+  return <ExpensiveList items={filtered} onDelete={handleDelete} />;
+}`
+  },
+  {
+    category: 'Performance', difficulty: 'Intermediate',
+    question: 'How do code splitting and lazy loading work in React?',
+    answer: 'Code splitting breaks your bundle into smaller chunks loaded on demand — the initial bundle is smaller and pages load faster. React.lazy() dynamically imports a component (returns a Promise). Wrap it in Suspense with a fallback UI shown while loading. Use with React Router for route-based splitting — the most impactful approach.',
+    tip: `import { lazy, Suspense } from 'react';
+import { Routes, Route } from 'react-router-dom';
+
+// ❌ All pages bundled together — big initial load
+import Dashboard from './pages/Dashboard';
+import Settings  from './pages/Settings';
+
+// ✅ Each page loaded only when navigated to
+const Dashboard = lazy(() => import('./pages/Dashboard'));
+const Settings  = lazy(() => import('./pages/Settings'));
+const HeavyChart = lazy(() => import('./components/HeavyChart'));
+
+function App() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <Routes>
+        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/settings"  element={<Settings />} />
+      </Routes>
+    </Suspense>
+  );
+}
+
+// Named chunk (Vite/webpack magic comment)
+const Modal = lazy(() => import(/* webpackChunkName: "modal" */ './Modal'));
+
+// Preload on hover for instant feel
+const preloadDashboard = () => import('./pages/Dashboard');
+<Link onMouseEnter={preloadDashboard} to="/dashboard">Dashboard</Link>`
+  },
+  {
+    category: 'Performance', difficulty: 'Intermediate',
+    question: 'Why does the key prop matter and how does React reconciliation work?',
+    answer: 'Reconciliation is React\'s algorithm for updating the DOM efficiently. It compares the old and new virtual DOM trees top-down. The key prop helps React identify which items in a list changed, were added, or removed. Stable, unique keys (like database IDs) allow React to reorder DOM nodes instead of rebuilding them. Index as key causes bugs when items are reordered or filtered.',
+    tip: `// Without key — React cannot tell what changed:
+// Old: [A, B, C]  →  New: [X, A, B, C]
+// React diffs each position → thinks A changed to X, B to A...
+// → destroys and rebuilds all DOM nodes ❌
+
+// With stable key — React matches by identity:
+// React sees X is new, A/B/C just moved → inserts X, reuses rest ✅
+
+// ✅ Use stable, unique IDs from data
+{users.map(u => <UserRow key={u.id} user={u} />)}
+
+// ❌ Index as key — breaks on sort/filter
+{users.map((u, i) => <UserRow key={i} user={u} />)}
+
+// Reconciliation rules:
+// 1. Different element type → unmount old, mount new
+// 2. Same type → update props in place
+// 3. Lists → match by key, then update/add/remove
+
+// Force remount by changing key (resets component state)
+<Input key={userId} defaultValue={user.email} />
+// Changing userId creates a fresh Input with no stale state`
+  },
+
+  // ── SSR & Next.js ────────────────────────────────────────
+  {
+    category: 'SSR & Next.js', difficulty: 'Intermediate',
+    question: 'What are CSR, SSR, SSG, and ISR — and when do you use each?',
+    answer: 'CSR (Client-Side Rendering): browser downloads JS bundle, runs it, fetches data — slow first load, bad SEO. SSR (Server-Side Rendering): server renders HTML on every request — fast first paint, always fresh, higher server cost. SSG (Static Site Generation): HTML generated at build time — fastest, best for CDN, but data can be stale. ISR (Incremental Static Regeneration): SSG pages that regenerate in the background after a time interval — best of SSG and SSR.',
+    tip: `//  Strategy     │ Rendered When  │ Data Fresh │ SEO  │ Cost
+// ─────────────┼────────────────┼────────────┼──────┼──────
+//  CSR         │ In browser     │ On demand  │  ❌  │ Low
+//  SSR         │ Each request   │ Always     │  ✅  │ High
+//  SSG         │ Build time     │ At build   │  ✅  │ Low
+//  ISR         │ Build + revalidate│ Near-fresh│ ✅  │ Low
+
+// Use CSR  for: dashboards, admin UIs (no SEO needed)
+// Use SSR  for: personalized pages, real-time stock/scores
+// Use SSG  for: blog, docs, marketing pages (data rarely changes)
+// Use ISR  for: product pages, news (fresh enough + fast + cheap)
+
+// Next.js App Router:
+// Default      → Server Component (SSR / RSC)
+// 'use client' → Client Component (CSR)
+// generateStaticParams() → SSG for dynamic routes
+// revalidate = 60        → ISR (regenerate every 60 seconds)
+
+// In Next.js page:
+export const revalidate = 60; // ISR — regenerate every 60s`
+  },
+  {
+    category: 'SSR & Next.js', difficulty: 'Intermediate',
+    question: 'What is the difference between Server Components and Client Components in Next.js?',
+    answer: 'React Server Components (RSC) run only on the server — they can fetch data directly (no useEffect), access backend resources, and never ship their code to the browser (smaller bundle). Client Components ("use client") run in the browser — they can use useState, useEffect, event handlers, and browser APIs. In Next.js App Router, all components are Server Components by default; add "use client" at the top to make one a Client Component.',
+    tip: `// Server Component (default in App Router)
+// ✅ Async — can await fetch/DB directly
+// ✅ No JS sent to browser
+// ✅ Access filesystem, env vars, DB
+// ❌ No hooks (useState, useEffect)
+// ❌ No event handlers (onClick)
+// ❌ No browser APIs (window, localStorage)
+
+async function ProductPage({ params }) {
+  const product = await db.products.findById(params.id); // direct DB!
+  return <ProductView product={product} />;
+}
+
+// Client Component — add "use client" directive at top
+'use client';
+import { useState } from 'react';
+
+function AddToCart({ productId }) {
+  const [added, setAdded] = useState(false);
+  return (
+    <button onClick={() => setAdded(true)}>
+      {added ? 'Added!' : 'Add to Cart'}
+    </button>
+  );
+}
+
+// Composition pattern — Server wraps Client:
+// ProductPage (Server) → renders AddToCart (Client)
+// ✅ Server fetches data, Client handles interaction
+// ❌ Client component CANNOT import Server component`
+  },
+  {
+    category: 'SSR & Next.js', difficulty: 'Intermediate',
+    question: 'How does data fetching work in Next.js App Router?',
+    answer: 'In the App Router, Server Components are async functions — fetch data directly with await. Next.js extends the native fetch() with caching and revalidation options. For mutations, use Server Actions (async functions that run on the server, called from Client Components). No need for getServerSideProps or getStaticProps (Pages Router patterns).',
+    tip: `// Server Component — direct async data fetch
+async function BlogPost({ params }) {
+  // Cached by default (like SSG)
+  const post = await fetch('https://api.example.com/posts/' + params.id, {
+    next: { revalidate: 3600 }  // ISR: revalidate every hour
+  }).then(r => r.json());
+
+  // No cache — fresh on every request (SSR)
+  const views = await fetch('/api/views/' + params.id, {
+    cache: 'no-store'
+  }).then(r => r.json());
+
+  return <article><h1>{post.title}</h1><p>Views: {views}</p></article>;
+}
+
+// Server Action — mutation runs on server, called from client
+'use server';
+async function submitComment(formData) {
+  const comment = formData.get('comment');
+  await db.comments.create({ text: comment });
+  revalidatePath('/blog/' + formData.get('postId'));
+}
+
+// Client form using Server Action
+'use client';
+function CommentForm({ postId }) {
+  return (
+    <form action={submitComment}>
+      <input name="comment" />
+      <input type="hidden" name="postId" value={postId} />
+      <button type="submit">Post</button>
+    </form>
+  );
+}`
+  },
+  {
+    category: 'SSR & Next.js', difficulty: 'Intermediate',
+    question: 'What is hydration in React SSR and what causes hydration errors?',
+    answer: 'Hydration is the process where React takes server-rendered HTML and attaches event listeners / state to make it interactive. React "hydrates" by rendering the component tree client-side and matching it to the existing DOM. A hydration mismatch occurs when the server HTML and client render produce different output — React warns and may re-render, causing a flash. Common causes: using Date.now() / Math.random() in render, browser-only APIs, locale-specific formatting.',
+    tip: `// SSR lifecycle:
+// 1. Server renders component to HTML string
+// 2. Browser receives and displays HTML immediately (fast!)
+// 3. JS bundle loads
+// 4. React hydrates: renders component again, diffs with DOM
+// 5. Event listeners attached → page is now interactive
+
+// Hydration mismatch causes:
+// ❌ Different output on server vs client
+
+// Bad — Math.random() differs each run
+function Avatar() {
+  return <div style={{ color: randomColor() }}>...</div>;
+}
+
+// Bad — Date differs between server and client
+function Timestamp() {
+  return <time>{new Date().toLocaleString()}</time>; // locale mismatch!
+}
+
+// ✅ Fix: suppress for truly dynamic content
+<div suppressHydrationWarning>{new Date().toLocaleString()}</div>
+
+// ✅ Fix: render on client only
+const [mounted, setMounted] = useState(false);
+useEffect(() => setMounted(true), []);
+if (!mounted) return null;
+
+// ✅ Fix: use stable values
+// Store random/date values in state initialized on client only`
+  },
+  {
+    category: 'SSR & Next.js', difficulty: 'Advanced',
+    question: 'How does the Next.js App Router file-based routing system work?',
+    answer: 'Next.js App Router uses the file system as the router. Every folder inside app/ can have a page.tsx (the page), layout.tsx (persistent wrapper — does not remount on navigation), loading.tsx (Suspense fallback), error.tsx (error boundary), and not-found.tsx. Dynamic segments use [param] folders. Route groups use (group) folders (no URL impact). Parallel routes use @slot folders.',
+    tip: `// File structure → URL mapping:
+app/
+├── layout.tsx          → root layout (wraps everything)
+├── page.tsx            → /
+├── globals.css
+├── about/
+│   └── page.tsx        → /about
+├── blog/
+│   ├── page.tsx        → /blog
+│   ├── loading.tsx     → shown while blog loads (Suspense)
+│   ├── error.tsx       → error boundary for /blog
+│   └── [slug]/
+│       └── page.tsx    → /blog/my-post  (params.slug = "my-post")
+├── (marketing)/        → route group — no effect on URL
+│   ├── pricing/page.tsx→ /pricing
+│   └── features/page.tsx→ /features
+└── dashboard/
+    ├── layout.tsx      → persistent sidebar (no remount!)
+    └── page.tsx        → /dashboard
+
+// layout.tsx — wraps children, persists across navigations
+export default function Layout({ children }) {
+  return (
+    <html lang="en">
+      <body><Navbar />{children}<Footer /></body>
+    </html>
+  );
+}
+
+// Dynamic page
+export default function BlogPost({ params, searchParams }) {
+  // params.slug = "my-post"  (from [slug] folder)
+  // searchParams.page = "2"  (from ?page=2)
+}`
+  },
+];
+
+/* ═══════════════════════════════════════════════════════════
    JAVASCRIPT — 50 cards across 6 topics
 ═══════════════════════════════════════════════════════════ */
 const JS_CARDS = [
@@ -6169,6 +6805,7 @@ const SUBJECTS = {
   'Linux':      LINUX_CARDS,
   'API':        API_CARDS,
   'Node.js':    NODEJS_CARDS,
+  'React & SSR': REACT_CARDS,
 };
 
 /* ═══════════════════════════════════════════════════════════
@@ -6185,6 +6822,7 @@ const SUBJECT_COLORS = {
   'Linux':      '#f97316',
   'API':        '#6366f1',
   'Node.js':    '#68a063',
+  'React & SSR': '#61dafb',
 };
 
 const CATEGORY_COLORS = {
@@ -6220,6 +6858,11 @@ const CATEGORY_COLORS = {
   'CSS':             '#ec4899',
   'Performance':     '#8b5cf6',
   'Security':        '#ef4444',
+  // React & SSR
+  'React Basics': '#61dafb',
+  'Hooks':        '#38bdf8',
+  'Performance':  '#0ea5e9',
+  'SSR & Next.js':'#0284c7',
   // Node.js
   'Node.js Basics':           '#68a063',
   'Modules & npm':            '#4ade80',
