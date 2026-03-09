@@ -4504,6 +4504,330 @@ Idempotent-Replayed: true
 // Storage: Redis with TTL is ideal
 // Real-world use: Stripe, Braintree, all payment APIs require this`
   },
+
+  // ── JWT ──────────────────────────────────────────────────
+  {
+    category: 'JWT', difficulty: 'Beginner',
+    question: 'What is a JWT and what are its three parts?',
+    answer: 'A JWT (JSON Web Token) is a compact, self-contained token for securely transmitting information between parties as a JSON object. It is digitally signed so the receiver can verify it was not tampered with. Structure: three Base64URL-encoded parts separated by dots — Header (algorithm & type), Payload (claims), Signature (proof of integrity).',
+    tip: `// JWT format:  header.payload.signature
+// eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI0MiIsIm5hbWUiOiJBbGljZSIsImV4cCI6MTcwMDAwMzYwMH0.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
+
+// 1. HEADER (decoded)
+{
+  "alg": "HS256",   // signing algorithm
+  "typ": "JWT"
+}
+
+// 2. PAYLOAD (decoded) — the "claims"
+{
+  "sub":  "42",          // subject (user ID)
+  "name": "Alice",
+  "role": "admin",
+  "iat":  1700000000,    // issued at (Unix timestamp)
+  "exp":  1700003600,    // expires at (1 hour later)
+  "iss":  "myapp.com"   // issuer
+}
+
+// 3. SIGNATURE
+// HMACSHA256(base64(header) + "." + base64(payload), SECRET)
+// → only the server with the secret can produce a valid signature
+
+// ⚠️ Payload is BASE64 encoded, NOT encrypted
+// Anyone can decode it — never store passwords or sensitive data in JWT`
+  },
+  {
+    category: 'JWT', difficulty: 'Beginner',
+    question: 'How does JWT authentication work end-to-end?',
+    answer: 'Login: client sends credentials → server verifies → server creates and signs a JWT → returns it to client. Subsequent requests: client sends JWT in Authorization header → server verifies signature (no DB lookup needed) → reads claims and processes request. The server is stateless — no session storage required. Token expiry (exp claim) limits the damage of a stolen token.',
+    tip: `// STEP 1 — Login
+POST /auth/login
+{ "email": "alice@example.com", "password": "secret" }
+
+// Server response
+HTTP 200 OK
+{
+  "accessToken":  "eyJ...",   // short-lived (15 min)
+  "refreshToken": "eyJ..."    // long-lived (7 days)
+}
+
+// STEP 2 — Authenticated request
+GET /api/profile
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9...
+
+// Server verifies:
+// 1. Signature valid? (was token issued by us?)
+// 2. Token expired? (exp claim > now)
+// 3. Extract claims: sub="42", role="admin"
+// → no DB lookup needed!
+
+// STEP 3 — Token expired → use refresh token
+POST /auth/refresh
+{ "refreshToken": "eyJ..." }
+// → server validates refresh token, issues new access token
+
+// Token storage:
+// ✅ HttpOnly cookie — safe from XSS
+// ⚠️  localStorage   — vulnerable to XSS`
+  },
+  {
+    category: 'JWT', difficulty: 'Intermediate',
+    question: 'What are the differences between HS256 and RS256 signing algorithms?',
+    answer: 'HS256 (HMAC-SHA256) uses a single shared secret — same key signs and verifies. Simple but the secret must be shared with every service that verifies tokens. RS256 (RSA-SHA256) uses a private/public key pair — the auth server signs with the private key; any service verifies with the public key (which can be published openly). RS256 is better for microservices and public token verification (e.g. Google, Auth0).',
+    tip: `// HS256 — shared secret (symmetric)
+const jwt = require('jsonwebtoken');
+const SECRET = process.env.JWT_SECRET;
+
+// Sign
+const token = jwt.sign({ sub: '42', role: 'admin' }, SECRET, {
+  algorithm: 'HS256',
+  expiresIn: '15m'
+});
+
+// Verify (same secret)
+const payload = jwt.verify(token, SECRET);
+
+// RS256 — private/public key pair (asymmetric)
+const privateKey = fs.readFileSync('private.pem');
+const publicKey  = fs.readFileSync('public.pem');
+
+// Auth server signs with private key
+const token = jwt.sign({ sub: '42' }, privateKey, {
+  algorithm: 'RS256',
+  expiresIn: '15m'
+});
+
+// Any service verifies with PUBLIC key (safe to share)
+const payload = jwt.verify(token, publicKey);
+
+// Use case guide:
+// HS256 → monolith / single service (simple)
+// RS256 → microservices, third-party token issuers (Auth0, Google)`
+  },
+  {
+    category: 'JWT', difficulty: 'Intermediate',
+    question: 'What are JWT security pitfalls and how do you avoid them?',
+    answer: 'Common JWT mistakes: (1) storing tokens in localStorage (XSS-vulnerable — use HttpOnly cookies), (2) weak or hardcoded secrets, (3) not validating expiry, (4) algorithm confusion (alg: "none" attack — always specify expected algorithm), (5) putting sensitive data in payload (it is only Base64 — not encrypted), (6) no token revocation strategy for logout.',
+    tip: `// ❌ Algorithm confusion attack — "alg: none"
+// Attacker crafts token with alg=none and no signature
+// Fix: ALWAYS specify allowed algorithms explicitly
+jwt.verify(token, secret, { algorithms: ['HS256'] }); // ✅
+
+// ❌ Weak secret
+JWT_SECRET=secret     // brute-forceable!
+// ✅ Use strong random secret (32+ bytes)
+node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
+
+// ❌ Storing in localStorage — XSS can steal it
+localStorage.setItem('token', jwt);
+
+// ✅ Store in HttpOnly cookie — JS cannot access it
+res.cookie('token', jwt, {
+  httpOnly: true,   // not accessible by JS
+  secure: true,     // HTTPS only
+  sameSite: 'strict' // CSRF protection
+});
+
+// ❌ No expiry
+jwt.sign({ sub: '42' }, secret);  // lives forever!
+// ✅ Always set expiry
+jwt.sign({ sub: '42' }, secret, { expiresIn: '15m' });
+
+// Token revocation (JWTs are stateless — hard to revoke):
+// → Short expiry (15 min) + refresh token rotation
+// → Blocklist (Redis) for explicit logout`
+  },
+  {
+    category: 'JWT', difficulty: 'Intermediate',
+    question: 'What is the access token + refresh token pattern and why use it?',
+    answer: 'Access tokens are short-lived (5–15 min) — limits damage if stolen. Refresh tokens are long-lived (days/weeks) and stored securely — used only to get new access tokens. On every refresh, the old refresh token is rotated (replaced with a new one), so stolen refresh tokens are detected on the next use. This balances security (short access token life) with usability (stay logged in).',
+    tip: `// Token lifecycle:
+//
+// 1. Login → server issues:
+//    accessToken  (exp: 15 min)  → stored in memory or HttpOnly cookie
+//    refreshToken (exp: 7 days)  → stored in HttpOnly cookie only
+//
+// 2. Every API call uses accessToken
+//
+// 3. accessToken expires → client sends refreshToken:
+POST /auth/refresh
+Cookie: refreshToken=eyJ...
+
+// Server:
+// a. Validate refreshToken signature + expiry
+// b. Check it's not in the blocklist (revoked)
+// c. Issue NEW accessToken + NEW refreshToken (rotation!)
+// d. Invalidate old refreshToken
+
+// 4. Logout → server adds refreshToken to blocklist (Redis)
+
+// Refresh token rotation:
+// If attacker steals refreshToken and uses it AFTER legitimate user
+// already rotated it → old token is invalid → attacker blocked!
+// If attacker uses it FIRST → legitimate user's next refresh fails
+// → detect theft, force re-login
+
+// Storage summary:
+// accessToken  → memory (JS variable) or short HttpOnly cookie
+// refreshToken → HttpOnly, Secure, SameSite=Strict cookie ONLY`
+  },
+
+  // ── OAuth2 ───────────────────────────────────────────────
+  {
+    category: 'OAuth2', difficulty: 'Beginner',
+    question: 'What is OAuth2 and what problem does it solve?',
+    answer: 'OAuth2 is an authorization framework that lets users grant third-party applications limited access to their account without sharing their password. Example: "Sign in with Google" — you allow a third-party app to read your Google profile, but the app never sees your Google password. Key roles: Resource Owner (user), Client (third-party app), Authorization Server (Google/GitHub), Resource Server (the API being accessed).',
+    tip: `// The core problem OAuth2 solves:
+//
+// OLD WAY (bad): give your Gmail password to a third-party app
+// → app has full access, password can be stolen/misused
+//
+// OAuth2 WAY: grant limited, revocable access
+// → app gets a scoped token, not your password
+// → you can revoke access anytime without changing password
+
+// OAuth2 Roles:
+// Resource Owner     = you (the user)
+// Client             = the app wanting access (Spotify, Notion...)
+// Authorization Server = who verifies identity (Google, GitHub, Auth0)
+// Resource Server    = the API storing your data (Google Calendar API)
+
+// OAuth2 is AUTHORIZATION, not AUTHENTICATION
+// For authentication (login), use OpenID Connect (OIDC)
+// OIDC = OAuth2 + identity layer (adds id_token with user info)
+
+// Common OAuth2 providers:
+// Google, GitHub, Facebook, Twitter, Microsoft, Auth0, Okta`
+  },
+  {
+    category: 'OAuth2', difficulty: 'Intermediate',
+    question: 'How does the OAuth2 Authorization Code Flow work step by step?',
+    answer: 'The most secure and common OAuth2 flow for web and mobile apps. Uses a short-lived authorization code (exchanged server-side for tokens) so tokens never appear in the browser URL. With PKCE (Proof Key for Code Exchange), it is also safe for public clients (SPAs, mobile) where a client secret cannot be kept hidden.',
+    tip: `// Authorization Code Flow (with PKCE):
+//
+// 1. USER clicks "Login with GitHub"
+//
+// 2. APP redirects user to Auth Server:
+GET https://github.com/login/oauth/authorize
+  ?client_id=abc123
+  &redirect_uri=https://myapp.com/callback
+  &scope=read:user,repo
+  &state=random_csrf_token
+  &code_challenge=base64(sha256(code_verifier))  // PKCE
+  &code_challenge_method=S256
+
+// 3. USER logs in on GitHub and grants permission
+//
+// 4. AUTH SERVER redirects back to app with code:
+GET https://myapp.com/callback?code=xyz789&state=random_csrf_token
+
+// 5. APP server exchanges code for tokens (server-side, never in browser):
+POST https://github.com/login/oauth/access_token
+{
+  "client_id":     "abc123",
+  "client_secret": "secret",   // kept on server
+  "code":          "xyz789",
+  "code_verifier": "original_verifier"  // PKCE
+}
+// → { "access_token": "ghu_...", "scope": "read:user,repo" }
+
+// 6. APP calls API with access_token:
+GET https://api.github.com/user
+Authorization: Bearer ghu_...`
+  },
+  {
+    category: 'OAuth2', difficulty: 'Intermediate',
+    question: 'What are OAuth2 scopes and why do they matter?',
+    answer: 'Scopes define the exact permissions a client is requesting. They implement the principle of least privilege — an app should request only the minimum access it needs. Users see the requested scopes on the consent screen. If an access token is stolen, the attacker is limited to those scopes. Resource servers validate that the token\'s scopes cover the requested action.',
+    tip: `// Scopes are space-separated strings in the authorization request
+scope=read:user repo:status email
+
+// Common scope patterns by provider:
+// GitHub:  read:user, repo, gist, admin:org
+// Google:  openid, email, profile, https://www.googleapis.com/auth/calendar
+// Spotify: user-read-email, playlist-modify-public, streaming
+
+// Minimal scope principle — only request what you need:
+// ❌ scope=admin  — full access (dangerous)
+// ✅ scope=read:user email  — just what this feature needs
+
+// Token with scopes — server checks before acting:
+// GET /repos (needs "repo" scope)
+// → Authorization server minted token with scope=read:user only
+// → Resource server returns 403 Forbidden — insufficient scope
+
+// OpenID Connect adds standard scopes for identity:
+scope=openid          // required for OIDC, returns id_token
+scope=openid profile  // name, picture, birthdate
+scope=openid email    // email + email_verified`
+  },
+  {
+    category: 'OAuth2', difficulty: 'Intermediate',
+    question: 'What are the other OAuth2 flows and when do you use each?',
+    answer: 'Authorization Code (+ PKCE) — web & mobile apps (most secure, use this by default). Client Credentials — machine-to-machine / service-to-service (no user involved, uses client_id + client_secret directly). Device Code — devices with no browser (smart TVs, CLI tools). Implicit — deprecated; was for SPAs but PKCE solved that. Resource Owner Password — deprecated; only for legacy trusted first-party apps.',
+    tip: `// 1. Authorization Code + PKCE → web apps, SPAs, mobile
+// (user-facing, most secure — described in previous card)
+
+// 2. Client Credentials → machine-to-machine (M2M)
+// No user involved — service authenticates as itself
+POST /oauth/token
+{
+  "grant_type":    "client_credentials",
+  "client_id":     "service-a",
+  "client_secret": "secret",
+  "scope":         "read:orders"
+}
+// → { "access_token": "...", "expires_in": 3600 }
+// Use case: cron jobs, microservices calling each other
+
+// 3. Device Code → browserless devices
+POST /oauth/device/code
+{ "client_id": "...", "scope": "read:user" }
+// → { "device_code": "...", "user_code": "ABCD-1234",
+//     "verification_uri": "https://example.com/device" }
+// User visits URL on phone, enters code
+// Device polls until authorized
+// Use case: CLI tools (GitHub CLI), smart TVs
+
+// Deprecated — DO NOT USE:
+// Implicit Flow         → use Auth Code + PKCE instead
+// Resource Owner Password → exposes password to client`
+  },
+  {
+    category: 'OAuth2', difficulty: 'Advanced',
+    question: 'What is OpenID Connect (OIDC) and how does it extend OAuth2?',
+    answer: 'OAuth2 handles authorization ("what can this app do?") but not authentication ("who is this user?"). OpenID Connect (OIDC) is an identity layer on top of OAuth2 that adds authentication. It introduces the id_token (a JWT containing user identity claims) and the /userinfo endpoint. OIDC is what powers "Sign in with Google/GitHub" — the app gets a verified identity, not just an access token.',
+    tip: `// OAuth2 alone = "here's a token to access things"
+// OIDC        = "here's WHO the user is + a token to access things"
+
+// OIDC adds to the Authorization Code flow:
+// 1. Request scope=openid (required)
+// 2. Get BOTH access_token AND id_token
+
+// id_token is a JWT with standard claims:
+{
+  "iss":   "https://accounts.google.com",  // issuer
+  "sub":   "1234567890",                   // unique user ID
+  "aud":   "your-client-id",              // your app
+  "exp":   1700003600,
+  "iat":   1700000000,
+  "email": "alice@gmail.com",
+  "name":  "Alice Smith",
+  "picture": "https://lh3.google.com/..."
+}
+
+// Standard OIDC endpoints (discovered via /.well-known/openid-configuration):
+GET https://accounts.google.com/.well-known/openid-configuration
+// → { "authorization_endpoint", "token_endpoint",
+//     "userinfo_endpoint", "jwks_uri", ... }
+
+// Use access_token to call /userinfo for fresh user data:
+GET https://openidconnect.googleapis.com/v1/userinfo
+Authorization: Bearer <access_token>
+
+// Libraries handling OIDC for you:
+// NextAuth.js, Passport.js (oidc strategy), Auth0 SDK, Keycloak`
+  },
 ];
 
 /* ═══════════════════════════════════════════════════════════
@@ -5907,6 +6231,8 @@ const CATEGORY_COLORS = {
   'REST Fundamentals': '#818cf8',
   'REST Design':       '#4f46e5',
   'API in Practice':   '#3730a3',
+  'JWT':               '#7c3aed',
+  'OAuth2':            '#5b21b6',
   // Linux
   'Linux Basics':        '#f97316',
   'Files & Permissions': '#fb923c',
