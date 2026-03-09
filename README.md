@@ -8,20 +8,23 @@ A multi-subject developer flash card web app built with vanilla HTML, CSS, and J
 
 ---
 
-## Subjects
+## Subjects & Cards
 
-| Subject | Cards | Topics Covered |
+| Subject | Cards | Categories |
 |---|---|---|
-| DSA | 28+ | Big O, Arrays, Stacks, Queues, Hash Tables, Trees, Graphs, Sorting, Hashing patterns, Recursion, Interview problems |
-| Python | 22 | Basics, OOP & Design patterns, Ecosystem (pip, venv, type hints) |
-| C# | 18 | Basics, OOP & Design patterns, LINQ & Async/Await |
-| SQL | 20 | Basics, Joins & Aggregation, Advanced SQL (indexes, CTEs, window functions) |
-| Database | 26+ | Relational DB, NoSQL, DB Design & Performance, PostgreSQL (MVCC, JSONB, indexes, EXPLAIN) |
-| JavaScript | 50 | Core JS, Async, DOM & Browser, CSS, Performance, Security |
-| Internet | 20 | How the Internet works, HTTP & HTTPS, DNS & Domains, Browsers |
-| Linux | 25 | Basics, Files & Permissions, Processes & System, Networking & SSH, Shell Scripting |
-| API | 20 | JSON, REST Fundamentals, REST Design best practices, API in Practice |
-| Node.js | 25 | Basics & Event Loop, Modules & npm, Async & Error Handling, Express.js, Performance & Production |
+| **DSA** | 40+ | Complexity, Data Structures, Algorithms, Patterns, Hashing, Recursion, Interview |
+| **Python** | 22 | Core Python, OOP & Design, Ecosystem |
+| **C#** | 18 | C# Basics, OOP & Patterns, LINQ & Async |
+| **SQL** | 20 | SQL Basics, Joins & Aggregation, Advanced SQL |
+| **Database** | 26+ | Relational DB, NoSQL, DB Design & Perf, PostgreSQL |
+| **JavaScript** | 50 | JavaScript Core, Async JavaScript, DOM & Browser, CSS, Performance, Security |
+| **Internet** | 20 | How Internet Works, HTTP & Web, DNS & Domains, Browsers |
+| **Linux** | 25 | Linux Basics, Files & Permissions, Processes & System, Networking & SSH, Shell Scripting |
+| **API** | 30+ | JSON Basics, REST Fundamentals, REST Design, API in Practice, JWT, OAuth2 |
+| **Node.js** | 25 | Node.js Basics, Modules & npm, Async & Error Handling, HTTP & Express, Performance & Production |
+| **React & SSR** | 25 | React Basics, Hooks, Performance, SSR & Next.js |
+
+**Total: 300+ cards**
 
 ---
 
@@ -30,13 +33,13 @@ A multi-subject developer flash card web app built with vanilla HTML, CSS, and J
 - Multi-subject navigation bar with per-subject color themes
 - Category filter bar — drill into specific topics within a subject
 - 3D card flip animation (CSS `transform-style: preserve-3d`)
-- "Got it" button to mark cards as known — tracked across shuffle
-- Progress bar and "X of Y" indicator
-- Shuffle deck (Fisher-Yates)
+- **"Got it"** button — track known cards, persists across shuffle
+- Progress bar and **"X of Y"** indicator
+- Shuffle deck (Fisher-Yates algorithm)
 - Reset progress
-- Keyboard shortcuts: `←` `→` navigate, `Space` flip, `K` mark known
+- Keyboard shortcuts: `←` `→` navigate · `Space` flip · `K` mark known
 - Difficulty badges: Beginner / Intermediate / Advanced
-- Code tip blocks on answer cards
+- Code tip blocks with syntax-highlighted snippets on answer cards
 
 ---
 
@@ -44,7 +47,7 @@ A multi-subject developer flash card web app built with vanilla HTML, CSS, and J
 
 - Vanilla HTML5, CSS3, JavaScript (ES2022) — zero dependencies
 - GitHub Actions CI/CD → GitHub Pages deployment
-- `node --check` syntax validation on every push
+- `node --check` syntax validation on every push to `master`
 
 ---
 
@@ -52,11 +55,11 @@ A multi-subject developer flash card web app built with vanilla HTML, CSS, and J
 
 ```
 Flash_cards/
-├── index.html          # App shell and markup
-├── style.css           # Dark theme, 3D flip animation
-├── app.js              # All card data, state management, DOM logic
+├── index.html              # App shell and markup
+├── style.css               # Dark theme, 3D flip animation
+├── app.js                  # All card data, state management, DOM logic
 ├── README.md
-├── CLAUDE.md           # Dev instructions for Claude
+├── CLAUDE.md               # Dev instructions for Claude
 └── .github/
     └── workflows/
         └── CI_deployy.yml  # Validate + deploy to GitHub Pages
@@ -69,7 +72,7 @@ Flash_cards/
 Open `index.html` directly in a browser — no install or build step required.
 
 ```bash
-# Or serve locally
+# Or serve locally with any static server
 npx serve .
 ```
 
