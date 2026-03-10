@@ -2661,6 +2661,332 @@ ORDER BY COUNT(o.id) DESC;
 -- Update statistics so planner makes better choices
 ANALYZE orders;`
   },
+
+  /* ── GROUP BY Patterns ── */
+  {
+    category: 'GROUP BY Patterns', difficulty: 'Intermediate',
+    question: 'What are the core GROUP BY counting patterns in SQL?',
+    answer: '`COUNT(*)` counts all rows per group. `COUNT(col)` ignores NULLs. `COUNT(DISTINCT col)` counts unique values. Combine with `GROUP BY` to answer "how many X per Y" questions. Common patterns: count orders per customer, count users per country, count events per day. Always group by the non-aggregated columns in your SELECT.',
+    tip: `-- Count orders per customer
+SELECT customer_id, COUNT(*) AS total_orders
+FROM orders
+GROUP BY customer_id
+ORDER BY total_orders DESC;
+
+-- Count unique products per category
+SELECT category, COUNT(DISTINCT product_id) AS unique_products
+FROM order_items oi
+JOIN products p ON p.id = oi.product_id
+GROUP BY category;
+
+-- Count signups per day
+SELECT DATE(created_at) AS day, COUNT(*) AS signups
+FROM users
+GROUP BY DATE(created_at)
+ORDER BY day;`
+  },
+  {
+    category: 'GROUP BY Patterns', difficulty: 'Intermediate',
+    question: 'How do you filter groups with HAVING? What are common HAVING patterns?',
+    answer: '`HAVING` filters groups after aggregation — it is the WHERE clause for GROUP BY results. Use it to: find customers with more than N orders, categories with total revenue above a threshold, users who logged in on more than X days. You cannot use a SELECT alias in HAVING (in most databases) — repeat the aggregate expression. Use WHERE to pre-filter rows before grouping (cheaper), HAVING to post-filter groups.',
+    tip: `-- Customers with more than 5 orders
+SELECT customer_id, COUNT(*) AS order_count
+FROM orders
+GROUP BY customer_id
+HAVING COUNT(*) > 5;
+
+-- Categories with total revenue > 10,000
+SELECT category, SUM(price * quantity) AS revenue
+FROM order_items oi
+JOIN products p ON p.id = oi.product_id
+GROUP BY category
+HAVING SUM(price * quantity) > 10000
+ORDER BY revenue DESC;
+
+-- Users active on at least 3 different days
+SELECT user_id, COUNT(DISTINCT DATE(created_at)) AS active_days
+FROM events
+GROUP BY user_id
+HAVING COUNT(DISTINCT DATE(created_at)) >= 3;`
+  },
+  {
+    category: 'GROUP BY Patterns', difficulty: 'Intermediate',
+    question: 'What are the key aggregation patterns with GROUP BY (SUM, AVG, MIN, MAX)?',
+    answer: 'Aggregation patterns: SUM for totals (revenue, quantities), AVG for averages (rating, spend per user), MIN/MAX for ranges (earliest/latest date, cheapest/most expensive item). Combine multiple aggregates in one query for dashboards. Use `FILTER (WHERE ...)` (PostgreSQL) or CASE inside aggregate for conditional aggregation — counting or summing only rows matching a condition.',
+    tip: `-- Sales summary per product
+SELECT
+  product_id,
+  COUNT(*)                          AS total_sales,
+  SUM(quantity)                     AS units_sold,
+  ROUND(AVG(unit_price), 2)         AS avg_price,
+  MIN(created_at)                   AS first_sale,
+  MAX(created_at)                   AS last_sale
+FROM order_items
+GROUP BY product_id;
+
+-- Conditional aggregation (pivot-style)
+SELECT
+  user_id,
+  COUNT(*) FILTER (WHERE status = 'completed') AS completed,
+  COUNT(*) FILTER (WHERE status = 'cancelled') AS cancelled,
+  SUM(amount) FILTER (WHERE status = 'completed') AS total_revenue
+FROM orders
+GROUP BY user_id;`
+  },
+
+  /* ── SQL Patterns ── */
+  {
+    category: 'SQL Patterns', difficulty: 'Intermediate',
+    question: 'What is the Pagination pattern in SQL (LIMIT / OFFSET vs keyset)?',
+    answer: 'Offset pagination: `LIMIT n OFFSET (page-1)*n`. Simple but slow on large tables — the DB must scan and discard all skipped rows. Keyset (cursor) pagination: `WHERE id > last_seen_id ORDER BY id LIMIT n`. O(1) regardless of page depth — always uses the index. Use keyset for infinite scroll / large datasets; offset for small tables or when you need random page access.',
+    tip: `-- Offset pagination (page 3, 10 per page)
+SELECT * FROM products
+ORDER BY id
+LIMIT 10 OFFSET 20;          -- scans 30 rows, returns last 10
+
+-- Keyset pagination (cursor-based) — always fast
+SELECT * FROM products
+WHERE id > 340                -- last id from previous page
+ORDER BY id
+LIMIT 10;
+
+-- With composite cursor (tie-breaking)
+SELECT * FROM posts
+WHERE (created_at, id) < (\$1, \$2)  -- last seen values
+ORDER BY created_at DESC, id DESC
+LIMIT 20;`
+  },
+  {
+    category: 'SQL Patterns', difficulty: 'Intermediate',
+    question: 'What is the Top-N per Group pattern in SQL?',
+    answer: 'Finding the top N rows per group (e.g., top 3 products per category, latest order per customer) requires window functions. `ROW_NUMBER() OVER (PARTITION BY group_col ORDER BY rank_col DESC)` assigns a rank within each group. Wrap in a subquery or CTE and filter `WHERE rn <= N`. Alternative: `DISTINCT ON (group_col)` in PostgreSQL for the single top row.',
+    tip: `-- Top 3 products by revenue per category
+WITH ranked AS (
+  SELECT
+    product_id, category,
+    SUM(revenue) AS total,
+    ROW_NUMBER() OVER (
+      PARTITION BY category
+      ORDER BY SUM(revenue) DESC
+    ) AS rn
+  FROM sales
+  GROUP BY product_id, category
+)
+SELECT * FROM ranked WHERE rn <= 3;
+
+-- Latest order per customer (PostgreSQL shortcut)
+SELECT DISTINCT ON (customer_id)
+  customer_id, order_id, created_at
+FROM orders
+ORDER BY customer_id, created_at DESC;`
+  },
+  {
+    category: 'SQL Patterns', difficulty: 'Intermediate',
+    question: 'What is the Running Total / Cumulative Sum pattern?',
+    answer: 'A running total accumulates a value row by row in order. Use `SUM(col) OVER (ORDER BY date_col)` — a window function with no PARTITION means the window spans all previous rows up to the current one. Add `PARTITION BY` to reset the running total per group (e.g., per user). Also useful: `AVG() OVER`, `COUNT() OVER` for rolling averages and counts.',
+    tip: `-- Daily revenue with running total
+SELECT
+  order_date,
+  daily_revenue,
+  SUM(daily_revenue) OVER (ORDER BY order_date) AS running_total
+FROM (
+  SELECT DATE(created_at) AS order_date,
+         SUM(amount)      AS daily_revenue
+  FROM orders
+  GROUP BY DATE(created_at)
+) daily;
+
+-- Running total per user (resets per partition)
+SELECT
+  user_id, order_date, amount,
+  SUM(amount) OVER (
+    PARTITION BY user_id
+    ORDER BY order_date
+  ) AS user_running_total
+FROM orders;`
+  },
+  {
+    category: 'SQL Patterns', difficulty: 'Intermediate',
+    question: 'What is the Upsert pattern in SQL (INSERT ... ON CONFLICT)?',
+    answer: 'Upsert inserts a row if it does not exist, or updates it if it does — atomically. PostgreSQL: `INSERT INTO ... ON CONFLICT (col) DO UPDATE SET ...`. MySQL: `INSERT ... ON DUPLICATE KEY UPDATE`. Use `EXCLUDED` pseudo-table in PostgreSQL to reference the values that were attempted. Essential for idempotent data pipelines, counters, and syncing external data.',
+    tip: `-- Insert or update a user's last_seen timestamp
+INSERT INTO user_sessions (user_id, last_seen, visit_count)
+VALUES (42, NOW(), 1)
+ON CONFLICT (user_id) DO UPDATE
+  SET last_seen   = EXCLUDED.last_seen,
+      visit_count = user_sessions.visit_count + 1;
+
+-- Insert if not exists, skip if exists
+INSERT INTO tags (name)
+VALUES ('postgresql')
+ON CONFLICT (name) DO NOTHING;
+
+-- RETURNING — get the row back either way
+INSERT INTO products (sku, price)
+VALUES ('ABC123', 9.99)
+ON CONFLICT (sku) DO UPDATE SET price = EXCLUDED.price
+RETURNING id, sku, price;`
+  },
+  {
+    category: 'SQL Patterns', difficulty: 'Intermediate',
+    question: 'What is the Pivot / Conditional Aggregation pattern?',
+    answer: 'Pivoting turns row values into columns. SQL does not have a native PIVOT syntax (outside SQL Server), but you can use conditional aggregation: `SUM(CASE WHEN status = "A" THEN amount ELSE 0 END)`. PostgreSQL also supports `FILTER (WHERE ...)` inside aggregates — cleaner syntax. Use this to produce cross-tab reports, monthly breakdowns per category, or status counters in a single row per entity.',
+    tip: `-- Monthly revenue per region (pivot)
+SELECT
+  region,
+  SUM(CASE WHEN EXTRACT(MONTH FROM order_date) = 1 THEN revenue ELSE 0 END) AS jan,
+  SUM(CASE WHEN EXTRACT(MONTH FROM order_date) = 2 THEN revenue ELSE 0 END) AS feb,
+  SUM(CASE WHEN EXTRACT(MONTH FROM order_date) = 3 THEN revenue ELSE 0 END) AS mar
+FROM orders
+GROUP BY region;
+
+-- Cleaner with FILTER (PostgreSQL)
+SELECT
+  user_id,
+  COUNT(*) FILTER (WHERE status = 'active')   AS active_count,
+  COUNT(*) FILTER (WHERE status = 'inactive') AS inactive_count,
+  AVG(score) FILTER (WHERE type = 'quiz')     AS avg_quiz_score
+FROM events
+GROUP BY user_id;`
+  },
+  {
+    category: 'SQL Patterns', difficulty: 'Advanced',
+    question: 'What is the Recursive CTE pattern and when do you use it?',
+    answer: 'Recursive CTEs traverse hierarchical or graph-like data (org charts, category trees, bill of materials, comment threads). Structure: anchor member (base case) UNION ALL recursive member (self-joins the CTE). PostgreSQL/most SQL databases support this. Always include a depth counter or termination condition to prevent infinite loops. Use `WITH RECURSIVE` keyword.',
+    tip: `-- Org chart: all reports under manager id=1
+WITH RECURSIVE org AS (
+  -- Anchor: start at the root manager
+  SELECT id, name, manager_id, 1 AS depth
+  FROM employees
+  WHERE id = 1
+
+  UNION ALL
+
+  -- Recursive: find direct reports of each found employee
+  SELECT e.id, e.name, e.manager_id, org.depth + 1
+  FROM employees e
+  JOIN org ON e.manager_id = org.id
+  WHERE org.depth < 10          -- safety: max 10 levels
+)
+SELECT * FROM org ORDER BY depth;
+
+-- Category tree path
+WITH RECURSIVE tree AS (
+  SELECT id, name, parent_id, name::TEXT AS path
+  FROM categories WHERE parent_id IS NULL
+  UNION ALL
+  SELECT c.id, c.name, c.parent_id, tree.path || ' > ' || c.name
+  FROM categories c JOIN tree ON c.parent_id = tree.id
+)
+SELECT * FROM tree;`
+  },
+  {
+    category: 'SQL Patterns', difficulty: 'Advanced',
+    question: 'What is the Gap and Island pattern in SQL?',
+    answer: 'Gaps are missing values in a sequence (missing order numbers, offline periods). Islands are consecutive ranges of rows. Classic technique: `row_number - rank` produces the same constant for consecutive rows in the same island. Use `LAG()`/`LEAD()` to detect gaps between adjacent rows. Common use cases: finding network downtime periods, consecutive login streaks, contiguous date ranges.',
+    tip: `-- Find date ranges of consecutive active days (islands)
+WITH numbered AS (
+  SELECT
+    user_id,
+    active_date,
+    active_date - INTERVAL '1 day' * ROW_NUMBER()
+      OVER (PARTITION BY user_id ORDER BY active_date) AS grp
+  FROM user_active_days
+)
+SELECT
+  user_id,
+  MIN(active_date) AS streak_start,
+  MAX(active_date) AS streak_end,
+  COUNT(*)         AS streak_length
+FROM numbered
+GROUP BY user_id, grp
+ORDER BY user_id, streak_start;
+
+-- Find gaps in order IDs
+SELECT prev_id + 1 AS gap_start, curr_id - 1 AS gap_end
+FROM (
+  SELECT id AS curr_id,
+         LAG(id) OVER (ORDER BY id) AS prev_id
+  FROM orders
+) t
+WHERE curr_id > prev_id + 1;`
+  },
+  {
+    category: 'SQL Patterns', difficulty: 'Advanced',
+    question: 'What is the Slowly Changing Dimension (SCD) pattern?',
+    answer: 'SCD handles historical tracking when dimension data changes over time (e.g., a customer changes their address). SCD Type 1: overwrite — no history, just update. SCD Type 2: add a new row with `valid_from`/`valid_to` date range and an `is_current` flag — full history preserved. SCD Type 3: add a `previous_value` column — keeps only one prior version. Type 2 is the most common in data warehouses.',
+    tip: `-- SCD Type 2 table structure
+CREATE TABLE customers_history (
+  surrogate_key SERIAL PRIMARY KEY,
+  customer_id   INT,
+  name          VARCHAR(100),
+  address       TEXT,
+  valid_from    DATE NOT NULL,
+  valid_to      DATE,                -- NULL means current
+  is_current    BOOLEAN DEFAULT TRUE
+);
+
+-- Insert new version when address changes
+UPDATE customers_history
+SET valid_to = CURRENT_DATE - 1, is_current = FALSE
+WHERE customer_id = 42 AND is_current = TRUE;
+
+INSERT INTO customers_history
+  (customer_id, name, address, valid_from, is_current)
+VALUES (42, 'Alice', 'New Address', CURRENT_DATE, TRUE);
+
+-- Query current state only
+SELECT * FROM customers_history WHERE is_current = TRUE;`
+  },
+  {
+    category: 'SQL Patterns', difficulty: 'Advanced',
+    question: 'What is the Funnel Analysis pattern in SQL?',
+    answer: 'Funnel analysis tracks how many users complete each step in a sequence (signup → verify email → first purchase → repeat purchase). Use conditional COUNT or SUM with ordered event timestamps. Key: each step must occur AFTER the previous one. Use self-joins or window functions to enforce ordering. Output: count and conversion rate at each stage.',
+    tip: `-- E-commerce funnel: visited → added to cart → purchased
+SELECT
+  COUNT(DISTINCT v.user_id)                       AS visited,
+  COUNT(DISTINCT c.user_id)                       AS added_to_cart,
+  COUNT(DISTINCT p.user_id)                       AS purchased,
+  ROUND(COUNT(DISTINCT c.user_id) * 100.0
+        / NULLIF(COUNT(DISTINCT v.user_id), 0), 1) AS cart_rate_pct,
+  ROUND(COUNT(DISTINCT p.user_id) * 100.0
+        / NULLIF(COUNT(DISTINCT c.user_id), 0), 1) AS purchase_rate_pct
+FROM events v
+LEFT JOIN events c ON c.user_id = v.user_id
+  AND c.event = 'add_to_cart'
+  AND c.created_at > v.created_at
+LEFT JOIN events p ON p.user_id = c.user_id
+  AND p.event = 'purchase'
+  AND p.created_at > c.created_at
+WHERE v.event = 'page_view';`
+  },
+  {
+    category: 'SQL Patterns', difficulty: 'Advanced',
+    question: 'What are the Deduplication patterns in SQL?',
+    answer: 'Duplicates arise from bad ingestion, double inserts, or joins. Three main deduplication patterns: 1) `SELECT DISTINCT` — removes identical rows. 2) `ROW_NUMBER() OVER (PARTITION BY key ORDER BY updated_at DESC)` — keep the latest version per key, then filter `WHERE rn = 1`. 3) `DELETE` using a CTE with ROW_NUMBER to physically remove duplicates. The ROW_NUMBER approach is the most flexible — works for both SELECT and DELETE.',
+    tip: `-- Keep only the most recent row per user_id
+WITH deduped AS (
+  SELECT *,
+    ROW_NUMBER() OVER (
+      PARTITION BY user_id
+      ORDER BY updated_at DESC
+    ) AS rn
+  FROM users_raw
+)
+SELECT * FROM deduped WHERE rn = 1;
+
+-- Delete duplicates, keep the row with the lowest id
+WITH dupes AS (
+  SELECT id,
+    ROW_NUMBER() OVER (
+      PARTITION BY email
+      ORDER BY id ASC
+    ) AS rn
+  FROM users
+)
+DELETE FROM users
+WHERE id IN (SELECT id FROM dupes WHERE rn > 1);`
+  },
 ];
 
 /* ═══════════════════════════════════════════════════════════
@@ -8438,6 +8764,8 @@ const CATEGORY_COLORS = {
   'DCL':                 '#7dd3fc',
   'Joins & Aggregation': '#0891b2',
   'Advanced SQL':        '#164e63',
+  'GROUP BY Patterns':   '#0284c7',
+  'SQL Patterns':        '#0369a1',
   // C#
   'C# Basics':    '#8b5cf6',
   'OOP & Patterns': '#a78bfa',
