@@ -74,7 +74,7 @@ Flash Cards Page
 |---|---|---|
 | Python | 22 | Core Python, OOP & Design, Ecosystem |
 | C# | 18 | C# Basics, OOP & Patterns, LINQ & Async |
-| SQL | 20 | SQL Basics, Joins & Aggregation, Advanced SQL |
+| SQL | 30+ | SQL Basics, DDL, DML, DQL, DCL, Joins & Aggregation, Advanced SQL |
 | Database | 26+ | Relational DB, NoSQL, DB Design & Perf, PostgreSQL |
 | API | 30+ | JSON Basics, REST Fundamentals, REST Design, API in Practice, JWT, OAuth2 |
 | Node.js | 25 | Node.js Basics, Modules & npm, Async & Error Handling, HTTP & Express, Performance & Production |
@@ -87,7 +87,7 @@ Flash Cards Page
 | React & SSR | 25 | React Basics, Hooks, Performance, SSR & Next.js |
 | CSS & Tailwind | 20 | CSS Fundamentals, CSS Layouts, Tailwind CSS |
 
-**Total: 340+ cards**
+**Total: 350+ cards**
 
 ---
 
