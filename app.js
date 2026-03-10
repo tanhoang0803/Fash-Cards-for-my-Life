@@ -1947,6 +1947,398 @@ id BIGSERIAL PRIMARY KEY       -- auto-increment bigint
 id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY  -- SQL standard`
   },
 
+  /* ── DDL — Data Definition Language ── */
+  {
+    category: 'DDL', difficulty: 'Beginner',
+    question: 'What is DDL and what are its core commands (CREATE, ALTER, DROP, TRUNCATE)?',
+    answer: 'DDL (Data Definition Language) defines and modifies database structure — it operates on schema objects, not data. CREATE builds new objects (tables, indexes, views). ALTER modifies existing ones (add/drop/rename columns). DROP permanently removes an object and all its data. TRUNCATE removes all rows from a table instantly without logging each row — much faster than DELETE for full clears. DDL is auto-committed in most databases.',
+    tip: `-- CREATE TABLE with common constraints
+CREATE TABLE users (
+  id         BIGSERIAL    PRIMARY KEY,
+  email      VARCHAR(255) NOT NULL UNIQUE,
+  username   VARCHAR(50)  NOT NULL,
+  role       VARCHAR(20)  NOT NULL DEFAULT 'user',
+  is_active  BOOLEAN      NOT NULL DEFAULT true,
+  created_at TIMESTAMP    NOT NULL DEFAULT NOW(),
+  updated_at TIMESTAMP    NOT NULL DEFAULT NOW()
+);
+
+-- ALTER TABLE — modify structure
+ALTER TABLE users ADD COLUMN  phone VARCHAR(20);          -- add column
+ALTER TABLE users DROP COLUMN phone;                      -- remove column
+ALTER TABLE users ALTER COLUMN username TYPE TEXT;         -- change type
+ALTER TABLE users RENAME COLUMN username TO display_name; -- rename
+ALTER TABLE users RENAME TO members;                      -- rename table
+
+-- DROP vs TRUNCATE
+DROP TABLE users;              -- delete table + all data (irreversible!)
+DROP TABLE IF EXISTS users;    -- safe (no error if missing)
+TRUNCATE TABLE users;          -- delete ALL rows instantly (faster than DELETE)
+TRUNCATE TABLE users RESTART IDENTITY; -- also reset auto-increment sequence`
+  },
+  {
+    category: 'DDL', difficulty: 'Intermediate',
+    question: 'How do you design constraints and indexes with DDL?',
+    answer: 'Constraints enforce data integrity at the database level — they catch bad data before it is stored. PRIMARY KEY ensures uniqueness + NOT NULL. FOREIGN KEY enforces referential integrity between tables. UNIQUE, NOT NULL, CHECK, DEFAULT are column-level guardrails. Indexes speed up reads but slow down writes — add them on columns used in WHERE, JOIN, and ORDER BY clauses. Always index foreign keys.',
+    tip: `-- Constraints
+CREATE TABLE orders (
+  id          BIGSERIAL PRIMARY KEY,
+  user_id     BIGINT    NOT NULL,
+  status      VARCHAR   NOT NULL DEFAULT 'pending',
+  total       NUMERIC(10,2) NOT NULL CHECK (total >= 0),
+  coupon_code VARCHAR(20)   UNIQUE,
+
+  -- Foreign key constraint
+  CONSTRAINT fk_orders_user
+    FOREIGN KEY (user_id) REFERENCES users(id)
+    ON DELETE CASCADE,     -- delete orders when user deleted
+    ON UPDATE CASCADE      -- propagate user_id changes
+);
+
+-- Named constraint (easier to drop later)
+ALTER TABLE orders
+  ADD CONSTRAINT chk_status
+  CHECK (status IN ('pending','paid','shipped','cancelled'));
+
+-- Indexes
+CREATE INDEX idx_orders_user_id ON orders (user_id);       -- FK index (always!)
+CREATE INDEX idx_orders_status  ON orders (status);
+CREATE INDEX idx_orders_created ON orders (created_at DESC);
+CREATE UNIQUE INDEX idx_users_email ON users (LOWER(email)); -- expression index
+CREATE INDEX idx_orders_compound ON orders (user_id, status);-- compound index
+
+-- Drop constraint / index
+ALTER TABLE orders DROP CONSTRAINT chk_status;
+DROP INDEX idx_orders_status;`
+  },
+  {
+    category: 'DDL', difficulty: 'Intermediate',
+    question: 'What are VIEWs and how do they simplify complex queries?',
+    answer: 'A VIEW is a named, saved SELECT query stored in the database. It behaves like a virtual table — you SELECT from it without rewriting the query. Views simplify complex joins, enforce column-level security (expose only safe columns), and centralise business logic in the DB. A Materialized View (PostgreSQL) stores the result physically and is refreshed on demand — great for expensive reporting queries.',
+    tip: `-- Simple view — hide sensitive columns
+CREATE VIEW public_users AS
+  SELECT id, username, created_at
+  FROM users
+  WHERE is_active = true;
+  -- password, email hidden from this view
+
+SELECT * FROM public_users;   -- safe, no sensitive data
+
+-- Complex view — pre-joined, reusable
+CREATE VIEW order_summary AS
+  SELECT
+    o.id,
+    o.created_at,
+    o.total,
+    o.status,
+    u.email    AS customer_email,
+    u.username AS customer_name,
+    COUNT(oi.id)    AS item_count
+  FROM orders o
+  JOIN users       u  ON u.id = o.user_id
+  JOIN order_items oi ON oi.order_id = o.id
+  GROUP BY o.id, u.email, u.username;
+
+SELECT * FROM order_summary WHERE status = 'pending';
+
+-- Materialized view (PostgreSQL) — cached result
+CREATE MATERIALIZED VIEW monthly_revenue AS
+  SELECT DATE_TRUNC('month', created_at) AS month,
+         SUM(total) AS revenue
+  FROM orders WHERE status = 'paid'
+  GROUP BY 1;
+
+REFRESH MATERIALIZED VIEW monthly_revenue;  -- update data
+
+-- Drop view
+DROP VIEW public_users;
+DROP MATERIALIZED VIEW monthly_revenue;`
+  },
+
+  /* ── DML — Data Manipulation Language ── */
+  {
+    category: 'DML', difficulty: 'Beginner',
+    question: 'What is DML and how do INSERT, UPDATE, and DELETE work?',
+    answer: 'DML (Data Manipulation Language) modifies the data inside tables — not the structure. INSERT adds new rows. UPDATE modifies existing rows (always use WHERE or you update everything). DELETE removes rows (always use WHERE). Unlike DDL, DML is transactional — changes can be rolled back before committing. A missing WHERE in UPDATE or DELETE is one of the most common and costly SQL mistakes.',
+    tip: `-- INSERT — single row
+INSERT INTO users (email, username, role)
+VALUES ('alice@example.com', 'alice', 'admin');
+
+-- INSERT — multiple rows at once (faster than separate inserts)
+INSERT INTO products (name, price, stock)
+VALUES
+  ('Laptop',  999.99, 50),
+  ('Monitor', 349.50, 120),
+  ('Keyboard', 79.99, 200);
+
+-- INSERT from SELECT — copy/transform data
+INSERT INTO archive_orders (order_id, user_id, total)
+  SELECT id, user_id, total
+  FROM orders
+  WHERE created_at < NOW() - INTERVAL '1 year';
+
+-- UPDATE — always verify with SELECT first!
+UPDATE users
+SET role = 'moderator', updated_at = NOW()
+WHERE id = 42;
+
+-- UPDATE multiple columns with calculation
+UPDATE products
+SET price = price * 1.10,   -- 10% price increase
+    updated_at = NOW()
+WHERE category = 'electronics';
+
+-- DELETE — targeted
+DELETE FROM sessions WHERE expires_at < NOW();
+DELETE FROM users WHERE id = 42;
+
+-- ⚠️ DANGER — no WHERE = affects ALL rows
+-- UPDATE users SET role = 'admin';   -- everyone becomes admin!
+-- DELETE FROM users;                 -- table emptied!`
+  },
+  {
+    category: 'DML', difficulty: 'Intermediate',
+    question: 'What is UPSERT (INSERT ... ON CONFLICT) and RETURNING?',
+    answer: 'UPSERT handles "insert or update if exists" atomically — no race condition. In PostgreSQL: INSERT ... ON CONFLICT DO UPDATE. In MySQL: INSERT ... ON DUPLICATE KEY UPDATE. RETURNING (PostgreSQL) returns data from the affected rows without a separate SELECT — useful for getting the generated ID after insert, or the updated values after an update.',
+    tip: `-- UPSERT — insert or update on conflict (PostgreSQL)
+INSERT INTO user_settings (user_id, theme, notifications)
+VALUES (42, 'dark', true)
+ON CONFLICT (user_id)            -- conflict on unique/PK column
+DO UPDATE SET
+  theme         = EXCLUDED.theme,       -- EXCLUDED = the row we tried to insert
+  notifications = EXCLUDED.notifications,
+  updated_at    = NOW();
+
+-- ON CONFLICT DO NOTHING — ignore duplicates silently
+INSERT INTO event_log (event_id, user_id)
+VALUES (101, 42)
+ON CONFLICT DO NOTHING;
+
+-- RETURNING — get inserted/updated data back
+INSERT INTO users (email, username)
+VALUES ('bob@example.com', 'bob')
+RETURNING id, created_at;          -- returns new row's id and timestamp
+
+-- RETURNING after UPDATE
+UPDATE orders
+SET status = 'shipped', shipped_at = NOW()
+WHERE id = 99
+RETURNING id, status, shipped_at, user_id;
+
+-- Useful pattern: insert + immediately use the ID
+WITH new_user AS (
+  INSERT INTO users (email) VALUES ('carol@example.com')
+  RETURNING id
+)
+INSERT INTO profiles (user_id, bio)
+SELECT id, 'New user' FROM new_user;`
+  },
+  {
+    category: 'DML', difficulty: 'Intermediate',
+    question: 'How do transactions work in SQL (BEGIN, COMMIT, ROLLBACK, SAVEPOINT)?',
+    answer: 'A transaction groups multiple SQL statements into an all-or-nothing unit. If any step fails, ROLLBACK undoes everything back to the start (or a SAVEPOINT). COMMIT makes changes permanent. Transactions guarantee ACID properties. Always wrap multi-step operations (money transfers, order creation) in a transaction to prevent partial updates from corrupting data.',
+    tip: `-- Bank transfer — must succeed or fail together
+BEGIN;
+
+  -- Step 1: deduct from sender
+  UPDATE accounts
+  SET balance = balance - 500
+  WHERE id = 1 AND balance >= 500;  -- check sufficient funds
+
+  -- Check rows affected (app-level)
+  -- if affected = 0 → insufficient funds → ROLLBACK
+
+  -- Step 2: add to receiver
+  UPDATE accounts
+  SET balance = balance + 500
+  WHERE id = 2;
+
+COMMIT;   -- both updates permanent
+
+-- If anything fails:
+ROLLBACK; -- both updates undone, data stays consistent
+
+-- SAVEPOINT — partial rollback within a transaction
+BEGIN;
+  INSERT INTO orders (user_id, total) VALUES (42, 150);
+
+  SAVEPOINT after_order;
+
+  INSERT INTO payments (order_id, amount) VALUES (99, 150);
+  -- payment fails...
+
+  ROLLBACK TO SAVEPOINT after_order;  -- undo only payment, keep order
+
+  -- try alternative payment method...
+
+COMMIT;
+
+-- Auto-commit: each statement is its own transaction by default
+-- Explicit BEGIN..COMMIT required for multi-statement transactions`
+  },
+
+  /* ── DQL — Data Query Language ── */
+  {
+    category: 'DQL', difficulty: 'Beginner',
+    question: 'What is DQL and how does the SELECT statement execution order work?',
+    answer: 'DQL (Data Query Language) is the SELECT statement — the most used SQL command. Understanding execution order is key to writing correct queries: FROM → JOIN → WHERE → GROUP BY → HAVING → SELECT → DISTINCT → ORDER BY → LIMIT. This means you cannot use a SELECT alias in WHERE (WHERE runs before SELECT). HAVING filters after GROUP BY; WHERE filters before.',
+    tip: `-- SELECT execution order (not the written order!):
+--  1. FROM + JOIN      → which tables, build dataset
+--  2. WHERE            → filter rows (before grouping)
+--  3. GROUP BY         → group remaining rows
+--  4. HAVING           → filter groups (after grouping)
+--  5. SELECT           → choose columns, compute expressions
+--  6. DISTINCT         → remove duplicate rows
+--  7. ORDER BY         → sort (can use aliases from SELECT)
+--  8. LIMIT / OFFSET   → paginate
+
+-- Example demonstrating the order:
+SELECT
+  u.username,                          -- 5: selected
+  COUNT(o.id)    AS order_count,       -- 5: computed
+  SUM(o.total)   AS total_spent        -- 5: computed
+FROM users u                           -- 1: base table
+LEFT JOIN orders o ON o.user_id = u.id -- 1: join
+WHERE u.is_active = true               -- 2: filter rows (before group)
+GROUP BY u.id, u.username              -- 3: group per user
+HAVING COUNT(o.id) > 0                 -- 4: only users with orders
+ORDER BY total_spent DESC              -- 7: sort (alias OK here)
+LIMIT 10;                              -- 8: top 10 only
+
+-- ❌ Cannot use alias in WHERE:
+-- WHERE order_count > 5  → error! order_count computed in step 5
+-- ✅ Use alias in ORDER BY and HAVING:`
+  },
+  {
+    category: 'DQL', difficulty: 'Intermediate',
+    question: 'How do subqueries, CTEs, and EXISTS work in SELECT?',
+    answer: 'Subqueries embed a SELECT inside another query — in WHERE (scalar/correlated), FROM (derived table), or SELECT (scalar). CTEs (WITH clause) name a subquery and make complex queries readable and reusable within the same statement. EXISTS checks if a subquery returns any rows — more efficient than IN for large datasets because it short-circuits on the first match.',
+    tip: `-- Scalar subquery — returns one value
+SELECT name,
+       price,
+       price - (SELECT AVG(price) FROM products) AS diff_from_avg
+FROM products;
+
+-- Subquery in WHERE
+SELECT * FROM users
+WHERE id IN (
+  SELECT DISTINCT user_id FROM orders WHERE total > 1000
+);
+
+-- EXISTS — short-circuits, faster than IN for large sets
+SELECT * FROM users u
+WHERE EXISTS (
+  SELECT 1 FROM orders o          -- SELECT 1: we only care if rows exist
+  WHERE o.user_id = u.id          -- correlated: references outer query
+    AND o.status = 'paid'
+);
+
+-- CTE (WITH) — readable, reusable named result sets
+WITH high_value_orders AS (
+  SELECT user_id, SUM(total) AS lifetime_value
+  FROM orders
+  WHERE status = 'paid'
+  GROUP BY user_id
+  HAVING SUM(total) > 5000
+),
+vip_users AS (
+  SELECT u.*, hvo.lifetime_value
+  FROM users u
+  JOIN high_value_orders hvo ON hvo.user_id = u.id
+)
+SELECT * FROM vip_users ORDER BY lifetime_value DESC;
+
+-- Recursive CTE — traverse hierarchies (org chart, categories)
+WITH RECURSIVE category_tree AS (
+  SELECT id, name, parent_id, 0 AS depth
+  FROM categories WHERE parent_id IS NULL
+  UNION ALL
+  SELECT c.id, c.name, c.parent_id, ct.depth + 1
+  FROM categories c
+  JOIN category_tree ct ON ct.id = c.parent_id
+)
+SELECT * FROM category_tree;`
+  },
+
+  /* ── DCL — Data Control Language ── */
+  {
+    category: 'DCL', difficulty: 'Intermediate',
+    question: 'What is DCL and how do GRANT and REVOKE control database access?',
+    answer: 'DCL (Data Control Language) controls who can do what in the database. GRANT gives privileges to users or roles. REVOKE takes them away. Privileges can be on databases, schemas, tables, columns, sequences, or functions. Best practice: create roles (groups of privileges), assign users to roles — never grant directly to individual users. Principle of least privilege: grant only what is needed.',
+    tip: `-- Create roles (groups of privileges)
+CREATE ROLE readonly;
+CREATE ROLE app_user;
+CREATE ROLE admin_user;
+
+-- Grant privileges to roles
+GRANT CONNECT ON DATABASE mydb TO readonly;
+GRANT USAGE   ON SCHEMA public TO readonly;
+GRANT SELECT  ON ALL TABLES IN SCHEMA public TO readonly;
+
+-- app_user — CRUD but no schema changes
+GRANT CONNECT ON DATABASE mydb TO app_user;
+GRANT USAGE   ON SCHEMA public TO app_user;
+GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA public TO app_user;
+GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA public TO app_user;  -- for SERIAL
+
+-- admin_user — full control
+GRANT ALL PRIVILEGES ON DATABASE mydb TO admin_user;
+
+-- Assign users to roles
+CREATE USER alice WITH PASSWORD 'securepassword';
+GRANT readonly  TO alice;
+
+CREATE USER api_service WITH PASSWORD 'servicepassword';
+GRANT app_user TO api_service;
+
+-- Revoke privileges
+REVOKE DELETE ON ALL TABLES IN SCHEMA public FROM app_user;
+REVOKE readonly FROM alice;
+
+-- Column-level privilege (restrict sensitive columns)
+GRANT SELECT (id, username, created_at) ON users TO readonly;
+-- readonly role cannot see email, password columns
+
+-- Apply to future tables automatically (PostgreSQL)
+ALTER DEFAULT PRIVILEGES IN SCHEMA public
+  GRANT SELECT ON TABLES TO readonly;`
+  },
+  {
+    category: 'DCL', difficulty: 'Intermediate',
+    question: 'What are Row-Level Security (RLS) and best practices for DB access control?',
+    answer: 'Row-Level Security (RLS) — supported in PostgreSQL — adds WHERE conditions automatically to queries based on the current user. Users can only see their own rows without any app-side filtering. Essential for multi-tenant SaaS where one database stores data for many organisations. Policies define which rows each user can SELECT, INSERT, UPDATE, or DELETE.',
+    tip: `-- Row-Level Security (PostgreSQL)
+
+-- 1. Enable RLS on the table
+ALTER TABLE orders ENABLE ROW LEVEL SECURITY;
+
+-- 2. Create policies
+-- Users can only see their own orders
+CREATE POLICY orders_user_isolation ON orders
+  FOR ALL
+  USING (user_id = current_setting('app.user_id')::BIGINT);
+
+-- Admins bypass RLS
+CREATE POLICY orders_admin_all ON orders
+  FOR ALL
+  TO admin_user
+  USING (true);   -- no restriction
+
+-- Set the current user context (from your app):
+SET LOCAL app.user_id = '42';
+SELECT * FROM orders;   -- automatically filtered to user 42's orders
+
+-- ✅ DB Access Control Best Practices:
+-- 1. Never connect as superuser/root from your application
+-- 2. One DB user per service (api_service, jobs_service)
+-- 3. Grant only SELECT unless writes are needed
+-- 4. Revoke PUBLIC schema privileges in production
+-- 5. Use RLS for multi-tenant data isolation
+-- 6. Rotate passwords regularly, use secrets manager
+-- 7. Log all DDL changes and privilege grants
+-- 8. Never hardcode credentials — use environment variables`
+  },
+
   /* ── Joins & Aggregation ── */
   {
     category: 'Joins & Aggregation', difficulty: 'Intermediate',
@@ -8040,6 +8432,10 @@ const CATEGORY_COLORS = {
   'PostgreSQL':       '#0369a1',
   // SQL
   'SQL Basics':          '#06b6d4',
+  'DDL':                 '#22d3ee',
+  'DML':                 '#0ea5e9',
+  'DQL':                 '#38bdf8',
+  'DCL':                 '#7dd3fc',
   'Joins & Aggregation': '#0891b2',
   'Advanced SQL':        '#164e63',
   // C#
