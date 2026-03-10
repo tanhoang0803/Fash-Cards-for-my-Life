@@ -1947,6 +1947,196 @@ id BIGSERIAL PRIMARY KEY       -- auto-increment bigint
 id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY  -- SQL standard`
   },
 
+  /* ── IF & CASE ── */
+  {
+    category: 'SQL Basics', difficulty: 'Beginner',
+    question: 'What is the CASE expression in SQL and what are its two forms?',
+    answer: 'CASE is SQL\'s if-else. It returns a value — use it anywhere an expression is valid (SELECT, WHERE, ORDER BY, GROUP BY). Two forms: **Simple CASE** compares one column to fixed values (`CASE col WHEN val THEN ... END`). **Searched CASE** evaluates arbitrary boolean conditions (`CASE WHEN condition THEN ... END`). Always end with `END`; add `ELSE` for a default — without ELSE, unmatched rows return NULL.',
+    tip: `-- Simple CASE (compare one column)
+SELECT name,
+  CASE status
+    WHEN 'A' THEN 'Active'
+    WHEN 'I' THEN 'Inactive'
+    WHEN 'B' THEN 'Banned'
+    ELSE 'Unknown'
+  END AS status_label
+FROM users;
+
+-- Searched CASE (arbitrary conditions)
+SELECT name, score,
+  CASE
+    WHEN score >= 90 THEN 'A'
+    WHEN score >= 80 THEN 'B'
+    WHEN score >= 70 THEN 'C'
+    ELSE 'F'
+  END AS grade
+FROM students;`
+  },
+  {
+    category: 'SQL Basics', difficulty: 'Beginner',
+    question: 'How do you use CASE in ORDER BY and GROUP BY?',
+    answer: 'CASE inside ORDER BY lets you define a custom sort order that can\'t be expressed with simple ASC/DESC. CASE inside GROUP BY groups rows by a computed bucket rather than a raw column value. Both are powerful for ad-hoc reporting without changing the schema.',
+    tip: `-- Custom sort order: show VIP first, then active, then rest
+SELECT name, tier
+FROM users
+ORDER BY
+  CASE tier
+    WHEN 'VIP'    THEN 1
+    WHEN 'active' THEN 2
+    ELSE               3
+  END;
+
+-- Group by computed bucket (price range)
+SELECT
+  CASE
+    WHEN price < 10   THEN 'Budget'
+    WHEN price < 50   THEN 'Mid-range'
+    ELSE                   'Premium'
+  END AS price_tier,
+  COUNT(*)  AS product_count,
+  AVG(price) AS avg_price
+FROM products
+GROUP BY
+  CASE
+    WHEN price < 10   THEN 'Budget'
+    WHEN price < 50   THEN 'Mid-range'
+    ELSE                   'Premium'
+  END;`
+  },
+  {
+    category: 'SQL Basics', difficulty: 'Intermediate',
+    question: 'How do you use CASE for conditional aggregation (pivot pattern)?',
+    answer: 'Wrap a CASE inside SUM or COUNT to aggregate only rows matching a condition — effectively pivoting rows into columns. `SUM(CASE WHEN condition THEN 1 ELSE 0 END)` counts matching rows. `SUM(CASE WHEN condition THEN amount ELSE 0 END)` sums a value conditionally. PostgreSQL also supports the cleaner `COUNT(*) FILTER (WHERE condition)` syntax.',
+    tip: `-- Count orders by status in one row per user
+SELECT
+  user_id,
+  COUNT(*)                                        AS total,
+  SUM(CASE WHEN status = 'completed' THEN 1 ELSE 0 END) AS completed,
+  SUM(CASE WHEN status = 'cancelled' THEN 1 ELSE 0 END) AS cancelled,
+  SUM(CASE WHEN status = 'pending'   THEN 1 ELSE 0 END) AS pending
+FROM orders
+GROUP BY user_id;
+
+-- PostgreSQL FILTER syntax (same result, cleaner)
+SELECT
+  user_id,
+  COUNT(*)                                         AS total,
+  COUNT(*) FILTER (WHERE status = 'completed')     AS completed,
+  COUNT(*) FILTER (WHERE status = 'cancelled')     AS cancelled,
+  SUM(amount) FILTER (WHERE status = 'completed')  AS revenue
+FROM orders
+GROUP BY user_id;`
+  },
+  {
+    category: 'SQL Basics', difficulty: 'Intermediate',
+    question: 'What is CASE with NULL handling? How does it interact with COALESCE and NULLIF?',
+    answer: 'NULL comparisons in CASE use `IS NULL` / `IS NOT NULL` — not `= NULL` (always false). `COALESCE(a, b, c)` returns the first non-NULL argument — shorthand for `CASE WHEN a IS NOT NULL THEN a WHEN b IS NOT NULL THEN b ... END`. `NULLIF(a, b)` returns NULL when a = b, otherwise returns a — useful to avoid division-by-zero: `val / NULLIF(divisor, 0)`.',
+    tip: `-- CASE with NULL check
+SELECT name,
+  CASE
+    WHEN email IS NULL THEN 'No email'
+    WHEN email LIKE '%@company.com' THEN 'Internal'
+    ELSE 'External'
+  END AS email_type
+FROM users;
+
+-- COALESCE — return first non-NULL
+SELECT COALESCE(phone, mobile, 'N/A') AS contact
+FROM users;
+
+-- NULLIF — avoid division by zero
+SELECT
+  product_id,
+  total_revenue / NULLIF(units_sold, 0) AS avg_revenue_per_unit
+FROM sales;
+
+-- Combine: replace NULL result of NULLIF
+SELECT COALESCE(total / NULLIF(count, 0), 0) AS safe_avg
+FROM stats;`
+  },
+  {
+    category: 'SQL Basics', difficulty: 'Intermediate',
+    question: 'How do you use CASE inside WHERE to build dynamic filters?',
+    answer: 'CASE inside WHERE evaluates conditions per row — useful for applying different filter logic based on a parameter or another column\'s value. For example: skip a filter when a parameter is NULL (pass-all), apply strict rules for one group and loose rules for another. Avoid overusing this — it can prevent index use; consider splitting into separate queries or using OR conditions for better performance.',
+    tip: `-- Skip filter when param is NULL (pass-all pattern)
+-- \$1 = NULL means "show all statuses"
+SELECT * FROM orders
+WHERE status = CASE WHEN \$1 IS NOT NULL THEN \$1 ELSE status END;
+
+-- Simpler equivalent:
+SELECT * FROM orders
+WHERE \$1 IS NULL OR status = \$1;
+
+-- Different logic per user tier
+SELECT * FROM products
+WHERE
+  CASE
+    WHEN (SELECT tier FROM users WHERE id = \$1) = 'VIP'
+      THEN price <= 10000        -- VIPs see all prices
+    ELSE price <= 100            -- others see only budget items
+  END;`
+  },
+  {
+    category: 'SQL Basics', difficulty: 'Intermediate',
+    question: 'Does SQL have IF? How do IIF and IF differ from CASE?',
+    answer: '`CASE` is ANSI SQL — works in all databases. Database-specific shortcuts: **MySQL/MariaDB**: `IF(condition, true_val, false_val)` — inline if expression. **SQL Server**: `IIF(condition, true_val, false_val)` — same idea, cleaner syntax. **PostgreSQL**: no IF expression — use CASE. Note: these are *expressions* (return a value). Procedural IF statements (in stored procedures / PL/pgSQL) are different — they control flow, not return values.',
+    tip: `-- MySQL IF expression
+SELECT name,
+  IF(score >= 60, 'Pass', 'Fail') AS result
+FROM students;
+
+-- SQL Server IIF (identical semantics)
+SELECT name,
+  IIF(score >= 60, 'Pass', 'Fail') AS result
+FROM students;
+
+-- PostgreSQL — use CASE (no IF expression)
+SELECT name,
+  CASE WHEN score >= 60 THEN 'Pass' ELSE 'Fail' END AS result
+FROM students;
+
+-- PL/pgSQL procedural IF (inside a function)
+-- IF score >= 60 THEN
+--   RETURN 'Pass';
+-- ELSE
+--   RETURN 'Fail';
+-- END IF;`
+  },
+  {
+    category: 'SQL Basics', difficulty: 'Advanced',
+    question: 'What are advanced CASE patterns: nested CASE, CASE in subqueries, and CASE with window functions?',
+    answer: 'CASE can be nested (CASE inside CASE) but this hurts readability — flatten with searched CASE instead. CASE inside a subquery\'s SELECT lets you tag rows before an outer query aggregates them. CASE inside window functions (like `SUM(CASE ... ) OVER (...)`) combines conditional logic with running totals or rankings — powerful for cohort analysis and complex reporting.',
+    tip: `-- Nested CASE → better written as searched CASE
+SELECT name,
+  CASE
+    WHEN age < 13                    THEN 'Child'
+    WHEN age < 18                    THEN 'Teen'
+    WHEN age < 65                    THEN 'Adult'
+    ELSE                                  'Senior'
+  END AS age_group
+FROM people;
+
+-- CASE inside a window function (running conditional total)
+SELECT
+  order_date,
+  amount,
+  SUM(CASE WHEN type = 'sale'   THEN  amount ELSE 0 END)
+    OVER (ORDER BY order_date) AS running_sales,
+  SUM(CASE WHEN type = 'refund' THEN  amount ELSE 0 END)
+    OVER (ORDER BY order_date) AS running_refunds
+FROM transactions;
+
+-- CASE to label rows, then aggregate in outer query
+SELECT category, COUNT(*) AS high_value_orders
+FROM (
+  SELECT *,
+    CASE WHEN amount > 500 THEN 'high' ELSE 'low' END AS value_tier
+  FROM orders
+) t
+WHERE value_tier = 'high'
+GROUP BY category;`
+  },
+
   /* ── DDL — Data Definition Language ── */
   {
     category: 'DDL', difficulty: 'Beginner',
