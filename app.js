@@ -1796,53 +1796,52 @@ const SQL_CARDS = [
   /* ── Core ── */
   {
     category: 'Core', difficulty: 'Beginner',
-    question: 'What is the full structure of a SQL query?',
-    answer: 'A SQL SELECT query is built from clauses that execute in a fixed order — not the order you write them. The logical execution order is: FROM → JOIN → WHERE → GROUP BY → HAVING → SELECT → DISTINCT → ORDER BY → LIMIT. Understanding this order explains why you cannot use a SELECT alias in WHERE (WHERE runs before SELECT), and why HAVING can reference aggregates but WHERE cannot.',
-    tip: `SQL QUERY
+    question: 'SQL Interview Mindmap — what are the 6 core areas every SQL interview covers?',
+    answer: '6 areas that cover ~90% of SQL interviews: 1) Core Query Structure (clause order + execution model). 2) JOIN Patterns (matching, unmatched, self-join, multi-table). 3) GROUP BY Patterns (duplicates, top category, multi-column). 4) Subquery Patterns (IN, NOT IN, EXISTS, scalar). 5) Window Functions (ranking, running totals, PARTITION BY). 6) Common Interview Tasks (Top-N per group, find duplicates, swap values, classify rows).',
+    tip: `SQL INTERVIEW MINDMAP
 │
-├── FROM  (Data Source)
-│   ├── table_name  /  schema.table
-│   ├── FROM (SELECT ...)  — subquery as table
-│   └── JOIN
-│       ├── INNER JOIN  — matching rows only
-│       ├── LEFT JOIN   — all left + matching right
-│       ├── RIGHT JOIN  — all right + matching left
-│       ├── FULL JOIN   — all rows from both sides
-│       ├── CROSS JOIN  — every combination (cartesian)
-│       └── ON join_condition
+├── 1. CORE QUERY STRUCTURE
+│   ├── FROM    — table / subquery / derived table
+│   ├── JOIN    — INNER  LEFT  RIGHT  FULL  CROSS
+│   ├── WHERE   — AND/OR/NOT  BETWEEN  IN  LIKE  IS NULL
+│   ├── GROUP BY — COUNT() SUM() AVG() MIN() MAX()
+│   ├── HAVING  — filter aggregated results
+│   ├── SELECT  — columns  expressions  AS  CASE WHEN
+│   ├── ORDER BY — ASC / DESC
+│   └── LIMIT   — top N rows
 │
-├── WHERE  (Row Filtering — before grouping)
-│   ├── Comparison : =  <>  >  <  >=  <=
-│   ├── Logical    : AND  OR  NOT
-│   ├── Pattern    : LIKE  '%text%'  '_char'
-│   ├── Range      : BETWEEN low AND high
-│   ├── Set        : IN (...)  NOT IN (...)
-│   └── NULL check : IS NULL  IS NOT NULL
+├── 2. JOIN PATTERNS
+│   ├── Unmatched rows   : LEFT JOIN + WHERE right IS NULL
+│   ├── Matching rows    : INNER JOIN
+│   ├── Count related    : LEFT JOIN + GROUP BY
+│   ├── Self join        : table t1 JOIN table t2
+│   └── Multi-table      : t1 JOIN t2 JOIN t3
 │
-├── GROUP BY  (Aggregation)
-│   ├── COUNT()  SUM()  AVG()  MIN()  MAX()
-│   └── GROUP BY col1, col2
+├── 3. GROUP BY PATTERNS
+│   ├── Count occurrences : GROUP BY col + HAVING COUNT(*) > N
+│   ├── Find duplicates   : HAVING COUNT(*) > 1
+│   ├── Find unique       : HAVING COUNT(*) = 1
+│   ├── Top category      : GROUP BY + ORDER BY COUNT(*) DESC
+│   └── Multi-column      : GROUP BY col1, col2
 │
-├── HAVING  (Filter Groups — after aggregation)
-│   └── HAVING COUNT(*) > N  /  SUM(col) > value
+├── 4. SUBQUERY PATTERNS
+│   ├── IN           : column IN (SELECT ...)
+│   ├── NOT IN       : column NOT IN (SELECT ...)
+│   ├── EXISTS       : WHERE EXISTS (SELECT ...)
+│   └── Scalar       : column = (SELECT single_value ...)
 │
-├── SELECT  (Output Columns)
-│   ├── column_name  /  *
-│   ├── AS alias
-│   ├── arithmetic & functions
-│   ├── CASE WHEN ... THEN ... END
-│   └── DISTINCT
+├── 5. WINDOW FUNCTIONS
+│   ├── OVER()  +  PARTITION BY  +  ORDER BY inside window
+│   ├── Ranking        : ROW_NUMBER()  RANK()  DENSE_RANK()
+│   ├── Running totals : SUM() OVER()
+│   └── Moving avg     : AVG() OVER()
 │
-├── ORDER BY  (Sorting)
-│   └── col ASC  /  col DESC  /  multiple columns
-│
-├── LIMIT  (Top N rows)
-│   └── LIMIT N  /  LIMIT N OFFSET skip
-│
-└── WINDOW FUNCTIONS  (Advanced — no grouping collapse)
-    ├── ROW_NUMBER()  RANK()  DENSE_RANK()
-    ├── SUM() OVER()  AVG() OVER()  COUNT() OVER()
-    └── PARTITION BY column  ORDER BY column`
+└── 6. COMMON INTERVIEW TASKS
+    ├── Top N per group    : ROW_NUMBER() + PARTITION BY
+    ├── Find duplicates    : GROUP BY + HAVING COUNT(*) > 1
+    ├── Find missing rows  : LEFT JOIN + WHERE right IS NULL
+    ├── Swap values        : CASE WHEN col = A THEN B ELSE A END
+    └── Classify rows      : CASE WHEN condition THEN label END`
   },
 
   /* ── SQL Basics ── */
