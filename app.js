@@ -1793,6 +1793,58 @@ public class UserService
 ═══════════════════════════════════════════════════════════ */
 const SQL_CARDS = [
 
+  /* ── Core ── */
+  {
+    category: 'Core', difficulty: 'Beginner',
+    question: 'What is the full structure of a SQL query?',
+    answer: 'A SQL SELECT query is built from clauses that execute in a fixed order — not the order you write them. The logical execution order is: FROM → JOIN → WHERE → GROUP BY → HAVING → SELECT → DISTINCT → ORDER BY → LIMIT. Understanding this order explains why you cannot use a SELECT alias in WHERE (WHERE runs before SELECT), and why HAVING can reference aggregates but WHERE cannot.',
+    tip: `SQL QUERY
+│
+├── FROM  (Data Source)
+│   ├── table_name  /  schema.table
+│   ├── FROM (SELECT ...)  — subquery as table
+│   └── JOIN
+│       ├── INNER JOIN  — matching rows only
+│       ├── LEFT JOIN   — all left + matching right
+│       ├── RIGHT JOIN  — all right + matching left
+│       ├── FULL JOIN   — all rows from both sides
+│       ├── CROSS JOIN  — every combination (cartesian)
+│       └── ON join_condition
+│
+├── WHERE  (Row Filtering — before grouping)
+│   ├── Comparison : =  <>  >  <  >=  <=
+│   ├── Logical    : AND  OR  NOT
+│   ├── Pattern    : LIKE  '%text%'  '_char'
+│   ├── Range      : BETWEEN low AND high
+│   ├── Set        : IN (...)  NOT IN (...)
+│   └── NULL check : IS NULL  IS NOT NULL
+│
+├── GROUP BY  (Aggregation)
+│   ├── COUNT()  SUM()  AVG()  MIN()  MAX()
+│   └── GROUP BY col1, col2
+│
+├── HAVING  (Filter Groups — after aggregation)
+│   └── HAVING COUNT(*) > N  /  SUM(col) > value
+│
+├── SELECT  (Output Columns)
+│   ├── column_name  /  *
+│   ├── AS alias
+│   ├── arithmetic & functions
+│   ├── CASE WHEN ... THEN ... END
+│   └── DISTINCT
+│
+├── ORDER BY  (Sorting)
+│   └── col ASC  /  col DESC  /  multiple columns
+│
+├── LIMIT  (Top N rows)
+│   └── LIMIT N  /  LIMIT N OFFSET skip
+│
+└── WINDOW FUNCTIONS  (Advanced — no grouping collapse)
+    ├── ROW_NUMBER()  RANK()  DENSE_RANK()
+    ├── SUM() OVER()  AVG() OVER()  COUNT() OVER()
+    └── PARTITION BY column  ORDER BY column`
+  },
+
   /* ── SQL Basics ── */
   {
     category: 'SQL Basics', difficulty: 'Beginner',
@@ -8947,6 +8999,7 @@ const CATEGORY_COLORS = {
   'DB Design & Perf': '#be185d',
   'PostgreSQL':       '#0369a1',
   // SQL
+  'Core':                '#38bdf8',
   'SQL Basics':          '#06b6d4',
   'DDL':                 '#22d3ee',
   'DML':                 '#0ea5e9',
