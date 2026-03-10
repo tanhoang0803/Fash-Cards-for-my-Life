@@ -2977,319 +2977,128 @@ GROUP BY user_id;`
 
   /* ── SQL Patterns ── */
   {
-    category: 'SQL Patterns', difficulty: 'Beginner',
-    question: 'Pattern 1 — Filter data: how do you use WHERE effectively?',
-    answer: '`WHERE` filters rows before any grouping or aggregation. Core operators: `=`, `<>`, `>`, `<`, `>=`, `<=` for comparisons; `AND`/`OR`/`NOT` to combine; `BETWEEN` for ranges (inclusive); `IN (...)` for a list; `LIKE` for pattern matching (`%` = any chars, `_` = one char); `IS NULL` / `IS NOT NULL` for null checks. Always filter as early as possible — pushing conditions into WHERE lets the DB use indexes and skip rows before processing them.',
-    tip: `-- Basic filter
-SELECT * FROM orders WHERE status = 'pending';
-
--- Multiple conditions
-SELECT * FROM users
-WHERE age >= 18 AND country = 'VN' AND is_active = TRUE;
-
--- Range + list
-SELECT * FROM products
-WHERE price BETWEEN 10 AND 100
-  AND category IN ('electronics', 'books');
-
--- Pattern matching
-SELECT * FROM users WHERE email LIKE '%@gmail.com';
-
--- NULL check
-SELECT * FROM orders WHERE shipped_at IS NULL;
-
--- Combine everything
-SELECT id, name, price FROM products
-WHERE category = 'electronics'
-  AND price < 500
-  AND name LIKE '%phone%'
-  AND deleted_at IS NULL
-ORDER BY price ASC;`
-  },
-  {
-    category: 'SQL Patterns', difficulty: 'Beginner',
-    question: 'Pattern 2 — Count per group: how does GROUP BY + COUNT work?',
-    answer: '`GROUP BY` collapses rows with the same value into one group, then aggregate functions compute per-group statistics. `COUNT(*)` counts all rows in the group; `COUNT(col)` skips NULLs; `COUNT(DISTINCT col)` counts unique values. The golden rule: every column in SELECT must either be in GROUP BY or wrapped in an aggregate. Use `ORDER BY COUNT(*) DESC` to rank groups by size.',
-    tip: `-- Count orders per customer
-SELECT customer_id, COUNT(*) AS order_count
-FROM orders
-GROUP BY customer_id
-ORDER BY order_count DESC;
-
--- Count unique products per category
-SELECT category, COUNT(DISTINCT product_id) AS unique_products
-FROM order_items
-GROUP BY category;
-
--- Multiple aggregates in one query
-SELECT
-  country,
-  COUNT(*)           AS total_users,
-  COUNT(DISTINCT city) AS unique_cities,
-  AVG(age)           AS avg_age
-FROM users
-GROUP BY country
-ORDER BY total_users DESC;
-
--- Count signups per day
-SELECT DATE(created_at) AS day, COUNT(*) AS signups
-FROM users
-GROUP BY DATE(created_at)
-ORDER BY day;`
-  },
-  {
-    category: 'SQL Patterns', difficulty: 'Beginner',
-    question: 'Pattern 3 — Find duplicates: how do you detect and remove duplicate rows?',
-    answer: 'To find duplicates: `GROUP BY` the key column(s) and use `HAVING COUNT(*) > 1`. This reveals which values appear more than once and how many times. To see the full duplicate rows: join back to the original table. To keep only one copy (the "best" row per key): use `ROW_NUMBER() OVER (PARTITION BY key ORDER BY ...)` and filter `WHERE rn = 1`. To physically delete duplicates: use a CTE with ROW_NUMBER + DELETE.',
-    tip: `-- Find duplicate emails
-SELECT email, COUNT(*) AS occurrences
-FROM users
-GROUP BY email
-HAVING COUNT(*) > 1;
-
--- See the full duplicate rows
-SELECT * FROM users
-WHERE email IN (
-  SELECT email FROM users
-  GROUP BY email HAVING COUNT(*) > 1
-)
-ORDER BY email;
-
--- Keep only the latest row per email (dedup SELECT)
-WITH ranked AS (
-  SELECT *,
-    ROW_NUMBER() OVER (
-      PARTITION BY email ORDER BY created_at DESC
-    ) AS rn
-  FROM users
-)
-SELECT * FROM ranked WHERE rn = 1;
-
--- Delete duplicates, keep lowest id
-WITH dupes AS (
-  SELECT id,
-    ROW_NUMBER() OVER (PARTITION BY email ORDER BY id) AS rn
-  FROM users
-)
-DELETE FROM users WHERE id IN (SELECT id FROM dupes WHERE rn > 1);`
+    category: 'SQL Patterns', difficulty: 'Intermediate',
+    question: 'SQL Pattern 1 — Backend (Application Queries): what SQL do backend engineers write daily?',
+    answer: 'Backend engineers write SQL that powers API endpoints. The core operations map to CRUD: `INSERT` (Create), `SELECT` (Read), `UPDATE`, `DELETE`. Beyond CRUD: use `JOIN` to fetch relational data in one round-trip, `WHERE id = $1` to fetch a single resource, `EXISTS`/`SELECT 1` for fast validation checks, `LIMIT`/`OFFSET` for pagination, and `BEGIN`/`COMMIT`/`ROLLBACK` to wrap multi-step writes in a transaction so they succeed or fail atomically.',
+    tip: `BACKEND QUERY PATTERNS
+│
+├── CRUD Operations
+│   ├─ Create  → INSERT INTO users (name, email) VALUES (\$1, \$2)
+│   ├─ Read    → SELECT * FROM users WHERE id = \$1
+│   ├─ Update  → UPDATE users SET name = \$1 WHERE id = \$2
+│   └─ Delete  → DELETE FROM users WHERE id = \$1
+│
+├── API Data Fetch (relational data in one trip)
+│   SELECT u.name, p.title, p.created_at
+│   FROM   posts p
+│   JOIN   users u ON u.id = p.user_id
+│   WHERE  p.id = \$1
+│
+├── Pagination
+│   SELECT * FROM posts
+│   WHERE  user_id = \$1
+│   ORDER BY created_at DESC
+│   LIMIT  10 OFFSET 20
+│
+├── Validation (check existence before insert)
+│   SELECT EXISTS (
+│     SELECT 1 FROM users WHERE email = \$1
+│   ) AS email_taken
+│
+└── Transactions (multi-step writes)
+    BEGIN;
+      UPDATE accounts SET balance = balance - 100 WHERE id = \$1;
+      UPDATE accounts SET balance = balance + 100 WHERE id = \$2;
+    COMMIT;`
   },
   {
     category: 'SQL Patterns', difficulty: 'Intermediate',
-    question: 'Pattern 4 — Join tables: what are the JOIN types and when do you use each?',
-    answer: '`INNER JOIN` — returns only rows with a match in both tables. `LEFT JOIN` — all rows from left, NULLs for non-matching right rows. `RIGHT JOIN` — all rows from right (rarely used; swap tables and use LEFT). `FULL JOIN` — all rows from both sides, NULLs where no match. `CROSS JOIN` — cartesian product, every combination. Key interview pattern: `LEFT JOIN + WHERE right.id IS NULL` finds rows in A that have NO match in B (anti-join / missing records).',
-    tip: `-- INNER JOIN: matching rows only
-SELECT u.name, o.id AS order_id
-FROM users u
-JOIN orders o ON o.user_id = u.id;
-
--- LEFT JOIN: all users, even those with no orders
-SELECT u.name, COUNT(o.id) AS order_count
-FROM users u
-LEFT JOIN orders o ON o.user_id = u.id
-GROUP BY u.id, u.name;
-
--- Anti-join: users who never placed an order
-SELECT u.name
-FROM users u
-LEFT JOIN orders o ON o.user_id = u.id
-WHERE o.id IS NULL;
-
--- Multi-table join
-SELECT u.name, p.name AS product, oi.quantity
-FROM users u
-JOIN orders o      ON o.user_id    = u.id
-JOIN order_items oi ON oi.order_id = o.id
-JOIN products p    ON p.id         = oi.product_id;`
-  },
-  {
-    category: 'SQL Patterns', difficulty: 'Beginner',
-    question: 'Pattern 5 — Top N rows: how do you select the highest or lowest N records?',
-    answer: 'Simple Top N: `ORDER BY col DESC LIMIT N` — sort descending, take the first N rows. This works when you need the global top N. For Top N per group (e.g., top 3 per category), you need `ROW_NUMBER() OVER (PARTITION BY group ORDER BY col DESC)` and filter `WHERE rn <= N`. Also useful: `OFFSET` for pagination, `FETCH FIRST N ROWS ONLY` (SQL standard alternative to LIMIT).',
-    tip: `-- Global Top 5 most expensive products
-SELECT name, price
-FROM products
-ORDER BY price DESC
-LIMIT 5;
-
--- Bottom 3 (cheapest)
-SELECT name, price
-FROM products
-ORDER BY price ASC
-LIMIT 3;
-
--- Top 1 per category (latest order per customer)
-SELECT DISTINCT ON (customer_id)
-  customer_id, id AS order_id, total, created_at
-FROM orders
-ORDER BY customer_id, created_at DESC;  -- PostgreSQL
-
--- Top N per group (any database)
-WITH ranked AS (
-  SELECT *,
-    ROW_NUMBER() OVER (
-      PARTITION BY category
-      ORDER BY price DESC
-    ) AS rn
-  FROM products
-)
-SELECT * FROM ranked WHERE rn <= 3;`
+    question: 'SQL Pattern 2 — Data Engineer (Data Processing): what SQL do data engineers write?',
+    answer: 'Data engineers build pipelines that transform, aggregate, and move data. Key patterns: `CASE WHEN` + `CAST` + date functions for data transformation, `GROUP BY` with `SUM/AVG/COUNT` for aggregation, multi-table `JOIN` for pipeline enrichment, window functions (`ROW_NUMBER`, `RANK`, `OVER PARTITION BY`) for ranking and analytics, and `ROW_NUMBER() OVER (PARTITION BY key)` for deduplication before loading into a data warehouse.',
+    tip: `DATA ENGINEER QUERY PATTERNS
+│
+├── Data Transformation
+│   SELECT
+│     user_id,
+│     CASE WHEN age < 18 THEN 'minor' ELSE 'adult' END AS segment,
+│     CAST(revenue AS NUMERIC(10,2))                    AS revenue,
+│     DATE_TRUNC('month', created_at)                   AS month
+│   FROM raw_events
+│
+├── Data Aggregation
+│   SELECT region, DATE_TRUNC('day', created_at) AS day,
+│     COUNT(*)       AS events,
+│     SUM(revenue)   AS total_revenue,
+│     AVG(duration)  AS avg_duration
+│   FROM events
+│   GROUP BY region, DATE_TRUNC('day', created_at)
+│
+├── Pipeline Join (enrich facts with dimension tables)
+│   SELECT e.*, u.country, p.category
+│   FROM   events e
+│   JOIN   users    u ON u.id = e.user_id
+│   LEFT JOIN products p ON p.id = e.product_id
+│
+├── Window Functions
+│   SELECT *,
+│     ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY created_at DESC) AS rn,
+│     RANK()       OVER (PARTITION BY region  ORDER BY revenue DESC)    AS rnk
+│   FROM orders
+│
+└── Deduplication (keep latest row per key)
+    WITH deduped AS (
+      SELECT *, ROW_NUMBER() OVER (
+        PARTITION BY user_id ORDER BY updated_at DESC
+      ) AS rn
+      FROM users_raw
+    )
+    SELECT * FROM deduped WHERE rn = 1`
   },
   {
     category: 'SQL Patterns', difficulty: 'Intermediate',
-    question: 'Pattern 6 — Ranking: how do ROW_NUMBER, RANK, and DENSE_RANK differ?',
-    answer: '`ROW_NUMBER()` — always unique, no ties: 1, 2, 3, 4. `RANK()` — ties share the same rank, next rank skips: 1, 2, 2, 4. `DENSE_RANK()` — ties share the same rank, no gaps: 1, 2, 2, 3. All three use `OVER (PARTITION BY group ORDER BY col)`. Use ROW_NUMBER for dedup / Top-N per group. Use RANK/DENSE_RANK when ties matter (leaderboards, competition results).',
-    tip: `-- Compare all three on the same data
-SELECT
-  name, score,
-  ROW_NUMBER()  OVER (ORDER BY score DESC) AS row_num,
-  RANK()        OVER (ORDER BY score DESC) AS rank,
-  DENSE_RANK()  OVER (ORDER BY score DESC) AS dense_rank
-FROM students;
--- score: 95, 90, 90, 85
--- row_num:  1,  2,  3,  4
--- rank:     1,  2,  2,  4   <- gap after tie
--- dense_rank: 1, 2, 2, 3   <- no gap
-
--- Ranking per group (per subject)
-SELECT
-  student_id, subject, score,
-  ROW_NUMBER() OVER (
-    PARTITION BY subject
-    ORDER BY score DESC
-  ) AS rank_in_subject
-FROM exam_scores;
-
--- Top 1 per group using ROW_NUMBER
-WITH r AS (
-  SELECT *, ROW_NUMBER() OVER (PARTITION BY subject ORDER BY score DESC) AS rn
-  FROM exam_scores
-)
-SELECT * FROM r WHERE rn = 1;`
-  },
-  {
-    category: 'SQL Patterns', difficulty: 'Intermediate',
-    question: 'Interview pattern — Find missing records: LEFT JOIN + WHERE IS NULL',
-    answer: 'The anti-join pattern finds rows in table A that have no corresponding row in table B. Use `LEFT JOIN` then filter `WHERE B.id IS NULL`. Common interview questions: customers who never ordered, employees with no manager, products never sold, users who never logged in. This is more reliable than `NOT IN` when the subquery could return NULLs (NOT IN with NULLs returns no rows — a subtle bug).',
-    tip: `-- Customers who never placed an order
-SELECT u.id, u.name
-FROM users u
-LEFT JOIN orders o ON o.user_id = u.id
-WHERE o.id IS NULL;
-
--- Products that were never sold
-SELECT p.id, p.name
-FROM products p
-LEFT JOIN order_items oi ON oi.product_id = p.id
-WHERE oi.id IS NULL;
-
--- NOT IN version (BEWARE: fails if subquery returns NULL)
-SELECT id, name FROM users
-WHERE id NOT IN (SELECT user_id FROM orders);
--- If any user_id is NULL in orders → returns 0 rows!
-
--- Safe alternative: NOT EXISTS
-SELECT id, name FROM users u
-WHERE NOT EXISTS (
-  SELECT 1 FROM orders o WHERE o.user_id = u.id
-);`
-  },
-  {
-    category: 'SQL Patterns', difficulty: 'Intermediate',
-    question: 'Interview pattern — Running total and moving average with window functions',
-    answer: 'A running total accumulates values row by row using `SUM(col) OVER (ORDER BY date)`. A moving average smooths data over a sliding window using `AVG(col) OVER (ORDER BY date ROWS BETWEEN N PRECEDING AND CURRENT ROW)`. Add `PARTITION BY` to reset per group. These are common in analytics, dashboards, and data engineering interviews — the key insight is that window functions do NOT collapse rows like GROUP BY does.',
-    tip: `-- Daily revenue with running total
-SELECT
-  DATE(created_at)                         AS day,
-  SUM(amount)                              AS daily_revenue,
-  SUM(SUM(amount)) OVER (
-    ORDER BY DATE(created_at)
-  )                                        AS running_total
-FROM orders
-GROUP BY DATE(created_at);
-
--- 7-day moving average of daily signups
-SELECT
-  day,
-  signups,
-  ROUND(AVG(signups) OVER (
-    ORDER BY day
-    ROWS BETWEEN 6 PRECEDING AND CURRENT ROW
-  ), 1) AS moving_avg_7d
-FROM daily_signups
-ORDER BY day;
-
--- Running total per user (resets per partition)
-SELECT user_id, order_date, amount,
-  SUM(amount) OVER (
-    PARTITION BY user_id ORDER BY order_date
-  ) AS cumulative_spend
-FROM orders;`
-  },
-  {
-    category: 'SQL Patterns', difficulty: 'Intermediate',
-    question: 'Interview pattern — Swap values and classify rows with CASE WHEN',
-    answer: 'CASE WHEN is used to transform data inline without changing the schema. Classic interview tasks: swap M/F values, classify rows into buckets, flag records meeting a condition, build pivot tables. Rule: CASE is an expression — it returns a value and can go anywhere a value can (SELECT, WHERE, ORDER BY, GROUP BY, inside aggregates). Without ELSE, unmatched rows return NULL.',
-    tip: `-- Swap gender values (classic interview question)
-UPDATE users
-SET gender = CASE gender
-  WHEN 'M' THEN 'F'
-  WHEN 'F' THEN 'M'
-  ELSE gender
-END;
-
--- Classify rows into buckets
-SELECT name, salary,
-  CASE
-    WHEN salary < 30000  THEN 'Junior'
-    WHEN salary < 70000  THEN 'Mid'
-    WHEN salary < 120000 THEN 'Senior'
-    ELSE                      'Executive'
-  END AS level
-FROM employees;
-
--- Conditional count (pivot)
-SELECT department,
-  COUNT(*) FILTER (WHERE gender = 'M') AS male_count,
-  COUNT(*) FILTER (WHERE gender = 'F') AS female_count
-FROM employees
-GROUP BY department;
-
--- Flag rows
-SELECT *, (score >= 60) AS passed FROM students;`
-  },
-  {
-    category: 'SQL Patterns', difficulty: 'Advanced',
-    question: 'Interview pattern — Subquery patterns: IN, NOT IN, EXISTS, scalar, derived table',
-    answer: 'Four subquery shapes: `IN (SELECT ...)` checks membership — simple but can be slow on large sets. `NOT IN (SELECT ...)` — beware: if the subquery returns any NULL, the entire result is empty (use NOT EXISTS instead). `EXISTS (SELECT 1 ...)` — stops at the first match, efficient for large tables. `Scalar subquery` returns one value and can go in SELECT. `Derived table` (subquery in FROM) lets you pre-aggregate before joining.',
-    tip: `-- IN: orders from VIP customers
-SELECT * FROM orders
-WHERE customer_id IN (
-  SELECT id FROM customers WHERE tier = 'VIP'
-);
-
--- NOT EXISTS (safe replacement for NOT IN with NULLs)
-SELECT * FROM products p
-WHERE NOT EXISTS (
-  SELECT 1 FROM order_items oi WHERE oi.product_id = p.id
-);
-
--- Scalar subquery in SELECT
-SELECT name,
-  salary,
-  (SELECT AVG(salary) FROM employees) AS company_avg,
-  salary - (SELECT AVG(salary) FROM employees) AS diff_from_avg
-FROM employees;
-
--- Derived table: top-spending customers
-SELECT d.customer_id, d.total_spent, c.name
-FROM (
-  SELECT customer_id, SUM(amount) AS total_spent
-  FROM orders
-  GROUP BY customer_id
-  HAVING SUM(amount) > 1000
-) d
-JOIN customers c ON c.id = d.customer_id
-ORDER BY d.total_spent DESC;`
+    question: 'SQL Pattern 3 — Data Analyst (Product Analytics): what SQL do analysts write?',
+    answer: 'Data analysts answer product questions with SQL. Core metrics: DAU with `COUNT(DISTINCT user_id) GROUP BY date`, Day-1 retention via a self-join matching signup-day users to the next day, funnel analysis using `COUNT(CASE WHEN event = X THEN user_id END)` per step, top users with `GROUP BY user ORDER BY COUNT DESC`, and sessions via `COUNT(DISTINCT session_id)`. The common thread: aggregate and filter event data to answer "how many users did X?"',
+    tip: `DATA ANALYST QUERY PATTERNS
+│
+├── DAU (Daily Active Users)
+│   SELECT DATE(created_at) AS day,
+│     COUNT(DISTINCT user_id) AS dau
+│   FROM events
+│   GROUP BY DATE(created_at)
+│   ORDER BY day
+│
+├── Retention (Day-1 retention rate)
+│   SELECT
+│     COUNT(DISTINCT d0.user_id)                    AS cohort,
+│     COUNT(DISTINCT d1.user_id)                    AS retained,
+│     ROUND(COUNT(DISTINCT d1.user_id) * 100.0
+│           / COUNT(DISTINCT d0.user_id), 1)        AS retention_pct
+│   FROM   events d0
+│   LEFT JOIN events d1
+│     ON  d1.user_id = d0.user_id
+│     AND DATE(d1.created_at) = DATE(d0.created_at) + 1
+│   WHERE d0.event = 'signup'
+│
+├── Funnel Analysis
+│   SELECT
+│     COUNT(CASE WHEN event = 'page_view'   THEN user_id END) AS step1_view,
+│     COUNT(CASE WHEN event = 'add_to_cart' THEN user_id END) AS step2_cart,
+│     COUNT(CASE WHEN event = 'purchase'    THEN user_id END) AS step3_buy
+│   FROM events
+│
+├── Top Users
+│   SELECT user_id, COUNT(*) AS actions
+│   FROM events
+│   GROUP BY user_id
+│   ORDER BY actions DESC
+│   LIMIT 10
+│
+└── Sessions per Day
+    SELECT DATE(created_at) AS day,
+      COUNT(DISTINCT session_id) AS sessions,
+      COUNT(DISTINCT user_id)    AS unique_users
+    FROM events
+    GROUP BY DATE(created_at)`
   },
 ];
 
