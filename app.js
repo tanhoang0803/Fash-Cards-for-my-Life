@@ -2977,10 +2977,81 @@ GROUP BY user_id;`
 
   /* ── SQL Patterns ── */
   {
+    category: 'SQL Patterns', difficulty: 'Beginner',
+    question: 'SQL by Role — what are the 3 SQL usage patterns across Backend, Data Engineering, and Data Analytics?',
+    answer: 'SQL is used differently depending on the role. Backend engineers write CRUD queries and transactions to power APIs. Data engineers write transformation, aggregation, and pipeline queries to move and process data. Data analysts write metric queries (DAU, retention, funnels) to answer product questions. All three rely on the same SQL foundation — but with different goals, data shapes, and query complexity.',
+    tip: `SQL BY ROLE
+│
+├── 1️⃣  Backend (Application Queries)
+│   ├── CRUD Operations
+│   │   ├─ Create → INSERT INTO
+│   │   ├─ Read   → SELECT ... WHERE id
+│   │   ├─ Update → UPDATE ... SET
+│   │   └─ Delete → DELETE ... WHERE
+│   ├── API Data Fetch
+│   │   ├─ JOIN    → fetch relational data
+│   │   ├─ WHERE   → filter resource
+│   │   └─ SELECT  → specific columns
+│   ├── Pagination
+│   │   └─ ORDER BY created_at  LIMIT n OFFSET m
+│   ├── Validation
+│   │   └─ EXISTS / SELECT 1
+│   └── Transactions
+│       ├─ BEGIN
+│       ├─ COMMIT
+│       └─ ROLLBACK
+│
+├── 2️⃣  Data Engineer (Data Processing)
+│   ├── Data Transformation
+│   │   ├─ SELECT
+│   │   ├─ CASE WHEN
+│   │   └─ CAST / DATE functions
+│   ├── Data Aggregation
+│   │   ├─ GROUP BY
+│   │   ├─ SUM()  AVG()  COUNT()
+│   ├── Data Pipeline Join
+│   │   ├─ INNER JOIN
+│   │   ├─ LEFT JOIN
+│   │   └─ JOIN multiple tables
+│   ├── Window Functions
+│   │   ├─ ROW_NUMBER()  RANK()
+│   │   └─ OVER(PARTITION BY)
+│   └── Deduplication
+│       └─ ROW_NUMBER() + PARTITION
+│
+└── 3️⃣  Data Analyst (Product Analytics)
+    ├── DAU
+    │   └─ COUNT(DISTINCT user_id)  GROUP BY date
+    ├── Retention
+    │   └─ self JOIN  date + 1 day
+    ├── Funnel Analysis
+    │   └─ COUNT(CASE WHEN event THEN user_id)
+    ├── Top Users
+    │   └─ GROUP BY user  ORDER BY COUNT DESC
+    └── Sessions
+        └─ COUNT(DISTINCT session_id)`
+  },
+  {
     category: 'SQL Patterns', difficulty: 'Intermediate',
     question: 'SQL Pattern 1 — Backend (Application Queries): what SQL do backend engineers write daily?',
     answer: 'Backend engineers write SQL that powers API endpoints. The core operations map to CRUD: `INSERT` (Create), `SELECT` (Read), `UPDATE`, `DELETE`. Beyond CRUD: use `JOIN` to fetch relational data in one round-trip, `WHERE id = $1` to fetch a single resource, `EXISTS`/`SELECT 1` for fast validation checks, `LIMIT`/`OFFSET` for pagination, and `BEGIN`/`COMMIT`/`ROLLBACK` to wrap multi-step writes in a transaction so they succeed or fail atomically.',
-    tip: `BACKEND QUERY PATTERNS
+    tip: `1️⃣  BACKEND — Plain Text Overview
+│
+├── CRUD Operations
+│   ├─ Create → INSERT INTO
+│   ├─ Read   → SELECT ... WHERE id
+│   ├─ Update → UPDATE ... SET
+│   └─ Delete → DELETE ... WHERE
+├── API Data Fetch
+│   ├─ JOIN   → fetch relational data
+│   ├─ WHERE  → filter resource
+│   └─ SELECT → specific columns
+├── Pagination   → ORDER BY created_at  LIMIT n OFFSET m
+├── Validation   → EXISTS / SELECT 1
+└── Transactions → BEGIN / COMMIT / ROLLBACK
+
+─────────────────────────────────────────
+BACKEND QUERY PATTERNS
 │
 ├── CRUD Operations
 │   ├─ Create  → INSERT INTO users (name, email) VALUES (\$1, \$2)
@@ -3015,7 +3086,16 @@ GROUP BY user_id;`
     category: 'SQL Patterns', difficulty: 'Intermediate',
     question: 'SQL Pattern 2 — Data Engineer (Data Processing): what SQL do data engineers write?',
     answer: 'Data engineers build pipelines that transform, aggregate, and move data. Key patterns: `CASE WHEN` + `CAST` + date functions for data transformation, `GROUP BY` with `SUM/AVG/COUNT` for aggregation, multi-table `JOIN` for pipeline enrichment, window functions (`ROW_NUMBER`, `RANK`, `OVER PARTITION BY`) for ranking and analytics, and `ROW_NUMBER() OVER (PARTITION BY key)` for deduplication before loading into a data warehouse.',
-    tip: `DATA ENGINEER QUERY PATTERNS
+    tip: `2️⃣  DATA ENGINEER — Plain Text Overview
+│
+├── Data Transformation  → SELECT + CASE WHEN + CAST / DATE functions
+├── Data Aggregation     → GROUP BY + SUM() AVG() COUNT()
+├── Data Pipeline Join   → INNER JOIN / LEFT JOIN / multi-table JOIN
+├── Window Functions     → ROW_NUMBER() / RANK() OVER(PARTITION BY)
+└── Deduplication        → ROW_NUMBER() + PARTITION BY key
+
+─────────────────────────────────────────
+DATA ENGINEER QUERY PATTERNS
 │
 ├── Data Transformation
 │   SELECT
@@ -3058,7 +3138,16 @@ GROUP BY user_id;`
     category: 'SQL Patterns', difficulty: 'Intermediate',
     question: 'SQL Pattern 3 — Data Analyst (Product Analytics): what SQL do analysts write?',
     answer: 'Data analysts answer product questions with SQL. Core metrics: DAU with `COUNT(DISTINCT user_id) GROUP BY date`, Day-1 retention via a self-join matching signup-day users to the next day, funnel analysis using `COUNT(CASE WHEN event = X THEN user_id END)` per step, top users with `GROUP BY user ORDER BY COUNT DESC`, and sessions via `COUNT(DISTINCT session_id)`. The common thread: aggregate and filter event data to answer "how many users did X?"',
-    tip: `DATA ANALYST QUERY PATTERNS
+    tip: `3️⃣  DATA ANALYST — Plain Text Overview
+│
+├── DAU           → COUNT(DISTINCT user_id)  GROUP BY date
+├── Retention     → self JOIN  date + 1 day
+├── Funnel        → COUNT(CASE WHEN event THEN user_id)
+├── Top Users     → GROUP BY user  ORDER BY COUNT DESC
+└── Sessions      → COUNT(DISTINCT session_id)
+
+─────────────────────────────────────────
+DATA ANALYST QUERY PATTERNS
 │
 ├── DAU (Daily Active Users)
 │   SELECT DATE(created_at) AS day,
