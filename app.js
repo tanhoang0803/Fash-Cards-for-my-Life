@@ -8994,6 +8994,96 @@ const { rows } = await pool.query(
 ];
 
 /* ═══════════════════════════════════════════════════════════
+   TRICKED MEMORY
+═══════════════════════════════════════════════════════════ */
+const TRICKED_CARDS = [
+
+  /* ── SQL ── */
+  {
+    category: 'SQL', difficulty: 'Beginner',
+    question: 'SQL execution order mnemonic — what does "FJ WGH SOL" mean?',
+    answer: '"FJ WGH SOL" is the SQL clause execution order: **F**ROM → **J**OIN → **W**HERE → **G**ROUP BY → **H**AVING → **S**ELECT → **O**RDER BY → **L**IMIT. The DB processes clauses in this order — NOT the order you write them. This is why you cannot reference a SELECT alias in WHERE (WHERE runs before SELECT), and why HAVING can filter on aggregates but WHERE cannot.',
+    tip: `FJ  WGH  SOL   ← say it like a word
+
+F — FROM        (pick the table / join sources)
+J — JOIN        (combine tables)
+W — WHERE       (filter rows — before grouping)
+G — GROUP BY    (group rows → run aggregates)
+H — HAVING      (filter groups — after aggregates)
+S — SELECT      (choose output columns)
+O — ORDER BY    (sort the result)
+L — LIMIT       (cap the rows returned)
+
+Example query — spot each letter:
+SELECT   department, COUNT(*) AS headcount   ← S
+FROM     employees                            ← F
+JOIN     departments ON ...                   ← J
+WHERE    active = TRUE                        ← W
+GROUP BY department                           ← G
+HAVING   COUNT(*) > 5                         ← H
+ORDER BY headcount DESC                       ← O
+LIMIT    10;                                  ← L`
+  },
+  {
+    category: 'SQL', difficulty: 'Beginner',
+    question: 'FJ WGH SOL — why does the execution order matter in practice?',
+    answer: 'Knowing the order prevents common bugs: 1) You cannot use a SELECT alias in WHERE — WHERE runs before SELECT so the alias doesn\'t exist yet. 2) You cannot use aggregate functions in WHERE — use HAVING instead. 3) You cannot reference a window function alias in WHERE or HAVING — wrap in a subquery/CTE. 4) DISTINCT runs after SELECT but before ORDER BY. 5) LIMIT is always last — it cuts after sorting.',
+    tip: `-- ❌ WRONG: alias used in WHERE (WHERE runs before SELECT)
+SELECT price * 0.9 AS discounted
+FROM products
+WHERE discounted < 50;          -- ERROR: column "discounted" unknown
+
+-- ✅ RIGHT: repeat the expression, or use subquery
+SELECT price * 0.9 AS discounted
+FROM products
+WHERE price * 0.9 < 50;
+
+-- ❌ WRONG: aggregate in WHERE
+SELECT department, COUNT(*) FROM employees
+WHERE COUNT(*) > 5              -- ERROR
+GROUP BY department;
+
+-- ✅ RIGHT: aggregate filter → HAVING
+SELECT department, COUNT(*) FROM employees
+GROUP BY department
+HAVING COUNT(*) > 5;
+
+-- ❌ WRONG: window function alias in WHERE
+SELECT name, RANK() OVER (ORDER BY score DESC) AS rnk
+FROM students WHERE rnk <= 3;   -- ERROR
+
+-- ✅ RIGHT: wrap in CTE / subquery
+WITH r AS (SELECT *, RANK() OVER (ORDER BY score DESC) AS rnk FROM students)
+SELECT * FROM r WHERE rnk <= 3;`
+  },
+  {
+    category: 'SQL', difficulty: 'Intermediate',
+    question: 'FJ WGH SOL — what happens at each step? Walk through a real query.',
+    answer: 'Each step transforms the working dataset before passing it to the next: FROM loads raw rows → JOIN merges additional tables → WHERE removes non-matching rows → GROUP BY collapses rows into groups and computes aggregates → HAVING drops groups → SELECT projects only the requested columns → ORDER BY sorts → LIMIT truncates. Understanding each step\'s input/output helps you write and debug complex queries.',
+    tip: `-- Full worked example: top 3 departments by active headcount
+
+SELECT   department, COUNT(*) AS headcount   -- ➎ keep 2 cols
+FROM     employees                            -- ➊ load all rows
+JOIN     departments d ON d.id = dept_id     -- ➋ add dept name
+WHERE    active = TRUE                        -- ➌ drop inactive
+GROUP BY department                           -- ➍ one row/dept
+HAVING   COUNT(*) > 2                         -- ➎ drop tiny depts
+ORDER BY headcount DESC                       -- ➏ sort biggest first
+LIMIT    3;                                   -- ➐ top 3 only
+
+-- Step-by-step data flow:
+-- ➊ FROM:     [all 500 employee rows]
+-- ➋ JOIN:     [500 rows + department.name column]
+-- ➌ WHERE:    [320 rows — only active=TRUE]
+-- ➍ GROUP BY: [12 groups — one per department, COUNT computed]
+-- ➎ HAVING:   [9 groups — dropped 3 with <= 2 people]
+-- ➏ SELECT:   [9 rows, 2 columns: department + headcount]
+-- ➐ ORDER BY: [9 rows sorted descending]
+-- ➑ LIMIT:    [3 rows returned]`
+  },
+];
+
+/* ═══════════════════════════════════════════════════════════
    SUBJECTS
 ═══════════════════════════════════════════════════════════ */
 const SUBJECTS = {
@@ -9010,13 +9100,14 @@ const SUBJECTS = {
   'React & SSR': REACT_CARDS,
   'CSS & Tailwind': CSS_CARDS,
   'Testing & Containers': DEVOPS_CARDS,
+  'Tricked Memory': TRICKED_CARDS,
 };
 
 /* ═══════════════════════════════════════════════════════════
    SUBJECT GROUPS  (controls menu bar sections)
 ═══════════════════════════════════════════════════════════ */
 const SUBJECT_GROUPS = {
-  'Core':     ['DSA', 'Internet', 'Linux'],
+  'Core':     ['DSA', 'Internet', 'Linux', 'Tricked Memory'],
   'Backend':  ['Python', 'C#', 'SQL', 'Database', 'API', 'Node.js', 'Testing & Containers'],
   'Frontend': ['JavaScript', 'React & SSR', 'CSS & Tailwind'],
 };
@@ -9044,6 +9135,7 @@ const SUBJECT_COLORS = {
   'React & SSR':    '#61dafb',
   'CSS & Tailwind': '#e879f9',
   'Testing & Containers': '#14b8a6',
+  'Tricked Memory': '#f43f5e',
 };
 
 const CATEGORY_COLORS = {
@@ -9123,6 +9215,8 @@ const CATEGORY_COLORS = {
   'HTTP & Web':         '#059669',
   'DNS & Domains':      '#34d399',
   'Browsers':           '#065f46',
+  // Tricked Memory
+  'SQL':                '#f43f5e',
 };
 
 const DIFFICULTY_CONFIG = {
