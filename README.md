@@ -22,7 +22,7 @@ A multi-subject developer flash card web app built with vanilla HTML, CSS, and J
 |---|---|---|
 | **Python** | 22 | Core Python, OOP & Design, Ecosystem |
 | **C#** | 18 | C# Basics, OOP & Patterns, LINQ & Async |
-| **SQL** | 30+ | SQL Basics, DDL, DML, DQL, DCL, Joins & Aggregation, Advanced SQL |
+| **SQL** | 43+ | SQL Basics, DDL, DML, DQL, DCL, Joins & Aggregation, Advanced SQL, GROUP BY Patterns, SQL Patterns |
 | **Database** | 26+ | Relational DB, NoSQL, DB Design & Perf, PostgreSQL |
 | **API** | 30+ | JSON Basics, REST Fundamentals, REST Design, API in Practice, JWT, OAuth2 |
 | **Node.js** | 25 | Node.js Basics, Modules & npm, Async & Error Handling, HTTP & Express, Performance & Production |
@@ -35,7 +35,7 @@ A multi-subject developer flash card web app built with vanilla HTML, CSS, and J
 | **React & SSR** | 25 | React Basics, Hooks, Performance, SSR & Next.js |
 | **CSS & Tailwind** | 20 | CSS Fundamentals, CSS Layouts, Tailwind CSS |
 
-**Total: 350+ cards**
+**Total: 363+ cards**
 
 ---
 
