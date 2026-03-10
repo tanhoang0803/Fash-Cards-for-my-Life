@@ -16,13 +16,14 @@ A multi-subject developer flash card web app built with vanilla HTML, CSS, and J
 | **DSA** | 40+ | Complexity, Data Structures, Algorithms, Patterns, Hashing, Recursion, Interview |
 | **Internet** | 20 | How Internet Works, HTTP & Web, DNS & Domains, Browsers |
 | **Linux** | 25 | Linux Basics, Files & Permissions, Processes & System, Networking & SSH, Shell Scripting |
+| **Tricked Memory** | 3+ | SQL (FJ WGH SOL — execution order mnemonic) |
 
 ### Backend
 | Subject | Cards | Categories |
 |---|---|---|
 | **Python** | 22 | Core Python, OOP & Design, Ecosystem |
 | **C#** | 18 | C# Basics, OOP & Patterns, LINQ & Async |
-| **SQL** | 43+ | SQL Basics, DDL, DML, DQL, DCL, Joins & Aggregation, Advanced SQL, GROUP BY Patterns, SQL Patterns |
+| **SQL** | 60+ | Core, SQL Basics, DDL, DML, DQL, DCL, IF & CASE, Joins & Aggregation, Advanced SQL, GROUP BY Patterns, SQL Patterns |
 | **Database** | 26+ | Relational DB, NoSQL, DB Design & Perf, PostgreSQL |
 | **API** | 30+ | JSON Basics, REST Fundamentals, REST Design, API in Practice, JWT, OAuth2 |
 | **Node.js** | 25 | Node.js Basics, Modules & npm, Async & Error Handling, HTTP & Express, Performance & Production |
@@ -35,7 +36,7 @@ A multi-subject developer flash card web app built with vanilla HTML, CSS, and J
 | **React & SSR** | 25 | React Basics, Hooks, Performance, SSR & Next.js |
 | **CSS & Tailwind** | 20 | CSS Fundamentals, CSS Layouts, Tailwind CSS |
 
-**Total: 363+ cards**
+**Total: 370+ cards**
 
 ---
 
