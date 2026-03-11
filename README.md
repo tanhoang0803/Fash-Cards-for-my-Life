@@ -32,11 +32,11 @@ A multi-subject developer flash card web app built with vanilla HTML, CSS, and J
 ### Frontend
 | Subject | Cards | Categories |
 |---|---|---|
-| **JavaScript** | 50 | JavaScript Core, Async JavaScript, DOM & Browser, CSS, Performance, Security |
+| **JavaScript** | 40+ | Overview, Fundamentals, Core JavaScript, ES6+, Async JavaScript, DOM & Browser, Data Structures, Advanced, Performance, Testing, Ecosystem, Interview |
 | **React & SSR** | 25 | React Basics, Hooks, Performance, SSR & Next.js |
 | **CSS & Tailwind** | 20 | CSS Fundamentals, CSS Layouts, Tailwind CSS |
 
-**Total: 370+ cards**
+**Total: 400+ cards**
 
 ---
 
