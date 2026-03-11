@@ -40,6 +40,31 @@ A multi-subject developer flash card web app built with vanilla HTML, CSS, and J
 
 ---
 
+### JavaScript — Detailed Breakdown
+
+| Category | Cards | Topics |
+|---|---|---|
+| **Overview** | 1 | Full mindmap · Frontend & Backend learning paths |
+| **Fundamentals** | 5 | var/let/const · Data types · Operators · Control flow · Functions |
+| **Core JavaScript** | 6 | Scope · Closures · Hoisting · `this` keyword · Event loop · Prototype chain |
+| **ES6+** | 4 | Destructuring & spread · Template literals · Classes · Modules (import/export) |
+| **Async JavaScript** | 3 | Promises · async/await · Fetch API |
+| **DOM & Browser** | 3 | DOM manipulation · Event bubbling & delegation · localStorage/sessionStorage |
+| **Data Structures** | 2 | Array methods (map/filter/reduce) · Map & Set |
+| **Advanced** | 4 | Execution context · Shallow vs deep copy · Debounce/throttle · Functional programming |
+| **Performance** | 2 | Memoization · Lazy loading · Code splitting · Web Workers |
+| **Testing** | 1 | Jest unit testing · Mocks · Async tests |
+| **Ecosystem** | 2 | npm/package.json · Webpack / Vite / Babel |
+| **Interview** | 10 | var vs let vs const · Closure · Hoisting · this · Event loop · Promises · async/await · Destructuring · Spread · map/filter/reduce |
+
+#### Learning Paths
+```
+Frontend Developer:   Core JS → ES6+ → DOM → Async JS → React → Performance
+Backend Developer:    Fundamentals → ES6 → Async → Node.js → API → Database
+```
+
+---
+
 ## Features
 
 - Multi-subject navigation grouped into **Core / Backend / Frontend** bars
