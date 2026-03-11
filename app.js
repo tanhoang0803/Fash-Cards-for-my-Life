@@ -9209,6 +9209,360 @@ export default defineConfig({
   ]
 }`
   },
+
+  // ── Interview Pack ───────────────────────────────────────
+  {
+    category: 'Interview', difficulty: 'Intermediate',
+    question: 'Interview #1 — var vs let vs const: what are the key differences?',
+    answer: 'Three key axes: **Scope** — `var` is function-scoped; `let`/`const` are block-scoped. **Hoisting** — `var` is hoisted and initialized to `undefined`; `let`/`const` are hoisted but stay in the Temporal Dead Zone (TDZ) — accessing before declaration throws ReferenceError. **Reassignment** — `const` cannot be reassigned (but objects/arrays it holds are still mutable). Interview tip: always start with `const`, downgrade to `let` only when you need to reassign, never use `var` in modern code.',
+    tip: `// 1. Scope
+function test() {
+  if (true) {
+    var x = 'var';    // function-scoped → leaks out of if
+    let y = 'let';    // block-scoped → stays inside if
+  }
+  console.log(x); // 'var'  ← accessible
+  console.log(y); // ReferenceError ← not accessible
+}
+
+// 2. Hoisting
+console.log(a); // undefined (var hoisted + init)
+var a = 1;
+console.log(b); // ReferenceError (TDZ)
+let b = 2;
+
+// 3. Reassignment & mutation
+const arr = [1, 2, 3];
+arr.push(4);        // ✓ mutating the object is fine
+arr = [5, 6];       // ✗ TypeError: assignment to constant
+
+// Interview gotcha — var in loops
+for (var i = 0; i < 3; i++) {
+  setTimeout(() => console.log(i), 0); // 3, 3, 3 (shared)
+}
+for (let i = 0; i < 3; i++) {
+  setTimeout(() => console.log(i), 0); // 0, 1, 2 (per-block)`
+  },
+  {
+    category: 'Interview', difficulty: 'Intermediate',
+    question: 'Interview #2 — Closure: what is it and why does it matter?',
+    answer: 'A closure is a function that remembers variables from its outer scope even after that scope has finished executing. Every function in JS forms a closure over its enclosing scope. Why it matters: enables **private state** (module pattern), **factory functions**, **memoization**, and **callbacks with context**. Interview test: can you spot what `count` will be in a counter example, or what the loop outputs with `var` vs `let`?',
+    tip: `// Classic closure — private counter
+function makeCounter(start = 0) {
+  let count = start;        // private, not accessible outside
+  return {
+    inc()   { return ++count; },
+    dec()   { return --count; },
+    reset() { count = start; },
+    get()   { return count; },
+  };
+}
+const c = makeCounter(10);
+c.inc(); // 11
+c.inc(); // 12
+c.dec(); // 11
+
+// Factory function — closure over config
+function multiplier(factor) {
+  return n => n * factor;   // closes over 'factor'
+}
+const double = multiplier(2);
+const triple = multiplier(3);
+double(5); // 10
+triple(5); // 15
+
+// Closure in React — stale closure trap
+function App() {
+  const [count, setCount] = useState(0);
+  useEffect(() => {
+    const id = setInterval(() => {
+      console.log(count); // stale! always 0
+    }, 1000);
+    return () => clearInterval(id);
+  }, []); // [] means closure captures count=0
+}`
+  },
+  {
+    category: 'Interview', difficulty: 'Intermediate',
+    question: 'Interview #3 — Hoisting: what gets hoisted and how?',
+    answer: 'Hoisting is JS\'s behaviour of moving declarations to the top of their scope during compilation. **What is hoisted**: `var` (declaration only, init = undefined), `function` declarations (fully — name + body). **Not initialized (TDZ)**: `let`, `const`, `class`. **Not hoisted at all**: function expressions, arrow functions (follow their variable\'s rules). Interview tip: only `function` declarations can be safely called before their line — everything else is a trap.',
+    tip: `// function declaration — fully hoisted ✓
+sayHi();                         // works
+function sayHi() { return 'Hi'; }
+
+// var — declaration hoisted, init is NOT
+console.log(score); // undefined (not error)
+var score = 100;
+
+// let/const — TDZ: hoisted but inaccessible
+console.log(name);  // ReferenceError
+let name = 'Alice';
+
+// function expression — var hoisted, function NOT
+console.log(greet); // undefined
+greet();            // TypeError: greet is not a function
+var greet = function() { return 'Hello'; };
+
+// class — also TDZ
+const obj = new Foo(); // ReferenceError
+class Foo {}
+
+// Interview question: what does this print?
+var x = 1;
+function test() {
+  console.log(x); // undefined (NOT 1) — local var x hoisted
+  var x = 2;
+}
+test();`
+  },
+  {
+    category: 'Interview', difficulty: 'Intermediate',
+    question: 'Interview #4 — this keyword: how is it determined in each context?',
+    answer: '`this` is determined at call time, not definition time (except arrows). 5 rules in priority order: 1) **new binding** (`new Fn()`) → new object. 2) **Explicit** (`call/apply/bind`) → provided context. 3) **Implicit** (`obj.fn()`) → `obj`. 4) **Arrow function** → lexical `this` from enclosing scope (cannot be changed). 5) **Default** → `window` (browser) or `undefined` (strict mode). Most interview bugs come from rule 3 losing `this` when a method is extracted.',
+    tip: `// Rule 3 — implicit binding (most common bug source)
+const user = {
+  name: 'Alice',
+  greet() { return 'Hi, ' + this.name; }
+};
+user.greet();                    // 'Hi, Alice' ✓
+
+const fn = user.greet;
+fn();                            // 'Hi, undefined' ✗ — lost this
+
+// Fix 1: bind
+const bound = user.greet.bind(user);
+bound();                         // 'Hi, Alice' ✓
+
+// Fix 2: arrow in class
+class Timer {
+  count = 0;
+  start() {
+    setInterval(() => this.count++, 1000); // lexical this ✓
+  }
+}
+
+// Interview question: what does this log?
+function Person(name) {
+  this.name = name;
+  this.sayName = function() { console.log(this.name); };
+  this.sayNameArrow = () => console.log(this.name);
+}
+const p = new Person('Bob');
+const { sayName, sayNameArrow } = p;
+sayName();       // undefined (lost this)
+sayNameArrow();  // 'Bob' (arrow, lexical this = p)`
+  },
+  {
+    category: 'Interview', difficulty: 'Advanced',
+    question: 'Interview #5 — Event Loop: explain the execution order with an example.',
+    answer: 'JS is single-threaded. The event loop keeps it non-blocking by managing 3 queues: **Call Stack** (sync, LIFO). **Microtask queue** (Promises `.then/catch`, `queueMicrotask`, `MutationObserver`) — drained fully after each task. **Macrotask queue** (setTimeout, setInterval, I/O) — one per loop turn. Execution order: run sync code → drain microtasks → run one macrotask → drain microtasks → repeat. Interview trap: `setTimeout(fn, 0)` runs AFTER all Promises in the same tick.',
+    tip: `console.log('A');               // 1. sync
+
+setTimeout(() => {
+  console.log('B');              // 5. macrotask
+}, 0);
+
+Promise.resolve()
+  .then(() => {
+    console.log('C');            // 3. microtask
+    return Promise.resolve();
+  })
+  .then(() => console.log('D')); // 4. microtask (queued after C)
+
+queueMicrotask(() => console.log('E')); // microtask
+
+console.log('F');               // 2. sync
+
+// Output: A  F  C  E  D  B
+// Sync first → ALL microtasks (C, E, D) → macrotask (B)
+
+// Why this matters in React:
+// setState batches updates (microtask-level in React 18)
+// useEffect runs after paint (macrotask-level)
+// Knowing this helps debug "why is my state stale?"`
+  },
+  {
+    category: 'Interview', difficulty: 'Intermediate',
+    question: 'Interview #6 — Promises: states, chaining, and parallel patterns.',
+    answer: 'A Promise has 3 states: **pending** → **fulfilled** (resolved) or **rejected** (immutable once settled). Chaining: each `.then()` returns a NEW Promise — you can chain transformations. Error propagation: a rejected promise skips `.then()` until a `.catch()`. Key static methods: `Promise.all` (parallel, fails fast), `Promise.allSettled` (parallel, waits for all), `Promise.race` (first to settle wins), `Promise.any` (first to fulfil wins). Interview trap: forgetting to return inside `.then()` breaks the chain.',
+    tip: `// Promise states
+const p = new Promise((resolve, reject) => {
+  setTimeout(() => resolve('done'), 1000);
+  // or: reject(new Error('failed'));
+});
+
+// Chaining — MUST return to pass value forward
+fetchUser(1)
+  .then(user => {
+    return fetchOrders(user.id); // return is crucial!
+  })
+  .then(orders => render(orders))
+  .catch(err  => handleError(err))
+  .finally(()  => hideSpinner());
+
+// Parallel patterns
+const [user, posts] = await Promise.all([   // fails if any fails
+  fetchUser(1),
+  fetchPosts(1),
+]);
+
+const results = await Promise.allSettled([  // never rejects
+  fetchA(), fetchB(), fetchC()
+]);
+results.forEach(r =>
+  r.status === 'fulfilled' ? use(r.value) : log(r.reason)
+);
+
+// Create resolved/rejected shorthand
+const resolved = Promise.resolve(42);
+const rejected  = Promise.reject(new Error('fail'));`
+  },
+  {
+    category: 'Interview', difficulty: 'Intermediate',
+    question: 'Interview #7 — async/await: how does it work and what are the common mistakes?',
+    answer: '`async` wraps the return value in a Promise. `await` suspends the function (not the thread) until the Promise settles. Errors: use `try/catch` — equivalent to `.catch()`. Common mistakes: 1) sequential `await` when you could be parallel (use `Promise.all`). 2) Forgetting `await` — returns a pending Promise instead of the value. 3) Using `await` in `forEach` — use `for...of` or `Promise.all(arr.map(...))` instead. 4) Unhandled rejections — always catch.',
+    tip: `// ✗ Mistake 1: sequential when parallel is possible (2x slower)
+const user   = await fetchUser(1);  // waits 300ms
+const posts  = await fetchPosts(1); // waits 300ms → 600ms total
+
+// ✓ Fix: parallel
+const [user, posts] = await Promise.all([
+  fetchUser(1), fetchPosts(1),      // both fire at once → 300ms
+]);
+
+// ✗ Mistake 2: await in forEach (doesn't wait)
+items.forEach(async item => {
+  await processItem(item);          // forEach ignores the promise
+});
+
+// ✓ Fix: for...of  OR  Promise.all
+for (const item of items) {
+  await processItem(item);          // sequential, awaited
+}
+await Promise.all(items.map(item => processItem(item))); // parallel
+
+// ✗ Mistake 3: forgot await
+const data = fetchData();           // Promise object, not value!
+
+// ✓
+const data = await fetchData();
+
+// Error handling
+async function load() {
+  try {
+    return await riskyFetch();
+  } catch (err) {
+    console.error(err);
+    return null;                    // graceful fallback
+  }
+}`
+  },
+  {
+    category: 'Interview', difficulty: 'Beginner',
+    question: 'Interview #8 — Destructuring: object, array, nested, and function params.',
+    answer: 'Destructuring extracts values from objects/arrays into named variables in one line. Features: **rename** (`{ a: newName }`), **default value** (`{ a = 0 }`), **nested** (drill into deep structures), **rest** (`{ a, ...rest }`). In function parameters, destructure directly in the signature for cleaner APIs. Array destructuring lets you swap variables and skip elements. Used everywhere in modern JS: React hooks (`const [state, setState] = useState()`), API responses, config objects.',
+    tip: `// Object destructuring
+const { name, age, city = 'Unknown', role: userRole } = user;
+//                    ↑ default        ↑ rename to userRole
+
+// Nested
+const { address: { city, zip } } = user;
+
+// Array destructuring — skip with comma
+const [first, , third, ...rest] = [1, 2, 3, 4, 5];
+
+// Swap variables
+let a = 1, b = 2;
+[a, b] = [b, a];    // a=2, b=1
+
+// Function parameter destructuring
+function render({ name, age = 0, active = true }) {
+  return \`\${name} (\${age}) - \${active ? 'on' : 'off'}\`;
+}
+render({ name: 'Alice', age: 25 });
+
+// In React
+const [count, setCount] = useState(0);
+const { data, error, loading } = useFetch('/api/users');
+
+// Interview question: what does this output?
+const { a: x = 10, b: y = 20 } = { a: 1 };
+console.log(x, y); // 1  20`
+  },
+  {
+    category: 'Interview', difficulty: 'Beginner',
+    question: 'Interview #9 — Spread operator: copying, merging, and passing arguments.',
+    answer: 'Spread (`...`) expands an iterable into individual elements. Three main uses: 1) **Copy** arrays/objects (shallow). 2) **Merge** multiple arrays/objects (later keys win in objects). 3) **Pass** array as function arguments. Remember: spread makes a **shallow copy** — nested objects still share references. In objects, later spread overwrites earlier keys — use this for defaults/overrides pattern.',
+    tip: `// 1. Shallow copy
+const arrCopy = [...original];
+const objCopy = { ...original };
+
+// 2. Merge arrays
+const merged = [...arr1, ...arr2, 4, 5];
+
+// 3. Merge objects — later keys WIN
+const defaults  = { color: 'blue', size: 'md', visible: true };
+const overrides = { color: 'red' };
+const config    = { ...defaults, ...overrides };
+// { color:'red', size:'md', visible:true }
+
+// 4. Function arguments
+const nums = [3, 1, 4, 1, 5];
+Math.max(...nums); // 5  (instead of Math.max.apply(null, nums))
+
+// 5. Add/remove from array (immutable update)
+const addItem    = (arr, item) => [...arr, item];
+const removeItem = (arr, idx)  => [...arr.slice(0, idx), ...arr.slice(idx+1)];
+
+// Interview: shallow vs deep
+const a = { x: { y: 1 } };
+const b = { ...a };
+b.x.y = 99;
+console.log(a.x.y); // 99 ← shared reference! spread is shallow
+
+// Interview question: what is the output?
+const obj = { a: 1, b: 2 };
+const copy = { ...obj, b: 99, c: 3 };
+console.log(copy); // { a:1, b:99, c:3 }`
+  },
+  {
+    category: 'Interview', difficulty: 'Intermediate',
+    question: 'Interview #10 — Array methods: map, filter, reduce — how do they work and how do you combine them?',
+    answer: '**map(fn)**: transforms every element → returns new array of same length. **filter(fn)**: keeps elements where fn returns truthy → shorter or equal length array. **reduce(fn, init)**: accumulates all elements into a single value (number, string, object, array). All three are **pure** — they don\'t mutate the original. Combine by chaining. Performance note: each chained call iterates the array separately — use `reduce` for a single-pass when performance matters on large arrays.',
+    tip: `const users = [
+  { name: 'Alice', age: 25, active: true  },
+  { name: 'Bob',   age: 17, active: false },
+  { name: 'Carol', age: 30, active: true  },
+];
+
+// map — transform
+users.map(u => u.name); // ['Alice', 'Bob', 'Carol']
+users.map(u => ({ ...u, age: u.age + 1 })); // new array, +1 age
+
+// filter — keep matching
+users.filter(u => u.active && u.age >= 18);
+// [{ name:'Alice'... }, { name:'Carol'... }]
+
+// reduce — accumulate
+users.reduce((sum, u) => sum + u.age, 0); // 72
+// Group by active status:
+users.reduce((groups, u) => {
+  const key = u.active ? 'active' : 'inactive';
+  groups[key] = [...(groups[key] || []), u];
+  return groups;
+}, {}); // { active: [...], inactive: [...] }
+
+// Chain — active users' names sorted
+users
+  .filter(u => u.active)
+  .map(u => u.name)
+  .sort();       // ['Alice', 'Carol']
+
+// Interview: implement map using reduce
+const myMap = (arr, fn) =>
+  arr.reduce((acc, item) => [...acc, fn(item)], []);`
+  },
+
 ];
 
 
