@@ -2,351 +2,269 @@
    DSA — Data Structures & Algorithms  (14 cards)
 ═══════════════════════════════════════════════════════════ */
 const DSA_CARDS = [
-  {
-    category: 'Complexity', difficulty: 'Beginner',
-    question: 'What is Big O notation?',
-    answer: 'Big O describes the worst-case growth rate of an algorithm\'s time or space as input size n grows. Constants and low-order terms are dropped — only the dominant term matters. It lets you compare algorithms independently of hardware and predict how they scale.',
-    tip: `O(1)       — hash lookup, array index access
-O(log n)   — binary search, balanced BST
-O(n)       — linear scan
-O(n log n) — merge sort, heap sort
-O(n²)      — bubble/insertion sort (nested loops)
-O(2ⁿ)      — brute-force subset enumeration`
-  },
-  {
-    category: 'Data Structures', difficulty: 'Beginner',
-    question: 'What is the difference between an Array and a Linked List?',
-    answer: 'Array: contiguous memory, O(1) random access by index, O(n) insert/delete at arbitrary position (elements shift). Linked List: nodes connected by pointers, O(n) access by index, O(1) insert/delete at a known node. Choose arrays for fast reads; linked lists for frequent head/middle insertions.',
-    tip: `// Array — O(1) index access
-const arr = [10, 20, 30];
-arr[1];               // 20 — instant
-arr.splice(1, 0, 99); // O(n) — shifts all elements
 
-// Singly Linked List node
-class Node {
-  constructor(val) {
-    this.val  = val;
-    this.next = null; // pointer to next node
-  }
-}`
-  },
-  {
-    category: 'Data Structures', difficulty: 'Beginner',
-    question: 'What is a Stack and what are its real-world use cases?',
-    answer: 'A Stack is LIFO (Last-In, First-Out). Core operations — push, pop, peek — are all O(1). Used for: call stack / recursion tracking, undo/redo in editors, balanced brackets validation, DFS graph traversal, expression parsing (postfix evaluation).',
-    tip: `class Stack {
-  #data = [];
-  push(val)  { this.#data.push(val); }
-  pop()      { return this.#data.pop(); }
-  peek()     { return this.#data.at(-1); }
-  isEmpty()  { return this.#data.length === 0; }
-}
+  // ══════════════════════════════════════════════════════════
+  // 1. ARRAYS
+  // ══════════════════════════════════════════════════════════
 
-// Classic: validate balanced brackets
-function isValid(s) {
-  const st = [], map = { ')': '(', ']': '[', '}': '{' };
-  for (const c of s) {
-    if ('([{'.includes(c)) st.push(c);
-    else if (st.pop() !== map[c]) return false;
-  }
-  return st.length === 0;
-}`
-  },
+  // 1.1 Two Pointers
   {
-    category: 'Data Structures', difficulty: 'Beginner',
-    question: 'What is a Queue and when do you use it?',
-    answer: 'A Queue is FIFO (First-In, First-Out). Enqueue adds to the back; dequeue removes from the front. O(1) for both with a proper implementation. Used for: BFS graph traversal, task/job schedulers, message brokers (Kafka, RabbitMQ), rate-limiting request buffers, print queues.',
-    tip: `// Efficient O(1) Queue using two stacks
-class Queue {
-  #in = []; #out = [];
-  enqueue(v) { this.#in.push(v); }
-  dequeue() {
-    if (!this.#out.length)
-      while (this.#in.length)
-        this.#out.push(this.#in.pop());
-    return this.#out.pop();
-  }
-  peek()    { return this.#out.at(-1) ?? this.#in[0]; }
-  isEmpty() { return !this.#in.length && !this.#out.length; }
-}`
-  },
-  {
-    category: 'Data Structures', difficulty: 'Intermediate',
-    question: 'What is a Hash Table and how does it handle collisions?',
-    answer: 'A Hash Table maps keys to values via a hash function that computes an array index. Average O(1) for get/set/delete. Collisions (two keys → same index) are resolved by: Chaining (each slot holds a linked list of entries) or Open Addressing (probe for next empty slot). A load factor above ~0.7 triggers resizing (rehashing).',
-    tip: `// Frequency map — quintessential hash table use
-function wordFreq(text) {
-  const freq = new Map();
-  for (const w of text.split(' '))
-    freq.set(w, (freq.get(w) ?? 0) + 1);
-  return freq;
-}
-
-// Two Sum — O(n) using hash map
+    category: 'Arrays', difficulty: 'Intermediate',
+    question: '1.1 Two Pointers — how does the pattern work and what problems does it solve?',
+    answer: '**Two Pointers** uses two index variables to traverse an array, replacing the O(n²) brute-force nested loop with O(n). Two main forms: **Opposite ends** — `left=0, right=n-1`, converge toward the center (used when array is sorted). **Same direction (slow/fast)** — both start at left, fast moves ahead by a condition. When to use: sorted arrays, palindrome check, remove duplicates, pair/triplet sum problems. **Key insight**: at each step, you always move the pointer that helps you approach the target condition.',
+    tip: `// --- Two Sum II (sorted array) ---
 function twoSum(nums, target) {
-  const seen = new Map();
-  for (let i = 0; i < nums.length; i++) {
-    const need = target - nums[i];
-    if (seen.has(need)) return [seen.get(need), i];
-    seen.set(nums[i], i);
-  }
-}`
-  },
-  {
-    category: 'Data Structures', difficulty: 'Intermediate',
-    question: 'What is a Binary Search Tree (BST)?',
-    answer: 'A BST is a binary tree where: left child < parent < right child for every node. Average O(log n) for search, insert, delete on a balanced tree; worst case O(n) if unbalanced (e.g. inserting sorted data). Self-balancing variants (AVL, Red-Black) guarantee O(log n). In-order traversal always yields sorted output.',
-    tip: `function insert(root, val) {
-  if (!root) return { val, left: null, right: null };
-  if (val < root.val) root.left  = insert(root.left,  val);
-  else               root.right = insert(root.right, val);
-  return root;
-}
-
-// In-order => sorted sequence
-function inOrder(node, res = []) {
-  if (!node) return res;
-  inOrder(node.left, res);
-  res.push(node.val);
-  inOrder(node.right, res);
-  return res;
-}`
-  },
-  {
-    category: 'Algorithms', difficulty: 'Intermediate',
-    question: 'How does Binary Search work?',
-    answer: 'Binary Search finds a target in a SORTED array in O(log n) by halving the search space each step: compare target to the middle element — equal → found; less → search left half; greater → search right half. For n = 1,000,000 it takes ≤ 20 comparisons. The array MUST be sorted first.',
-    tip: `function binarySearch(arr, target) {
-  let lo = 0, hi = arr.length - 1;
-  while (lo <= hi) {
-    const mid = (lo + hi) >> 1;   // fast floor divide
-    if      (arr[mid] === target) return mid;
-    else if (arr[mid] < target)  lo = mid + 1;
-    else                         hi = mid - 1;
-  }
-  return -1; // not found
-}
-
-// After loop: lo = correct insertion index
-// Useful for: first/last occurrence,
-//             "search on answer" problems`
-  },
-  {
-    category: 'Algorithms', difficulty: 'Intermediate',
-    question: 'What is the difference between BFS and DFS?',
-    answer: 'BFS (Breadth-First Search) uses a Queue and explores nodes level by level — guarantees shortest path in an unweighted graph. DFS (Depth-First Search) uses a Stack/recursion and goes as deep as possible before backtracking. BFS: shortest path, level-order traversal. DFS: cycle detection, topological sort, connected components, maze solving.',
-    tip: `// BFS — level-by-level, shortest path
-function bfs(graph, start) {
-  const visited = new Set([start]);
-  const queue   = [start];
-  while (queue.length) {
-    const node = queue.shift();
-    for (const nb of graph[node])
-      if (!visited.has(nb)) { visited.add(nb); queue.push(nb); }
+  let left = 0, right = nums.length - 1;
+  while (left < right) {
+    const sum = nums[left] + nums[right];
+    if (sum === target) return [left + 1, right + 1];
+    else if (sum < target) left++;
+    else right--;
   }
 }
+// O(n) time, O(1) space
 
-// DFS — depth-first, recursive
-function dfs(graph, node, visited = new Set()) {
-  if (visited.has(node)) return;
-  visited.add(node);
-  for (const nb of graph[node]) dfs(graph, nb, visited);
-}`
-  },
-  {
-    category: 'Algorithms', difficulty: 'Intermediate',
-    question: 'What is Merge Sort and what are its trade-offs?',
-    answer: 'Merge Sort uses divide-and-conquer: split array in half recursively, sort each half, merge. Time: O(n log n) guaranteed. Space: O(n) extra. Stable sort (preserves relative order of equal elements). Preferred for linked lists and when stability matters. Quick Sort is usually faster in practice (better cache locality) but O(n²) worst case.',
-    tip: `function mergeSort(arr) {
-  if (arr.length <= 1) return arr;
-  const mid = arr.length >> 1;
-  const L   = mergeSort(arr.slice(0, mid));
-  const R   = mergeSort(arr.slice(mid));
-  return merge(L, R);
-}
-function merge(L, R) {
-  const out = []; let i = 0, j = 0;
-  while (i < L.length && j < R.length)
-    out.push(L[i] <= R[j] ? L[i++] : R[j++]);
-  return out.concat(L.slice(i), R.slice(j));
-}
-// Time: O(n log n) all cases | Space: O(n)`
-  },
-  {
-    category: 'Patterns', difficulty: 'Intermediate',
-    question: 'What is the Two Pointers technique?',
-    answer: 'Two Pointers uses two indices moving through a sorted array or string — usually from both ends toward each other, or both moving forward at different speeds. Reduces O(n²) brute-force pair checks to O(n). Common problems: pair sum in sorted array, palindrome check, remove duplicates, container with most water, three-sum.',
-    tip: `// Pair with target sum — O(n) on sorted array
-function hasPairSum(arr, target) {
-  let lo = 0, hi = arr.length - 1;
-  while (lo < hi) {
-    const sum = arr[lo] + arr[hi];
-    if      (sum === target) return true;
-    else if (sum <  target) lo++;  // need bigger
-    else                    hi--;  // need smaller
+// --- Remove Duplicates from Sorted Array ---
+function removeDuplicates(nums) {
+  let slow = 0;
+  for (let fast = 1; fast < nums.length; fast++) {
+    if (nums[fast] !== nums[slow]) {
+      slow++;
+      nums[slow] = nums[fast];
+    }
   }
-  return false;
+  return slow + 1; // new length
 }
 
-// Palindrome check — O(n)
-const isPalin = s => {
+// --- Valid Palindrome ---
+function isPalindrome(s) {
   let l = 0, r = s.length - 1;
-  while (l < r) if (s[l++] !== s[r--]) return false;
+  while (l < r) {
+    if (s[l] !== s[r]) return false;
+    l++; r--;
+  }
   return true;
-};`
+}`
   },
+
+  // 1.2 Sliding Window
   {
-    category: 'Patterns', difficulty: 'Intermediate',
-    question: 'What is the Sliding Window technique?',
-    answer: 'Sliding Window maintains a contiguous subarray/substring as a "window" that expands or shrinks as it moves through the input. Avoids recomputing the whole window each step — O(n) instead of O(n²). Common problems: max sum subarray of size k, longest substring without repeating characters, minimum window substring, count anagrams in string.',
-    tip: `// Longest substring without repeating chars — O(n)
-function maxUniqueLen(s) {
-  const seen = new Map();
-  let max = 0, left = 0;
-  for (let r = 0; r < s.length; r++) {
-    if (seen.has(s[r]) && seen.get(s[r]) >= left)
-      left = seen.get(s[r]) + 1;  // shrink window
-    seen.set(s[r], r);
-    max = Math.max(max, r - left + 1);
+    category: 'Arrays', difficulty: 'Intermediate',
+    question: '1.2 Sliding Window — fixed vs variable window, when to use and how to implement?',
+    answer: '**Sliding Window** maintains a contiguous subarray/substring range `[left, right]` to find an optimal segment without re-scanning. **Fixed window**: size `k` stays constant — slide both ends together. Use for: max/min/sum of exactly k elements. **Variable window**: expand `right` to include elements; shrink `left` when window is invalid. Use for: longest/shortest window satisfying a condition. **Time**: O(n) — every element enters and exits the window exactly once. **Key insight**: never restart from scratch — slide the window.',
+    tip: `// --- Max Sum Subarray of Size K (Fixed Window) ---
+function maxSumFixed(nums, k) {
+  let sum = nums.slice(0, k).reduce((a, b) => a + b, 0);
+  let max = sum;
+  for (let i = k; i < nums.length; i++) {
+    sum += nums[i] - nums[i - k]; // add new, remove old
+    max = Math.max(max, sum);
   }
   return max;
 }
-// "abcabcbb" => 3 ("abc")`
-  },
-  {
-    category: 'Patterns', difficulty: 'Intermediate',
-    question: 'What is Dynamic Programming (DP)?',
-    answer: 'DP solves problems with overlapping sub-problems and optimal substructure by caching intermediate results. Top-down (memoization): recursion + cache — easy to write, computes only needed states. Bottom-up (tabulation): fill a table iteratively from base cases — no recursion overhead. Common DP: Fibonacci, coin change, longest common subsequence, 0/1 knapsack, edit distance.',
-    tip: `// Memoization — top-down O(n)
-const memo = {};
-function fib(n) {
-  if (n <= 1) return n;
-  return memo[n] ??= fib(n - 1) + fib(n - 2);
-}
+// O(n) — classic fixed window
 
-// Coin change — min coins (bottom-up tabulation)
-function minCoins(coins, amount) {
-  const dp = Array(amount + 1).fill(Infinity);
-  dp[0] = 0;
-  for (let i = 1; i <= amount; i++)
-    for (const c of coins)
-      if (c <= i) dp[i] = Math.min(dp[i], dp[i - c] + 1);
-  return dp[amount] === Infinity ? -1 : dp[amount];
-}`
-  },
-  {
-    category: 'Data Structures', difficulty: 'Advanced',
-    question: 'What is a Heap (Priority Queue) and what is it used for?',
-    answer: 'A Heap is a complete binary tree with the heap property. Min-Heap: parent ≤ children (root = minimum). Max-Heap: parent ≥ children (root = maximum). Insert and extract-min/max are O(log n); peek is O(1). Stored as an array (node i has children at 2i+1 and 2i+2). Used for: priority queues, Dijkstra\'s algorithm, heap sort, top-K elements.',
-    tip: `// Array representation of a Min-Heap:
-// index:  0   1   2   3   4   5
-// value: [1,  3,  2,  7,  4,  5]
-// Node i: parent = floor((i-1)/2)
-//         left   = 2*i + 1
-//         right  = 2*i + 2
-
-// Top-K largest numbers (min-heap of size k):
-// If heap.size < k  → push element
-// Else if elem > heap.min → pop + push
-// Result: k largest in O(n log k) time`
-  },
-  {
-    category: 'Algorithms', difficulty: 'Advanced',
-    question: "What is Dijkstra's algorithm and when does it fail?",
-    answer: "Dijkstra's finds shortest paths from a source node to all others in a weighted graph with non-negative weights. It greedily picks the unvisited node with the smallest known distance, then relaxes its neighbours. Time: O((V + E) log V) with a min-heap. Fails with negative edge weights — use Bellman-Ford O(VE) instead.",
-    tip: `function dijkstra(graph, src) {
-  // graph: { node: [[neighbor, weight], ...] }
-  const dist = {}; const visited = new Set();
-  dist[src] = 0;
-  const pq = [[0, src]]; // [cost, node]
-
-  while (pq.length) {
-    pq.sort((a, b) => a[0] - b[0]); // use real min-heap
-    const [cost, node] = pq.shift();
-    if (visited.has(node)) continue;
-    visited.add(node);
-    for (const [nb, w] of graph[node] ?? []) {
-      const d = cost + w;
-      if (d < (dist[nb] ?? Infinity)) {
-        dist[nb] = d;
-        pq.push([d, nb]);
-      }
+// --- Longest Substring Without Repeating Chars (Variable) ---
+function lengthOfLongestSubstring(s) {
+  const seen = new Map();
+  let left = 0, maxLen = 0;
+  for (let right = 0; right < s.length; right++) {
+    if (seen.has(s[right]) && seen.get(s[right]) >= left) {
+      left = seen.get(s[right]) + 1; // shrink: jump past duplicate
     }
+    seen.set(s[right], right);
+    maxLen = Math.max(maxLen, right - left + 1);
   }
-  return dist;
-}`
+  return maxLen;
+}
+// O(n) time, O(min(n,alphabet)) space
+
+// Template (variable window):
+// right expands → check condition → while invalid: left shrinks`
   },
 
-  // ── Hashing ──────────────────────────────────────────────
+  // 1.3 Prefix Sum
   {
-    category: 'Hashing', difficulty: 'Beginner',
-    question: 'How does a Hash Table work internally?',
-    answer: 'A hash table maps keys to values via a hash function that converts any key into an array index. Ideal case: O(1) average for insert, lookup, delete. The hash function must be deterministic and distribute keys uniformly. When two keys map to the same index (collision), the table resolves it via chaining (linked list per bucket) or open addressing (probe for next empty slot). Load factor = items / buckets; rehash when it exceeds ~0.7.',
-    tip: `// How hashing works step by step:
-// key "alice"
-//   → hash("alice") = 92847263
-//   → 92847263 % 16 (bucket count) = 7
-//   → store value at bucket[7]
-
-// Chaining collision resolution:
-// bucket[7] → [("alice", 25)] → [("charlie", 30)] → null
-
-// Open addressing (linear probe):
-// bucket[7] taken → try 8 → try 9 → ...
-
-// Load factor & rehashing
-const map = new Map();         // JS built-in hash map
-map.set('alice', 25);
-map.get('alice');              // O(1)
-map.has('alice');              // O(1)
-map.delete('alice');           // O(1)
-map.size;                      // number of entries
-
-// Object as hash map (string keys only)
-const freq = {};
-for (const ch of 'hello') freq[ch] = (freq[ch] || 0) + 1;
-// { h:1, e:1, l:2, o:1 }`
-  },
-  {
-    category: 'Hashing', difficulty: 'Intermediate',
-    question: 'What are the most common hashing patterns for solving array/string problems?',
-    answer: 'Three core patterns: (1) Frequency Map — count occurrences of each element in O(n), (2) Seen Set — detect duplicates or check membership in O(1), (3) Prefix-Sum + Hash Map — find subarray with a target sum in O(n). These patterns solve dozens of interview problems in linear time that naive solutions would do in O(n²).',
-    tip: `// 1. Frequency Map — count occurrences
-function topKFrequent(nums, k) {
-  const freq = new Map();
-  for (const n of nums) freq.set(n, (freq.get(n) || 0) + 1);
-  return [...freq.entries()]
-    .sort((a, b) => b[1] - a[1])
-    .slice(0, k)
-    .map(([n]) => n);
-}
-
-// 2. Seen Set — first duplicate
-function findDuplicate(nums) {
-  const seen = new Set();
-  for (const n of nums) {
-    if (seen.has(n)) return n;
-    seen.add(n);
+    category: 'Arrays', difficulty: 'Intermediate',
+    question: '1.3 Prefix Sum — what is it, how to build it, and what problems does it solve?',
+    answer: '**Prefix Sum** precomputes `prefix[i] = sum of nums[0..i-1]` so any range sum `[l, r]` can be answered in **O(1)** with `prefix[r+1] - prefix[l]`. Trade-off: O(n) one-time build + O(1) per query vs O(n) per query without it. **2D Prefix Sum** works the same for grids. **Hash + Prefix Sum**: storing `prefix[i]` in a hashmap lets you find subarrays with a target sum in O(n) — the key insight for "Subarray Sum Equals K".',
+    tip: `// Build prefix sum array (length n+1)
+function buildPrefix(nums) {
+  const prefix = new Array(nums.length + 1).fill(0);
+  for (let i = 0; i < nums.length; i++) {
+    prefix[i + 1] = prefix[i] + nums[i];
   }
+  return prefix;
 }
+// Range sum [l, r] in O(1):
+// sum = prefix[r + 1] - prefix[l]
 
-// 3. Prefix Sum + Map — subarray sum equals k
+// --- Subarray Sum Equals K ---
 function subarraySum(nums, k) {
-  const prefixCount = new Map([[0, 1]]);
-  let sum = 0, count = 0;
+  const prefixCount = new Map([[0, 1]]); // prefix 0 seen once
+  let prefix = 0, count = 0;
   for (const n of nums) {
-    sum += n;
-    count += prefixCount.get(sum - k) || 0;
-    prefixCount.set(sum, (prefixCount.get(sum) || 0) + 1);
+    prefix += n;
+    count += prefixCount.get(prefix - k) || 0; // how many times (prefix-k) seen
+    prefixCount.set(prefix, (prefixCount.get(prefix) || 0) + 1);
   }
   return count;
+}
+// O(n) — classic prefix + HashMap combo
+// Key: if prefix[j] - prefix[i] == k, then subarray [i+1..j] sums to k`
+  },
+
+  // 1.4 Sorting
+  {
+    category: 'Arrays', difficulty: 'Beginner',
+    question: '1.4 Sorting — when to sort first as a strategy, and what algorithms must you know?',
+    answer: '**Sort first** to unlock faster algorithms: two pointers on sorted array, binary search, greedy comparisons, merge-style operations. JS `Array.sort()` is O(n log n) — uses Timsort internally. Custom comparator: `arr.sort((a, b) => a - b)` ascending. **Key algorithms**: Merge Sort — O(n log n) stable, good for linked lists; Quick Sort — O(n log n) avg, O(n²) worst, in-place; Counting Sort — O(n+k) for small integer ranges. **Common patterns**: sort + two pointers (3Sum), sort by interval start (Merge Intervals), sort by frequency (Top K).',
+    tip: `// JS sort — ascending
+[3,1,4,1,5].sort((a, b) => a - b); // [1,1,3,4,5]
+
+// Sort objects by property
+users.sort((a, b) => a.age - b.age);
+
+// --- Merge Intervals ---
+function merge(intervals) {
+  intervals.sort((a, b) => a[0] - b[0]);
+  const result = [intervals[0]];
+  for (const [start, end] of intervals.slice(1)) {
+    const last = result[result.length - 1];
+    if (start <= last[1]) last[1] = Math.max(last[1], end); // overlap
+    else result.push([start, end]);
+  }
+  return result;
+}
+
+// --- 3Sum (sort + two pointers) ---
+function threeSum(nums) {
+  nums.sort((a, b) => a - b);
+  const result = [];
+  for (let i = 0; i < nums.length - 2; i++) {
+    if (i > 0 && nums[i] === nums[i-1]) continue; // skip duplicates
+    let l = i + 1, r = nums.length - 1;
+    while (l < r) {
+      const sum = nums[i] + nums[l] + nums[r];
+      if (sum === 0) { result.push([nums[i], nums[l], nums[r]]); l++; r--; }
+      else if (sum < 0) l++;
+      else r--;
+    }
+  }
+  return result;
 }`
   },
+
+  // 1.5 Kadane's Algorithm
   {
-    category: 'Hashing', difficulty: 'Intermediate',
-    question: 'How do you use hashing to group and match patterns?',
-    answer: 'Hash maps excel at grouping items by a computed key — the canonical form of the data. Group anagrams by sorted characters; group by first letter; detect isomorphic strings by mapping structure. The key insight: transform each item into a canonical representation and use that as the map key.',
-    tip: `// Group Anagrams — canonical key = sorted chars
+    category: 'Arrays', difficulty: 'Intermediate',
+    question: "1.5 Kadane's Algorithm — how does it find the maximum subarray sum in O(n)?",
+    answer: "**Kadane's Algorithm** solves Maximum Subarray Sum in O(n) time, O(1) space using dynamic programming. The key insight: at each position, either **extend the current subarray** (add current element to running sum) or **start fresh** (if running sum is negative, it can only hurt — discard and start from current element). Track `currentSum = max(num, currentSum + num)` and `maxSum = max(maxSum, currentSum)` at each step. Works because a negative prefix always makes the sum worse.",
+    tip: `// Kadane's — Maximum Subarray (LeetCode #53)
+function maxSubArray(nums) {
+  let currentSum = nums[0];
+  let maxSum     = nums[0];
+
+  for (let i = 1; i < nums.length; i++) {
+    // Either start fresh or extend current subarray
+    currentSum = Math.max(nums[i], currentSum + nums[i]);
+    maxSum     = Math.max(maxSum, currentSum);
+  }
+  return maxSum;
+}
+// nums = [-2,1,-3,4,-1,2,1,-5,4]
+// Output: 6  ([4,-1,2,1])
+
+// --- With subarray indices ---
+function maxSubArrayWithIndices(nums) {
+  let maxSum = nums[0], curSum = nums[0];
+  let start = 0, end = 0, tempStart = 0;
+  for (let i = 1; i < nums.length; i++) {
+    if (curSum + nums[i] < nums[i]) {
+      curSum = nums[i]; tempStart = i; // fresh start
+    } else { curSum += nums[i]; }
+    if (curSum > maxSum) {
+      maxSum = curSum; start = tempStart; end = i;
+    }
+  }
+  return { maxSum, subarray: nums.slice(start, end + 1) };
+}
+
+// Variation: Maximum Circular Subarray
+// max(Kadane normal, totalSum - Kadane on negated array)`
+  },
+
+  // ══════════════════════════════════════════════════════════
+  // 2. STRINGS
+  // ══════════════════════════════════════════════════════════
+
+  // 2.1 Palindrome
+  {
+    category: 'Strings', difficulty: 'Beginner',
+    question: '2.1 Palindrome — detection, longest palindrome, and expand-from-center technique?',
+    answer: '**Palindrome**: reads the same forwards and backwards. **Check**: two pointers from both ends, compare `s[l]` and `s[r]`, converge — O(n). **Longest Palindromic Substring**: brute force O(n³); expand-from-center O(n²) — for each index, expand outward while chars match (handle odd and even length separately); Manacher\'s O(n) for optimal. **Key insight for expand-from-center**: single char is always a palindrome (base case). Expand left-- and right++ while in bounds and chars equal.',
+    tip: `// Check if string is palindrome
+function isPalindrome(s) {
+  let l = 0, r = s.length - 1;
+  while (l < r) {
+    if (s[l] !== s[r]) return false;
+    l++; r--;
+  }
+  return true;
+}
+
+// Longest Palindromic Substring (expand from center)
+function longestPalindrome(s) {
+  let start = 0, maxLen = 0;
+
+  function expand(l, r) {
+    while (l >= 0 && r < s.length && s[l] === s[r]) {
+      if (r - l + 1 > maxLen) { maxLen = r - l + 1; start = l; }
+      l--; r++;
+    }
+  }
+
+  for (let i = 0; i < s.length; i++) {
+    expand(i, i);     // odd length palindromes
+    expand(i, i + 1); // even length palindromes
+  }
+  return s.slice(start, start + maxLen);
+}
+// 'babad' -> 'bab'  |  'cbbd' -> 'bb'
+
+// Valid Palindrome II (allow one deletion)
+function validPalindrome(s) {
+  const ok = (l, r) => {
+    while (l < r) { if (s[l] !== s[r]) return false; l++; r--; }
+    return true;
+  };
+  let l = 0, r = s.length - 1;
+  while (l < r) {
+    if (s[l] !== s[r]) return ok(l+1, r) || ok(l, r-1); // skip one
+    l++; r--;
+  }
+  return true;
+}`
+  },
+
+  // 2.2 Anagram
+  {
+    category: 'Strings', difficulty: 'Beginner',
+    question: '2.2 Anagram — detection approaches and the frequency counter trick?',
+    answer: '**Anagram**: two strings with identical character frequencies (same chars, different order). **Approach 1 — Sort**: sort both strings, compare — O(n log n). **Approach 2 — Frequency Map**: count chars in s, decrement for t, check all zeros — O(n). **Approach 3 — Fixed Array**: for lowercase letters only, use `int[26]` — O(n), minimal overhead. **Group Anagrams**: use sorted word as HashMap key → group all anagrams together. **Sliding Window Anagram**: find all anagram substrings in a text — use frequency window.',
+    tip: `// Check if two strings are anagrams — O(n)
+function isAnagram(s, t) {
+  if (s.length !== t.length) return false;
+  const count = {};
+  for (const c of s) count[c] = (count[c] || 0) + 1;
+  for (const c of t) {
+    if (!count[c]) return false;
+    count[c]--;
+  }
+  return true;
+}
+
+// Group Anagrams — sort as key
 function groupAnagrams(strs) {
   const map = new Map();
   for (const s of strs) {
@@ -356,238 +274,165 @@ function groupAnagrams(strs) {
   }
   return [...map.values()];
 }
-// ["eat","tea","tan","ate","nat","bat"]
-// → [["eat","tea","ate"],["tan","nat"],["bat"]]
+// ['eat','tea','tan','ate','nat','bat']
+// -> [['eat','tea','ate'],['tan','nat'],['bat']]
 
-// Two Sum — O(n) with hash map
-function twoSum(nums, target) {
-  const seen = new Map();   // value → index
-  for (let i = 0; i < nums.length; i++) {
-    const complement = target - nums[i];
-    if (seen.has(complement)) return [seen.get(complement), i];
-    seen.set(nums[i], i);
-  }
-}
-
-// Isomorphic Strings — map char-to-char in both directions
-function isIsomorphic(s, t) {
-  const st = new Map(), ts = new Map();
-  for (let i = 0; i < s.length; i++) {
-    if (st.get(s[i]) !== t[i] || ts.get(t[i]) !== s[i])
-      if (st.has(s[i]) || ts.has(t[i])) return false;
-    st.set(s[i], t[i]);
-    ts.set(t[i], s[i]);
-  }
-  return true;
-}`
-  },
-
-  // ── Recursion ─────────────────────────────────────────────
-  {
-    category: 'Recursion', difficulty: 'Beginner',
-    question: 'What is recursion and what are the two required parts?',
-    answer: 'Recursion is when a function calls itself to solve a smaller version of the same problem. Every correct recursive function has: (1) Base case — the condition that stops the recursion (without it, you get infinite recursion / stack overflow), (2) Recursive case — the function calls itself with a simpler input, moving toward the base case. Think: "trust the recursion" — assume the recursive call correctly solves the smaller problem.',
-    tip: `// Factorial: n! = n × (n-1)!
-function factorial(n) {
-  if (n <= 1) return 1;          // ← base case
-  return n * factorial(n - 1);   // ← recursive case
-}
-factorial(5) = 5 * factorial(4)
-             = 5 * 4 * factorial(3)
-             = 5 * 4 * 3 * 2 * 1 = 120
-
-// Call stack visualization:
-// factorial(5)
-//   factorial(4)
-//     factorial(3)
-//       factorial(2)
-//         factorial(1) → 1  ← base case hit, unwind
-//       → 2
-//     → 6
-//   → 24
-// → 120
-
-// Fibonacci
-function fib(n) {
-  if (n <= 1) return n;           // base cases: fib(0)=0, fib(1)=1
-  return fib(n - 1) + fib(n - 2);// recursive case
-}
-// ⚠️ Naive fib is O(2ⁿ) — use memoization!`
-  },
-  {
-    category: 'Recursion', difficulty: 'Intermediate',
-    question: 'What is memoization and how does it optimize recursive solutions?',
-    answer: 'Memoization caches the result of a function call so repeated calls with the same arguments return instantly. It converts naive exponential recursive solutions (like Fibonacci O(2ⁿ)) to linear O(n) by ensuring each unique subproblem is solved only once. This is the top-down approach of Dynamic Programming.',
-    tip: `// Naive fib: O(2ⁿ) — recalculates same values repeatedly
-//         fib(5)
-//        /       \\
-//     fib(4)   fib(3)    ← fib(3) called twice!
-//    /    \\   /    \\
-// fib(3) fib(2)...      ← fib(2) called 3 times!
-
-// Memoized fib: O(n) — each value computed once
-function fib(n, memo = new Map()) {
-  if (n <= 1) return n;
-  if (memo.has(n)) return memo.get(n);  // cache hit!
-  const result = fib(n - 1, memo) + fib(n - 2, memo);
-  memo.set(n, result);                  // cache result
-  return result;
-}
-
-// Generic memoize helper
-function memoize(fn) {
-  const cache = new Map();
-  return function(...args) {
-    const key = JSON.stringify(args);
-    if (cache.has(key)) return cache.get(key);
-    const result = fn.apply(this, args);
-    cache.set(key, result);
-    return result;
-  };
-}
-const memoFib = memoize(fib);`
-  },
-  {
-    category: 'Recursion', difficulty: 'Intermediate',
-    question: 'What is backtracking and how does it differ from plain recursion?',
-    answer: 'Backtracking explores all possible solutions by building candidates incrementally and abandoning ("pruning") a candidate as soon as it cannot lead to a valid solution. Pattern: choose → explore → unchoose (undo). Used for: permutations, combinations, subsets, N-Queens, Sudoku solver, word search. Backtracking prunes branches early, making it much faster than brute force.',
-    tip: `// Permutations using backtracking
-function permutations(nums) {
-  const result = [];
-  function backtrack(current, remaining) {
-    if (remaining.length === 0) {   // base: no more to pick
-      result.push([...current]);
-      return;
-    }
-    for (let i = 0; i < remaining.length; i++) {
-      current.push(remaining[i]);                      // choose
-      backtrack(current, remaining.filter((_, j) => j !== i)); // explore
-      current.pop();                                   // unchoose ← backtrack!
-    }
-  }
-  backtrack([], nums);
-  return result;
-}
-
-// Subsets (power set)
-function subsets(nums) {
-  const result = [];
-  function backtrack(start, current) {
-    result.push([...current]);          // every state is a valid subset
-    for (let i = start; i < nums.length; i++) {
-      current.push(nums[i]);            // choose
-      backtrack(i + 1, current);        // explore
-      current.pop();                    // unchoose
-    }
-  }
-  backtrack(0, []);
-  return result;
-}`
-  },
-
-  // ── Interview ─────────────────────────────────────────────
-  {
-    category: 'Interview', difficulty: 'Intermediate',
-    question: '[Interview] Two Sum — find indices of two numbers that add to a target.',
-    answer: 'Classic hash map problem. Naive O(n²): check every pair. Optimal O(n): for each number, check if its complement (target - num) already exists in a map. If yes → found the pair. If no → store current number and its index in the map. One pass, O(n) time, O(n) space.',
-    tip: `// Problem: nums = [2,7,11,15], target = 9 → [0,1]
-// 2+7=9, return indices [0,1]
-
-function twoSum(nums, target) {
-  const seen = new Map();        // value → index
-  for (let i = 0; i < nums.length; i++) {
-    const complement = target - nums[i];
-    if (seen.has(complement)) {
-      return [seen.get(complement), i];
-    }
-    seen.set(nums[i], i);
-  }
-}
-
-// Trace through [2,7,11,15], target=9:
-// i=0: complement=7, seen={}, not found → seen={2:0}
-// i=1: complement=2, seen has 2! → return [0,1] ✅
-
-// Time:  O(n)   — one pass
-// Space: O(n)   — map stores up to n entries
-// Key insight: instead of searching for the pair,
-// ask "have I SEEN the complement before?"`
-  },
-  {
-    category: 'Interview', difficulty: 'Intermediate',
-    question: '[Interview] Valid Anagram — check if two strings are anagrams.',
-    answer: 'Two strings are anagrams if they contain the same characters with the same frequencies. Approach 1: sort both strings and compare O(n log n). Approach 2 (optimal): build a frequency map for s, then subtract for t — if all counts reach zero, they\'re anagrams. O(n) time, O(1) space (only 26 letters).',
-    tip: `// Problem: s="anagram", t="nagaram" → true
-//          s="rat",     t="car"    → false
-
-// Approach 1: sort (simple, O(n log n))
-function isAnagram(s, t) {
-  if (s.length !== t.length) return false;
-  return s.split('').sort().join('') ===
-         t.split('').sort().join('');
-}
-
-// Approach 2: frequency map (optimal O(n))
-function isAnagram(s, t) {
-  if (s.length !== t.length) return false;
-  const count = new Array(26).fill(0);
+// Find All Anagrams in a String (sliding window)
+function findAnagrams(s, p) {
+  if (s.length < p.length) return [];
+  const pCount = new Array(26).fill(0);
+  const wCount = new Array(26).fill(0);
   const a = 'a'.charCodeAt(0);
-  for (let i = 0; i < s.length; i++) {
-    count[s.charCodeAt(i) - a]++;   // increment for s
-    count[t.charCodeAt(i) - a]--;   // decrement for t
+  for (let i = 0; i < p.length; i++) { pCount[p.charCodeAt(i)-a]++; wCount[s.charCodeAt(i)-a]++; }
+  const result = [];
+  if (pCount.toString() === wCount.toString()) result.push(0);
+  for (let i = p.length; i < s.length; i++) {
+    wCount[s.charCodeAt(i)-a]++;
+    wCount[s.charCodeAt(i-p.length)-a]--;
+    if (pCount.toString() === wCount.toString()) result.push(i - p.length + 1);
   }
-  return count.every(c => c === 0); // all zero = anagram
+  return result;
+}`
+  },
+
+  // 2.3 Substring Search
+  {
+    category: 'Strings', difficulty: 'Intermediate',
+    question: '2.3 Substring Search — built-in vs KMP vs Rabin-Karp, when to use each?',
+    answer: '**Built-in**: `s.indexOf(t)` / `s.includes(t)` — O(n*m) worst case, fine for most interview problems. **KMP (Knuth-Morris-Pratt)**: O(n+m) — builds a failure function (partial match table) that avoids rechecking already matched characters. Optimal for large texts. **Rabin-Karp**: O(n+m) average — uses rolling hash to match pattern fingerprint; worst case O(n*m) on hash collisions. **For interviews**: master built-in + understand KMP conceptually. KMP is the go-to when asked for O(n+m) string matching.',
+    tip: `// Built-in search
+'hello world'.indexOf('world'); // 6
+'hello world'.includes('world'); // true
+
+// KMP — O(n+m) substring search
+function kmpSearch(text, pattern) {
+  const n = text.length, m = pattern.length;
+
+  // Build failure function: longest proper prefix = suffix
+  const fail = new Array(m).fill(0);
+  let k = 0;
+  for (let i = 1; i < m; i++) {
+    while (k > 0 && pattern[k] !== pattern[i]) k = fail[k - 1];
+    if (pattern[k] === pattern[i]) k++;
+    fail[i] = k;
+  }
+
+  // Search
+  const matches = [];
+  k = 0;
+  for (let i = 0; i < n; i++) {
+    while (k > 0 && pattern[k] !== text[i]) k = fail[k - 1];
+    if (pattern[k] === text[i]) k++;
+    if (k === m) { matches.push(i - m + 1); k = fail[k - 1]; }
+  }
+  return matches;
 }
 
-// Time:  O(n)
-// Space: O(1) — fixed 26-char array
-// Follow-up: Unicode → use Map instead of fixed array`
+// Rabin-Karp — rolling hash (concept)
+// hash(s[i..i+m]) = (hash(s[i-1..i+m-1]) - s[i-1]*base^(m-1)) * base + s[i+m]
+// Recompute hash in O(1) per slide`
   },
+
+  // 2.4 Pattern Matching
   {
-    category: 'Interview', difficulty: 'Intermediate',
-    question: '[Interview] Longest Consecutive Sequence — find longest run of consecutive numbers.',
-    answer: 'Given [100,4,200,1,3,2] → answer is 4 (sequence 1,2,3,4). Naive sorting: O(n log n). Optimal using hash set: only start counting from the beginning of a sequence (num-1 not in set). Each number is visited at most twice → O(n).',
-    tip: `// Problem: [100,4,200,1,3,2] → 4  (1,2,3,4)
-
-function longestConsecutive(nums) {
-  const set = new Set(nums);    // O(1) lookup
-  let best = 0;
-
-  for (const num of set) {
-    // Only start a sequence from its beginning
-    if (set.has(num - 1)) continue;  // not a start → skip
-
-    let current = num;
-    let length  = 1;
-    while (set.has(current + 1)) {
-      current++;
-      length++;
+    category: 'Strings', difficulty: 'Advanced',
+    question: '2.4 Pattern Matching — Trie, Wildcard DP, and Z-algorithm: when to use each?',
+    answer: '**Trie (Prefix Tree)**: insert/search words in O(L) where L = word length. Use for: autocomplete, word dictionary, prefix search, Word Search II. **Wildcard Matching DP** (`?` matches one char, `*` matches any sequence): 2D DP table — dp[i][j] = does pattern[0..i-1] match text[0..j-1]. **Z-algorithm**: O(n+m) — builds Z-array where Z[i] = length of longest substring starting at i that matches a prefix of the string. Use for: linear pattern matching. **Regex DP**: similar to wildcard but `.` matches single, `*` matches zero or more of previous.',
+    tip: `// Trie — insert + search + startsWith
+class TrieNode { constructor() { this.children = {}; this.isEnd = false; } }
+class Trie {
+  constructor() { this.root = new TrieNode(); }
+  insert(word) {
+    let node = this.root;
+    for (const c of word) {
+      if (!node.children[c]) node.children[c] = new TrieNode();
+      node = node.children[c];
     }
-    best = Math.max(best, length);
+    node.isEnd = true;
   }
-  return best;
+  search(word) {
+    let node = this.root;
+    for (const c of word) {
+      if (!node.children[c]) return false;
+      node = node.children[c];
+    }
+    return node.isEnd;
+  }
+  startsWith(prefix) {
+    let node = this.root;
+    for (const c of prefix) {
+      if (!node.children[c]) return false;
+      node = node.children[c];
+    }
+    return true;
+  }
 }
 
-// Trace [100,4,200,1,3,2]:
-// set = {100,4,200,1,3,2}
-// num=100: 99 not in set → start, 101 not in set → length=1
-// num=4:   3 in set → skip (not a start)
-// num=200: 199 not in set → length=1
-// num=1:   0 not in set → start: 1→2→3→4, length=4 ✅
-// num=3,2: predecessors in set → skip
-
-// Time:  O(n)   — each num visited at most twice
-// Space: O(n)   — hash set`
+// Wildcard Matching — DP
+function isMatch(s, p) {
+  const m = s.length, n = p.length;
+  const dp = Array.from({length: m+1}, () => new Array(n+1).fill(false));
+  dp[0][0] = true;
+  for (let j = 1; j <= n; j++) if (p[j-1] === '*') dp[0][j] = dp[0][j-1];
+  for (let i = 1; i <= m; i++)
+    for (let j = 1; j <= n; j++) {
+      if (p[j-1] === '*') dp[i][j] = dp[i-1][j] || dp[i][j-1];
+      else if (p[j-1] === '?' || p[j-1] === s[i-1]) dp[i][j] = dp[i-1][j-1];
+    }
+  return dp[m][n];
+}`
   },
+
+  // ══════════════════════════════════════════════════════════
+  // 3. HASHMAP / HASHSET
+  // ══════════════════════════════════════════════════════════
+
+  // 3.1 Frequency Counter
   {
-    category: 'Interview', difficulty: 'Intermediate',
-    question: '[Interview] Contains Duplicate / Find All Duplicates using hashing.',
-    answer: 'Contains Duplicate: return true if any value appears at least twice — one-liner with Set. Find All Duplicates: in an array of n integers where 1 ≤ nums[i] ≤ n, find all duplicates in O(n) time and O(1) extra space by using the array itself as a hash map (negate values at visited indices).',
-    tip: `// Contains Duplicate — O(n) time, O(n) space
-function containsDuplicate(nums) {
-  return nums.length !== new Set(nums).size;
+    category: 'HashMap', difficulty: 'Beginner',
+    question: '3.1 Frequency Counter — what is the pattern and what problems does it replace O(n²) with O(n)?',
+    answer: '**Frequency Counter** uses a HashMap to count occurrences, replacing a slow nested loop with two fast passes. Build a count map in O(n), then answer queries in O(1). **Rule of thumb**: if you see a problem asking about frequencies, occurrences, or existence of elements — HashMap first. **Common problems**: Valid Anagram, Top K Frequent Elements, First Unique Character, Task Scheduler, Verifying an Alien Dictionary. The pattern works for both arrays (number freq) and strings (char freq).',
+    tip: `// Character frequency counter
+function charFreq(s) {
+  const freq = {};
+  for (const c of s) freq[c] = (freq[c] || 0) + 1;
+  return freq;
 }
-// Or:
+
+// First Unique Character in a String
+function firstUniqChar(s) {
+  const freq = charFreq(s);
+  for (let i = 0; i < s.length; i++) {
+    if (freq[s[i]] === 1) return i;
+  }
+  return -1;
+}
+// 'leetcode' -> 0 (l)  |  'loveleetcode' -> 2 (v)
+
+// Top K Frequent Elements
+function topKFrequent(nums, k) {
+  const freq = new Map();
+  for (const n of nums) freq.set(n, (freq.get(n) || 0) + 1);
+
+  // Bucket sort — O(n) alternative to heap
+  const buckets = Array.from({length: nums.length + 1}, () => []);
+  for (const [num, count] of freq) buckets[count].push(num);
+
+  const result = [];
+  for (let i = buckets.length - 1; i >= 0 && result.length < k; i--) {
+    result.push(...buckets[i]);
+  }
+  return result.slice(0, k);
+}
+// [1,1,1,2,2,3], k=2 -> [1,2]  — O(n) time`
+  },
+
+  // 3.2 Duplicate Detection
+  {
+    category: 'HashMap', difficulty: 'Beginner',
+    question: '3.2 Duplicate Detection with HashSet — why is it O(n) and what patterns use it?',
+    answer: '**HashSet** gives O(1) average insert and lookup — perfect for "have I seen this before?" checks. For each element, `if set.has(x): found duplicate` — no need to scan the whole array. **Common patterns**: Contains Duplicate (direct set check), Longest Consecutive Sequence (check neighbors in set), Happy Number (cycle detection with set), Intersection of Arrays. **Two Sum with set**: store complement, check if current number is in set. **Floyd\'s cycle detection** is an alternative for O(1) space but O(n) time in linked list cycles.',
+    tip: `// Contains Duplicate
 function containsDuplicate(nums) {
   const seen = new Set();
   for (const n of nums) {
@@ -597,316 +442,1350 @@ function containsDuplicate(nums) {
   return false;
 }
 
-// Find All Duplicates — O(n) time, O(1) space
-// Key trick: use sign of nums[abs(num)-1] as visited marker
-function findDuplicates(nums) {
-  const result = [];
-  for (const num of nums) {
-    const idx = Math.abs(num) - 1;
-    if (nums[idx] < 0) {
-      result.push(Math.abs(num));  // visited twice → duplicate!
-    } else {
-      nums[idx] = -nums[idx];      // mark as visited
+// Longest Consecutive Sequence — O(n) using Set
+function longestConsecutive(nums) {
+  const numSet = new Set(nums);
+  let maxLen = 0;
+  for (const n of numSet) {
+    if (!numSet.has(n - 1)) { // only start counting from sequence start
+      let cur = n, len = 1;
+      while (numSet.has(cur + 1)) { cur++; len++; }
+      maxLen = Math.max(maxLen, len);
     }
   }
-  return result;
+  return maxLen;
 }
-// [4,3,2,7,8,2,3,1] → [2,3]`
-  },
-  {
-    category: 'Interview', difficulty: 'Advanced',
-    question: '[Interview] LRU Cache — design a data structure with O(1) get and put.',
-    answer: 'LRU (Least Recently Used) cache evicts the least recently accessed item when capacity is full. Optimal O(1) design: combine a HashMap (key → node, for O(1) lookup) with a Doubly Linked List (maintains access order — head = most recent, tail = least recent). On access/update, move the node to the head. On eviction, remove the tail.',
-    tip: `class LRUCache {
-  #cap; #map; #head; #tail;
+// [100,4,200,1,3,2] -> 4  (sequence 1,2,3,4)
 
+// Happy Number (cycle detection with Set)
+function isHappy(n) {
+  const seen = new Set();
+  while (n !== 1) {
+    n = String(n).split('').reduce((acc, d) => acc + d * d, 0);
+    if (seen.has(n)) return false; // cycle detected
+    seen.add(n);
+  }
+  return true;
+}
+// 19 -> true  |  2 -> false`
+  },
+
+  // 3.3 Fast Lookup O(1)
+  {
+    category: 'HashMap', difficulty: 'Intermediate',
+    question: '3.3 HashMap for O(1) Lookup — the Two Sum pattern and its variants?',
+    answer: '**The core trick**: store what you\'ve seen (value → index) in a HashMap. For each new element, check if its complement is already stored — O(1) lookup replaces O(n) scan. **Two Sum pattern**: `complement = target - nums[i]`, check map, else store `map[nums[i]] = i`. **Extensions**: 4Sum uses HashMap to reduce O(n³) to O(n²); Subarray Sum Equals K uses prefix sum + HashMap; Intersection uses map for set operations. This pattern is the single most useful HashMap pattern in coding interviews.',
+    tip: `// Two Sum — classic O(n) with HashMap
+function twoSum(nums, target) {
+  const map = new Map(); // value -> index
+  for (let i = 0; i < nums.length; i++) {
+    const complement = target - nums[i];
+    if (map.has(complement)) return [map.get(complement), i];
+    map.set(nums[i], i);
+  }
+}
+// [2,7,11,15], target=9 -> [0,1]
+
+// Two Sum II variants
+// - 4Sum: fix two, use hash for third+fourth
+// - 3Sum with no duplicates: sort + two pointers (better than hash)
+
+// LRU Cache — HashMap + Doubly Linked List
+class LRUCache {
   constructor(capacity) {
-    this.#cap  = capacity;
-    this.#map  = new Map();             // key → node
-    this.#head = { key: 0, val: 0 };   // dummy head (MRU side)
-    this.#tail = { key: 0, val: 0 };   // dummy tail (LRU side)
-    this.#head.next = this.#tail;
-    this.#tail.prev = this.#head;
+    this.cap = capacity;
+    this.map = new Map(); // key -> node (ordered by insertion in JS Map)
   }
-
-  #remove(node) {
-    node.prev.next = node.next;
-    node.next.prev = node.prev;
-  }
-  #insertFront(node) {
-    node.next = this.#head.next;
-    node.prev = this.#head;
-    this.#head.next.prev = node;
-    this.#head.next = node;
-  }
-
   get(key) {
-    if (!this.#map.has(key)) return -1;
-    const node = this.#map.get(key);
-    this.#remove(node);
-    this.#insertFront(node);            // move to MRU
-    return node.val;
+    if (!this.map.has(key)) return -1;
+    const val = this.map.get(key);
+    this.map.delete(key); // move to end (most recently used)
+    this.map.set(key, val);
+    return val;
   }
-
-  put(key, val) {
-    if (this.#map.has(key)) this.#remove(this.#map.get(key));
-    const node = { key, val };
-    this.#insertFront(node);
-    this.#map.set(key, node);
-    if (this.#map.size > this.#cap) {
-      const lru = this.#tail.prev;     // evict LRU
-      this.#remove(lru);
-      this.#map.delete(lru.key);
+  put(key, value) {
+    this.map.delete(key);
+    this.map.set(key, value);
+    if (this.map.size > this.cap) {
+      this.map.delete(this.map.keys().next().value); // evict LRU (first key)
     }
   }
-}
-// Time: O(1) get and put   Space: O(capacity)`
+}`
   },
+
+  // 3.4 Grouping Problems
   {
-    category: 'Interview', difficulty: 'Intermediate',
-    question: '[Interview] Longest Substring Without Repeating Characters.',
-    answer: 'Sliding window + hash map (or set). Maintain a window [left, right]. Expand right; when a duplicate is found, shrink from the left until the duplicate is gone. The map stores each character\'s latest index so left can jump directly past the duplicate instead of sliding one-by-one.',
-    tip: `// Problem: "abcabcbb" → 3 ("abc")
-//          "pwwkew"  → 3 ("wke")
-
-function lengthOfLongestSubstring(s) {
-  const lastIndex = new Map();  // char → last seen index
-  let left = 0, best = 0;
-
-  for (let right = 0; right < s.length; right++) {
-    const ch = s[right];
-    // If char seen inside current window, jump left past it
-    if (lastIndex.has(ch) && lastIndex.get(ch) >= left) {
-      left = lastIndex.get(ch) + 1;
-    }
-    lastIndex.set(ch, right);
-    best = Math.max(best, right - left + 1);
+    category: 'HashMap', difficulty: 'Intermediate',
+    question: '3.4 Grouping with HashMap — what is the canonical key-grouping pattern?',
+    answer: '**Grouping pattern**: find a canonical key that all "equivalent" items share, then map key → list of items. The key can be: sorted string (anagrams), character count tuple, first letter, modular value, or any normalized representation. **Think**: "what property do these items share that I can express as a string/number key?" **Common problems**: Group Anagrams (sorted string as key), Isomorphic Strings (character mapping pattern), Find Duplicate File in System, Word Pattern. This pattern converts O(n²) comparison into O(n) hashing.',
+    tip: `// Group Anagrams — sorted word as canonical key
+function groupAnagrams(strs) {
+  const map = new Map();
+  for (const s of strs) {
+    const key = [...s].sort().join('');
+    if (!map.has(key)) map.set(key, []);
+    map.get(key).push(s);
   }
-  return best;
+  return [...map.values()];
 }
 
-// Trace "abcabcbb":
-// r=0 a → window=[a]         best=1
-// r=1 b → window=[ab]        best=2
-// r=2 c → window=[abc]       best=3
-// r=3 a → dup! left→1, window=[bca]  best=3
-// r=4 b → dup! left→2, window=[cab]  best=3
-// r=5 c → dup! left→3, window=[abc]  best=3
-// r=6 b → dup! left→4, window=[bc]   ...
-// → 3
-
-// Time: O(n)   Space: O(min(n, charset))`
-  },
-  {
-    category: 'Interview', difficulty: 'Intermediate',
-    question: '[Interview] Top K Frequent Elements — return the k most frequent numbers.',
-    answer: 'Step 1: build a frequency map O(n). Step 2: bucket sort by frequency — create an array of buckets where index = frequency, put numbers in their bucket. Step 3: collect from highest-frequency bucket down until k elements gathered. Overall O(n) — faster than the heap approach O(n log k).',
-    tip: `// Problem: nums=[1,1,1,2,2,3], k=2 → [1,2]
-
-function topKFrequent(nums, k) {
-  // Step 1: frequency map
-  const freq = new Map();
-  for (const n of nums) freq.set(n, (freq.get(n) || 0) + 1);
-
-  // Step 2: bucket sort (index = frequency)
-  const buckets = Array.from({ length: nums.length + 1 }, () => []);
-  for (const [num, count] of freq) {
-    buckets[count].push(num);
+// Isomorphic Strings — map characters in both directions
+function isIsomorphic(s, t) {
+  const sToT = {}, tToS = {};
+  for (let i = 0; i < s.length; i++) {
+    if (sToT[s[i]] && sToT[s[i]] !== t[i]) return false;
+    if (tToS[t[i]] && tToS[t[i]] !== s[i]) return false;
+    sToT[s[i]] = t[i];
+    tToS[t[i]] = s[i];
   }
-
-  // Step 3: collect top k from highest bucket
-  const result = [];
-  for (let i = buckets.length - 1; i >= 1 && result.length < k; i--) {
-    result.push(...buckets[i]);
-  }
-  return result.slice(0, k);
+  return true;
 }
+// 'egg', 'add' -> true   'foo', 'bar' -> false
 
-// freq map: {1:3, 2:2, 3:1}
-// buckets:  [[], [3], [2], [1], [], [], ...]
-//                 ↑1x  ↑2x  ↑3x
-// collect from end: bucket[3]=[1] → bucket[2]=[2] → result=[1,2] ✅
-
-// Time: O(n)   Space: O(n)
-// Alternative: use min-heap of size k → O(n log k)`
-  },
-  {
-    category: 'Interview', difficulty: 'Intermediate',
-    question: '[Interview] Subarray Sum Equals K — count subarrays with sum = k.',
-    answer: 'Prefix sum + hash map in one pass. Key insight: if prefixSum[j] - prefixSum[i] = k, then subarray [i+1..j] sums to k. So for each position j, count how many previous prefix sums equal prefixSum[j] - k. Initialize the map with {0: 1} (empty subarray has sum 0).',
-    tip: `// Problem: nums=[1,1,1], k=2 → 2  (subarrays [1,1] at index 0-1 and 1-2)
-//          nums=[1,2,3], k=3 → 2  ([1,2] and [3])
-
-function subarraySum(nums, k) {
-  const prefixCount = new Map([[0, 1]]);  // {prefixSum: count}
-  let sum = 0, count = 0;
-
-  for (const num of nums) {
-    sum += num;
-    // How many times has (sum - k) appeared as a prefix sum?
-    count += prefixCount.get(sum - k) || 0;
-    prefixCount.set(sum, (prefixCount.get(sum) || 0) + 1);
-  }
-  return count;
-}
-
-// Trace [1,1,1], k=2:
-// map={0:1}, sum=0, count=0
-// num=1: sum=1, need sum-k=-1 → 0 times. map={0:1,1:1}
-// num=1: sum=2, need 2-2=0   → 1 time! count=1. map={0:1,1:2,2:1} wait...
-// Actually: num=1: sum=2, need 0 → found 1. count=1. map={0:1,1:1,2:1}
-// num=1: sum=3, need 1 → found 2. count=3... let me re-trace:
-// Result = 2 for [1,1,1] k=2 ✅
-
-// Time: O(n)   Space: O(n)`
-  },
-  {
-    category: 'Interview', difficulty: 'Intermediate',
-    question: '[Interview] Word Pattern — check if a string follows a pattern.',
-    answer: 'Bijection problem: each pattern letter maps to exactly one word, and each word maps to exactly one letter (one-to-one, both directions). Use two maps: pattern→word and word→pattern. If either mapping conflicts, return false. This is the same technique used for Isomorphic Strings.',
-    tip: `// Problem: pattern="abba", s="dog cat cat dog" → true
-//          pattern="abba", s="dog cat cat fish" → false
-//          pattern="aaaa", s="dog cat cat dog" → false
-
+// Word Pattern
 function wordPattern(pattern, s) {
   const words = s.split(' ');
   if (pattern.length !== words.length) return false;
-
-  const charToWord = new Map();
-  const wordToChar = new Map();
-
+  const pToW = {}, wToP = {};
   for (let i = 0; i < pattern.length; i++) {
-    const ch = pattern[i];
-    const word = words[i];
-
-    if (charToWord.has(ch) && charToWord.get(ch) !== word) return false;
-    if (wordToChar.has(word) && wordToChar.get(word) !== ch) return false;
-
-    charToWord.set(ch, word);
-    wordToChar.set(word, ch);
+    const p = pattern[i], w = words[i];
+    if (pToW[p] && pToW[p] !== w) return false;
+    if (wToP[w] && wToP[w] !== p) return false;
+    pToW[p] = w; wToP[w] = p;
   }
   return true;
+}`
+  },
+
+  // ══════════════════════════════════════════════════════════
+  // 4. SEARCHING
+  // ══════════════════════════════════════════════════════════
+
+  // 4.1 Binary Search
+  {
+    category: 'Searching', difficulty: 'Intermediate',
+    question: '4.1 Binary Search — how does it work, what are the gotchas, and the universal template?',
+    answer: '**Binary Search** eliminates half the search space each iteration — O(log n) on sorted data. **Template**: `left=0, right=n-1`, `mid = left + Math.floor((right-left)/2)` (prevents integer overflow). If `nums[mid] === target`: found. If `nums[mid] < target`: `left = mid+1`. Else: `right = mid-1`. **Gotchas**: off-by-one errors; infinite loop when `left === right`; choosing `mid+1` vs `mid` when shrinking. **Key insight**: binary search works on ANY monotone function, not just arrays — "search on answer" technique.',
+    tip: `// Classic Binary Search
+function binarySearch(nums, target) {
+  let left = 0, right = nums.length - 1;
+  while (left <= right) {
+    const mid = left + Math.floor((right - left) / 2); // avoid overflow
+    if (nums[mid] === target) return mid;
+    else if (nums[mid] < target) left = mid + 1;
+    else right = mid - 1;
+  }
+  return -1; // not found
 }
 
-// Why TWO maps? One map isn't enough:
-// pattern="ab", s="dog dog"
-// charToWord: {a→dog, b→dog}  ← b→dog conflicts? No!
-// But a and b should map to DIFFERENT words → wordToChar catches it
-// wordToChar: dog→a, then dog→b conflicts ✅
+// Search Insert Position (lower bound)
+function searchInsert(nums, target) {
+  let left = 0, right = nums.length;
+  while (left < right) {
+    const mid = left + Math.floor((right - left) / 2);
+    if (nums[mid] < target) left = mid + 1;
+    else right = mid; // could be answer, keep narrowing left
+  }
+  return left; // first position where nums[i] >= target
+}
 
-// Time: O(n)   Space: O(n)`
+// Binary Search on Answer — Minimum in Rotated Sorted Array
+function findMin(nums) {
+  let left = 0, right = nums.length - 1;
+  while (left < right) {
+    const mid = left + Math.floor((right - left) / 2);
+    if (nums[mid] > nums[right]) left = mid + 1; // min is in right half
+    else right = mid;                             // mid could be the min
+  }
+  return nums[left];
+}
+// [3,4,5,1,2] -> 1`
   },
+
+  // 4.2 Rotated Array Search
   {
-    category: 'Interview', difficulty: 'Intermediate',
-    question: '[Interview] 4Sum II — count tuples (i,j,k,l) such that A[i]+B[j]+C[k]+D[l]=0.',
-    answer: 'Brute force O(n⁴) is too slow. Split into two halves: enumerate all O(n²) pair sums from A+B into a map, then for each pair sum from C+D, look up its negation in the map. O(n²) time and space.',
-    tip: `// Problem: A=[1,2], B=[-2,-1], C=[-1,2], D=[0,2] → 2
+    category: 'Searching', difficulty: 'Advanced',
+    question: '4.2 Rotated Array Search — how to binary search in a rotated sorted array in O(log n)?',
+    answer: '**Key insight**: in a rotated sorted array, when you pick `mid`, **one half is always sorted**. Determine which half is sorted by comparing `nums[left]` with `nums[mid]`. If left half sorted (`nums[left] <= nums[mid]`): check if target falls in `[nums[left], nums[mid]]` → narrow to left, else narrow to right. Else right half is sorted: check if target falls in `[nums[mid], nums[right]]`. This guarantees you always eliminate half. Works even with duplicates (with slight modification to handle `nums[left] === nums[mid]`).',
+    tip: `// Search in Rotated Sorted Array — O(log n)
+function search(nums, target) {
+  let left = 0, right = nums.length - 1;
 
-function fourSumCount(A, B, C, D) {
-  const pairSums = new Map();
+  while (left <= right) {
+    const mid = left + Math.floor((right - left) / 2);
+    if (nums[mid] === target) return mid;
 
-  // Store all A[i]+B[j] pair sums
-  for (const a of A) {
-    for (const b of B) {
-      const s = a + b;
-      pairSums.set(s, (pairSums.get(s) || 0) + 1);
+    // Left half is sorted
+    if (nums[left] <= nums[mid]) {
+      if (nums[left] <= target && target < nums[mid]) {
+        right = mid - 1; // target in left half
+      } else {
+        left = mid + 1;  // target in right half
+      }
+    }
+    // Right half is sorted
+    else {
+      if (nums[mid] < target && target <= nums[right]) {
+        left = mid + 1;  // target in right half
+      } else {
+        right = mid - 1; // target in left half
+      }
     }
   }
+  return -1;
+}
+// [4,5,6,7,0,1,2], target=0 -> 4
+// [4,5,6,7,0,1,2], target=3 -> -1
 
-  // For each C[k]+D[l], find how many A+B pairs complete to 0
-  let count = 0;
-  for (const c of C) {
-    for (const d of D) {
-      count += pairSums.get(-(c + d)) || 0;
+// Find Minimum in Rotated Array
+function findMin(nums) {
+  let l = 0, r = nums.length - 1;
+  while (l < r) {
+    const m = l + Math.floor((r - l) / 2);
+    if (nums[m] > nums[r]) l = m + 1;
+    else r = m;
+  }
+  return nums[l]; // pivot = minimum
+}`
+  },
+
+  // 4.3 Lower Bound / Upper Bound
+  {
+    category: 'Searching', difficulty: 'Intermediate',
+    question: '4.3 Lower Bound & Upper Bound — what are they and how to implement with binary search?',
+    answer: '**Lower Bound**: first index where `arr[i] >= target` (leftmost valid position). **Upper Bound**: first index where `arr[i] > target`. These let you find the range of a target value, count occurrences, and handle "find first/last position" problems. **Template**: when `nums[mid]` satisfies the condition, don\'t return — store it and narrow further (`right = mid`). When it doesn\'t, move `left = mid+1`. This is also called the "bisect_left / bisect_right" pattern from Python.',
+    tip: `// Lower Bound — first index where arr[i] >= target
+function lowerBound(nums, target) {
+  let left = 0, right = nums.length;
+  while (left < right) {
+    const mid = left + Math.floor((right - left) / 2);
+    if (nums[mid] < target) left = mid + 1;
+    else right = mid; // could be answer, keep going
+  }
+  return left; // insertion point for target
+}
+
+// Upper Bound — first index where arr[i] > target
+function upperBound(nums, target) {
+  let left = 0, right = nums.length;
+  while (left < right) {
+    const mid = left + Math.floor((right - left) / 2);
+    if (nums[mid] <= target) left = mid + 1;
+    else right = mid;
+  }
+  return left;
+}
+
+// Find First and Last Position of Element
+function searchRange(nums, target) {
+  const first = lowerBound(nums, target);
+  if (first === nums.length || nums[first] !== target) return [-1, -1];
+  const last = upperBound(nums, target) - 1;
+  return [first, last];
+}
+// [5,7,7,8,8,10], target=8 -> [3,4]
+// Count of target = upperBound - lowerBound`
+  },
+
+  // ══════════════════════════════════════════════════════════
+  // 5. RECURSION
+  // ══════════════════════════════════════════════════════════
+
+  // 5.1 Base Case
+  {
+    category: 'Recursion', difficulty: 'Beginner',
+    question: '5.1 Recursion & Base Case — what makes a correct recursive function?',
+    answer: 'Recursion solves a problem by breaking it into a **smaller version of the same problem**. Three requirements: 1) **Base case** — the simplest input that can be answered directly (stops the recursion). 2) **Recursive case** — reduce the problem toward the base case. 3) **Progress** — each call must get strictly closer to the base case. Without a proper base case: **stack overflow**. **The Recursive Leap of Faith**: trust that the recursive call correctly solves the smaller problem — don\'t try to trace every level. Time: usually O(branches^depth). Space: O(depth) call stack.',
+    tip: `// Factorial — O(n) time, O(n) space (call stack)
+function factorial(n) {
+  if (n <= 1) return 1;          // base case
+  return n * factorial(n - 1);  // recursive case — progresses toward 0
+}
+// factorial(5) = 5 * factorial(4) = 5 * 4 * 3 * 2 * 1 = 120
+
+// Sum of array elements recursively
+function sum(arr, i = 0) {
+  if (i === arr.length) return 0;  // base case: past end
+  return arr[i] + sum(arr, i + 1); // add current + rest
+}
+
+// Power — O(log n) with divide & conquer
+function power(base, exp) {
+  if (exp === 0) return 1;                  // base case
+  if (exp % 2 === 0) {
+    const half = power(base, exp / 2);
+    return half * half;                    // even: (b^(n/2))^2
+  }
+  return base * power(base, exp - 1);      // odd: b * b^(n-1)
+}
+
+// Common base cases:
+// Array: i === arr.length | i === 0
+// String: s.length === 0
+// Tree: node === null
+// Number: n === 0 | n === 1
+// Linked List: node === null | node.next === null`
+  },
+
+  // 5.2 Divide and Conquer
+  {
+    category: 'Recursion', difficulty: 'Intermediate',
+    question: '5.2 Divide and Conquer — pattern, Master Theorem, and key algorithms?',
+    answer: '**Divide and Conquer** splits a problem into smaller subproblems, solves recursively, then merges results. Steps: 1) **Divide** — split into subproblems (usually 2 halves). 2) **Conquer** — recursively solve each. 3) **Combine** — merge results. **Master Theorem**: T(n) = aT(n/b) + f(n). If work per level dominates: O(f(n)). If split dominates: O(n^log_b(a)). **Key algorithms**: Merge Sort O(n log n), Quick Sort O(n log n) avg, Binary Search O(log n), Maximum Subarray, Closest Pair of Points. D&C trades repeated work for a logarithmic factor.',
+    tip: `// Merge Sort — O(n log n) stable sort
+function mergeSort(arr) {
+  if (arr.length <= 1) return arr;          // base case
+
+  const mid = Math.floor(arr.length / 2);
+  const left  = mergeSort(arr.slice(0, mid)); // conquer left
+  const right = mergeSort(arr.slice(mid));    // conquer right
+  return merge(left, right);                  // combine
+}
+
+function merge(left, right) {
+  const result = [];
+  let i = 0, j = 0;
+  while (i < left.length && j < right.length) {
+    if (left[i] <= right[j]) result.push(left[i++]);
+    else result.push(right[j++]);
+  }
+  return [...result, ...left.slice(i), ...right.slice(j)];
+}
+
+// Quick Sort — O(n log n) avg, O(n^2) worst
+function quickSort(arr, lo = 0, hi = arr.length - 1) {
+  if (lo >= hi) return;
+  const pivot = partition(arr, lo, hi);
+  quickSort(arr, lo, pivot - 1);
+  quickSort(arr, pivot + 1, hi);
+}
+function partition(arr, lo, hi) {
+  const pivot = arr[hi];
+  let i = lo - 1;
+  for (let j = lo; j < hi; j++) {
+    if (arr[j] <= pivot) { i++; [arr[i], arr[j]] = [arr[j], arr[i]]; }
+  }
+  [arr[i+1], arr[hi]] = [arr[hi], arr[i+1]];
+  return i + 1;
+}
+// Divide: split at pivot  |  Conquer: sort each half  |  Combine: in-place`
+  },
+
+  // 5.3 Backtracking
+  {
+    category: 'Recursion', difficulty: 'Advanced',
+    question: '5.3 Backtracking — choose-explore-unchoose pattern, pruning, and key problems?',
+    answer: '**Backtracking** explores all possibilities by making choices and undoing them (backtracking) when a path is invalid. Template: **Choose** (add to path), **Explore** (recurse), **Unchoose** (remove from path). **Pruning**: skip invalid choices early to drastically cut the search space. **Complexity**: typically O(2^n) for subsets, O(n!) for permutations — but pruning makes it practical. **Key problems**: Subsets (include/exclude), Permutations (swap), Combinations (pick k of n), N-Queens (constraint check), Word Search (grid DFS), Sudoku Solver.',
+    tip: `// Subsets — include/exclude each element
+function subsets(nums) {
+  const result = [];
+  function bt(start, path) {
+    result.push([...path]);      // every path is a valid subset
+    for (let i = start; i < nums.length; i++) {
+      path.push(nums[i]);        // CHOOSE
+      bt(i + 1, path);           // EXPLORE
+      path.pop();                // UNCHOOSE (backtrack)
     }
+  }
+  bt(0, []);
+  return result;
+}
+// [1,2,3] -> [[],[1],[1,2],[1,2,3],[1,3],[2],[2,3],[3]]
+
+// Permutations
+function permute(nums) {
+  const result = [];
+  function bt(path, used) {
+    if (path.length === nums.length) { result.push([...path]); return; }
+    for (let i = 0; i < nums.length; i++) {
+      if (used[i]) continue;       // PRUNE: already used
+      used[i] = true;
+      path.push(nums[i]);          // CHOOSE
+      bt(path, used);              // EXPLORE
+      path.pop();                  // UNCHOOSE
+      used[i] = false;
+    }
+  }
+  bt([], new Array(nums.length).fill(false));
+  return result;
+}
+
+// Combination Sum (elements can repeat)
+function combinationSum(candidates, target) {
+  const result = [];
+  function bt(start, path, rem) {
+    if (rem === 0) { result.push([...path]); return; }
+    for (let i = start; i < candidates.length; i++) {
+      if (candidates[i] > rem) break; // PRUNE (sorted candidates)
+      path.push(candidates[i]);
+      bt(i, path, rem - candidates[i]); // i (not i+1) — can reuse
+      path.pop();
+    }
+  }
+  candidates.sort((a, b) => a - b);
+  bt(0, [], target);
+  return result;
+}`
+  },
+
+  // ══════════════════════════════════════════════════════════
+  // 6. TREES
+  // ══════════════════════════════════════════════════════════
+
+  // 6.1 Binary Tree
+  {
+    category: 'Trees', difficulty: 'Beginner',
+    question: '6.1 Binary Tree — structure, key properties, and common interview measurements?',
+    answer: '**Binary Tree**: each node has at most two children (left, right). No ordering constraint (unlike BST). **Types**: Full (each node has 0 or 2 children), Complete (all levels full except possibly last, filled left to right), Perfect (all levels completely filled), Balanced (height = O(log n)). **Key measurements**: Height/Depth = longest path from root to leaf. Diameter = longest path between any two nodes (may not pass through root). Node count of perfect tree with height h: 2^(h+1) - 1. **Most tree problems**: use recursion — think "what should this function return given left subtree result and right subtree result?"',
+    tip: `// TreeNode definition
+class TreeNode {
+  constructor(val, left = null, right = null) {
+    this.val = val; this.left = left; this.right = right;
+  }
+}
+
+// Height of tree — O(n)
+function height(root) {
+  if (!root) return 0;
+  return 1 + Math.max(height(root.left), height(root.right));
+}
+
+// Count nodes
+function countNodes(root) {
+  if (!root) return 0;
+  return 1 + countNodes(root.left) + countNodes(root.right);
+}
+
+// Diameter of Binary Tree (longest path between two nodes)
+function diameterOfBinaryTree(root) {
+  let maxDiam = 0;
+  function depth(node) {
+    if (!node) return 0;
+    const left  = depth(node.left);
+    const right = depth(node.right);
+    maxDiam = Math.max(maxDiam, left + right); // path through this node
+    return 1 + Math.max(left, right);          // depth returned to parent
+  }
+  depth(root);
+  return maxDiam;
+}
+
+// Symmetric Tree
+function isSymmetric(root) {
+  function mirror(l, r) {
+    if (!l && !r) return true;
+    if (!l || !r || l.val !== r.val) return false;
+    return mirror(l.left, r.right) && mirror(l.right, r.left);
+  }
+  return mirror(root, root);
+}`
+  },
+
+  // 6.2 Binary Search Tree
+  {
+    category: 'Trees', difficulty: 'Intermediate',
+    question: '6.2 Binary Search Tree (BST) — invariant, operations, when it degrades, and validation?',
+    answer: '**BST invariant**: for every node, ALL values in left subtree < node.val < ALL values in right subtree. **Operations**: search, insert, delete — O(log n) average, O(n) worst (degenerate tree from sorted input). **Inorder traversal = sorted array** — the single most useful BST property. **Balanced BSTs** (AVL, Red-Black trees) guarantee O(log n) worst case. **Validation**: track valid range `(min, max)` for each node — not just parent comparison. **Common problems**: Kth Smallest, Validate BST, LCA in BST, Convert BST to Greater Tree, Delete Node.',
+    tip: `// Validate BST — track min/max bounds
+function isValidBST(root, min = -Infinity, max = Infinity) {
+  if (!root) return true;
+  if (root.val <= min || root.val >= max) return false;
+  return isValidBST(root.left,  min, root.val) &&
+         isValidBST(root.right, root.val, max);
+}
+
+// Inorder traversal of BST = sorted array
+function inorder(root, result = []) {
+  if (!root) return result;
+  inorder(root.left, result);
+  result.push(root.val);       // visit root
+  inorder(root.right, result);
+  return result;
+}
+// Kth Smallest: take kth element from inorder result
+
+// BST Insert
+function insert(root, val) {
+  if (!root) return new TreeNode(val);
+  if (val < root.val) root.left  = insert(root.left, val);
+  else                root.right = insert(root.right, val);
+  return root;
+}
+
+// LCA in BST (Lowest Common Ancestor)
+function lowestCommonAncestor(root, p, q) {
+  if (!root) return null;
+  if (p.val < root.val && q.val < root.val) return lowestCommonAncestor(root.left, p, q);
+  if (p.val > root.val && q.val > root.val) return lowestCommonAncestor(root.right, p, q);
+  return root; // split point = LCA
+}`
+  },
+
+  // 6.3 DFS Traversal
+  {
+    category: 'Trees', difficulty: 'Intermediate',
+    question: '6.3 Tree DFS Traversal — preorder, inorder, postorder: what each visits and when to use each?',
+    answer: '**Three DFS orders** (Root = current node, L = left subtree, R = right subtree): **Preorder (Root→L→R)**: visit node before children — use for: copy/serialize tree, prefix notation, process parent before children. **Inorder (L→Root→R)**: left subtree first — use for: BST sorted output, validate BST, expression tree. **Postorder (L→R→Root)**: visit node after children — use for: delete tree, calculate subtree results (directory sizes), postfix notation. All O(n) time, O(h) space. **Iterative** versions use an explicit stack.',
+    tip: `// Recursive DFS traversals
+function preorder(root, res = []) {
+  if (!root) return res;
+  res.push(root.val);             // Root first
+  preorder(root.left, res);
+  preorder(root.right, res);
+  return res;
+}
+
+function inorder(root, res = []) {
+  if (!root) return res;
+  inorder(root.left, res);
+  res.push(root.val);             // Root in middle
+  inorder(root.right, res);
+  return res;
+}
+
+function postorder(root, res = []) {
+  if (!root) return res;
+  postorder(root.left, res);
+  postorder(root.right, res);
+  res.push(root.val);             // Root last
+  return res;
+}
+
+// Iterative Inorder (using explicit stack)
+function inorderIterative(root) {
+  const res = [], stack = [];
+  let cur = root;
+  while (cur || stack.length) {
+    while (cur) { stack.push(cur); cur = cur.left; } // go left
+    cur = stack.pop();
+    res.push(cur.val);            // visit
+    cur = cur.right;              // go right
+  }
+  return res;
+}
+
+// Maximum Path Sum (postorder: use children results)
+function maxPathSum(root) {
+  let max = -Infinity;
+  function dfs(node) {
+    if (!node) return 0;
+    const l = Math.max(0, dfs(node.left));  // discard negative
+    const r = Math.max(0, dfs(node.right));
+    max = Math.max(max, node.val + l + r);  // path through node
+    return node.val + Math.max(l, r);       // best single branch
+  }
+  dfs(root);
+  return max;
+}`
+  },
+
+  // 6.4 BFS Traversal
+  {
+    category: 'Trees', difficulty: 'Intermediate',
+    question: '6.4 Tree BFS — how it works, level-by-level collection, and important variations?',
+    answer: '**BFS (Breadth-First Search)** uses a **queue** to visit nodes level by level, left to right. Algorithm: enqueue root → loop: dequeue node, process, enqueue children. **Time**: O(n). **Space**: O(w) where w = max width (worst case O(n) for the last level of a full tree). **Key insight**: to capture nodes by level, check queue size at the start of each iteration — that\'s how many nodes are in the current level. **Use BFS over DFS for**: shortest path, level-order problems, anything that needs "minimum depth" or layer-by-layer processing.',
+    tip: `// Level Order Traversal — group by level
+function levelOrder(root) {
+  if (!root) return [];
+  const result = [], queue = [root];
+  while (queue.length) {
+    const levelSize = queue.length;  // nodes in current level
+    const level = [];
+    for (let i = 0; i < levelSize; i++) {
+      const node = queue.shift();
+      level.push(node.val);
+      if (node.left)  queue.push(node.left);
+      if (node.right) queue.push(node.right);
+    }
+    result.push(level);
+  }
+  return result;
+}
+// Output: [[3],[9,20],[15,7]]
+
+// Minimum Depth (BFS finds it faster than DFS)
+function minDepth(root) {
+  if (!root) return 0;
+  const queue = [[root, 1]];
+  while (queue.length) {
+    const [node, depth] = queue.shift();
+    if (!node.left && !node.right) return depth; // first leaf = min depth
+    if (node.left)  queue.push([node.left,  depth + 1]);
+    if (node.right) queue.push([node.right, depth + 1]);
+  }
+}
+
+// Right Side View (last node of each level)
+function rightSideView(root) {
+  if (!root) return [];
+  const result = [], queue = [root];
+  while (queue.length) {
+    const size = queue.length;
+    for (let i = 0; i < size; i++) {
+      const node = queue.shift();
+      if (i === size - 1) result.push(node.val); // last = rightmost
+      if (node.left)  queue.push(node.left);
+      if (node.right) queue.push(node.right);
+    }
+  }
+  return result;
+}`
+  },
+
+  // 6.5 Level Order Patterns
+  {
+    category: 'Trees', difficulty: 'Intermediate',
+    question: '6.5 Level Order Patterns — Zigzag, Max Width, and Connect Next Pointers?',
+    answer: '**Level Order** (BFS-based) is the foundation for a family of interview problems. **Zigzag**: alternate left-to-right and right-to-left per level — use a flag + reverse alternate levels. **Max Width**: maximum number of nodes at any level — also useful with position indexing to handle sparse trees. **Connect Next Pointers**: link each node to its right neighbor — can be done with BFS (queue) or O(1) space using the already-linked previous level. **Binary Tree Cameras**: postorder DP with 3 states. These all share the same BFS skeleton; the variation is in what you do with each level.',
+    tip: `// Zigzag Level Order
+function zigzagLevelOrder(root) {
+  if (!root) return [];
+  const result = [], queue = [root];
+  let leftToRight = true;
+  while (queue.length) {
+    const size = queue.length;
+    const level = [];
+    for (let i = 0; i < size; i++) {
+      const node = queue.shift();
+      if (leftToRight) level.push(node.val);
+      else level.unshift(node.val);            // prepend for reverse
+      if (node.left)  queue.push(node.left);
+      if (node.right) queue.push(node.right);
+    }
+    result.push(level);
+    leftToRight = !leftToRight;
+  }
+  return result;
+}
+
+// Max Width of Binary Tree (using position indices)
+function widthOfBinaryTree(root) {
+  if (!root) return 0;
+  let maxWidth = 0;
+  const queue = [[root, 0]]; // [node, position]
+  while (queue.length) {
+    const size = queue.length;
+    const leftPos = queue[0][1];  // leftmost position
+    let rightPos;
+    for (let i = 0; i < size; i++) {
+      const [node, pos] = queue.shift();
+      const normalized = pos - leftPos; // prevent BigInt overflow
+      rightPos = normalized;
+      if (node.left)  queue.push([node.left,  normalized * 2]);
+      if (node.right) queue.push([node.right, normalized * 2 + 1]);
+    }
+    maxWidth = Math.max(maxWidth, rightPos + 1);
+  }
+  return maxWidth;
+}`
+  },
+
+  // ══════════════════════════════════════════════════════════
+  // 7. GRAPH
+  // ══════════════════════════════════════════════════════════
+
+  // 7.1 Graph DFS
+  {
+    category: 'Graph', difficulty: 'Intermediate',
+    question: '7.1 Graph DFS — recursive and iterative implementations, visited set, and key problems?',
+    answer: '**Graph DFS** visits a node, marks it visited, then recursively visits all unvisited neighbors. Unlike tree DFS, graphs can have cycles — **always use a `visited` set**. **Recursive** is cleaner but risks stack overflow for large graphs. **Iterative** uses an explicit stack. **Adjacency list** is the standard representation for interview graphs. **Key problems**: Number of Islands (flood fill), Connected Components, Cycle Detection (directed: white/grey/black; undirected: parent tracking), Clone Graph, Pacific Atlantic Water Flow, Course Schedule.',
+    tip: `// Build adjacency list from edge list
+function buildGraph(n, edges) {
+  const graph = Array.from({length: n}, () => []);
+  for (const [u, v] of edges) { graph[u].push(v); graph[v].push(u); }
+  return graph;
+}
+
+// DFS — recursive (count connected components)
+function numComponents(n, edges) {
+  const graph = buildGraph(n, edges);
+  const visited = new Set();
+  let count = 0;
+  function dfs(node) {
+    visited.add(node);
+    for (const neighbor of graph[node]) {
+      if (!visited.has(neighbor)) dfs(neighbor);
+    }
+  }
+  for (let i = 0; i < n; i++) {
+    if (!visited.has(i)) { dfs(i); count++; }
   }
   return count;
 }
 
-// A+B pairs: {-1:1, 0:1, 1:1, 3:1}
-// Wait: 1+(-2)=-1, 1+(-1)=0, 2+(-2)=0, 2+(-1)=1
-// pairSums: {-1:1, 0:2, 1:1}
-// C+D: -1+0=-1, -1+2=1, 2+0=2, 2+2=4
-// need -(−1)=1 → found 1 time
-// need -(1)=-1 → found 1 time
-// count=2 ✅
-
-// Time: O(n²)   Space: O(n²)`
-  },
-  {
-    category: 'Interview', difficulty: 'Advanced',
-    question: '[Interview] Minimum Window Substring — smallest window in s containing all chars of t.',
-    answer: 'Sliding window + two frequency maps. Expand the right pointer to include characters; once all characters of t are covered ("valid"), shrink from the left to minimize the window, recording the minimum. Track "formed" count (how many distinct chars meet their required frequency) to check validity in O(1) per step.',
-    tip: `// Problem: s="ADOBECODEBANC", t="ABC" → "BANC"
-
-function minWindow(s, t) {
-  if (!s || !t) return '';
-  const need = new Map();
-  for (const ch of t) need.set(ch, (need.get(ch) || 0) + 1);
-
-  const window = new Map();
-  let have = 0, required = need.size;
-  let left = 0, minLen = Infinity, minLeft = 0;
-
-  for (let right = 0; right < s.length; right++) {
-    const ch = s[right];
-    window.set(ch, (window.get(ch) || 0) + 1);
-
-    // Did this char's count just meet the requirement?
-    if (need.has(ch) && window.get(ch) === need.get(ch)) have++;
-
-    // Shrink from left while window is valid
-    while (have === required) {
-      // Update minimum
-      if (right - left + 1 < minLen) {
-        minLen = right - left + 1;
-        minLeft = left;
+// DFS — iterative (using explicit stack)
+function dfsIterative(graph, start) {
+  const visited = new Set([start]);
+  const stack = [start];
+  while (stack.length) {
+    const node = stack.pop();
+    console.log(node);
+    for (const neighbor of graph[node]) {
+      if (!visited.has(neighbor)) {
+        visited.add(neighbor);
+        stack.push(neighbor);
       }
-      // Remove leftmost char
-      const lch = s[left++];
-      window.set(lch, window.get(lch) - 1);
-      if (need.has(lch) && window.get(lch) < need.get(lch)) have--;
     }
   }
-  return minLen === Infinity ? '' : s.slice(minLeft, minLeft + minLen);
 }
 
-// Time: O(|s| + |t|)   Space: O(|s| + |t|)`
+// Number of Islands (2D grid DFS)
+function numIslands(grid) {
+  let count = 0;
+  for (let r = 0; r < grid.length; r++)
+    for (let c = 0; c < grid[0].length; c++)
+      if (grid[r][c] === '1') { dfsGrid(grid, r, c); count++; }
+  return count;
+}
+function dfsGrid(grid, r, c) {
+  if (r < 0 || c < 0 || r >= grid.length || c >= grid[0].length || grid[r][c] !== '1') return;
+  grid[r][c] = '0'; // mark visited by sinking the island
+  [[1,0],[-1,0],[0,1],[0,-1]].forEach(([dr,dc]) => dfsGrid(grid, r+dr, c+dc));
+}`
   },
+
+  // 7.2 Graph BFS
   {
-    category: 'Interview', difficulty: 'Intermediate',
-    question: '[Interview] Ransom Note — can you build the note using magazine letters?',
-    answer: 'Frequency map problem. Count character frequencies in the magazine, then subtract for each character in the ransom note. If any character count goes negative, return false. O(n) time, O(1) space (only 26 lowercase letters).',
-    tip: `// Problem: ransomNote="aa", magazine="aab" → true
-//          ransomNote="aa", magazine="ab"  → false
-
-function canConstruct(ransomNote, magazine) {
-  const count = new Array(26).fill(0);
-  const a = 'a'.charCodeAt(0);
-
-  // Count available letters in magazine
-  for (const ch of magazine) {
-    count[ch.charCodeAt(0) - a]++;
+    category: 'Graph', difficulty: 'Intermediate',
+    question: '7.2 Graph BFS — why it guarantees shortest path in unweighted graphs, and key patterns?',
+    answer: '**Graph BFS** explores all neighbors at distance 1, then distance 2, etc. — naturally finds the **shortest path (fewest edges)** in unweighted graphs. Use a **queue + visited set**. Mark nodes visited when **enqueuing** (not dequeuing) to avoid adding duplicates to the queue. **Key insight**: BFS distance from source = level in the BFS tree. **Problems**: Shortest Path (unweighted), Word Ladder (BFS on implicit graph), 01 Matrix (multi-source BFS), Bipartite Check (2-color with BFS), Walls and Gates, Rotten Oranges (multi-source).',
+    tip: `// BFS — shortest path between two nodes
+function shortestPath(graph, start, end) {
+  const visited = new Set([start]);
+  const queue = [[start, 0]]; // [node, distance]
+  while (queue.length) {
+    const [node, dist] = queue.shift();
+    if (node === end) return dist;
+    for (const neighbor of graph[node]) {
+      if (!visited.has(neighbor)) {
+        visited.add(neighbor);       // mark on enqueue
+        queue.push([neighbor, dist + 1]);
+      }
+    }
   }
-
-  // Consume letters for ransom note
-  for (const ch of ransomNote) {
-    count[ch.charCodeAt(0) - a]--;
-    if (count[ch.charCodeAt(0) - a] < 0) return false; // not enough
-  }
-  return true;
+  return -1; // not reachable
 }
 
-// Pattern: "do you have enough of X?"
-// → count available supply, subtract demand, check for negatives
-// Same pattern used in:
-//   - Valid Anagram
-//   - Task Scheduler (frequency counts)
-//   - Find All Anagrams in a String (sliding window + freq)
+// Word Ladder — BFS on implicit word graph
+function ladderLength(beginWord, endWord, wordList) {
+  const wordSet = new Set(wordList);
+  if (!wordSet.has(endWord)) return 0;
+  const queue = [[beginWord, 1]];
+  while (queue.length) {
+    const [word, steps] = queue.shift();
+    for (let i = 0; i < word.length; i++) {
+      for (let c = 97; c <= 122; c++) { // a-z
+        const next = word.slice(0,i) + String.fromCharCode(c) + word.slice(i+1);
+        if (next === endWord) return steps + 1;
+        if (wordSet.has(next)) { wordSet.delete(next); queue.push([next, steps+1]); }
+      }
+    }
+  }
+  return 0;
+}
 
-// Time: O(m + n)   Space: O(1) — fixed 26-char array`
+// Multi-source BFS (Rotten Oranges)
+// Start BFS from ALL rotten oranges simultaneously
+// Each step = 1 minute — find minimum time to rot all`
   },
+
+  // 7.3 Topological Sort
+  {
+    category: 'Graph', difficulty: 'Advanced',
+    question: '7.3 Topological Sort — DAG ordering, Kahn\'s algorithm vs DFS-based, and cycle detection?',
+    answer: '**Topological Sort**: linear ordering of vertices in a **DAG** (Directed Acyclic Graph) where for every edge u→v, u appears before v. Only possible if no cycles. **Kahn\'s Algorithm (BFS-based)**: 1) Compute in-degree for all nodes. 2) Enqueue all nodes with in-degree 0. 3) Dequeue node, add to result, decrement neighbors\' in-degree, enqueue newly zeroed neighbors. 4) If result length < n: cycle detected. **DFS-based**: run DFS, push node to stack AFTER visiting all neighbors (post-order), reverse stack. **Use cases**: course prerequisites, build systems, task scheduling.',
+    tip: `// Kahn's Algorithm — BFS Topological Sort
+function topoSort(numCourses, prerequisites) {
+  const graph = Array.from({length: numCourses}, () => []);
+  const inDegree = new Array(numCourses).fill(0);
+
+  for (const [a, b] of prerequisites) {
+    graph[b].push(a);   // b must come before a
+    inDegree[a]++;
+  }
+
+  const queue = [];
+  for (let i = 0; i < numCourses; i++) {
+    if (inDegree[i] === 0) queue.push(i); // start nodes
+  }
+
+  const order = [];
+  while (queue.length) {
+    const node = queue.shift();
+    order.push(node);
+    for (const neighbor of graph[node]) {
+      inDegree[neighbor]--;
+      if (inDegree[neighbor] === 0) queue.push(neighbor);
+    }
+  }
+
+  // If not all nodes visited: cycle exists (impossible to complete)
+  return order.length === numCourses ? order : [];
+}
+// Course Schedule: return order.length === numCourses
+
+// DFS-based Topological Sort
+function topoSortDFS(n, graph) {
+  const visited = new Set(), stack = [];
+  function dfs(node) {
+    visited.add(node);
+    for (const nb of graph[node]) if (!visited.has(nb)) dfs(nb);
+    stack.push(node); // push AFTER all neighbors processed
+  }
+  for (let i = 0; i < n; i++) if (!visited.has(i)) dfs(i);
+  return stack.reverse(); // reverse = topological order
+}`
+  },
+
+  // 7.4 Shortest Path
+  {
+    category: 'Graph', difficulty: 'Advanced',
+    question: '7.4 Shortest Path — BFS vs Dijkstra vs Bellman-Ford: when to use each?',
+    answer: '**Unweighted graph**: BFS — O(V+E), guarantees shortest hop count. **Weighted, non-negative**: Dijkstra\'s — O((V+E) log V) with min-heap; greedily picks the closest unvisited node. **Weighted, with negative edges**: Bellman-Ford — O(V·E), relaxes all edges V-1 times; detects negative cycles. **All pairs**: Floyd-Warshall — O(V³). **Interview focus**: BFS for unweighted/grid problems, Dijkstra for weighted positive (Network Delay Time, Cheapest Flights). **Key insight for Dijkstra**: once a node is popped from min-heap, its shortest distance is final.',
+    tip: `// Dijkstra's Algorithm — O((V+E) log V) with min-heap
+function dijkstra(n, edges, src) {
+  const graph = Array.from({length: n}, () => []);
+  for (const [u, v, w] of edges) graph[u].push([v, w]);
+
+  const dist = new Array(n).fill(Infinity);
+  dist[src] = 0;
+
+  // Min-heap: [distance, node]
+  const heap = [[0, src]];
+
+  while (heap.length) {
+    // Simple simulation (in interviews, use a real priority queue)
+    heap.sort((a, b) => a[0] - b[0]);
+    const [d, u] = heap.shift();
+    if (d > dist[u]) continue;  // stale entry — skip
+
+    for (const [v, w] of graph[u]) {
+      if (dist[u] + w < dist[v]) {
+        dist[v] = dist[u] + w;
+        heap.push([dist[v], v]);
+      }
+    }
+  }
+  return dist; // dist[i] = shortest from src to i
+}
+// Network Delay Time: return Math.max(...dist) if all reachable
+
+// Bellman-Ford — handles negative weights
+function bellmanFord(n, edges, src) {
+  const dist = new Array(n).fill(Infinity);
+  dist[src] = 0;
+  for (let i = 0; i < n - 1; i++) {         // relax n-1 times
+    for (const [u, v, w] of edges) {
+      if (dist[u] !== Infinity && dist[u] + w < dist[v]) {
+        dist[v] = dist[u] + w;
+      }
+    }
+  }
+  // Check for negative cycles: if any relaxation still improves
+  for (const [u, v, w] of edges) {
+    if (dist[u] !== Infinity && dist[u] + w < dist[v]) return null; // neg cycle
+  }
+  return dist;
+}`
+  },
+
+  // ══════════════════════════════════════════════════════════
+  // 8. DYNAMIC PROGRAMMING
+  // ══════════════════════════════════════════════════════════
+
+  // 8.1 Memoization (Top-Down)
+  {
+    category: 'Dynamic Programming', difficulty: 'Intermediate',
+    question: '8.1 Memoization (Top-Down DP) — how to convert recursion to DP and identify overlapping subproblems?',
+    answer: '**Memoization** = recursion + caching. Write the recursive solution naturally, then add a cache (Map or array). Before computing: check if result is cached. After computing: store in cache before returning. **Converts exponential to polynomial**: O(2^n) Fibonacci → O(n) with memo. **When to use**: problem has **overlapping subproblems** (same inputs computed multiple times) and **optimal substructure** (optimal solution built from optimal solutions to subproblems). **Identify DP**: "count ways", "minimum/maximum", "is it possible" with repeated choices — likely DP. **Parameters of the recursive function = dimensions of the DP table**.',
+    tip: `// Fibonacci — naive O(2^n) -> memoized O(n)
+function fib(n, memo = {}) {
+  if (n <= 1) return n;
+  if (memo[n]) return memo[n];          // cache hit
+  memo[n] = fib(n-1, memo) + fib(n-2, memo);
+  return memo[n];
+}
+
+// Climbing Stairs (1 or 2 steps at a time)
+function climbStairs(n, memo = {}) {
+  if (n <= 1) return 1;
+  if (memo[n]) return memo[n];
+  memo[n] = climbStairs(n-1, memo) + climbStairs(n-2, memo);
+  return memo[n];
+}
+// Same as Fibonacci! dp[n] = dp[n-1] + dp[n-2]
+
+// Coin Change (minimum coins) — Top-Down
+function coinChange(coins, amount, memo = {}) {
+  if (amount === 0) return 0;
+  if (amount < 0)  return Infinity;
+  if (memo[amount] !== undefined) return memo[amount];
+  let min = Infinity;
+  for (const coin of coins) {
+    const res = coinChange(coins, amount - coin, memo);
+    min = Math.min(min, res + 1);
+  }
+  memo[amount] = min === Infinity ? -1 : min;
+  return memo[amount];
+}
+
+// Word Break
+function wordBreak(s, wordDict, memo = {}) {
+  if (s in memo) return memo[s];
+  if (s.length === 0) return true;
+  for (const word of wordDict) {
+    if (s.startsWith(word) && wordBreak(s.slice(word.length), wordDict, memo)) {
+      memo[s] = true; return true;
+    }
+  }
+  memo[s] = false; return false;
+}`
+  },
+
+  // 8.2 Tabulation (Bottom-Up)
+  {
+    category: 'Dynamic Programming', difficulty: 'Intermediate',
+    question: '8.2 Tabulation (Bottom-Up DP) — how to build the DP table and optimize space?',
+    answer: '**Tabulation** fills a DP table from base cases up to the target — no recursion, no call stack. Steps: 1) **Define** `dp[i]` (or dp[i][j]): what does this cell represent? 2) **Base case**: fill base values. 3) **Recurrence**: how does dp[i] depend on smaller cells? 4) **Order**: fill so dependencies are ready. 5) **Answer**: usually `dp[n]` or `dp[m][n]`. **Space optimization**: if dp[i] only depends on dp[i-1] (and dp[i-2]), you can reduce O(n) space to O(1) by keeping only the last two values. Bottom-up is generally faster in practice (no function call overhead, better cache locality).',
+    tip: `// Climbing Stairs — Bottom-Up O(n) time, O(1) space
+function climbStairs(n) {
+  if (n <= 1) return 1;
+  let prev2 = 1, prev1 = 1;
+  for (let i = 2; i <= n; i++) {
+    [prev2, prev1] = [prev1, prev1 + prev2]; // space-optimized
+  }
+  return prev1;
+}
+
+// Coin Change — Bottom-Up
+function coinChange(coins, amount) {
+  const dp = new Array(amount + 1).fill(Infinity);
+  dp[0] = 0; // base case: 0 coins to make amount 0
+  for (let a = 1; a <= amount; a++) {
+    for (const coin of coins) {
+      if (coin <= a) dp[a] = Math.min(dp[a], dp[a - coin] + 1);
+    }
+  }
+  return dp[amount] === Infinity ? -1 : dp[amount];
+}
+// amount=11, coins=[1,5,6,9] -> 2 (coins 5+6)
+
+// Longest Common Subsequence — 2D DP
+function longestCS(text1, text2) {
+  const m = text1.length, n = text2.length;
+  const dp = Array.from({length: m+1}, () => new Array(n+1).fill(0));
+  for (let i = 1; i <= m; i++)
+    for (let j = 1; j <= n; j++) {
+      if (text1[i-1] === text2[j-1]) dp[i][j] = dp[i-1][j-1] + 1;
+      else dp[i][j] = Math.max(dp[i-1][j], dp[i][j-1]);
+    }
+  return dp[m][n];
+}
+// 'abcde', 'ace' -> 3  ('ace')`
+  },
+
+  // 8.3 Knapsack
+  {
+    category: 'Dynamic Programming', difficulty: 'Advanced',
+    question: '8.3 Knapsack Problem — 0/1 knapsack DP solution and space optimization?',
+    answer: '**0/1 Knapsack**: given n items each with `weight[i]` and `value[i]`, maximize total value with capacity W. Each item either taken (1) or not (0). **Recurrence**: `dp[i][w] = max(dp[i-1][w], value[i] + dp[i-1][w-weight[i]])` if `weight[i] <= w`. **Time**: O(n·W). **Space**: O(n·W) → optimize to O(W) by using 1D array and iterating W backwards (prevents using same item twice). **Variations**: Unbounded Knapsack (items can be reused — iterate W forward), Subset Sum (value = weight, can we hit exactly W?), Partition Equal Subset Sum.',
+    tip: `// 0/1 Knapsack — 2D DP
+function knapsack(weights, values, W) {
+  const n = weights.length;
+  const dp = Array.from({length: n+1}, () => new Array(W+1).fill(0));
+
+  for (let i = 1; i <= n; i++) {
+    for (let w = 0; w <= W; w++) {
+      dp[i][w] = dp[i-1][w]; // don't take item i
+      if (weights[i-1] <= w) {
+        dp[i][w] = Math.max(dp[i][w], values[i-1] + dp[i-1][w - weights[i-1]]);
+      }
+    }
+  }
+  return dp[n][W];
+}
+
+// Space-optimized 0/1 Knapsack — O(W) space
+function knapsack1D(weights, values, W) {
+  const dp = new Array(W + 1).fill(0);
+  for (let i = 0; i < weights.length; i++) {
+    for (let w = W; w >= weights[i]; w--) {  // iterate BACKWARDS
+      dp[w] = Math.max(dp[w], values[i] + dp[w - weights[i]]);
+    }
+  }
+  return dp[W];
+}
+
+// Partition Equal Subset Sum (knapsack variant)
+function canPartition(nums) {
+  const total = nums.reduce((a, b) => a + b, 0);
+  if (total % 2 !== 0) return false;
+  const target = total / 2;
+  const dp = new Array(target + 1).fill(false);
+  dp[0] = true;
+  for (const num of nums) {
+    for (let w = target; w >= num; w--) {
+      dp[w] = dp[w] || dp[w - num];
+    }
+  }
+  return dp[target];
+}
+// [1,5,11,5] -> true (partition into [1,5,5] and [11])`
+  },
+
+  // 8.4 Fibonacci Pattern
+  {
+    category: 'Dynamic Programming', difficulty: 'Intermediate',
+    question: '8.4 Fibonacci DP Pattern — what problems follow this pattern and how to optimize to O(1) space?',
+    answer: '**Fibonacci Pattern**: `dp[i] = f(dp[i-1], dp[i-2])` — current state depends only on the previous 1-2 states. The full DP table is O(n) space but can always be reduced to O(1) by keeping only the last two values. **Problems in this family**: Fibonacci, Climbing Stairs, House Robber (can\'t rob adjacent), Min Cost Climbing Stairs, Decode Ways, Tribonacci, Jump Game II. **Recognition**: "count ways to reach position i" or "min/max cost at position i" where only nearby previous positions affect the current. The recurrence is the key — find it and code falls into place.',
+    tip: `// House Robber — can't rob adjacent houses
+function rob(nums) {
+  let prev2 = 0, prev1 = 0;
+  for (const num of nums) {
+    const cur = Math.max(prev1, prev2 + num);
+    prev2 = prev1;
+    prev1 = cur;
+  }
+  return prev1;
+}
+// dp[i] = max(dp[i-1], dp[i-2] + nums[i])
+// [2,7,9,3,1] -> 12 (rob houses 1,3,5: 2+9+1)
+
+// House Robber II (circular — two passes)
+function rob2(nums) {
+  function robRange(start, end) {
+    let p2 = 0, p1 = 0;
+    for (let i = start; i <= end; i++) {
+      [p2, p1] = [p1, Math.max(p1, p2 + nums[i])];
+    }
+    return p1;
+  }
+  const n = nums.length;
+  return Math.max(nums[0], robRange(0, n-2), robRange(1, n-1));
+}
+
+// Decode Ways (Fibonacci-like with conditions)
+function numDecodings(s) {
+  const n = s.length;
+  let prev2 = 1, prev1 = s[0] !== '0' ? 1 : 0;
+  for (let i = 1; i < n; i++) {
+    let cur = 0;
+    if (s[i] !== '0') cur += prev1;            // single digit decode
+    const two = parseInt(s.slice(i-1, i+1));
+    if (two >= 10 && two <= 26) cur += prev2;  // two digit decode
+    prev2 = prev1; prev1 = cur;
+  }
+  return prev1;
+}
+// '12' -> 2 (1+2 or 12)  |  '226' -> 3  |  '06' -> 0`
+  },
+
+  // ══════════════════════════════════════════════════════════
+  // IMPORTANT PATTERNS
+  // ══════════════════════════════════════════════════════════
+
+  // Pattern: Two Pointers
+  {
+    category: 'Patterns', difficulty: 'Intermediate',
+    question: 'Pattern: Two Pointers — 3 example problems and their solutions?',
+    answer: '**Two Pointers** in action across 3 classic problems: 1) **Container With Most Water** — maximize area by moving the shorter wall inward. 2) **3Sum** — sort + fix one element + two pointers for the other two. 3) **Trapping Rain Water** — track left/right max walls, water level at each cell is `min(leftMax, rightMax) - height[i]`. All are O(n) or O(n log n). The pattern is always: two indices, smart movement condition.',
+    tip: `// 1. Container With Most Water
+function maxArea(height) {
+  let l = 0, r = height.length - 1, max = 0;
+  while (l < r) {
+    max = Math.max(max, Math.min(height[l], height[r]) * (r - l));
+    if (height[l] < height[r]) l++; // move shorter wall to try for better
+    else r--;
+  }
+  return max;
+}
+
+// 2. 3Sum — sort + two pointers
+function threeSum(nums) {
+  nums.sort((a, b) => a - b);
+  const res = [];
+  for (let i = 0; i < nums.length - 2; i++) {
+    if (i > 0 && nums[i] === nums[i-1]) continue; // skip duplicate
+    let l = i+1, r = nums.length-1;
+    while (l < r) {
+      const s = nums[i] + nums[l] + nums[r];
+      if (s === 0) {
+        res.push([nums[i], nums[l], nums[r]]);
+        while (nums[l] === nums[l+1]) l++; // skip duplicates
+        while (nums[r] === nums[r-1]) r--;
+        l++; r--;
+      } else if (s < 0) l++;
+      else r--;
+    }
+  }
+  return res;
+}
+
+// 3. Trapping Rain Water — O(n) time, O(1) space
+function trap(height) {
+  let l = 0, r = height.length-1, lMax = 0, rMax = 0, water = 0;
+  while (l < r) {
+    if (height[l] <= height[r]) {
+      lMax = Math.max(lMax, height[l]);
+      water += lMax - height[l]; l++;
+    } else {
+      rMax = Math.max(rMax, height[r]);
+      water += rMax - height[r]; r--;
+    }
+  }
+  return water;
+}`
+  },
+
+  // Pattern: Sliding Window
+  {
+    category: 'Patterns', difficulty: 'Intermediate',
+    question: 'Pattern: Sliding Window — 3 example problems from fixed to advanced variable window?',
+    answer: '**Sliding Window** in action: 1) **Maximum Average Subarray** — fixed window of size k. 2) **Minimum Window Substring** — variable window; expand right, contract left when valid. 3) **Longest Repeating Character Replacement** — window where replacements = windowSize - maxFreq of any char. All O(n). **Recognition signs**: "subarray/substring", "contiguous", "at most k", "longest/shortest with condition" → likely sliding window.',
+    tip: `// 1. Maximum Average Subarray (Fixed Window)
+function findMaxAverage(nums, k) {
+  let sum = nums.slice(0, k).reduce((a, b) => a + b);
+  let max = sum;
+  for (let i = k; i < nums.length; i++) {
+    sum += nums[i] - nums[i - k];
+    max = Math.max(max, sum);
+  }
+  return max / k;
+}
+
+// 2. Minimum Window Substring (Variable Window)
+function minWindow(s, t) {
+  const need = {}, have = {};
+  for (const c of t) need[c] = (need[c] || 0) + 1;
+  let formed = 0, required = Object.keys(need).length;
+  let l = 0, minLen = Infinity, minL = 0;
+  for (let r = 0; r < s.length; r++) {
+    const c = s[r];
+    have[c] = (have[c] || 0) + 1;
+    if (need[c] && have[c] === need[c]) formed++;
+    while (formed === required) { // window is valid — shrink
+      if (r - l + 1 < minLen) { minLen = r - l + 1; minL = l; }
+      have[s[l]]--;
+      if (need[s[l]] && have[s[l]] < need[s[l]]) formed--;
+      l++;
+    }
+  }
+  return minLen === Infinity ? '' : s.slice(minL, minL + minLen);
+}
+
+// 3. Longest Repeating Character Replacement
+function characterReplacement(s, k) {
+  const count = {};
+  let l = 0, maxFreq = 0, maxLen = 0;
+  for (let r = 0; r < s.length; r++) {
+    count[s[r]] = (count[s[r]] || 0) + 1;
+    maxFreq = Math.max(maxFreq, count[s[r]]);
+    // window size - maxFreq = replacements needed
+    while ((r - l + 1) - maxFreq > k) { count[s[l]]--; l++; }
+    maxLen = Math.max(maxLen, r - l + 1);
+  }
+  return maxLen;
+}`
+  },
+
+  // Pattern: HashMap
+  {
+    category: 'Patterns', difficulty: 'Intermediate',
+    question: 'Pattern: HashMap — 3 essential problems that showcase O(n) HashMap solutions?',
+    answer: '**HashMap patterns** in practice: 1) **Two Sum** — complement lookup. 2) **Subarray Sum Equals K** — prefix sum + hashmap. 3) **Longest Substring with At Most K Distinct Characters** — sliding window + freq map. Each demonstrates a core HashMap trick: fast lookup, prefix hashing, frequency counting in a window. These three together cover 80% of HashMap interview patterns.',
+    tip: `// 1. Two Sum — complement HashMap
+function twoSum(nums, target) {
+  const map = new Map();
+  for (let i = 0; i < nums.length; i++) {
+    const comp = target - nums[i];
+    if (map.has(comp)) return [map.get(comp), i];
+    map.set(nums[i], i);
+  }
+}
+
+// 2. Subarray Sum Equals K
+function subarraySum(nums, k) {
+  const prefixCount = new Map([[0, 1]]);
+  let prefix = 0, count = 0;
+  for (const n of nums) {
+    prefix += n;
+    count += (prefixCount.get(prefix - k) || 0);
+    prefixCount.set(prefix, (prefixCount.get(prefix) || 0) + 1);
+  }
+  return count;
+}
+// [1,1,1], k=2 -> 2   [1,2,3], k=3 -> 2
+
+// 3. Longest Substring with At Most K Distinct Characters
+function lengthOfLongestSubstringKDistinct(s, k) {
+  const freq = new Map();
+  let l = 0, maxLen = 0;
+  for (let r = 0; r < s.length; r++) {
+    freq.set(s[r], (freq.get(s[r]) || 0) + 1);
+    while (freq.size > k) {              // too many distinct chars
+      freq.set(s[l], freq.get(s[l]) - 1);
+      if (freq.get(s[l]) === 0) freq.delete(s[l]);
+      l++;
+    }
+    maxLen = Math.max(maxLen, r - l + 1);
+  }
+  return maxLen;
+}
+// 'eceba', k=2 -> 3 ('ece')`
+  },
+
+  // Pattern: Binary Search
+  {
+    category: 'Patterns', difficulty: 'Intermediate',
+    question: 'Pattern: Binary Search — 3 problems using "binary search on answer" beyond plain arrays?',
+    answer: '**Binary Search on Answer**: apply binary search on the answer space (not the array index). The key insight: "is it possible to achieve result X?" is a monotone function — once true, all larger values are also true (or vice versa). Binary search finds the boundary. **Problems**: Koko Eating Bananas (min eating speed), Find Peak Element, Capacity to Ship Packages. This extends binary search far beyond sorted arrays.',
+    tip: `// 1. Koko Eating Bananas — Binary Search on Answer
+function minEatingSpeed(piles, h) {
+  let lo = 1, hi = Math.max(...piles);
+  while (lo < hi) {
+    const mid = lo + Math.floor((hi - lo) / 2);
+    const hours = piles.reduce((acc, p) => acc + Math.ceil(p / mid), 0);
+    if (hours <= h) hi = mid;   // mid is feasible, try slower
+    else lo = mid + 1;          // too slow, need faster
+  }
+  return lo;
+}
+// Binary search: what's the minimum speed?
+
+// 2. Find Peak Element
+function findPeakElement(nums) {
+  let l = 0, r = nums.length - 1;
+  while (l < r) {
+    const m = l + Math.floor((r - l) / 2);
+    if (nums[m] > nums[m+1]) r = m;   // peak is on left side (or m itself)
+    else l = m + 1;                   // peak is on right side
+  }
+  return l;
+}
+
+// 3. Capacity to Ship Packages
+function shipWithinDays(weights, days) {
+  let lo = Math.max(...weights), hi = weights.reduce((a, b) => a + b);
+  while (lo < hi) {
+    const mid = lo + Math.floor((hi - lo) / 2);
+    let daysNeeded = 1, cur = 0;
+    for (const w of weights) {
+      if (cur + w > mid) { daysNeeded++; cur = 0; }
+      cur += w;
+    }
+    if (daysNeeded <= days) hi = mid;
+    else lo = mid + 1;
+  }
+  return lo;
+}`
+  },
+
+  // Pattern: DFS/BFS
+  {
+    category: 'Patterns', difficulty: 'Intermediate',
+    question: 'Pattern: DFS/BFS — 3 problems showing when to choose DFS vs BFS?',
+    answer: '**DFS vs BFS decision**: Use **DFS** when: exploring all paths, backtracking, finding any path, exhaustive search (permutations, subsets). Use **BFS** when: shortest path (unweighted), level-by-level processing, minimum steps. **Problems**: Clone Graph (DFS — deep copy), Number of Islands (DFS — flood fill faster), Shortest Path in Binary Matrix (BFS — need minimum steps). Both are O(V+E) time but BFS uses more memory (wide graphs).',
+    tip: `// 1. Clone Graph — DFS with HashMap (node -> clone)
+function cloneGraph(node, visited = new Map()) {
+  if (!node) return null;
+  if (visited.has(node)) return visited.get(node);
+  const clone = { val: node.val, neighbors: [] };
+  visited.set(node, clone);
+  for (const nb of node.neighbors) {
+    clone.neighbors.push(cloneGraph(nb, visited));
+  }
+  return clone;
+}
+
+// 2. Number of Islands — DFS flood fill
+function numIslands(grid) {
+  let count = 0;
+  function sink(r, c) {
+    if (r < 0 || c < 0 || r >= grid.length || c >= grid[0].length || grid[r][c] !== '1') return;
+    grid[r][c] = '0';
+    sink(r+1,c); sink(r-1,c); sink(r,c+1); sink(r,c-1);
+  }
+  for (let r = 0; r < grid.length; r++)
+    for (let c = 0; c < grid[0].length; c++)
+      if (grid[r][c] === '1') { sink(r, c); count++; }
+  return count;
+}
+
+// 3. Shortest Path in Binary Matrix — BFS (need minimum steps)
+function shortestPathBinaryMatrix(grid) {
+  const n = grid.length;
+  if (grid[0][0] || grid[n-1][n-1]) return -1;
+  const queue = [[0, 0, 1]]; // [row, col, steps]
+  grid[0][0] = 1; // mark visited
+  const dirs = [[-1,-1],[-1,0],[-1,1],[0,-1],[0,1],[1,-1],[1,0],[1,1]];
+  while (queue.length) {
+    const [r, c, steps] = queue.shift();
+    if (r === n-1 && c === n-1) return steps;
+    for (const [dr, dc] of dirs) {
+      const nr = r+dr, nc = c+dc;
+      if (nr >= 0 && nc >= 0 && nr < n && nc < n && !grid[nr][nc]) {
+        grid[nr][nc] = 1;
+        queue.push([nr, nc, steps+1]);
+      }
+    }
+  }
+  return -1;
+}`
+  },
+
+  // Pattern: Dynamic Programming
+  {
+    category: 'Patterns', difficulty: 'Advanced',
+    question: 'Pattern: Dynamic Programming — 3 classic examples across 1D, 2D, and interval DP?',
+    answer: '**DP pattern recognition**: if a problem asks for min/max/count of something with overlapping choices that can\'t be greedily resolved, try DP. **1D DP**: state is a single index (Climbing Stairs, House Robber). **2D DP**: state is two indices, often two strings or a grid (LCS, Edit Distance, Knapsack). **Interval DP**: state is a range [i,j] (Burst Balloons, Palindromic Substrings). **Key**: always define what dp[i] (or dp[i][j]) represents, write the recurrence, identify base case.',
+    tip: `// 1. Edit Distance — 2D DP (classic)
+function minDistance(word1, word2) {
+  const m = word1.length, n = word2.length;
+  const dp = Array.from({length: m+1}, (_, i) => {
+    const row = new Array(n+1).fill(0);
+    row[0] = i; return row;
+  });
+  for (let j = 0; j <= n; j++) dp[0][j] = j;
+  for (let i = 1; i <= m; i++)
+    for (let j = 1; j <= n; j++) {
+      if (word1[i-1] === word2[j-1]) dp[i][j] = dp[i-1][j-1];
+      else dp[i][j] = 1 + Math.min(
+        dp[i-1][j],   // delete
+        dp[i][j-1],   // insert
+        dp[i-1][j-1]  // replace
+      );
+    }
+  return dp[m][n];
+}
+// 'horse','ros' -> 3
+
+// 2. Unique Paths — 2D grid DP
+function uniquePaths(m, n) {
+  const dp = Array.from({length: m}, () => new Array(n).fill(1));
+  for (let i = 1; i < m; i++)
+    for (let j = 1; j < n; j++)
+      dp[i][j] = dp[i-1][j] + dp[i][j-1]; // from top or left
+  return dp[m-1][n-1];
+}
+
+// 3. Longest Palindromic Subsequence — Interval DP
+function longestPalindromeSubseq(s) {
+  const n = s.length;
+  const dp = Array.from({length: n}, () => new Array(n).fill(0));
+  for (let i = 0; i < n; i++) dp[i][i] = 1; // single char = palindrome
+  for (let len = 2; len <= n; len++)
+    for (let i = 0; i <= n - len; i++) {
+      const j = i + len - 1;
+      if (s[i] === s[j]) dp[i][j] = dp[i+1][j-1] + 2;
+      else dp[i][j] = Math.max(dp[i+1][j], dp[i][j-1]);
+    }
+  return dp[0][n-1];
+}`
+  },
+
 ];
+
+;
 
 /* ═══════════════════════════════════════════════════════════
    PYTHON — 14 cards across 3 categories
@@ -10207,13 +11086,21 @@ const SUBJECT_COLORS = {
 };
 
 const CATEGORY_COLORS = {
-  // DSA
+  // DSA — new topic-based categories
+  'Arrays':              '#f97316',
+  'Strings':             '#10b981',
+  'HashMap':             '#3b82f6',
+  'Searching':           '#8b5cf6',
+  'Recursion':           '#f59e0b',
+  'Trees':               '#14b8a6',
+  'Graph':               '#6366f1',
+  'Dynamic Programming': '#ec4899',
+  'Patterns':            '#c2410c',
+  // Legacy DSA (kept for any old references)
   'Complexity':      '#f97316',
   'Data Structures': '#fb923c',
   'Algorithms':      '#ea580c',
-  'Patterns':        '#c2410c',
   'Hashing':         '#fbbf24',
-  'Recursion':       '#f59e0b',
   'Interview':       '#d97706',
   // Database
   'Relational DB':    '#ec4899',
