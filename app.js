@@ -8427,10 +8427,180 @@ class Timer {
   },
 
   // ── 2. Core JavaScript ───────────────────────────────────
+  // Topics: Execution Context · Closures · Event Loop · Prototype
+  //         Async Programming · Memory · Scopes · Hoisting · this
+
+  // 2-1. Execution Context
   {
     category: 'Core JavaScript', difficulty: 'Intermediate',
-    question: 'What are the three types of scope in JavaScript? What is lexical scoping?',
-    answer: '**Global scope**: accessible everywhere. **Function scope**: `var` declarations inside a function — not accessible outside. **Block scope**: `let`/`const` inside `{}` — not accessible outside. **Lexical scoping**: a function can access variables from its own scope AND all enclosing scopes where it was DEFINED (not where it is called). This is the foundation of closures.',
+    question: 'What is an Execution Context? How does the Call Stack work?',
+    answer: 'An **Execution Context (EC)** is the environment in which JS code runs. Three types: **Global EC** (created first — `window`/`globalThis`), **Function EC** (created on every call), **Eval EC** (rare). Each EC has two phases: **Creation** — sets up scope chain, `this`, hoists vars/functions. **Execution** — runs code line by line. The **Call Stack** (LIFO) tracks active ECs. Calling a function pushes a new EC; returning pops it. Stack overflow = recursion without base case.',
+    tip: `// Call Stack demo
+function multiply(a, b) { return a * b; }
+function square(n)      { return multiply(n, n); }
+function printSquare(n) { const result = square(n); console.log(result); }
+
+printSquare(5);
+// Stack at deepest:
+// [ multiply(5,5) ]   <-- top
+// [ square(5)     ]
+// [ printSquare(5)]
+// [ global EC     ]   <-- bottom
+
+// Each function gets its own EC with:
+//   - Variable Environment (local vars/params)
+//   - Scope chain (access to outer scopes)
+//   - this binding`
+  },
+
+  // 2-2. Closures
+  {
+    category: 'Core JavaScript', difficulty: 'Intermediate',
+    question: 'What is a Closure? Give a real-world use case.',
+    answer: 'A **closure** is a function that retains access to its outer scope\'s variables even after that scope has finished executing. Functions capture a **reference** — not a snapshot — to outer variables. **Use cases**: private state/encapsulation, factory functions, memoization, event handlers with context. **Classic pitfall**: `var` in loops captured by reference — fix with `let` (block-scoped per iteration).',
+    tip: `// Private counter via closure
+function makeCounter() {
+  let count = 0;       // private — not accessible outside
+  return {
+    inc()   { return ++count; },
+    dec()   { return --count; },
+    value() { return count; },
+  };
+}
+const c = makeCounter();
+c.inc(); c.inc(); // count = 2
+c.value();        // 2
+
+// Loop pitfall
+for (var i = 0; i < 3; i++) {
+  setTimeout(() => console.log(i), 0); // 3,3,3 (shared ref)
+}
+for (let i = 0; i < 3; i++) {
+  setTimeout(() => console.log(i), 0); // 0,1,2 (own binding)`
+  },
+
+  // 2-3. Event Loop
+  {
+    category: 'Core JavaScript', difficulty: 'Advanced',
+    question: 'How does the Event Loop work? What is the difference between microtasks and macrotasks?',
+    answer: 'JS is **single-threaded**. The Event Loop keeps it non-blocking. **Call Stack** runs sync code (LIFO). **Web APIs** handle async ops (setTimeout, fetch). **Microtask queue** (Promises, `queueMicrotask`, MutationObserver) runs **before** the next macrotask — fully drained each loop turn. **Macrotask queue** (setTimeout, setInterval, I/O, UI events) runs **one** per loop turn. Order each turn: all sync → drain microtasks → one macrotask → drain microtasks → ...',
+    tip: `console.log('A');           // sync
+
+setTimeout(() => console.log('B'), 0); // macrotask
+
+Promise.resolve()
+  .then(() => console.log('C'))        // microtask
+  .then(() => console.log('D'));       // microtask (queued after C)
+
+queueMicrotask(() => console.log('E')); // microtask
+
+console.log('F');           // sync
+
+// Output: A  F  C  E  D  B
+// Sync (A,F) → microtasks (C,E,D) → macrotask (B)
+
+// Tip: infinite microtask loop starves macrotasks
+// Use setTimeout(fn, 0) to yield to the event loop`
+  },
+
+  // 2-4. Prototype
+  {
+    category: 'Core JavaScript', difficulty: 'Intermediate',
+    question: 'What is the Prototype chain? How does JavaScript inheritance work?',
+    answer: 'Every JS object has a hidden `[[Prototype]]` link. Property lookup walks the chain until found or reaches `null`. `Object.prototype` is the root. **class/extends** is syntactic sugar over this chain — no real classes, just prototype delegation. `instanceof` checks the prototype chain. `Object.create(proto)` creates an object with a specific prototype. Own properties shadow prototype properties.',
+    tip: `// Prototype chain
+const animal = { speak() { return 'sound'; } };
+const dog = Object.create(animal);
+dog.speak();   // 'sound' — found on prototype
+
+dog.speak = () => 'Woof'; // own property shadows prototype
+dog.speak();   // 'Woof'
+
+// class syntax (sugar over prototype)
+class Animal {
+  constructor(name) { this.name = name; }
+  speak() { return this.name + ' makes a sound'; }
+}
+class Dog extends Animal {
+  speak() { return this.name + ' barks'; }  // override
+}
+const d = new Dog('Rex');
+d.speak();            // 'Rex barks'
+d instanceof Dog;     // true
+d instanceof Animal;  // true (chain)
+Object.getPrototypeOf(d) === Dog.prototype; // true`
+  },
+
+  // 2-5. Async Programming
+  {
+    category: 'Core JavaScript', difficulty: 'Intermediate',
+    question: 'What are the three stages of async programming in JS? What problem does each solve?',
+    answer: '**Callbacks** (Node.js era): function passed as argument, runs when async op completes. Problem: Callback Hell — deeply nested, hard to read, error-prone. **Promises** (ES6): object with 3 states (pending → fulfilled/rejected). Chainable with `.then()/.catch()/.finally()`. Solves nesting. **async/await** (ES2017): syntactic sugar over Promises. Write async code that reads like sync. `await` pauses the function (not the thread) until the Promise resolves. Errors caught with `try/catch`.',
+    tip: `// 1. Callback (old way)
+fs.readFile('file.txt', (err, data) => {
+  if (err) handle(err);
+  process(data);         // nested → callback hell
+});
+
+// 2. Promise
+fetch('/api/user')
+  .then(res => res.json())
+  .then(data => console.log(data))
+  .catch(err => console.error(err));
+
+// 3. async/await (modern)
+async function loadUser() {
+  try {
+    const res  = await fetch('/api/user');
+    const data = await res.json();
+    console.log(data);
+  } catch (err) {
+    console.error(err);
+  }
+}
+
+// Parallel — don't await sequentially when independent:
+const [a, b] = await Promise.all([fetchA(), fetchB()]);`
+  },
+
+  // 2-6. Memory
+  {
+    category: 'Core JavaScript', difficulty: 'Advanced',
+    question: 'How does JavaScript manage memory? What causes memory leaks?',
+    answer: '**Stack**: fixed-size, fast — stores primitives and references. **Heap**: dynamic-size — stores objects/functions. **Garbage Collection** (V8 uses Mark-and-Sweep): finds all roots (global, call stack), marks reachable objects, sweeps the rest. **Generational GC**: most objects die young (Minor GC), survivors promoted to old space (Major GC). **Memory Leaks**: forgotten global variables, detached DOM nodes still referenced, closures holding large data, uncleared timers/listeners, circular references (less common with modern GC).',
+    tip: `// Common memory leaks:
+
+// 1. Forgotten global variable
+function leak() { forgotVar = 'I live forever'; } // no var/let/const
+
+// 2. Detached DOM node
+let el = document.getElementById('btn');
+document.body.removeChild(el);
+// el still holds a reference — node not GC'd
+el = null; // fix: clear the reference
+
+// 3. Forgotten setInterval
+const timer = setInterval(() => doWork(), 1000);
+// Always clear when done:
+clearInterval(timer);
+
+// 4. Closure over large data
+function outer() {
+  const bigData = new Array(1000000).fill('x');
+  return function inner() {
+    console.log(bigData[0]); // bigData cannot be GC'd
+  };
+}
+
+// Use WeakMap/WeakSet for cache without preventing GC:
+const cache = new WeakMap(); // keys held weakly`
+  },
+
+  // 2-7. Scopes
+  {
+    category: 'Core JavaScript', difficulty: 'Intermediate',
+    question: 'What are the types of scope in JavaScript? What is lexical scoping?',
+    answer: '**Global scope**: accessible everywhere. **Function scope**: `var` inside a function — not accessible outside. **Block scope**: `let`/`const` inside `{}` — scoped to that block. **Module scope**: top-level vars in ES modules are module-private, not global. **Lexical scoping**: a function looks up variables in the scope where it was **defined**, not where it is **called** — this is the foundation of closures. Scope chain: JS walks outward from the current scope until found or hits global.',
     tip: `let globalVar = 'global';
 
 function outer() {
@@ -8438,147 +8608,85 @@ function outer() {
 
   function inner() {
     let innerVar = 'inner';
-    // Lexical: can access all outer vars
-    console.log(globalVar, outerVar, innerVar);
+    // Lexical: can access all outer scopes
+    console.log(globalVar, outerVar, innerVar); // all work
   }
-
   inner();
-  // console.log(innerVar); // ReferenceError
+  // console.log(innerVar); // ReferenceError — no upward access
 }
 
 // Block scope
 {
-  let blockVar = 'block';
-  const blockConst = 'also block';
+  let blockLet   = 'only here';
+  const blockConst = 'also here';
+  var blockVar   = 'leaks out!'; // var ignores blocks
 }
-// console.log(blockVar); // ReferenceError`
+console.log(blockVar);   // 'leaks out!' — var is function-scoped
+// console.log(blockLet); // ReferenceError`
   },
-  {
-    category: 'Core JavaScript', difficulty: 'Intermediate',
-    question: 'What is a closure? Why is it useful?',
-    answer: 'A closure is a function that retains access to its outer scope\'s variables even after that scope has finished executing. Functions capture a reference — not a snapshot — to outer variables. Use cases: private state/data encapsulation, factory functions, memoization, event handlers with context. Classic pitfall: loop variables captured by reference with `var` — fix with `let` (block-scoped per iteration).',
-    tip: `// Private counter — classic closure
-function makeCounter() {
-  let count = 0;
-  return {
-    increment() { return ++count; },
-    decrement() { return --count; },
-    value()     { return count; },
-  };
-}
-const c = makeCounter();
-c.increment(); // 1
-c.increment(); // 2
-c.value();     // 2
-// count is private — cannot access from outside
 
-// Loop closure pitfall
-for (var i = 0; i < 3; i++) {
-  setTimeout(() => console.log(i), 0); // 3,3,3 ← bug (var)
-}
-for (let i = 0; i < 3; i++) {
-  setTimeout(() => console.log(i), 0); // 0,1,2 ✓ (let)`
-  },
+  // 2-8. Hoisting
   {
     category: 'Core JavaScript', difficulty: 'Intermediate',
-    question: 'What is hoisting? How does it differ for var, let, function declarations, and class?',
-    answer: 'Hoisting moves declarations to the top of their scope at compile time. `var`: hoisted AND initialized to `undefined` — safe to read (but undefined). `function` declarations: fully hoisted (name + body) — can call before declaration. `let`/`const`/`class`: hoisted but NOT initialized — accessing before declaration throws ReferenceError (Temporal Dead Zone). Function expressions (including arrows): follow the rules of their variable keyword.',
-    tip: `// var — hoisted, initialized to undefined
+    question: 'What is Hoisting? How does it differ for var, let/const, function declarations, and classes?',
+    answer: 'Hoisting moves **declarations** to the top of their scope at compile time (not the values). `var`: hoisted AND initialized to `undefined` — readable before assignment (but undefined). `function` declarations: **fully hoisted** (name + body) — callable before the line. `let`/`const`/`class`: hoisted but **NOT initialized** — accessing before declaration throws `ReferenceError` (**Temporal Dead Zone**). Function expressions/arrows: follow the rules of their variable keyword.',
+    tip: `// var — hoisted + initialized to undefined
 console.log(x); // undefined (no error)
 var x = 5;
 
 // Function declaration — fully hoisted
-sayHi();        // works!
-function sayHi() { console.log('Hi'); }
+greet();                    // works!
+function greet() { console.log('Hi'); }
 
-// let — Temporal Dead Zone (TDZ)
-console.log(y); // ReferenceError
+// let — Temporal Dead Zone
+console.log(y);             // ReferenceError
 let y = 10;
 
 // Function expression — var hoisted, value is NOT
-console.log(fn); // undefined
-fn();            // TypeError: fn is not a function
+console.log(fn);            // undefined
+fn();                       // TypeError: fn is not a function
 var fn = function() { return 42; };
 
 // class — also TDZ
 const obj = new MyClass(); // ReferenceError
-class MyClass {}`
+class MyClass {}
+
+// Arrow functions follow the same rules as their keyword:
+console.log(arrow);         // undefined
+var arrow = () => 'hi';`
   },
+
+  // 2-9. this keyword
   {
     category: 'Core JavaScript', difficulty: 'Intermediate',
-    question: 'How is `this` determined in JavaScript?',
-    answer: '`this` is the object executing the current function. Rules: 1) **Global/standalone call**: `window` (browser) or `undefined` (strict mode). 2) **Method call** (`obj.fn()`): `this` = `obj`. 3) **`new` call**: `this` = the new object. 4) **Explicit binding**: `call(ctx)`, `apply(ctx, args)`, `bind(ctx)`. 5) **Arrow function**: no own `this` — inherits from enclosing lexical scope, cannot be overridden. Always look at the CALL SITE, not the definition.',
-    tip: `const user = {
-  name: 'Alice',
-  greet() { console.log('Hi, ' + this.name); },
-};
-user.greet();     // 'Hi, Alice'  ← this = user
+    question: 'How is `this` determined in JavaScript? What are the 5 rules?',
+    answer: '`this` = the object executing the current function. Always look at the **call site**, not the definition. 5 rules (priority order): 1) **`new` binding** — `this` = newly created object. 2) **Explicit binding** — `call(ctx)` / `apply(ctx)` / `bind(ctx)`. 3) **Implicit binding** — `obj.fn()` → `this = obj`. 4) **Default binding** — standalone call → `window` (sloppy) / `undefined` (strict). 5) **Arrow functions** — no own `this`; inherit from enclosing lexical scope, cannot be overridden by call/apply/bind.',
+    tip: `// Implicit — this = the object before the dot
+const user = { name: 'Alice', greet() { console.log(this.name); } };
+user.greet();         // 'Alice'
 
+// Detached — loses implicit binding
 const fn = user.greet;
-fn();             // 'Hi, undefined'  ← this = global/undefined
+fn();                 // undefined (strict) or window.name (sloppy)
 
 // Explicit binding
-fn.call(user);    // 'Hi, Alice'
-fn.apply(user);   // 'Hi, Alice'
+fn.call(user);        // 'Alice'
+fn.apply(user);       // 'Alice'
 const bound = fn.bind(user);
-bound();          // 'Hi, Alice'
+bound();              // 'Alice' — permanently bound
 
-// Arrow — lexical this, cannot rebind
+// new binding
+function Person(name) { this.name = name; }
+const p = new Person('Bob');
+p.name;               // 'Bob'
+
+// Arrow — lexical this, ignores call site
 class Timer {
-  constructor() { this.n = 0; }
   start() {
-    setInterval(() => this.n++, 1000); // this = Timer instance
-    // setInterval(function() { this.n++; }, 1000); // BROKEN
+    setInterval(() => console.log(this), 1000); // this = Timer
+    // Regular function here would be undefined/window
   }
 }`
-  },
-  {
-    category: 'Core JavaScript', difficulty: 'Intermediate',
-    question: 'What is the Event Loop? How do call stack, microtasks, and macrotasks work?',
-    answer: 'JS is single-threaded. The Event Loop keeps it non-blocking: **Call Stack** runs sync code (LIFO). **Web APIs** handle async ops (setTimeout, fetch). **Microtask queue** (Promises, queueMicrotask) runs BEFORE the next macrotask — fully drained each turn. **Macrotask queue** (setTimeout, setInterval, I/O) runs one per loop turn. Order: sync code → all microtasks → one macrotask → all microtasks → …',
-    tip: `console.log('1');           // sync
-
-setTimeout(() => {
-  console.log('2');          // macrotask
-}, 0);
-
-Promise.resolve()
-  .then(() => console.log('3')) // microtask
-  .then(() => console.log('4')); // microtask (queued after 3)
-
-console.log('5');           // sync
-
-// Output: 1  5  3  4  2
-// Sync first → microtasks (3,4) → macrotask (2)
-
-// Starvation: too many microtasks block macrotasks
-// Use setTimeout to yield to the event loop`
-  },
-  {
-    category: 'Core JavaScript', difficulty: 'Intermediate',
-    question: 'What is the Prototype chain? How does JS inheritance work?',
-    answer: 'Every JS object has a hidden `[[Prototype]]` link. When accessing a property, JS searches the object first, then walks up the chain until it finds it or reaches `null`. `Object.prototype` is the root. `class`/`extends` is syntactic sugar over this chain. `instanceof` checks the prototype chain. Use `Object.create(proto)` to create an object with a specific prototype, or `class extends` for readable inheritance.',
-    tip: `// Prototype chain
-const animal = { speak() { return 'sound'; } };
-const dog = Object.create(animal);
-dog.speak();   // 'sound' — found on prototype
-
-dog.speak = () => 'Woof';
-dog.speak();   // 'Woof' — found on dog first
-
-// class (sugar over prototype)
-class Animal {
-  constructor(name) { this.name = name; }
-  speak() { return this.name + ' makes a sound'; }
-}
-class Dog extends Animal {
-  speak() { return this.name + ' barks'; }
-}
-const d = new Dog('Rex');
-d.speak();               // 'Rex barks'
-d instanceof Dog;        // true
-d instanceof Animal;     // true — up the chain
-Object.getPrototypeOf(d) === Dog.prototype; // true`
   },
 
   // ── 3. ES6+ Modern JavaScript ────────────────────────────
