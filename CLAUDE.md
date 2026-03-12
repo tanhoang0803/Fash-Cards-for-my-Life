@@ -55,7 +55,7 @@ Flash Cards Page
 
 └── Footer
     ├── Keyboard hints
-    └── Author credit ("Created by @TanQHoang — 2026")
+    └── Author credit ("Copyright © 2026 TanQHoang")
 ```
 
 ---

@@ -119,4 +119,4 @@ npx serve .
 
 ## Author
 
-@TanQHoang — 2026
+Copyright © 2026 TanQHoang
