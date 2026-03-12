@@ -65,7 +65,7 @@ Flash Cards Page
 ### Core
 | Subject | Cards | Categories |
 |---|---|---|
-| DSA | 40+ | Complexity, Data Structures, Algorithms, Patterns, Hashing, Recursion, Interview |
+| DSA | 38 | Arrays, Strings, HashMap, Searching, Recursion, Trees, Graph, Dynamic Programming, Patterns |
 | Internet | 20 | How Internet Works, HTTP & Web, DNS & Domains, Browsers |
 | Linux | 25 | Linux Basics, Files & Permissions, Processes & System, Networking & SSH, Shell Scripting |
 | Tricked Memory | 3+ | SQL (FJ WGH SOL — execution order mnemonic) |
@@ -84,11 +84,11 @@ Flash Cards Page
 ### Frontend
 | Subject | Cards | Categories |
 |---|---|---|
-| JavaScript | 50+ | Overview, Fundamentals, Core JavaScript, ES6+, Async JavaScript, DOM & Browser, Data Structures, Advanced, Performance, Testing, Ecosystem, JS Functions, Interview |
+| JavaScript | 80+ | Overview, Fundamentals, Core JavaScript, ES6+, Async JavaScript, DOM & Browser, Data Structures, Advanced, Performance, Testing, Ecosystem, JS Functions, JS Patterns, Interview |
 | React & SSR | 25 | React Basics, Hooks, Performance, SSR & Next.js |
 | CSS & Tailwind | 20 | CSS Fundamentals, CSS Layouts, Tailwind CSS |
 
-**Total: 400+ cards**
+**Total: 450+ cards**
 
 ### JavaScript — Detailed Breakdown
 
@@ -106,6 +106,7 @@ Flash Cards Page
 | **Testing** | 1 | Jest unit testing · Mocks · Async tests |
 | **Ecosystem** | 2 | npm/package.json · Webpack / Vite / Babel |
 | **JS Functions** | 9 | map/filter/reduce · find/some/every · Object.keys/values/entries · setTimeout/fetch · Promise/async-await · call/apply/bind · Spread/Rest · String methods · JSON.parse/stringify |
+| **JS Patterns** | 33 | Array Transformation · Functional Programming (compose/pipe/curry) · Performance (debounce/throttle/memoize) · Object/Data Handling · Async Patterns (retry+backoff) · Core Internals (closure/module/singleton/factory/prototype/event delegation) |
 | **Interview** | 10 | var vs let vs const · Closure · Hoisting · this · Event loop · Promises · async/await · Destructuring · Spread · map/filter/reduce |
 
 #### Learning Paths
