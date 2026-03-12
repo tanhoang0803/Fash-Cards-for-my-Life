@@ -84,7 +84,7 @@ Flash Cards Page
 ### Frontend
 | Subject | Cards | Categories |
 |---|---|---|
-| JavaScript | 40+ | Overview, Fundamentals, Core JavaScript, ES6+, Async JavaScript, DOM & Browser, Data Structures, Advanced, Performance, Testing, Ecosystem, Interview |
+| JavaScript | 50+ | Overview, Fundamentals, Core JavaScript, ES6+, Async JavaScript, DOM & Browser, Data Structures, Advanced, Performance, Testing, Ecosystem, JS Functions, Interview |
 | React & SSR | 25 | React Basics, Hooks, Performance, SSR & Next.js |
 | CSS & Tailwind | 20 | CSS Fundamentals, CSS Layouts, Tailwind CSS |
 
@@ -96,7 +96,7 @@ Flash Cards Page
 |---|---|---|
 | **Overview** | 1 | Full mindmap · Frontend & Backend learning paths |
 | **Fundamentals** | 5 | var/let/const · Data types · Operators · Control flow · Functions |
-| **Core JavaScript** | 6 | Scope · Closures · Hoisting · `this` keyword · Event loop · Prototype chain |
+| **Core JavaScript** | 9 | Execution Context · Closures · Event Loop · Prototype · Async Programming · Memory · Scopes · Hoisting · this |
 | **ES6+** | 4 | Destructuring & spread · Template literals · Classes · Modules (import/export) |
 | **Async JavaScript** | 3 | Promises · async/await · Fetch API |
 | **DOM & Browser** | 3 | DOM manipulation · Event bubbling & delegation · localStorage/sessionStorage |
@@ -105,6 +105,7 @@ Flash Cards Page
 | **Performance** | 2 | Memoization · Lazy loading · Code splitting · Web Workers |
 | **Testing** | 1 | Jest unit testing · Mocks · Async tests |
 | **Ecosystem** | 2 | npm/package.json · Webpack / Vite / Babel |
+| **JS Functions** | 9 | map/filter/reduce · find/some/every · Object.keys/values/entries · setTimeout/fetch · Promise/async-await · call/apply/bind · Spread/Rest · String methods · JSON.parse/stringify |
 | **Interview** | 10 | var vs let vs const · Closure · Hoisting · this · Event loop · Promises · async/await · Destructuring · Spread · map/filter/reduce |
 
 #### Learning Paths
