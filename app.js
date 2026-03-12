@@ -10584,6 +10584,1503 @@ localStorage.setItem('user', JSON.stringify(user));
 const saved = JSON.parse(localStorage.getItem('user'));`
   },
 
+  // ── JS Patterns Pack ─────────────────────────────────────
+  // 6 sections · 33 cards · category: 'JS Patterns'
+
+  // ════════════════════════════════════════════════════════
+  // 1. ARRAY TRANSFORMATION PATTERNS
+  // ════════════════════════════════════════════════════════
+
+  // 1.1 Map Pattern
+  {
+    category: 'JS Patterns', difficulty: 'Beginner',
+    question: '1.1 Map Pattern — transform every element of an array into a new shape.',
+    answer: '**map(fn)** creates a new array by applying `fn` to every element. The original array is never mutated, the result is always the same length. **When to use**: convert raw API data to display format, extract a single field from objects, apply a formula to every value. **React**: the go-to for rendering lists — `arr.map(item => <Component key={item.id} {...item} />)`. **Rule**: use `map` when you need ALL elements transformed — use `filter` when you need to remove some, use `reduce` when the output shape is different.',
+    tip: `// Basic transform
+const nums = [1, 2, 3];
+const doubled = nums.map(n => n * 2);     // [2, 4, 6]
+const squared = nums.map(n => n ** 2);    // [1, 4, 9]
+
+// Extract a field from objects
+const users = [
+  { id: 1, name: 'Alice', age: 28 },
+  { id: 2, name: 'Bob',   age: 32 },
+];
+const names = users.map(u => u.name);     // ['Alice', 'Bob']
+const ids   = users.map(u => u.id);       // [1, 2]
+
+// Format API data for display
+const products = [
+  { price: 9.9, title: 'book' },
+  { price: 19.9, title: 'pen' },
+];
+const display = products.map(p => ({
+  ...p,
+  priceLabel: '$' + p.price.toFixed(2),
+  title: p.title.toUpperCase(),
+}));
+// [{ price:9.9, title:'BOOK', priceLabel:'$9.90' }, ...]
+
+// React list rendering
+// products.map(p => <ProductCard key={p.id} product={p} />)`
+  },
+
+  // 1.2 Filter Pattern
+  {
+    category: 'JS Patterns', difficulty: 'Beginner',
+    question: '1.2 Filter Pattern — keep only elements that pass a test condition.',
+    answer: '**filter(fn)** returns a new array with only the elements where `fn(element)` returns truthy. Never mutates the original. Result can be shorter (or even empty). **When to use**: search results, filter products by category/price, show only active/completed items, remove nulls. **Combine with map**: filter first to reduce data, then map to transform — always filter before mapping for efficiency. **Falsy removal trick**: `arr.filter(Boolean)` removes all `null`, `undefined`, `0`, `false`, `""` values.',
+    tip: `// Basic filter
+const nums = [1, 2, 3, 4, 5, 6];
+const evens  = nums.filter(n => n % 2 === 0);   // [2, 4, 6]
+const greats = nums.filter(n => n > 3);          // [4, 5, 6]
+
+// Filter objects by property
+const users = [
+  { name: 'Alice', active: true,  role: 'admin' },
+  { name: 'Bob',   active: false, role: 'user'  },
+  { name: 'Carol', active: true,  role: 'user'  },
+];
+const activeUsers = users.filter(u => u.active);
+// [{ name:'Alice'... }, { name:'Carol'... }]
+
+const admins = users.filter(u => u.role === 'admin');
+
+// Remove falsy values (nulls, undefined, empty strings)
+const mixed = [1, null, 'hello', undefined, 0, false, 'world'];
+mixed.filter(Boolean); // [1, 'hello', 'world']
+
+// Search by keyword
+const searchTerm = 'al';
+const results = users.filter(u =>
+  u.name.toLowerCase().includes(searchTerm.toLowerCase())
+);
+
+// Chaining: filter then map
+const activeNames = users
+  .filter(u => u.active)
+  .map(u => u.name);    // ['Alice', 'Carol']`
+  },
+
+  // 1.3 Reduce Pattern
+  {
+    category: 'JS Patterns', difficulty: 'Intermediate',
+    question: '1.3 Reduce Pattern — collapse an array into any single value (sum, object, grouped data).',
+    answer: '**reduce(fn, initial)** is the most powerful array method — it can replace `map` and `filter`, and produce any output shape (number, string, object, array). `acc` = accumulator (carries result forward), `cur` = current element. Always provide the initial value to avoid bugs on empty arrays. **Key mental model**: think of `reduce` as folding the array left-to-right, accumulating a running result. **Use cases**: sum/average, count frequencies, group by property, flatten arrays, build lookup objects from arrays.',
+    tip: `// 1. Sum and statistics
+const nums = [1, 2, 3, 4, 5];
+const sum  = nums.reduce((acc, n) => acc + n, 0);       // 15
+const max  = nums.reduce((acc, n) => Math.max(acc, n), -Infinity); // 5
+
+// 2. Count frequencies (frequency map)
+const fruits = ['apple', 'banana', 'apple', 'cherry', 'banana', 'apple'];
+const freq = fruits.reduce((acc, f) => {
+  acc[f] = (acc[f] || 0) + 1;
+  return acc;
+}, {});
+// { apple: 3, banana: 2, cherry: 1 }
+
+// 3. Group by property
+const orders = [
+  { status: 'pending', id: 1 },
+  { status: 'done',    id: 2 },
+  { status: 'pending', id: 3 },
+];
+const grouped = orders.reduce((acc, o) => {
+  acc[o.status] = acc[o.status] || [];
+  acc[o.status].push(o);
+  return acc;
+}, {});
+// { pending: [{id:1},{id:3}], done: [{id:2}] }
+
+// 4. Build a lookup object (array -> object keyed by id)
+const users = [{ id: 1, name: 'Alice' }, { id: 2, name: 'Bob' }];
+const byId = users.reduce((acc, u) => { acc[u.id] = u; return acc; }, {});
+// { '1': { id:1, name:'Alice' }, '2': { id:2, name:'Bob' } }
+
+// 5. Flatten nested arrays
+const nested = [[1,2],[3,4],[5]];
+const flat = nested.reduce((acc, arr) => [...acc, ...arr], []);
+// [1, 2, 3, 4, 5]  (modern: nested.flat())`
+  },
+
+  // 1.4 Find Pattern
+  {
+    category: 'JS Patterns', difficulty: 'Beginner',
+    question: '1.4 Find Pattern — locate the first matching element (or its index) efficiently.',
+    answer: '**find(fn)** returns the **first element** where `fn` returns truthy, or `undefined` if not found. **findIndex(fn)** returns the index (-1 if not found). Both **short-circuit** — they stop as soon as a match is found (no full scan needed). `find` is ideal when you need the actual object; `findIndex` is ideal when you need to update/delete by position. **vs filter**: `filter` returns ALL matches (new array); `find` returns ONE match (the object or `undefined`).',
+    tip: `const users = [
+  { id: 1, name: 'Alice', role: 'admin' },
+  { id: 2, name: 'Bob',   role: 'user'  },
+  { id: 3, name: 'Carol', role: 'user'  },
+];
+
+// find — first matching element
+const alice = users.find(u => u.id === 1);
+// { id: 1, name: 'Alice', role: 'admin' }
+
+const notFound = users.find(u => u.id === 99);
+// undefined — always guard against this!
+
+if (notFound) { /* safe */ } else { console.log('not found'); }
+
+// findIndex — position of first match
+const idx = users.findIndex(u => u.name === 'Bob');  // 1
+const noIdx = users.findIndex(u => u.id === 99);     // -1
+
+// Use findIndex to update an element immutably (React pattern)
+function updateUser(users, id, changes) {
+  const idx = users.findIndex(u => u.id === id);
+  if (idx === -1) return users;
+  return [
+    ...users.slice(0, idx),
+    { ...users[idx], ...changes },
+    ...users.slice(idx + 1),
+  ];
+}
+
+// Use findIndex to remove an element immutably
+function removeUser(users, id) {
+  const idx = users.findIndex(u => u.id === id);
+  if (idx === -1) return users;
+  return [...users.slice(0, idx), ...users.slice(idx + 1)];
+}`
+  },
+
+  // 1.5 Some Pattern
+  {
+    category: 'JS Patterns', difficulty: 'Beginner',
+    question: '1.5 Some Pattern — check if at least one element satisfies a condition (logical OR).',
+    answer: '**some(fn)** returns `true` as soon as ANY element passes the test — it short-circuits immediately. Think of it as a logical OR across all elements. **Use cases**: permission checks ("does this user have at least one admin role?"), feature flag existence, form validation ("is any field invalid?"), checking if an array contains a certain value/condition. **vs every**: `some` = OR (one is enough); `every` = AND (all must pass). Both return a boolean and are O(n) worst-case but O(1) best-case via short-circuit.',
+    tip: `const nums = [1, 3, 5, 7, 8];
+const users = [
+  { name: 'Alice', roles: ['admin', 'user'] },
+  { name: 'Bob',   roles: ['user'] },
+];
+
+// Basic checks
+nums.some(n => n % 2 === 0);       // true  (8 is even)
+nums.some(n => n > 100);           // false (none > 100)
+[1, 2, 3].some(n => n > 2);       // true  — stops at 3
+
+// Permission check — does user have ANY allowed role?
+const allowedRoles = ['admin', 'moderator'];
+const canAccess = users[0].roles.some(r => allowedRoles.includes(r));
+// true (has 'admin')
+
+// Form validation — is ANY field missing?
+const form = { name: 'Alice', email: '', age: 25 };
+const hasEmptyField = Object.values(form).some(v => !v);
+// true (email is empty)
+
+// Check if array contains an object with certain property
+const products = [{ id: 1 }, { id: 2 }, { id: 3 }];
+const hasProduct2 = products.some(p => p.id === 2);  // true
+
+// Early-exit advantage: with 1000 elements, stops at first match
+// vs filter which always scans all 1000
+const huge = Array.from({length: 1000}, (_, i) => i);
+huge.some(n => n > 5); // stops at index 6 — O(1) best case`
+  },
+
+  // 1.6 Every Pattern
+  {
+    category: 'JS Patterns', difficulty: 'Beginner',
+    question: '1.6 Every Pattern — verify that ALL elements satisfy a condition (logical AND).',
+    answer: '**every(fn)** returns `true` only if ALL elements pass — it short-circuits and returns `false` on the first failure. Think of it as a logical AND across all elements. **Use cases**: validate all form fields are filled, check all items are selected/checked, ensure all permissions are met, data integrity checks. **Empty array edge case**: `[].every(fn)` returns `true` (vacuous truth) — guard against this if needed. **Combine with some**: `some` for "any", `every` for "all" — together they cover most conditional collection checks.',
+    tip: `const nums = [2, 4, 6, 8, 10];
+
+// Basic checks
+nums.every(n => n % 2 === 0);      // true  — all even
+nums.every(n => n > 5);            // false — stops at 2
+
+// Form validation — are ALL required fields filled?
+const form = { name: 'Alice', email: 'a@b.com', age: 25 };
+const required = ['name', 'email', 'age'];
+const isValid = required.every(field => Boolean(form[field]));
+// true
+
+const formBad = { name: 'Alice', email: '', age: 25 };
+required.every(field => Boolean(formBad[field])); // false (email empty)
+
+// Check all checkboxes selected
+const items = [
+  { label: 'Item 1', checked: true  },
+  { label: 'Item 2', checked: true  },
+  { label: 'Item 3', checked: false },
+];
+const allSelected = items.every(i => i.checked);  // false
+const selectAllLabel = allSelected ? 'Deselect All' : 'Select All';
+
+// Check all API responses succeeded
+const responses = [
+  { ok: true, data: { id: 1 } },
+  { ok: true, data: { id: 2 } },
+];
+const allSucceeded = responses.every(r => r.ok);  // true
+
+// Combine some + every for complex validation
+const users = [{ age: 20 }, { age: 17 }, { age: 25 }];
+const anyMinor  = users.some(u => u.age < 18);   // true
+const allAdults = users.every(u => u.age >= 18);  // false`
+  },
+
+  // ════════════════════════════════════════════════════════
+  // 2. FUNCTIONAL PROGRAMMING PATTERNS
+  // ════════════════════════════════════════════════════════
+
+  // 2.1 Function Composition
+  {
+    category: 'JS Patterns', difficulty: 'Intermediate',
+    question: '2.1 Function Composition — combine functions so the output of one becomes the input of the next (right to left).',
+    answer: '**Composition** `compose(f, g)(x) = f(g(x))` — applies functions **right to left**. g runs first, passes result to f. Build complex operations by chaining simple, single-purpose functions. **Benefits**: each function is small and testable, pipelines are readable, functions are reusable in any combination. The mathematical notation `(f ∘ g)(x) = f(g(x))` maps directly to code. For N functions: `compose(f, g, h)(x) = f(g(h(x)))`. **Contrast with pipe**: pipe applies left-to-right (more intuitive for most devs).',
+    tip: `// Basic compose (right to left)
+const compose = (f, g) => x => f(g(x));
+
+const double = x => x * 2;
+const square = x => x * x;
+const addOne = x => x + 1;
+
+const squareThenDouble = compose(double, square);
+squareThenDouble(3); // double(square(3)) = double(9) = 18
+
+const doubleThenSquare = compose(square, double);
+doubleThenSquare(3); // square(double(3)) = square(6) = 36
+
+// Compose N functions (variadic)
+const composeN = (...fns) => x => fns.reduceRight((acc, fn) => fn(acc), x);
+
+const transform = composeN(addOne, double, square);
+transform(3); // addOne(double(square(3))) = addOne(double(9)) = addOne(18) = 19
+
+// Real-world: compose string transformers
+const trim      = s => s.trim();
+const lowercase = s => s.toLowerCase();
+const slugify   = s => s.replace(/\s+/g, '-');
+
+const toSlug = composeN(slugify, lowercase, trim);
+toSlug('  Hello World  '); // 'hello-world'
+
+// Compose works great for data transformation pipelines:
+// parseJSON -> validate -> normalize -> format`
+  },
+
+  // 2.2 Pipe Pattern
+  {
+    category: 'JS Patterns', difficulty: 'Intermediate',
+    question: '2.2 Pipe Pattern — apply functions left to right (same as compose but more readable).',
+    answer: '**Pipe** `pipe(f, g)(x) = g(f(x))` — applies functions **left to right** (the order you write them = the order they execute). More intuitive than compose for most developers because you read top-to-bottom, like a Unix pipe. **Real-world use**: data transformation pipelines, middleware chains, request/response processing. `pipe` is equivalent to `compose` with arguments reversed. Modern JS proposal: `|>` operator (pipeline operator) aims to make this native. Libraries: Ramda, Lodash/fp, fp-ts all provide pipe/compose.',
+    tip: `// Pipe — left to right
+const pipe = (...fns) => x => fns.reduce((acc, fn) => fn(acc), x);
+
+const double  = x => x * 2;
+const square  = x => x * x;
+const addOne  = x => x + 1;
+
+const transform = pipe(double, square, addOne);
+transform(3);
+// double(3)=6 -> square(6)=36 -> addOne(36)=37
+
+// Compare: compose(addOne, square, double)(3) = same result, reverse order
+
+// Real-world: user data pipeline
+const trim      = s => s.trim();
+const lowercase = s => s.toLowerCase();
+const slugify   = s => s.replace(/\s+/g, '-');
+const validate  = s => { if (!s) throw new Error('Empty'); return s; };
+
+const processInput = pipe(trim, validate, lowercase, slugify);
+processInput('  Hello World  '); // 'hello-world'
+
+// API request middleware pattern (pipe-like)
+const withAuth    = req => ({ ...req, headers: { ...req.headers, Authorization: 'Bearer token' } });
+const withJson    = req => ({ ...req, headers: { ...req.headers, 'Content-Type': 'application/json' } });
+const withLogging = req => { console.log('REQ:', req.url); return req; };
+
+const buildRequest = pipe(withAuth, withJson, withLogging);
+buildRequest({ url: '/api/users', method: 'GET' });`
+  },
+
+  // 2.3 Currying
+  {
+    category: 'JS Patterns', difficulty: 'Intermediate',
+    question: '2.3 Currying — transform a multi-argument function into a chain of single-argument functions.',
+    answer: '**Currying** converts `f(a, b, c)` into `f(a)(b)(c)` — each call receives one argument and returns a new function expecting the next. **Benefits**: partial application (pre-fill some arguments), reusability, composition compatibility. **Auto-curry**: a curry utility that handles both curried and normal calling styles. **Real uses**: event handlers with pre-bound data, customizable validators, filtering factories, logging with pre-set context. Curried functions work naturally with `compose` and `pipe` since they accept one argument.',
+    tip: `// Manual currying
+const add = a => b => a + b;
+add(2)(3);    // 5
+const add5 = add(5);     // partial: pre-fills a=5
+add5(10);     // 15
+add5(20);     // 25 — reusable!
+
+// Curried multiply
+const multiply = a => b => a * b;
+const double = multiply(2);
+const triple = multiply(3);
+[1,2,3].map(double); // [2,4,6]
+[1,2,3].map(triple); // [3,6,9]
+
+// Auto-curry utility (handles any arity)
+function curry(fn) {
+  return function curried(...args) {
+    if (args.length >= fn.length) return fn(...args);
+    return (...more) => curried(...args, ...more);
+  };
+}
+const addThree = curry((a, b, c) => a + b + c);
+addThree(1)(2)(3); // 6
+addThree(1, 2)(3); // 6  — flexible calling
+addThree(1)(2, 3); // 6
+
+// Curried validator factory
+const isGreaterThan = min => value => value > min;
+const isPositive  = isGreaterThan(0);
+const isAdult     = isGreaterThan(17);
+[1, -2, 3].filter(isPositive); // [1, 3]
+[15, 18, 20].filter(isAdult);  // [18, 20]`
+  },
+
+  // 2.4 Partial Application
+  {
+    category: 'JS Patterns', difficulty: 'Intermediate',
+    question: '2.4 Partial Application — pre-fill some arguments of a function to create a specialized version.',
+    answer: '**Partial Application** fixes some arguments of a function, returning a new function that takes the remaining arguments. Unlike currying (which fixes ONE argument at a time), partial application can fix multiple at once. **Methods**: `Function.prototype.bind(null, arg1, arg2)` — built-in partial application. Manual `partial` utility. **Difference from curry**: curry always produces unary (single-arg) functions; partial application can produce functions with any number of remaining args. **Use cases**: pre-configure API base URLs, create logging functions with pre-set severity, specialize utility functions.',
+    tip: `// Using bind for partial application
+function multiply(a, b) { return a * b; }
+const double = multiply.bind(null, 2); // pre-fill a=2
+const triple = multiply.bind(null, 3);
+
+double(5);  // 10
+triple(5);  // 15
+[1,2,3].map(double); // [2,4,6]
+
+// Manual partial utility
+function partial(fn, ...presetArgs) {
+  return function(...laterArgs) {
+    return fn(...presetArgs, ...laterArgs);
+  };
+}
+
+function log(level, timestamp, message) {
+  console.log('[' + level + '] ' + timestamp + ': ' + message);
+}
+
+const logError = partial(log, 'ERROR');
+const logWarn  = partial(log, 'WARN');
+
+logError(Date.now(), 'Connection failed');
+logWarn(Date.now(),  'Slow response');
+
+// API factory with pre-set base URL
+function request(baseUrl, endpoint, options) {
+  return fetch(baseUrl + endpoint, options);
+}
+const apiRequest = partial(request, 'https://api.example.com');
+apiRequest('/users', { method: 'GET' });
+apiRequest('/posts', { method: 'POST', body: '{}' });`
+  },
+
+  // 2.5 Higher-Order Functions
+  {
+    category: 'JS Patterns', difficulty: 'Intermediate',
+    question: '2.5 Higher-Order Functions — functions that take or return other functions.',
+    answer: 'A **Higher-Order Function (HOF)** either: 1) **Takes a function as argument** (map, filter, reduce, setTimeout, addEventListener, sort), or 2) **Returns a function** (factory functions, decorators, middleware). HOFs are the foundation of functional programming in JS and enable: abstraction over behavior, code reuse, decorating/wrapping existing functions. **Key insight**: in JS, functions are first-class values — they can be stored in variables, passed as arguments, and returned from functions just like any other value.',
+    tip: `// HOF: takes a function as argument
+function repeat(fn, times) {
+  for (let i = 0; i < times; i++) fn(i);
+}
+repeat(i => console.log('Step ' + i), 3);
+// Step 0, Step 1, Step 2
+
+// HOF: returns a function (factory / decorator)
+function withLogging(fn) {
+  return function(...args) {
+    console.log('Calling with:', args);
+    const result = fn(...args);
+    console.log('Result:', result);
+    return result;
+  };
+}
+const add = (a, b) => a + b;
+const loggedAdd = withLogging(add);
+loggedAdd(2, 3);
+// Calling with: [2, 3]
+// Result: 5
+
+// HOF: once — call a function only once
+function once(fn) {
+  let called = false, result;
+  return function(...args) {
+    if (!called) { called = true; result = fn(...args); }
+    return result;
+  };
+}
+const init = once(() => { console.log('Initialized!'); return 42; });
+init(); // 'Initialized!' -> 42
+init(); // 42  (fn not called again)
+
+// Built-in HOFs in action
+[1,2,3,4].map(n => n * 2);              // HOF: takes fn
+[1,2,3,4].filter(n => n % 2 === 0);    // HOF: takes fn
+setTimeout(() => console.log('hi'), 0); // HOF: takes fn`
+  },
+
+  // 2.6 Pure Functions
+  {
+    category: 'JS Patterns', difficulty: 'Intermediate',
+    question: '2.6 Pure Functions — deterministic, side-effect-free functions and why they matter.',
+    answer: 'A **pure function**: 1) Always returns the **same output** for the same input. 2) Has **no side effects** — doesn\'t modify external state, doesn\'t read mutable external data, no I/O. **Benefits**: predictable, easily testable (no mocks needed), safe to memoize, safe to run in parallel. **Side effects** (impure): modifying a variable outside the function, mutating function arguments, HTTP calls, console.log, reading `Date.now()`. **Key distinction**: pure functions TRANSFORM data; impure functions DO things. Aim for pure core logic, push side effects to the edges.',
+    tip: `// PURE functions — same input always = same output
+const add = (a, b) => a + b;             // pure
+const double = x => x * 2;              // pure
+const getFullName = u => u.first + ' ' + u.last; // pure
+
+// IMPURE — reads mutable external state
+let tax = 0.1;
+const priceWithTax = price => price * (1 + tax); // impure: reads 'tax'
+tax = 0.2; // now priceWithTax(100) returns different value!
+
+// Make it pure — pass all dependencies as arguments
+const calcPrice = (price, taxRate) => price * (1 + taxRate); // pure
+
+// IMPURE — mutates argument
+function addItem(cart, item) {
+  cart.push(item);    // MUTATES original array!
+  return cart;
+}
+// PURE — returns new array
+function addItemPure(cart, item) {
+  return [...cart, item];  // original unchanged
+}
+
+// IMPURE — side effect (external call)
+function saveUser(user) {
+  localStorage.setItem('user', JSON.stringify(user)); // side effect
+  return user;
+}
+
+// Testing pure vs impure:
+// Pure: add(2, 3) === 5 always — no setup needed
+// Impure: must mock localStorage, Date, fetch, etc.
+
+// React principle: reducers MUST be pure functions
+// Redux reducer: (state, action) => newState — pure!`
+  },
+
+  // ════════════════════════════════════════════════════════
+  // 3. PERFORMANCE OPTIMIZATION PATTERNS
+  // ════════════════════════════════════════════════════════
+
+  // 3.1 Debounce
+  {
+    category: 'JS Patterns', difficulty: 'Intermediate',
+    question: '3.1 Debounce — delay function execution until input stops for N milliseconds.',
+    answer: '**Debounce** wraps a function so it only executes after the user has stopped triggering it for a specified delay. Each new call resets the timer. **Use when**: you want to react to the FINAL state after a burst of events. **Use cases**: search-as-you-type API calls, form auto-save, window resize recalculations, button rapid-click prevention. **Difference from throttle**: debounce fires AFTER the burst ends; throttle fires AT MOST once per interval during the burst. **Key parameters**: `fn` = function to debounce, `delay` = wait time in ms.',
+    tip: `// Debounce implementation
+function debounce(fn, delay) {
+  let timer = null;
+  return function(...args) {
+    clearTimeout(timer);                     // reset on every call
+    timer = setTimeout(() => fn(...args), delay);
+  };
+}
+
+// Search input — only fires after user stops typing for 300ms
+const searchInput = document.getElementById('search');
+const search = debounce((query) => {
+  fetch('/api/search?q=' + query)
+    .then(r => r.json())
+    .then(results => renderResults(results));
+}, 300);
+
+searchInput.addEventListener('input', e => search(e.target.value));
+// User types 'j', 'ja', 'jav', 'java' fast — only ONE request sent
+
+// Window resize (re-render only after resize stops)
+const handleResize = debounce(() => {
+  console.log('Window size:', window.innerWidth, window.innerHeight);
+}, 200);
+window.addEventListener('resize', handleResize);
+
+// Debounce with immediate option (fire once at START, then debounce)
+function debounceImmediate(fn, delay) {
+  let timer = null;
+  return function(...args) {
+    const callNow = !timer;
+    clearTimeout(timer);
+    timer = setTimeout(() => { timer = null; }, delay);
+    if (callNow) fn(...args);  // fire immediately first time
+  };
+}`
+  },
+
+  // 3.2 Throttle
+  {
+    category: 'JS Patterns', difficulty: 'Intermediate',
+    question: '3.2 Throttle — limit a function to fire at most once per time interval.',
+    answer: '**Throttle** ensures a function executes at most once per specified interval, regardless of how many times it\'s triggered. Unlike debounce (waits for silence), throttle fires regularly during continuous input. **Use when**: you want PERIODIC updates during continuous events. **Use cases**: scroll event handlers (update navbar/progress), mouse move (drag effects), game loop updates, rate-limiting API calls. **Mental model**: debounce = "wait until things calm down"; throttle = "fire every N ms max, no matter what".',
+    tip: `// Throttle implementation
+function throttle(fn, delay) {
+  let lastTime = 0;
+  return function(...args) {
+    const now = Date.now();
+    if (now - lastTime >= delay) {
+      lastTime = now;
+      fn(...args);
+    }
+  };
+}
+
+// Scroll progress bar — update at most 10 times/second
+const updateProgress = throttle(() => {
+  const scrollTop    = window.scrollY;
+  const docHeight    = document.body.scrollHeight - window.innerHeight;
+  const progress     = (scrollTop / docHeight) * 100;
+  document.getElementById('progress').style.width = progress + '%';
+}, 100);
+
+window.addEventListener('scroll', updateProgress);
+// Without throttle: fires HUNDREDS of times per second on scroll
+// With throttle(100ms): fires max 10 times per second
+
+// Button spam prevention (throttle click)
+const submitBtn = document.getElementById('submit');
+submitBtn.addEventListener('click', throttle(async () => {
+  await submitForm();
+}, 2000)); // can only submit once per 2 seconds
+
+// Comparison summary:
+// Debounce: search input, auto-save, resize
+//   → waits for user to STOP, then fires once
+// Throttle: scroll, mousemove, game loop
+//   → fires REGULARLY during continuous events`
+  },
+
+  // 3.3 Memoization
+  {
+    category: 'JS Patterns', difficulty: 'Intermediate',
+    question: '3.3 Memoization — cache expensive function results to avoid redundant computation.',
+    answer: '**Memoization** stores the result of a function call keyed by its arguments. On subsequent calls with the same arguments, the cached result is returned instantly without recomputing. **When to use**: computationally expensive pure functions that are called repeatedly with the same arguments (fibonacci, factorial, complex calculations). **Requirements**: the function must be **pure** (same input = same output, no side effects). **In React**: `useMemo` memoizes a computed value; `useCallback` memoizes a function reference; `React.memo` memoizes a component.',
+    tip: `// Basic memoize (single argument)
+function memoize(fn) {
+  const cache = new Map();
+  return function(x) {
+    if (cache.has(x)) {
+      console.log('Cache hit for:', x);
+      return cache.get(x);
+    }
+    const result = fn(x);
+    cache.set(x, result);
+    return result;
+  };
+}
+
+// Expensive Fibonacci without memo: O(2^n)
+const fib = memoize(function(n) {
+  if (n <= 1) return n;
+  return fib(n - 1) + fib(n - 2); // recursive calls also hit cache
+});
+fib(40); // computes once — subsequent calls instant
+
+// Multi-argument memoize (JSON key)
+function memoizeMulti(fn) {
+  const cache = new Map();
+  return function(...args) {
+    const key = JSON.stringify(args);
+    if (cache.has(key)) return cache.get(key);
+    const result = fn(...args);
+    cache.set(key, result);
+    return result;
+  };
+}
+const expensiveCalc = memoizeMulti((a, b) => {
+  // imagine heavy computation here
+  return a ** b;
+});
+
+// React memoization
+// useMemo: memoize computed value
+// const total = useMemo(() => items.reduce((s, i) => s + i.price, 0), [items]);
+
+// useCallback: memoize function reference
+// const handleClick = useCallback(() => onPress(id), [id]);`
+  },
+
+  // 3.4 Lazy Evaluation
+  {
+    category: 'JS Patterns', difficulty: 'Intermediate',
+    question: '3.4 Lazy Evaluation — defer computation until the value is actually needed.',
+    answer: '**Lazy Evaluation** delays computation until the result is required, avoiding wasted work. **Techniques in JS**: 1) **Getter functions** — compute on first access. 2) **Thunks** — wrap value in a function `() => value`, call only when needed. 3) **Generators** — produce values on demand (infinite sequences). 4) **Dynamic imports** — `import()` loads modules on demand. 5) **Short-circuit evaluation** — `a && b` only evaluates `b` if `a` is truthy. **Benefits**: improved startup time, memory savings for values that might never be needed.',
+    tip: `// 1. Getter — lazy property computation
+const obj = {
+  get expensiveData() {
+    console.log('Computing...');
+    return Array.from({length: 1000000}, (_, i) => i * 2);
+  }
+};
+// Not computed until accessed:
+// obj.expensiveData  <- computes now
+
+// 2. Thunk — wrap computation in a function
+const getConfig = () => JSON.parse(localStorage.getItem('config'));
+// Config only read when getConfig() is called
+
+// 3. Lazy singleton with closure
+function lazyInit(factory) {
+  let instance = null;
+  return () => {
+    if (!instance) instance = factory();
+    return instance;
+  };
+}
+const getDB = lazyInit(() => {
+  console.log('Connecting to DB...');
+  return { query: () => {} };
+});
+getDB(); // connects now
+getDB(); // reuses existing connection
+
+// 4. Generator — infinite lazy sequence
+function* naturals() {
+  let n = 1;
+  while (true) yield n++;
+}
+const gen = naturals();
+gen.next().value; // 1
+gen.next().value; // 2
+gen.next().value; // 3 — computed on demand, never all at once
+
+// 5. Dynamic import — load code only when needed
+async function loadModule() {
+  const { heavyLib } = await import('./heavyLib.js'); // lazy!
+  heavyLib.doWork();
+}`
+  },
+
+  // 3.5 Virtualization
+  {
+    category: 'JS Patterns', difficulty: 'Advanced',
+    question: '3.5 Virtualization (Virtual List) — render only visible items for massive lists.',
+    answer: '**Virtualization** (windowing) renders only the DOM nodes that are currently visible in the viewport, instead of all items. A list of 10,000 items creates 10,000 DOM nodes and kills performance; virtualization keeps only ~20-30 nodes alive at any time. **Libraries**: `react-window`, `react-virtualized`, `@tanstack/virtual`. **Core concept**: maintain a window of visible items based on scroll position, recycle DOM nodes as user scrolls. **When to use**: lists with 100+ items where rendering all causes jank. Other perf patterns: code splitting, lazy images, pagination, infinite scroll.',
+    tip: `// Concept: Virtual List core logic
+function VirtualList({ items, itemHeight, containerHeight }) {
+  const [scrollTop, setScrollTop] = React.useState(0);
+
+  const visibleCount = Math.ceil(containerHeight / itemHeight);
+  const startIdx     = Math.floor(scrollTop / itemHeight);
+  const endIdx       = Math.min(startIdx + visibleCount + 1, items.length);
+
+  const visibleItems = items.slice(startIdx, endIdx);
+  const topPadding   = startIdx * itemHeight;
+  const totalHeight  = items.length * itemHeight;
+
+  return (
+    // <div style={{height: containerHeight, overflow: 'auto'}} onScroll={...}>
+    //   <div style={{height: totalHeight, paddingTop: topPadding}}>
+    //     {visibleItems.map(item => <Row key={item.id} item={item} />)}
+    //   </div>
+    // </div>
+    null // JSX shown conceptually
+  );
+}
+
+// Using react-window (production solution)
+// import { FixedSizeList } from 'react-window';
+//
+// <FixedSizeList
+//   height={600}
+//   itemCount={10000}
+//   itemSize={35}
+//   width="100%"
+// >
+//   {({ index, style }) => (
+//     <div style={style}>Row {index}: {items[index].name}</div>
+//   )}
+// </FixedSizeList>
+
+// Performance rules of thumb:
+// < 100 items:   render all — no optimization needed
+// 100-500 items: consider pagination or simple windowing
+// 500+ items:    always virtualize`
+  },
+
+  // ════════════════════════════════════════════════════════
+  // 4. OBJECT / DATA HANDLING PATTERNS
+  // ════════════════════════════════════════════════════════
+
+  // 4.1 Destructuring
+  {
+    category: 'JS Patterns', difficulty: 'Beginner',
+    question: '4.1 Destructuring — extract values from objects and arrays with clean syntax.',
+    answer: '**Destructuring** unpacks values from arrays/objects into variables in a single statement. Makes code more readable, eliminates repetitive property access. **Object destructuring**: `const { a, b } = obj` — can rename, set defaults, nest. **Array destructuring**: `const [first, ...rest] = arr` — position-based, good for swapping. **Function parameter destructuring**: receive objects and destructure inline. **Common patterns**: rename during destructure `{ name: userName }`, default values `{ age = 18 }`, skip array elements `[, second]`, nested `{ address: { city } }`.',
+    tip: `// Object destructuring
+const user = { name: 'Alice', age: 28, role: 'admin', city: 'Hanoi' };
+
+const { name, age }       = user;         // basic
+const { name: userName }  = user;         // rename: userName = 'Alice'
+const { score = 100 }     = user;         // default: score = 100 (not in obj)
+const { name: n, ...rest} = user;         // rest: rest = { age, role, city }
+
+// Nested destructuring
+const data = { user: { profile: { city: 'Hanoi' } } };
+const { user: { profile: { city } } } = data; // city = 'Hanoi'
+
+// Array destructuring
+const colors = ['red', 'green', 'blue'];
+const [primary, secondary]     = colors;  // red, green
+const [first, , third]         = colors;  // skip: red, blue
+const [head, ...tail]          = colors;  // head='red', tail=['green','blue']
+
+// Swap variables (no temp needed)
+let a = 1, b = 2;
+[a, b] = [b, a];  // a=2, b=1
+
+// Function parameter destructuring (common in React)
+function UserCard({ name, age, role = 'user' }) {
+  return name + ' (' + age + ') - ' + role;
+}
+UserCard({ name: 'Alice', age: 28, role: 'admin' }); // clean API
+
+// API response destructuring
+const { data: users, status, headers: { 'content-type': ct } } =
+  await axios.get('/api/users');`
+  },
+
+  // 4.2 Spread Operator
+  {
+    category: 'JS Patterns', difficulty: 'Beginner',
+    question: '4.2 Spread Operator — copy, merge, and override arrays and objects.',
+    answer: '**Spread** (`...`) expands an iterable into individual elements. **For arrays**: copy, merge, prepend/append, unpack into function args. **For objects**: shallow copy, merge, override properties. **React state pattern**: `setState(prev => ({ ...prev, field: newValue }))` — always return a new object, never mutate. **Shallow copy warning**: spread copies top-level properties by reference — nested objects are still shared. For deep cloning, use `structuredClone()` or `JSON.parse(JSON.stringify(obj))`. **vs Object.assign**: spread is more readable and works in literals; `Object.assign` modifies the target in-place.',
+    tip: `// Array spread
+const arr = [1, 2, 3];
+const copy   = [...arr];                  // [1,2,3] — new array
+const added  = [...arr, 4, 5];           // [1,2,3,4,5]
+const merged = [...arr, ...[4, 5]];      // [1,2,3,4,5]
+Math.max(...arr);                        // 3 — unpack as args
+
+// Object spread
+const defaults = { theme: 'dark', lang: 'en', size: 'md' };
+const userPrefs = { lang: 'vi', size: 'lg' };
+const config = { ...defaults, ...userPrefs };
+// { theme:'dark', lang:'vi', size:'lg' } — right side wins
+
+// React immutable state update pattern
+const state = { name: 'Alice', score: 10, level: 2 };
+
+// Update one field — return NEW object
+const newState = { ...state, score: state.score + 1 };
+// { name:'Alice', score:11, level:2 }
+
+// Add a new field
+const withRole = { ...state, role: 'admin' };
+
+// Update nested (need spread at each level!)
+const nested = { user: { name: 'Alice', address: { city: 'Hanoi' } } };
+const updatedCity = {
+  ...nested,
+  user: { ...nested.user, address: { ...nested.user.address, city: 'HCM' } },
+};
+
+// SHALLOW COPY TRAP
+const orig = { info: { score: 100 } };
+const copy = { ...orig };
+copy.info.score = 0;   // mutates orig.info too! (shared reference)
+// Fix: structuredClone(orig) for true deep copy`
+  },
+
+  // 4.3 Immutability
+  {
+    category: 'JS Patterns', difficulty: 'Intermediate',
+    question: '4.3 Immutability Pattern — never mutate state; always return new data.',
+    answer: '**Immutability** means never changing existing data — instead, create and return a new copy with the desired changes. **Why it matters**: makes state changes predictable and traceable, enables time-travel debugging, is required for React state updates to trigger re-renders (React compares references, not values). **Techniques**: spread for update/merge, `filter` for remove, `map` for update-in-array, `Object.freeze` for enforced immutability. **Immutable libraries**: Immer (`produce` function lets you "mutate" a draft that creates a new immutable copy).',
+    tip: `// MUTABLE (bad for React/Redux)
+const state = { count: 0, items: ['a', 'b'] };
+state.count = 1;          // direct mutation — React won't re-render!
+state.items.push('c');    // array mutation
+
+// IMMUTABLE patterns
+// Update a field
+const newState = { ...state, count: state.count + 1 };
+
+// Add to array
+const withNew = { ...state, items: [...state.items, 'c'] };
+
+// Remove from array (filter)
+const withRemoved = { ...state, items: state.items.filter(i => i !== 'b') };
+
+// Update element in array (map)
+const users = [{ id: 1, name: 'Alice' }, { id: 2, name: 'Bob' }];
+const updated = users.map(u => u.id === 1 ? { ...u, name: 'Alicia' } : u);
+
+// Object.freeze — shallow immutability enforcement
+const config = Object.freeze({ env: 'prod', port: 3000 });
+// config.port = 9999; // silently fails in sloppy, throws in strict
+
+// Immer — write "mutations", get immutable result
+// import produce from 'immer';
+// const nextState = produce(state, draft => {
+//   draft.count += 1;        // looks like mutation
+//   draft.items.push('c');   // but draft is a proxy
+// });
+// state is unchanged; nextState is a new object
+
+// Redux reducer pattern (must be pure + immutable)
+function reducer(state = { count: 0 }, action) {
+  switch (action.type) {
+    case 'INCREMENT': return { ...state, count: state.count + 1 };
+    case 'RESET':     return { ...state, count: 0 };
+    default:          return state;
+  }
+}`
+  },
+
+  // 4.4 Object.entries / Object.values
+  {
+    category: 'JS Patterns', difficulty: 'Beginner',
+    question: '4.4 Object.entries / Object.values — iterate and transform objects like arrays.',
+    answer: '**Object.entries(obj)** → `[[key, value], ...]` pairs. **Object.values(obj)** → `[value, ...]`. **Object.keys(obj)** → `[key, ...]`. All return arrays, so you can chain `.map()`, `.filter()`, `.reduce()`. **Object.fromEntries(pairs)** reverses entries back to an object — the key for object transformation pipelines. **Common patterns**: filter object properties, transform all values, convert between object and array format. These four methods together cover almost all object iteration needs.',
+    tip: `const prices = { apple: 1.2, banana: 0.5, cherry: 3.0, durian: 15.0 };
+
+// Object.keys / values / entries
+Object.keys(prices);    // ['apple','banana','cherry','durian']
+Object.values(prices);  // [1.2, 0.5, 3.0, 15.0]
+Object.entries(prices); // [['apple',1.2],['banana',0.5],...]
+
+// Loop an object (clean pattern)
+for (const [key, val] of Object.entries(prices)) {
+  console.log(key + ': $' + val);
+}
+
+// Transform all values (map over object)
+const withTax = Object.fromEntries(
+  Object.entries(prices).map(([k, v]) => [k, +(v * 1.1).toFixed(2)])
+);
+// { apple: 1.32, banana: 0.55, cherry: 3.3, durian: 16.5 }
+
+// Filter object properties
+const affordable = Object.fromEntries(
+  Object.entries(prices).filter(([, v]) => v < 5)
+);
+// { apple: 1.2, banana: 0.5, cherry: 3.0 }
+
+// Rename keys
+const renamed = Object.fromEntries(
+  Object.entries(prices).map(([k, v]) => [k.toUpperCase(), v])
+);
+// { APPLE: 1.2, BANANA: 0.5, ... }
+
+// Sum all values
+const total = Object.values(prices).reduce((acc, v) => acc + v, 0);
+
+// Check if a value exists
+Object.values(prices).includes(3.0);  // true
+Object.entries(prices).some(([k]) => k === 'cherry'); // true`
+  },
+
+  // 4.5 Deep Clone
+  {
+    category: 'JS Patterns', difficulty: 'Intermediate',
+    question: '4.5 Deep Clone — create a fully independent copy with no shared references.',
+    answer: '**Shallow copy** (`{...obj}`, `Object.assign`) copies top-level properties — nested objects are still shared references. **Deep clone** creates a completely independent copy at all levels. **Methods**: 1) `structuredClone(obj)` — modern, built-in (Chrome 98+, Node 17+), handles Date, Map, Set, ArrayBuffer, circular refs. 2) `JSON.parse(JSON.stringify(obj))` — works for plain JSON data, but drops `undefined`, functions, Dates become strings, no circular refs. 3) Custom recursive clone for special cases. 4) Lodash `_.cloneDeep` — battle-tested for edge cases.',
+    tip: `// Shallow copy problem
+const original = { name: 'Alice', address: { city: 'Hanoi' } };
+const shallow  = { ...original };
+
+shallow.name = 'Bob';          // OK — own property
+shallow.address.city = 'HCM'; // MUTATES original.address too!
+original.address.city;         // 'HCM' — shared reference!
+
+// --- Method 1: structuredClone (BEST — modern) ---
+const deep1 = structuredClone(original);
+deep1.address.city = 'HCM';
+original.address.city; // 'Hanoi' — untouched!
+
+// structuredClone supports: Date, Map, Set, RegExp, ArrayBuffer, Blob
+// Does NOT support: functions, DOM nodes
+
+// --- Method 2: JSON (simple, limited) ---
+const deep2 = JSON.parse(JSON.stringify(original));
+// Limitations:
+//   undefined / functions -> dropped
+//   Date -> string (not Date object)
+//   Map / Set -> {}
+//   Circular refs -> throws
+
+// --- Method 3: recursive custom clone ---
+function deepClone(value) {
+  if (value === null || typeof value !== 'object') return value;
+  if (Array.isArray(value)) return value.map(deepClone);
+  return Object.fromEntries(
+    Object.entries(value).map(([k, v]) => [k, deepClone(v)])
+  );
+}
+
+// When to use which:
+// structuredClone -> default choice (modern environments)
+// JSON method      -> quick hack for plain data, no special types
+// _.cloneDeep      -> when supporting older envs or edge cases matter`
+  },
+
+  // ════════════════════════════════════════════════════════
+  // 5. ASYNC PROGRAMMING PATTERNS
+  // ════════════════════════════════════════════════════════
+
+  // 5.1 Promise Pattern
+  {
+    category: 'JS Patterns', difficulty: 'Intermediate',
+    question: '5.1 Promise Pattern — create, chain, and handle Promises correctly.',
+    answer: 'A **Promise** represents a value that will be available in the future (or fail). States: **pending** → **fulfilled** (resolve) or **rejected** (reject). **Chain** with `.then(onFulfilled).catch(onRejected).finally(cleanup)`. Each `.then()` returns a new Promise — enabling chaining. **Key rules**: always handle rejections (unhandled rejections crash Node.js); `.catch` at the end catches any error in the chain; `.finally` always runs (great for cleanup). **Promisify**: convert callback-based APIs to Promises with `new Promise((resolve, reject) => ...)`.',
+    tip: `// Create a Promise
+const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+
+// Promisify a callback-based function
+function readFileAsync(path) {
+  return new Promise((resolve, reject) => {
+    fs.readFile(path, 'utf8', (err, data) => {
+      if (err) reject(err);
+      else resolve(data);
+    });
+  });
+}
+
+// Promise chain
+fetch('/api/user')
+  .then(res => {
+    if (!res.ok) throw new Error('HTTP ' + res.status); // caught by .catch
+    return res.json();
+  })
+  .then(user => {
+    console.log('Got user:', user.name);
+    return fetch('/api/posts?userId=' + user.id); // chain another request
+  })
+  .then(res => res.json())
+  .then(posts => console.log('Posts:', posts))
+  .catch(err => console.error('Error:', err))  // catches ALL above errors
+  .finally(() => hideSpinner());               // always runs
+
+// Promise.resolve / reject — create pre-settled Promises
+Promise.resolve(42).then(v => console.log(v));  // 42
+Promise.reject(new Error('oops')).catch(e => console.error(e));
+
+// Wrap async in Promise for compatibility
+function loadScript(src) {
+  return new Promise((resolve, reject) => {
+    const script = document.createElement('script');
+    script.src = src;
+    script.onload  = () => resolve(script);
+    script.onerror = () => reject(new Error('Script load failed: ' + src));
+    document.head.appendChild(script);
+  });
+}`
+  },
+
+  // 5.2 Async/Await Pattern
+  {
+    category: 'JS Patterns', difficulty: 'Intermediate',
+    question: '5.2 Async/Await Pattern — write async code that reads like synchronous code.',
+    answer: '**async** makes a function return a Promise. **await** pauses the function until the Promise resolves — but DOES NOT block the thread. `try/catch` handles rejections just like sync errors. **Common mistakes**: forgetting `await` (returns a Promise instead of the value); using `await` inside `forEach` (doesn\'t work — use `for...of` or `Promise.all`); sequential `await` when parallel is faster. **Best practice**: always `await` in a `try/catch`; use `Promise.all` for independent parallel operations.',
+    tip: `// Basic async/await
+async function getUser(id) {
+  try {
+    const res  = await fetch('/api/users/' + id);
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const user = await res.json();
+    return user;
+  } catch (err) {
+    console.error('Failed to load user:', err);
+    throw err; // re-throw if caller needs to handle
+  }
+}
+
+// PITFALL 1: forgetting await
+async function bad() {
+  const user = fetch('/api/user'); // Promise, not user data!
+  console.log(user.name);          // undefined
+}
+
+// PITFALL 2: await in forEach (does NOT wait)
+async function processAll(items) {
+  items.forEach(async item => {
+    await process(item); // forEach ignores returned Promises!
+  });
+  // Returns before any item is processed!
+}
+// Fix: use for...of for sequential, or Promise.all for parallel:
+for (const item of items) { await process(item); } // sequential
+await Promise.all(items.map(item => process(item))); // parallel
+
+// PITFALL 3: unnecessary sequential awaits
+// Slow — waits for each before starting next:
+const a = await fetchA();
+const b = await fetchB();
+
+// Fast — both start simultaneously:
+const [a, b] = await Promise.all([fetchA(), fetchB()]);
+
+// Top-level await (ES modules only)
+// const data = await fetchConfig(); // works at module top level`
+  },
+
+  // 5.3 Promise.all Pattern
+  {
+    category: 'JS Patterns', difficulty: 'Intermediate',
+    question: '5.3 Promise.all — run multiple async operations in parallel and wait for all.',
+    answer: '**Promise.all(arr)** runs all Promises in parallel and returns a new Promise that resolves with an array of all results when ALL succeed. If ANY Promise rejects, `Promise.all` immediately rejects with that error (fail-fast). **Promise.allSettled(arr)** waits for ALL, never rejects — each result has `{status, value}` or `{status, reason}`. **Promise.race(arr)** resolves/rejects with the first to settle. **Promise.any(arr)** resolves with the first to SUCCEED (ignores rejects). Use `Promise.all` when you need all results; `allSettled` when partial failure is acceptable.',
+    tip: `// Promise.all — parallel, fail-fast
+async function loadDashboard(userId) {
+  try {
+    const [user, posts, notifications] = await Promise.all([
+      fetch('/api/users/' + userId).then(r => r.json()),
+      fetch('/api/posts?user=' + userId).then(r => r.json()),
+      fetch('/api/notifications/' + userId).then(r => r.json()),
+    ]);
+    return { user, posts, notifications };
+  } catch (err) {
+    // If ANY request fails, catch runs
+    console.error('Dashboard load failed:', err);
+  }
+}
+
+// Promise.allSettled — never fails, check each result
+async function loadOptional(ids) {
+  const results = await Promise.allSettled(
+    ids.map(id => fetch('/api/items/' + id).then(r => r.json()))
+  );
+  const items  = results.filter(r => r.status === 'fulfilled').map(r => r.value);
+  const failed = results.filter(r => r.status === 'rejected').map(r => r.reason);
+  console.log('Loaded:', items.length, 'Failed:', failed.length);
+  return items; // partial results — only successful ones
+}
+
+// Promise.race — timeout pattern
+function withTimeout(promise, ms) {
+  const timeout = new Promise((_, reject) =>
+    setTimeout(() => reject(new Error('Timeout after ' + ms + 'ms')), ms)
+  );
+  return Promise.race([promise, timeout]);
+}
+await withTimeout(fetchData(), 5000); // throws if fetch takes > 5s
+
+// Promise.any — first success wins
+const fastest = await Promise.any([
+  fetch('https://mirror1.com/data'),
+  fetch('https://mirror2.com/data'),
+  fetch('https://mirror3.com/data'),
+]); // uses whichever server responds first`
+  },
+
+  // 5.4 Sequential Async Pattern
+  {
+    category: 'JS Patterns', difficulty: 'Intermediate',
+    question: '5.4 Sequential Async — process items one after another in order (with correct patterns).',
+    answer: '**Sequential async** processes each item after the previous completes — useful when order matters or when parallel would overwhelm a server. **The trap**: `forEach` ignores returned Promises — async callbacks inside `forEach` run but are never awaited. **Correct patterns**: `for...of` with `await` (sequential), `reduce` with Promise chaining. **When to choose sequential**: API rate limits, dependent requests (use result of call N in call N+1), database transactions, order-sensitive operations. **When to choose parallel**: independent operations where order doesn\'t matter.',
+    tip: `const items = [1, 2, 3, 4, 5];
+const processItem = async (item) => {
+  await new Promise(r => setTimeout(r, 100)); // simulate async work
+  console.log('Processed:', item);
+  return item * 2;
+};
+
+// --- WRONG: forEach ignores async callbacks ---
+async function wrongWay() {
+  items.forEach(async item => {
+    await processItem(item); // not awaited by forEach!
+  });
+  console.log('Done'); // prints BEFORE items are processed!
+}
+
+// --- CORRECT 1: for...of (sequential, clean) ---
+async function sequential() {
+  const results = [];
+  for (const item of items) {
+    const result = await processItem(item); // waits for each
+    results.push(result);
+  }
+  return results; // [2, 4, 6, 8, 10] in order
+}
+
+// --- CORRECT 2: reduce with Promise chaining ---
+async function sequentialReduce() {
+  return items.reduce(async (prevPromise, item) => {
+    const prev = await prevPromise; // wait for previous
+    const result = await processItem(item);
+    return [...prev, result];
+  }, Promise.resolve([]));
+}
+
+// Batch processing — parallel in groups of N
+async function batchProcess(items, batchSize) {
+  const results = [];
+  for (let i = 0; i < items.length; i += batchSize) {
+    const batch = items.slice(i, i + batchSize);
+    const batchResults = await Promise.all(batch.map(processItem));
+    results.push(...batchResults);
+  }
+  return results;
+}`
+  },
+
+  // 5.5 Retry Pattern
+  {
+    category: 'JS Patterns', difficulty: 'Advanced',
+    question: '5.5 Retry Pattern — automatically retry failed async operations with backoff.',
+    answer: '**Retry** wraps an async operation and re-attempts it on failure, up to a maximum number of tries. **Exponential backoff**: wait `2^attempt * baseDelay` ms between retries — avoids hammering a struggling server. **Jitter**: add random delay to backoff to prevent thundering herd (many clients retrying at the same time). **Retryable vs non-retryable**: retry on network errors and 5xx (server errors); do NOT retry on 4xx (client errors — won\'t fix itself). Essential for resilient production systems, API integrations, and network-unreliable environments.',
+    tip: `// Basic retry
+async function retry(fn, maxAttempts = 3) {
+  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+    try {
+      return await fn();
+    } catch (err) {
+      if (attempt === maxAttempts) throw err; // give up
+      console.log('Attempt ' + attempt + ' failed, retrying...');
+    }
+  }
+}
+await retry(() => fetch('/api/data'));
+
+// Retry with exponential backoff + jitter
+async function retryWithBackoff(fn, {
+  maxAttempts = 3,
+  baseDelay   = 300,
+  maxDelay    = 10000,
+} = {}) {
+  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+    try {
+      return await fn();
+    } catch (err) {
+      if (attempt === maxAttempts) throw err;
+
+      const exponential = baseDelay * 2 ** (attempt - 1);
+      const jitter      = Math.random() * baseDelay;
+      const delay       = Math.min(exponential + jitter, maxDelay);
+
+      console.log('Attempt', attempt, 'failed. Waiting', Math.round(delay), 'ms...');
+      await new Promise(r => setTimeout(r, delay));
+    }
+  }
+}
+
+// Smart retry — only retry on retriable errors
+async function smartRetry(fn, maxAttempts = 3) {
+  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+    try {
+      return await fn();
+    } catch (err) {
+      const retriable = !err.status || err.status >= 500; // retry 5xx, not 4xx
+      if (!retriable || attempt === maxAttempts) throw err;
+      await new Promise(r => setTimeout(r, 1000 * attempt));
+    }
+  }
+}
+await smartRetry(() => fetchWithStatus('/api/data'));`
+  },
+
+  // ════════════════════════════════════════════════════════
+  // 6. CORE JAVASCRIPT INTERNALS
+  // ════════════════════════════════════════════════════════
+
+  // 6.1 Closure Pattern
+  {
+    category: 'JS Patterns', difficulty: 'Intermediate',
+    question: '6.1 Closure Pattern — use closures to create private state and factory functions.',
+    answer: 'A **closure** forms when a function "closes over" variables from its outer scope, retaining access even after the outer function has returned. **Pattern use cases**: 1) **Private state** — encapsulate variables that shouldn\'t be accessible from outside. 2) **Factory functions** — create specialized functions with pre-configured state. 3) **Module-like objects** — expose only what\'s needed via returned methods. 4) **Event handlers** — capture loop variables or configuration. **Gotcha**: closures capture the REFERENCE to a variable, not its value at the time of creation (the `var` loop bug).',
+    tip: `// 1. Private state with closure
+function createCounter(initialValue = 0) {
+  let count = initialValue; // private — not accessible outside
+
+  return {
+    increment() { return ++count; },
+    decrement() { return --count; },
+    reset()     { count = initialValue; return count; },
+    value()     { return count; },
+  };
+}
+const counter = createCounter(10);
+counter.increment(); // 11
+counter.increment(); // 12
+counter.value();     // 12
+// count is inaccessible: counter.count === undefined
+
+// 2. Factory function with closure
+function createMultiplier(factor) {
+  return (number) => number * factor; // closes over 'factor'
+}
+const double = createMultiplier(2);
+const triple = createMultiplier(3);
+[1,2,3].map(double); // [2,4,6]
+[1,2,3].map(triple); // [3,6,9]
+
+// 3. Once function — run only on first call
+function once(fn) {
+  let ran = false, result;
+  return function(...args) {
+    if (!ran) { ran = true; result = fn(...args); }
+    return result;
+  };
+}
+const initDB = once(() => { console.log('DB connected!'); return db; });
+initDB(); // 'DB connected!' -> db
+initDB(); // db (no log, no reconnect)
+
+// 4. var loop bug (classic closure gotcha)
+for (var i = 0; i < 3; i++) {
+  setTimeout(() => console.log(i), 0); // prints 3,3,3 — shared ref!
+}
+for (let i = 0; i < 3; i++) {
+  setTimeout(() => console.log(i), 0); // prints 0,1,2 — let = new binding per iter
+}`
+  },
+
+  // 6.2 Module Pattern
+  {
+    category: 'JS Patterns', difficulty: 'Intermediate',
+    question: '6.2 Module Pattern — encapsulate code and expose only a public API.',
+    answer: 'The **Module Pattern** uses an IIFE (Immediately Invoked Function Expression) or ES Modules to create a private scope — only what you explicitly return is public. **IIFE Module**: wraps code in `(function() { ... })()` for immediate execution and scope isolation. **Revealing Module**: define everything privately, then return an object exposing only the public API. **ES Modules (modern)**: `export` only what should be public, everything else stays module-scoped. Modules are the foundation of scalable JavaScript architecture — they prevent global namespace pollution.',
+    tip: `// 1. IIFE Module Pattern (classic, pre-ES6)
+const CartModule = (function() {
+  // Private variables — not accessible outside
+  let items = [];
+  let discount = 0;
+
+  // Private function
+  function calcTotal() {
+    return items.reduce((sum, i) => sum + i.price, 0) * (1 - discount);
+  }
+
+  // Public API (Revealing Module)
+  return {
+    addItem(item)    { items.push(item); },
+    removeItem(id)   { items = items.filter(i => i.id !== id); },
+    setDiscount(d)   { discount = d; },
+    getTotal()       { return calcTotal(); },
+    getItemCount()   { return items.length; },
+  };
+})();
+
+CartModule.addItem({ id: 1, name: 'Book', price: 10 });
+CartModule.setDiscount(0.1);
+CartModule.getTotal(); // 9
+
+// 2. ES Module (modern — one module per file)
+// cart.js
+// let items = [];
+// export function addItem(item) { items.push(item); }
+// export function getTotal() { return items.reduce((s,i) => s+i.price, 0); }
+// export default CartModule;
+
+// main.js
+// import { addItem, getTotal } from './cart.js';
+// import CartModule from './cart.js';
+
+// 3. Namespace object (simple grouping)
+const MathUtils = {
+  clamp: (val, min, max) => Math.min(Math.max(val, min), max),
+  lerp:  (a, b, t) => a + (b - a) * t,
+  range: (n) => Array.from({ length: n }, (_, i) => i),
+};
+MathUtils.clamp(150, 0, 100); // 100`
+  },
+
+  // 6.3 Singleton Pattern
+  {
+    category: 'JS Patterns', difficulty: 'Intermediate',
+    question: '6.3 Singleton Pattern — ensure only one instance of an object exists.',
+    answer: '**Singleton** restricts instantiation to exactly ONE object — every call returns the same instance. **Use cases**: database connection pool, configuration store, logger, event bus, global state. **Implementation**: store the instance in a closure variable; return existing instance on subsequent calls. **In Node.js**: module caching naturally creates singletons (a required module is cached after first load). **Caution**: Singletons can make testing harder (shared state between tests) and can hide dependencies — use dependency injection when possible.',
+    tip: `// 1. Singleton with closure
+function createSingleton(factory) {
+  let instance = null;
+  return {
+    getInstance() {
+      if (!instance) instance = factory();
+      return instance;
+    }
+  };
+}
+const DBConnection = createSingleton(() => {
+  console.log('Connecting to DB...');
+  return { query: (sql) => console.log('Query:', sql), connected: true };
+});
+
+const db1 = DBConnection.getInstance(); // 'Connecting to DB...'
+const db2 = DBConnection.getInstance(); // (no log — reuses)
+db1 === db2; // true — same object
+
+// 2. Class-based Singleton
+class AppConfig {
+  constructor() {
+    if (AppConfig._instance) return AppConfig._instance;
+    this.theme = 'dark';
+    this.lang  = 'en';
+    AppConfig._instance = this;
+  }
+  static getInstance() {
+    return AppConfig._instance || new AppConfig();
+  }
+}
+const config1 = new AppConfig();
+const config2 = new AppConfig();
+config1 === config2; // true
+
+// 3. Node.js module singleton (natural)
+// db.js
+// const pool = new Pool({ connectionString: process.env.DB_URL });
+// module.exports = pool; // same instance everywhere it's imported
+
+// 4. ES Module singleton
+// store.js
+// let state = { count: 0 };
+// export const getState = () => state;
+// export const setState = (next) => { state = next; };
+// Importing store.js anywhere = same state object (module cached)`
+  },
+
+  // 6.4 Factory Pattern
+  {
+    category: 'JS Patterns', difficulty: 'Intermediate',
+    question: '6.4 Factory Pattern — create objects without exposing construction logic.',
+    answer: '**Factory** is a function that creates and returns objects — hides the construction details from the caller. The caller says "give me a user" without needing to know HOW it\'s built. **Benefits**: centralize object creation logic, easy to swap implementations, add validation/defaults in one place, create different subtypes from one factory. **vs Constructor/Class**: factories don\'t need `new`, can return any object type, more flexible. **Abstract Factory**: a factory that creates other factories — for families of related objects.',
+    tip: `// 1. Simple factory function
+function createUser(name, role = 'user') {
+  if (!name) throw new Error('Name required');
+  return {
+    id:        Math.random().toString(36).slice(2),
+    name:      name.trim(),
+    role,
+    createdAt: new Date().toISOString(),
+    isAdmin:   role === 'admin',
+    greet()    { return 'Hi, I am ' + this.name; },
+  };
+}
+const alice = createUser('Alice', 'admin');
+const bob   = createUser('Bob');
+alice.isAdmin; // true   bob.isAdmin; // false
+
+// 2. Factory with type switching
+function createShape(type, options) {
+  const shapes = {
+    circle:    ({ radius })        => ({ type, radius, area: () => Math.PI * radius ** 2 }),
+    rectangle: ({ width, height }) => ({ type, width, height, area: () => width * height }),
+    triangle:  ({ base, height })  => ({ type, base, height, area: () => 0.5 * base * height }),
+  };
+  const factory = shapes[type];
+  if (!factory) throw new Error('Unknown shape: ' + type);
+  return factory(options);
+}
+const c = createShape('circle', { radius: 5 });
+c.area(); // 78.54
+
+// 3. Factory for test doubles / stubs
+function createMockUser(overrides = {}) {
+  return {
+    id: 1, name: 'Test User', role: 'user',
+    email: 'test@example.com',
+    ...overrides, // allow test-specific overrides
+  };
+}
+const adminUser = createMockUser({ role: 'admin', name: 'Admin' });`
+  },
+
+  // 6.5 Prototype Pattern
+  {
+    category: 'JS Patterns', difficulty: 'Intermediate',
+    question: '6.5 Prototype Pattern — share methods via prototype chain to save memory.',
+    answer: '**Prototype** allows objects to share methods via the prototype chain instead of each instance having its own copy — saves memory for method storage. When a property isn\'t found on the object, JS walks up the `[[Prototype]]` chain. **`class` syntax** is syntactic sugar over prototypes — `class` extends = setting up prototype chains. **Object.create(proto)** creates an object with a specific prototype. **`instanceof`** checks the prototype chain. Key principle: data goes on instances, behavior (methods) goes on prototypes.',
+    tip: `// 1. Constructor function + prototype (old style)
+function Person(name, age) {
+  this.name = name; // instance data
+  this.age  = age;
+}
+// Methods on prototype — shared by ALL instances (one copy in memory)
+Person.prototype.greet = function() {
+  return 'Hi, I am ' + this.name;
+};
+Person.prototype.isAdult = function() {
+  return this.age >= 18;
+};
+
+const alice = new Person('Alice', 28);
+const bob   = new Person('Bob', 16);
+alice.greet();    // 'Hi, I am Alice'
+alice.isAdult();  // true
+bob.isAdult();    // false
+
+// alice.greet === bob.greet  -> true (shared, not duplicated)
+
+// 2. class syntax (sugar over prototypes)
+class Animal {
+  constructor(name) { this.name = name; }
+  speak() { return this.name + ' makes a sound'; }
+}
+class Dog extends Animal {                     // sets up prototype chain
+  speak() { return this.name + ' barks'; }   // overrides
+  fetch() { return this.name + ' fetches!'; }
+}
+const rex = new Dog('Rex');
+rex.speak();  // 'Rex barks'
+rex instanceof Dog;    // true
+rex instanceof Animal; // true (chain)
+Object.getPrototypeOf(rex) === Dog.prototype; // true
+
+// 3. Object.create — explicit prototype link
+const vehicleProto = {
+  describe() { return this.make + ' ' + this.model; }
+};
+const car = Object.create(vehicleProto);
+car.make  = 'Toyota';
+car.model = 'Camry';
+car.describe(); // 'Toyota Camry'`
+  },
+
+  // 6.6 Event Delegation Pattern
+  {
+    category: 'JS Patterns', difficulty: 'Intermediate',
+    question: '6.6 Event Delegation — handle events from many children with one parent listener.',
+    answer: '**Event Delegation** attaches ONE event listener to a parent element instead of one per child. Works because events **bubble up** from the target to the root. Use `event.target` to identify which child was clicked, and `event.target.closest(selector)` to handle nested child structures. **Benefits**: one listener handles thousands of items (memory efficient), automatically handles dynamically added elements (no need to re-attach listeners), cleaner code. **Use cases**: dynamic lists (todo items), table rows, navigation menus, any repeated element pattern.',
+    tip: `// Without delegation — attach to each button (bad for many items)
+document.querySelectorAll('.btn').forEach(btn => {
+  btn.addEventListener('click', handleClick); // N listeners
+});
+
+// With delegation — ONE listener on the parent
+document.getElementById('button-list').addEventListener('click', (e) => {
+  const btn = e.target.closest('button');    // handle nested elements
+  if (!btn) return;                           // click wasn't on a button
+
+  const action = btn.dataset.action;
+  const id     = btn.dataset.id;
+
+  if (action === 'delete') deleteItem(id);
+  if (action === 'edit')   editItem(id);
+});
+
+// HTML structure this handles:
+// <ul id="button-list">
+//   <li><button data-action="edit"   data-id="1"><span>Edit</span></button></li>
+//   <li><button data-action="delete" data-id="1"><span>Delete</span></button></li>
+// </ul>
+// e.target might be the <span>, closest('button') finds the button
+
+// Dynamic elements — delegation handles newly added items automatically
+const list = document.getElementById('todo-list');
+list.addEventListener('click', (e) => {
+  const item = e.target.closest('li');
+  if (!item) return;
+  if (e.target.classList.contains('delete-btn')) {
+    item.remove();  // dynamically added items are handled!
+  }
+  if (e.target.classList.contains('toggle')) {
+    item.classList.toggle('done');
+  }
+});
+
+// Add new item — no need to attach a new listener!
+function addTodo(text) {
+  const li = document.createElement('li');
+  li.innerHTML = text + ' <button class="delete-btn">X</button>';
+  list.appendChild(li); // automatically handled by delegation
+}`
+  },
+
   // ── Interview Pack ───────────────────────────────────────
   {
     category: 'Interview', difficulty: 'Intermediate',
@@ -11131,6 +12628,7 @@ const CATEGORY_COLORS = {
   'Async JavaScript':'#3b82f6',
   'DOM & Browser':   '#10b981',
   'JS Functions':    '#f97316',
+  'JS Patterns':     '#a855f7',
   'CSS':             '#ec4899',
   'Performance':     '#8b5cf6',
   'Security':        '#ef4444',
