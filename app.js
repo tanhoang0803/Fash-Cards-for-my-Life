@@ -9318,6 +9318,393 @@ export default defineConfig({
 }`
   },
 
+  // ── JS Functions Pack ────────────────────────────────────
+  // Topics: Array Methods · Object Utilities · Async Functions
+  //         Function Methods · Spread/Rest · String Functions · JSON
+
+  // F-1. Array Methods — map / filter / reduce
+  {
+    category: 'JS Functions', difficulty: 'Intermediate',
+    question: 'Array Methods #1 — map(), filter(), reduce(): how do they work, when do you use each, and what are common pitfalls?',
+    answer: '**map(fn)** — transforms every element, always returns a **new array of the same length**. Pure: original untouched. Use for: convert data shapes, format API responses, render React lists (`arr.map(item => <Card key={item.id} />)`). **filter(fn)** — keeps elements where `fn` returns truthy, returns a (shorter or equal) new array. Use for: search results, filtering products/users by criteria. **reduce(fn, initial)** — most powerful: collapses the array into **any single value** (number, object, array). Use for: sum/average, grouping by key, building lookup objects, composing pipelines. **Key rule**: all three are **immutable** — they return new arrays, never mutate the original. Never use map for side-effect-only loops (use `forEach`) and never use reduce where filter/map is clearer.',
+    tip: `const nums = [1, 2, 3, 4, 5];
+
+// map — transform each element
+const doubled = nums.map(n => n * 2);   // [2,4,6,8,10]
+
+// filter — keep matching elements
+const evens = nums.filter(n => n % 2 === 0);  // [2,4]
+
+// reduce — accumulate into any shape
+const sum = nums.reduce((acc, n) => acc + n, 0);  // 15
+
+// Chain: readable data pipelines
+const result = nums
+  .filter(n => n > 1)          // [2,3,4,5]
+  .map(n => n * 10)             // [20,30,40,50]
+  .reduce((a, b) => a + b, 0); // 140
+
+// Real-world: group objects by property
+const users = [
+  {id:1, role:'admin'}, {id:2, role:'user'}, {id:3, role:'admin'}
+];
+const byRole = users.reduce((acc, u) => {
+  acc[u.role] = acc[u.role] || [];
+  acc[u.role].push(u);
+  return acc;
+}, {});
+// { admin: [{id:1},{id:3}], user: [{id:2}] }
+
+// Implement map using reduce (interview trick)
+const mapped = nums.reduce((acc, n) => [...acc, n * 2], []);`
+  },
+
+  // F-2. Array Methods — find / some / every
+  {
+    category: 'JS Functions', difficulty: 'Beginner',
+    question: 'Array Methods #2 — find(), some(), every(): what do they return, how do they short-circuit, and when do you use each?',
+    answer: '**find(fn)** — returns the **first element** that matches, or `undefined`. Stops immediately on first match (short-circuit). Best for: looking up a specific object by id, finding a product, finding a config entry. **findIndex(fn)** — same but returns the index (-1 if not found). **some(fn)** — returns `true` if **at least one** element passes. Short-circuits on first truthy. Best for: "does any user have admin role?", permission checks, feature flag existence. **every(fn)** — returns `true` only if **ALL** elements pass. Short-circuits on first falsy. Best for: full form validation, data integrity, checking all items are selected. **Interview tip**: `some` = logical OR across array; `every` = logical AND across array.',
+    tip: `const users = [
+  { id: 1, name: 'Alice', role: 'admin', age: 30 },
+  { id: 2, name: 'Bob',   role: 'user',  age: 17 },
+  { id: 3, name: 'Carol', role: 'user',  age: 25 },
+];
+
+// find — first match or undefined
+const bob = users.find(u => u.id === 2);
+// { id:2, name:'Bob', role:'user', age:17 }
+
+users.find(u => u.id === 99); // undefined
+
+// findIndex — index of first match
+const idx = users.findIndex(u => u.role === 'admin'); // 0
+
+// some — at least one passes? (OR)
+const hasAdmin    = users.some(u => u.role === 'admin'); // true
+const hasMinor    = users.some(u => u.age < 18);         // true
+
+// every — all pass? (AND)
+const allAdults   = users.every(u => u.age >= 18);       // false
+const allHaveName = users.every(u => Boolean(u.name));   // true
+
+// Practical: validate required form fields
+const form = { name: 'Alice', email: 'a@b.com', age: 25 };
+const required = ['name', 'email', 'age'];
+const isValid = required.every(field => Boolean(form[field])); // true`
+  },
+
+  // F-3. Object Utility Functions
+  {
+    category: 'JS Functions', difficulty: 'Beginner',
+    question: 'Object.keys(), Object.values(), Object.entries() — what do they return and what real-world patterns use them?',
+    answer: '**Object.keys(obj)** — array of own enumerable **property names** (strings). **Object.values(obj)** — array of own **values**. **Object.entries(obj)** — array of `[key, value]` pairs — the most versatile. All three only include **own** (non-inherited), **enumerable** properties. Since they return arrays, you can chain `.map()`, `.filter()`, `.reduce()` directly. **Object.fromEntries(entries)** reverses entries back to an object — useful for transforming objects. **Object.assign(target, src)** — shallow merge/copy. **Object.freeze(obj)** — prevents any property changes (shallow immutability).',
+    tip: `const user = { name: 'Alice', age: 25, role: 'admin' };
+
+Object.keys(user);    // ['name', 'age', 'role']
+Object.values(user);  // ['Alice', 25, 'admin']
+Object.entries(user); // [['name','Alice'],['age',25],['role','admin']]
+
+// Loop an object (preferred pattern)
+for (const [key, val] of Object.entries(user)) {
+  console.log(key + ': ' + val);
+}
+
+// Transform all values
+const prices = { apple: 1.2, banana: 0.5, cherry: 3.0 };
+const withTax = Object.fromEntries(
+  Object.entries(prices).map(([k, v]) => [k, +(v * 1.1).toFixed(2)])
+);
+// { apple: 1.32, banana: 0.55, cherry: 3.3 }
+
+// Filter an object's entries
+const expensive = Object.fromEntries(
+  Object.entries(prices).filter(([, v]) => v > 1)
+);
+// { apple: 1.2, cherry: 3.0 }
+
+// Check if value exists
+Object.values(user).includes('admin'); // true
+
+// Shallow copy / merge
+const copy = Object.assign({}, user, { age: 26 });
+
+// Freeze (shallow immutability — nested objects still mutable)
+const cfg = Object.freeze({ env: 'prod', port: 3000 });
+cfg.port = 9999; // silently fails (or throws in strict mode)`
+  },
+
+  // F-4. Async — setTimeout / fetch
+  {
+    category: 'JS Functions', difficulty: 'Beginner',
+    question: 'setTimeout() and fetch() — how do they work and how do they fit into JavaScript async model?',
+    answer: '**setTimeout(fn, ms)** — schedules `fn` to run after at least `ms` milliseconds (macrotask). Non-blocking: the call stack continues. Returns a timer ID for `clearTimeout()`. **setInterval(fn, ms)** — repeats every `ms` ms. **fetch(url, options)** — browser-native HTTP client, returns a **Promise** that resolves to a `Response` object. The response body is a readable stream — call `.json()`, `.text()`, or `.blob()` to parse it (also async). Always handle network errors with `.catch()` or `try/catch`. `fetch()` does **NOT** reject on HTTP error status (4xx, 5xx) — you must check `res.ok` manually.',
+    tip: `// setTimeout — one-time delay
+const id = setTimeout(() => console.log('later'), 1000);
+clearTimeout(id); // cancel it
+
+// setInterval — repeat
+const tick = setInterval(() => console.log('tick'), 500);
+clearInterval(tick); // stop it
+
+// fetch — GET request (Promise style)
+fetch('/api/users')
+  .then(res => {
+    if (!res.ok) throw new Error('HTTP error: ' + res.status);
+    return res.json();    // parse JSON body
+  })
+  .then(data => console.log(data))
+  .catch(err  => console.error('Network error:', err));
+
+// fetch — async/await style (preferred)
+async function getUsers() {
+  try {
+    const res  = await fetch('/api/users');
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    return await res.json();
+  } catch (err) {
+    console.error(err);
+  }
+}
+
+// fetch — POST with JSON body
+await fetch('/api/users', {
+  method:  'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body:    JSON.stringify({ name: 'Alice', role: 'admin' }),
+});
+
+// fetch does NOT reject on 404/500 — always check res.ok!`
+  },
+
+  // F-5. Promise / async-await
+  {
+    category: 'JS Functions', difficulty: 'Intermediate',
+    question: 'Promise and async/await — states, chaining, combinators, and common pitfalls.',
+    answer: '**Promise** — object with 3 states: **pending** → **fulfilled** (resolve) / **rejected** (reject). Chain with `.then(onFulfilled)`, `.catch(onRejected)`, `.finally(fn)`. **async function** always returns a Promise. **await** pauses the function (not the thread) until the Promise settles. **Combinators**: `Promise.all([])` — parallel, fails fast if any reject. `Promise.allSettled([])` — parallel, never rejects, each result has status + value/reason. `Promise.race([])` — first to settle (any state) wins. `Promise.any([])` — first to **succeed** wins (ignores rejects). **Common pitfalls**: awaiting in a loop sequentially when parallel is needed; missing `await` silently returns a Promise; `forEach` does not await async callbacks.',
+    tip: `// Promise basics
+const wait = ms => new Promise(resolve => setTimeout(resolve, ms));
+
+// Chaining
+fetch('/api/data')
+  .then(res  => res.json())
+  .then(data => process(data))
+  .catch(err => console.error(err))
+  .finally(()=> hideSpinner());
+
+// async/await with error handling
+async function load() {
+  try {
+    const res  = await fetch('/api/data');
+    const data = await res.json();
+    return data;
+  } catch (err) { console.error(err); }
+}
+
+// PARALLEL — fastest pattern
+const [users, posts] = await Promise.all([
+  fetch('/api/users').then(r => r.json()),
+  fetch('/api/posts').then(r => r.json()),
+]);
+
+// allSettled — get all results even if some fail
+const results = await Promise.allSettled([fetchA(), fetchB()]);
+results.forEach(r =>
+  r.status === 'fulfilled'
+    ? console.log(r.value)
+    : console.error(r.reason)
+);
+
+// PITFALL: forEach doesn't await
+// Wrong:
+arr.forEach(async item => await process(item)); // no waiting!
+// Correct:
+await Promise.all(arr.map(async item => await process(item)));
+// Or:
+for (const item of arr) { await process(item); } // sequential`
+  },
+
+  // F-6. Function Methods — call / apply / bind
+  {
+    category: 'JS Functions', difficulty: 'Intermediate',
+    question: 'call(), apply(), bind() — differences, use cases, and why they matter for interviews.',
+    answer: 'All three **explicitly set `this`** context for a function. **call(ctx, arg1, arg2, ...)** — invokes the function immediately, arguments passed individually (comma-separated). **apply(ctx, [arg1, arg2])** — invokes immediately, arguments passed as an **array**. Memory trick: **A**pply = **A**rray. **bind(ctx, arg1, ...)** — does **NOT** invoke; returns a **new function** permanently bound to `ctx`. Also supports **partial application** — pre-fill arguments. **Why it matters**: React class components use `.bind(this)` in constructors; borrowing methods from other objects; extracting methods from objects; currying/partial application patterns. Arrow functions **ignore** all three — they inherit `this` from lexical scope and cannot be rebound.',
+    tip: `function greet(greeting, punct) {
+  return greeting + ', ' + this.name + punct;
+}
+const user = { name: 'Alice' };
+
+// call — invoke now, args as individual values
+greet.call(user, 'Hello', '!');   // 'Hello, Alice!'
+
+// apply — invoke now, args as an array
+greet.apply(user, ['Hi', '.']);   // 'Hi, Alice.'
+
+// bind — return new function, invoke later
+const sayHello = greet.bind(user, 'Hey');
+sayHello('?'); // 'Hey, Alice?'   — ctx + greeting pre-set
+
+// Partial application pattern (currying-lite)
+function multiply(a, b) { return a * b; }
+const double = multiply.bind(null, 2);  // pre-set a = 2
+double(5);  // 10   double(9);  // 18
+
+// Borrow array methods for array-like objects
+function logArgs() {
+  const args = Array.prototype.slice.call(arguments);
+  console.log(args); // real array from arguments object
+}
+
+// Spread is the modern alternative to apply:
+Math.max.apply(null, [1,2,3]);  // 3 (old)
+Math.max(...[1,2,3]);           // 3 (modern)
+
+// Arrow — cannot be rebound (call/apply/bind ignored for this)
+const arrow = () => this;
+arrow.call({ x: 99 }); // still outer this`
+  },
+
+  // F-7. Spread & Rest
+  {
+    category: 'JS Functions', difficulty: 'Beginner',
+    question: 'Spread (...) vs Rest (...) — what is the difference and where is each used?',
+    answer: 'Same syntax, opposite directions. **Spread** (`...`) — **expands** an iterable (array, string, object) into individual elements. Used in: array literals to copy/merge, object literals to clone/override (React state!), function calls to unpack args. **Rest** (`...`) — **collects** remaining arguments/elements into an array. Used in: function parameters for variadic functions, destructuring to capture leftovers. **Key insight**: spread = "burst out"; rest = "gather up". **Shallow copy trap** with spread: nested objects are still shared references — modifying a nested property in the copy also changes the original.',
+    tip: `// SPREAD — arrays
+const arr = [1, 2, 3];
+const copy   = [...arr];              // [1,2,3] — shallow copy
+const added  = [...arr, 4, 5];       // [1,2,3,4,5]
+const merged = [...[0], ...arr, 4];  // [0,1,2,3,4]
+
+// Function call — unpack as args
+Math.max(...arr); // 3
+
+// SPREAD — objects (React state pattern!)
+const user = { name: 'Alice', age: 25, role: 'admin' };
+const updated  = { ...user, age: 26 };          // override
+// { name:'Alice', age:26, role:'admin' }
+const merged2  = { ...defaults, ...overrides }; // right side wins
+
+// Shallow copy trap!
+const nested = { info: { score: 100 } };
+const copy2  = { ...nested };
+copy2.info.score = 0;
+nested.info.score; // 0 — still shared! (info is same reference)
+// Fix: deep clone with JSON.parse(JSON.stringify(nested)) or structuredClone()
+
+// REST — variadic function params
+function sum(first, ...rest) {
+  return rest.reduce((acc, n) => acc + n, first);
+}
+sum(1, 2, 3, 4); // 10
+
+// REST — destructuring arrays
+const [head, ...tail] = [1, 2, 3, 4];
+head; // 1    tail; // [2,3,4]
+
+// REST — destructuring objects
+const { name, ...others } = user;
+others; // { age:25, role:'admin' }`
+  },
+
+  // F-8. String Functions
+  {
+    category: 'JS Functions', difficulty: 'Beginner',
+    question: 'Essential String methods — which ones must you know and what are the gotchas?',
+    answer: '**Search**: `includes(str)` — boolean; `startsWith()/endsWith()` — position-aware; `indexOf(str)` — first index or -1; `search(regex)`. **Transform**: `replace(pat, rep)` — first match; `replaceAll(pat, rep)` — all matches; `toUpperCase()/toLowerCase()`; `slice(start, end)` — extract substring (negative indexes count from end); `padStart(n, char)/padEnd(n, char)` — pad to length. **Split/join**: `split(sep)` — string → array; `join(sep)` on arrays reverses it. **Clean**: `trim()/trimStart()/trimEnd()`. **Important**: strings are **immutable** — all methods return new strings, the original is never changed. Template literals (backticks) are often cleaner than concatenation.',
+    tip: `const s = '  Hello, World!  ';
+
+// Check content
+s.includes('World');          // true
+s.startsWith('  Hello');      // true
+'file.tsx'.endsWith('.tsx');  // true
+'abcabc'.indexOf('b');        // 1 (first occurrence)
+
+// Clean up whitespace
+s.trim();       // 'Hello, World!'
+s.trimStart();  // 'Hello, World!  '
+s.trimEnd();    // '  Hello, World!'
+
+// Split — string to array
+'a,b,c'.split(',');        // ['a','b','c']
+'hello'.split('');         // ['h','e','l','l','o']
+'one two three'.split(' ');// ['one','two','three']
+
+// Replace (first match vs all)
+'foo foo'.replace('foo', 'bar');    // 'bar foo'
+'foo foo'.replaceAll('foo', 'bar'); // 'bar bar'
+'  extra  spaces  '.replace(/\s+/g, ' ').trim(); // 'extra spaces'
+
+// Extract
+'Hello World'.slice(0, 5);   // 'Hello'
+'Hello World'.slice(-5);     // 'World'
+'Hello World'.slice(6);      // 'World'
+
+// Padding — format numbers, ids
+String(7).padStart(3, '0');  // '007'
+'42'.padStart(5);            // '   42' (spaces by default)
+
+// Case
+'Alice'.toLowerCase();       // 'alice'
+'alice'.toUpperCase();       // 'ALICE'
+
+// Array back to string
+['a','b','c'].join('-');     // 'a-b-c'`
+  },
+
+  // F-9. JSON.parse / JSON.stringify
+  {
+    category: 'JS Functions', difficulty: 'Beginner',
+    question: 'JSON.stringify() and JSON.parse() — how do they work and what are the critical edge cases?',
+    answer: '**JSON.stringify(value, replacer, space)** — serializes a JS value to a JSON **string**. Use for: API request bodies, `localStorage`, logging, deep clone trick. **JSON.parse(str, reviver)** — deserializes a JSON string back to a JS value. **Critical edge cases**: 1) `undefined`, functions, and Symbols are **silently dropped** from objects (and become `null` in arrays). 2) `Date` objects become ISO strings — `parse()` gives you a string back, not a Date. 3) **Circular references throw** `TypeError`. 4) Numbers `Infinity`, `-Infinity`, and `NaN` become `null`. Use `replacer` to control which fields are serialized; `reviver` to post-process parsed values. For true deep clone, use `structuredClone()` (modern) instead.',
+    tip: `const user = { name: 'Alice', age: 25, active: true };
+
+// Stringify
+const json = JSON.stringify(user);
+// '{"name":"Alice","age":25,"active":true}'
+
+// Parse
+const obj = JSON.parse(json);
+// { name: 'Alice', age: 25, active: true }
+
+// Pretty print — indent for readability / logging
+JSON.stringify(user, null, 2);
+
+// GOTCHA 1 — undefined / functions / Symbol silently dropped
+JSON.stringify({ fn: () => {}, x: undefined, s: Symbol() });
+// '{}'  — they disappear!
+
+// GOTCHA 2 — Date becomes string, not Date on parse
+const d = { ts: new Date() };
+const s = JSON.stringify(d);
+const back = JSON.parse(s);
+back.ts instanceof Date; // false — it's a string!
+
+// GOTCHA 3 — Infinity / NaN become null
+JSON.stringify({ a: Infinity, b: NaN }); // '{"a":null,"b":null}'
+
+// GOTCHA 4 — circular reference throws
+const circ = {};
+circ.self = circ;
+// JSON.stringify(circ); // TypeError: circular structure
+
+// Quick deep clone (safe only for plain JSON-serializable data)
+const clone = JSON.parse(JSON.stringify(user));
+
+// Modern alternative — structuredClone (handles Date, circular, etc.)
+const clone2 = structuredClone(user);
+
+// Replacer — filter/rename fields
+JSON.stringify(user, ['name', 'age']); // only include those keys
+
+// API usage — send JSON body
+fetch('/api', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ name: 'Bob' }),
+});
+localStorage.setItem('user', JSON.stringify(user));
+const saved = JSON.parse(localStorage.getItem('user'));`
+  },
+
   // ── Interview Pack ───────────────────────────────────────
   {
     category: 'Interview', difficulty: 'Intermediate',
@@ -9856,6 +10243,7 @@ const CATEGORY_COLORS = {
   'JavaScript Core': '#f59e0b',
   'Async JavaScript':'#3b82f6',
   'DOM & Browser':   '#10b981',
+  'JS Functions':    '#f97316',
   'CSS':             '#ec4899',
   'Performance':     '#8b5cf6',
   'Security':        '#ef4444',
