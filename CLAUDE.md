@@ -85,7 +85,7 @@ Flash Cards Page
 | Subject | Cards | Categories |
 |---|---|---|
 | JavaScript | 80+ | Overview, Fundamentals, Core JavaScript, ES6+, Async JavaScript, DOM & Browser, Data Structures, Advanced, Performance, Testing, Ecosystem, JS Functions, JS Patterns, Interview |
-| React & SSR | 25 | React Basics, Hooks, Performance, SSR & Next.js |
+| React & SSR | 31 | Overview, Fundamentals, Lifecycle, Hooks, Data Flow, Performance, Ecosystem, Advanced, Interview |
 | CSS & Tailwind | 20 | CSS Fundamentals, CSS Layouts, Tailwind CSS |
 
 **Total: 450+ cards**
@@ -114,6 +114,20 @@ Flash Cards Page
 Frontend Developer:   Core JS → ES6+ → DOM → Async JS → React → Performance
 Backend Developer:    Fundamentals → ES6 → Async → Node.js → API → Database
 ```
+
+### React & SSR — Detailed Breakdown
+
+| Category | Cards | Topics |
+|---|---|---|
+| **Overview** | 1 | Full mindmap · 7 core areas · Core interview knowledge |
+| **Fundamentals** | 4 | Functional vs Class · JSX · Props · State |
+| **Lifecycle** | 3 | Mounting · Updating · Unmounting (useEffect patterns) |
+| **Hooks** | 5 | useState · useEffect · useRef/useCallback/useMemo · useContext · useReducer |
+| **Data Flow** | 3 | One-way binding · Lifting state up · Context API |
+| **Performance** | 3 | Virtual DOM & reconciliation · React.memo/useMemo/useCallback · Code splitting & lazy loading |
+| **Ecosystem** | 3 | React Router · Redux / Zustand / Context · Testing (Jest, RTL) |
+| **Advanced** | 3 | SSR & Next.js (CSR/SSR/SSG/ISR) · Concurrent rendering · Suspense & Error Boundaries |
+| **Interview** | 6 | Declarative · Component-based architecture · State vs Props · Hooks · Virtual DOM · One-way data flow |
 
 ---
 
