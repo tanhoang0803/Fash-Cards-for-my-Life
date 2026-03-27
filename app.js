@@ -7344,7 +7344,7 @@ clinic flame  -- node app.js    // flame graph`
 ];
 
 /* ═══════════════════════════════════════════════════════════
-   REACT & SSR — 25 cards across 8 categories
+   REACT & SSR — 31 cards across 9 categories
 ═══════════════════════════════════════════════════════════ */
 const REACT_CARDS = [
 
@@ -8230,7 +8230,191 @@ class ErrorBoundary extends React.Component {
 // loading.tsx  → automatic Suspense boundary for the route
 // error.tsx    → automatic Error Boundary for the route`
   },
+
+  // ── Interview ────────────────────────────────────────────
+  {
+    category: 'Interview', difficulty: 'Beginner',
+    question: 'React is declarative — what does that mean and why does it matter?',
+    answer: 'Declarative means you describe what the UI should look like for a given state, and React figures out how to update the DOM to match. You never manually add/remove DOM nodes. The opposite is imperative: "find element, add class, remove child, append new child." Declarative code is predictable, easier to debug, and scales — state changes automatically produce the correct UI.',
+    tip: `// Imperative (vanilla JS) — describe HOW to update
+const btn = document.getElementById('btn');
+btn.textContent = 'Loading...';
+btn.disabled = true;
+btn.classList.add('spinner');
+
+// Declarative (React) — describe WHAT to show
+function SubmitButton({ isLoading }) {
+  return (
+    <button disabled={isLoading}>
+      {isLoading ? 'Loading...' : 'Submit'}
+    </button>
+  );
+}
+// React handles ALL the DOM updates when isLoading changes
+
+// Why it matters:
+// ✅ No manual DOM manipulation → fewer bugs
+// ✅ UI = f(state) — same state always produces same UI
+// ✅ React batches and optimises DOM updates for you
+// ✅ Easy to reason about — just look at the render output`
+  },
+  {
+    category: 'Interview', difficulty: 'Beginner',
+    question: 'What is component-based architecture in React?',
+    answer: 'Component-based architecture breaks the UI into small, reusable, self-contained pieces. Each component owns its markup, logic, and (optionally) styles. Components compose together like LEGO — a Page is made of Sections, Sections are made of Cards, Cards are made of Buttons. Benefits: reusability, isolated testing, parallel development, and incremental updates.',
+    tip: `// Bad: one giant component — hard to reuse, test, maintain
+function App() {
+  return (
+    <div>
+      {/* 300 lines of mixed concerns */}
+    </div>
+  );
+}
+
+// Good: composed from focused components
+function App() {
+  return (
+    <Layout>
+      <Navbar user={currentUser} />
+      <main>
+        <ProductGrid products={products} />
+        <Sidebar filters={filters} onFilter={handleFilter} />
+      </main>
+      <Footer />
+    </Layout>
+  );
+}
+
+// Component design principles:
+// Single Responsibility — one component, one job
+// Reusable — accepts props to customise behaviour
+// Isolated — no hidden side effects during render
+// Composable — small components build larger ones`
+  },
+  {
+    category: 'Interview', difficulty: 'Beginner',
+    question: 'State vs Props — what is the difference and when do you use each?',
+    answer: 'Props are read-only inputs passed from parent to child — like function arguments. State is internal, mutable data owned by the component — like local variables that trigger re-renders when changed. Rule: if a value comes from outside, it is a prop. If a component needs to remember and change something itself, it is state. Never mutate props; always use the setter for state.',
+    tip: `// Props — passed in, READ-ONLY
+function Button({ label, onClick, disabled }) {
+  // label/onClick/disabled are given to us — we cannot change them
+  return <button onClick={onClick} disabled={disabled}>{label}</button>;
+}
+
+// State — owned internally, MUTABLE via setter
+function Toggle() {
+  const [on, setOn] = useState(false);  // this component owns 'on'
+  return (
+    <button onClick={() => setOn(prev => !prev)}>
+      {on ? 'ON' : 'OFF'}
+    </button>
+  );
+}
+
+// Quick decision guide:
+// "Does a parent need to control this value?"  → prop
+// "Does only this component need to track it?" → state
+// "Is it derived from props/state?"            → compute it, not state
+
+// Common mistake: copying props into state
+// ❌ const [name, setName] = useState(props.name) → goes stale
+// ✅ just use props.name directly in the render`
+  },
+  {
+    category: 'Interview', difficulty: 'Intermediate',
+    question: 'What are React Hooks and why were they introduced?',
+    answer: 'Hooks are functions that let functional components use state, lifecycle effects, and other React features — replacing class component patterns. Introduced in React 16.8 to solve: hard-to-reuse stateful logic (required HOCs or render props), complex lifecycle methods that mixed unrelated concerns, and the confusion of "this" in classes. Core hooks: useState, useEffect, useContext, useRef, useMemo, useCallback, useReducer.',
+    tip: `// Before hooks: class component with lifecycle mixing concerns
+class UserPage extends React.Component {
+  componentDidMount()  { fetchUser(); subscribeToSocket(); }
+  componentDidUpdate() { if (idChanged) fetchUser(); }
+  componentWillUnmount() { unsubscribeFromSocket(); }
+  // fetch logic and socket logic tangled together ^
+}
+
+// After hooks: each concern in its own useEffect
+function UserPage({ userId }) {
+  // Concern 1: fetch user
+  useEffect(() => {
+    fetchUser(userId);
+  }, [userId]);
+
+  // Concern 2: socket subscription
+  useEffect(() => {
+    subscribeToSocket();
+    return () => unsubscribeFromSocket();
+  }, []);
+}
+
+// Rules of Hooks (enforced by eslint-plugin-react-hooks):
+// ✅ Only call at the TOP LEVEL — not inside if/loops
+// ✅ Only call from function components or custom hooks
+// These rules ensure hook call order is stable across renders.`
+  },
+  {
+    category: 'Interview', difficulty: 'Intermediate',
+    question: 'How does the Virtual DOM work and why does it improve performance?',
+    answer: 'The Virtual DOM is a lightweight JavaScript object tree that mirrors the real DOM. On each state change React re-renders the component to a new virtual tree, diffs it against the previous version (reconciliation), and computes the minimal set of real DOM mutations needed. Direct DOM operations are expensive (trigger layout/repaint); batching them via the virtual DOM minimises that cost. React 18 adds concurrent rendering — work can be paused and prioritised.',
+    tip: `// Virtual DOM cycle:
+//
+//  setState() called
+//       │
+//       ▼
+//  React re-renders component → new Virtual DOM tree
+//       │
+//       ▼
+//  Reconciliation (diffing):
+//    same element type?  → update props in place
+//    different type?     → unmount old, mount new
+//    list items?         → match by key, add/remove/reorder
+//       │
+//       ▼
+//  Commit: apply ONLY changed nodes to real DOM
+//       │
+//       ▼
+//  Browser paints
+
+// Why real DOM is slow:
+// every change can trigger: style recalc → layout → paint → composite
+
+// React's optimisations:
+// ✅ Batch multiple setState calls into one render
+// ✅ Skip re-render if props unchanged (React.memo)
+// ✅ Concurrent mode: pause low-priority renders for urgent input`
+  },
+  {
+    category: 'Interview', difficulty: 'Intermediate',
+    question: 'What is one-way data flow in React and how do you handle global state?',
+    answer: 'Data flows in one direction: parent → child via props. A child cannot modify a parent\'s state directly — it calls a callback prop instead. This makes bugs easy to trace (follow the data up the tree). For global state shared across many components, options are: Context API (built-in, good for low-frequency data like theme/user), Zustand (lightweight, minimal boilerplate), or Redux Toolkit (large apps, complex flows, devtools).',
+    tip: `// One-way flow: parent owns state, passes data down
+function Parent() {
+  const [count, setCount] = useState(0);
+  return <Child count={count} onIncrement={() => setCount(c => c + 1)} />;
+}
+function Child({ count, onIncrement }) {
+  return <button onClick={onIncrement}>Count: {count}</button>;
+}
+
+// Problem: prop drilling — passing through many layers
+// Solution 1: Context API (built-in)
+const UserCtx = createContext(null);
+<UserCtx.Provider value={user}><DeepTree /></UserCtx.Provider>
+const user = useContext(UserCtx); // anywhere below Provider
+
+// Solution 2: Zustand (no Provider needed)
+const useStore = create(set => ({
+  user: null,
+  setUser: (u) => set({ user: u }),
+}));
+const { user, setUser } = useStore(); // any component, anywhere
+
+// When to use what:
+// Context     theme, locale, current user (low update frequency)
+// Zustand     shared UI state, medium complexity
+// Redux Toolkit  enterprise apps, time-travel debugging, middleware`
+  },
 ];
+
 
 /* ═══════════════════════════════════════════════════════════
    TESTING & CONTAINERS — Docker + Kubernetes  (20 cards)
@@ -12902,6 +13086,7 @@ const CATEGORY_COLORS = {
   'Performance':  '#7c3aed',
   'Ecosystem':    '#a855f7',
   'Advanced':     '#7e22ce',
+  'Interview':    '#be185d',
   // Node.js
   'Node.js Basics':           '#68a063',
   'Modules & npm':            '#4ade80',
