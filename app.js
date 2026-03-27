@@ -7344,40 +7344,51 @@ clinic flame  -- node app.js    // flame graph`
 ];
 
 /* ═══════════════════════════════════════════════════════════
-   REACT & SSR — 25 cards across 5 categories
+   REACT & SSR — 24 cards across 7 categories
 ═══════════════════════════════════════════════════════════ */
 const REACT_CARDS = [
 
-  // ── React Basics ─────────────────────────────────────────
+  // ── Fundamentals ─────────────────────────────────────────
   {
-    category: 'React Basics', difficulty: 'Beginner',
-    question: 'What is React and how does the Virtual DOM work?',
-    answer: 'React is a JavaScript library for building UIs as a tree of components. Instead of updating the real DOM directly (slow), React maintains a Virtual DOM — a lightweight JS object copy of the DOM. On each state change, React re-renders the virtual tree, diffs it against the previous version (reconciliation), and applies only the minimal real DOM mutations needed. This batching and diffing is what makes React fast.',
-    tip: `// Virtual DOM flow:
-//
-// State changes
-//       ↓
-// React re-renders component → new Virtual DOM tree
-//       ↓
-// Diffing (reconciliation) — find what changed
-//       ↓
-// Commit — apply only the changes to real DOM
-//       ↓
-// Browser paints
+    category: 'Fundamentals', difficulty: 'Beginner',
+    question: 'Functional vs Class Components — what changed and why?',
+    answer: 'Class components (pre-2019) required extending React.Component, a constructor, and this.state / this.setState. Functional components are plain JS functions returning JSX. With Hooks (React 16.8+), functional components can do everything class components can — state, lifecycle effects, context — with less boilerplate. Class components are still valid but functional + hooks is the modern standard.',
+    tip: `// Class component — verbose, "this" everywhere
+class Counter extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { count: 0 };
+  }
+  increment() { this.setState({ count: this.state.count + 1 }); }
+  render() {
+    return (
+      <div>
+        <p>{this.state.count}</p>
+        <button onClick={() => this.increment()}>+</button>
+      </div>
+    );
+  }
+}
 
-// Real DOM manipulation is slow because:
-// - Layout recalculation
-// - Style recalculation
-// - Repaint / reflow
-// React batches updates to minimize DOM touches
+// Functional component — clean, hooks-based (modern)
+function Counter() {
+  const [count, setCount] = useState(0);
+  return (
+    <div>
+      <p>{count}</p>
+      <button onClick={() => setCount(c => c + 1)}>+</button>
+    </div>
+  );
+}
 
-// React 18+ Concurrent Mode:
-// React can pause, interrupt, and resume rendering
-// → keeps UI responsive during heavy work
-// → enabled by createRoot() instead of ReactDOM.render()`
+// Why functional wins:
+// ✅ No 'this' confusion
+// ✅ Easier to test (pure functions)
+// ✅ Hooks compose better than lifecycle methods
+// ✅ Smaller bundle, easier to read`
   },
   {
-    category: 'React Basics', difficulty: 'Beginner',
+    category: 'Fundamentals', difficulty: 'Beginner',
     question: 'What is JSX and how does it compile?',
     answer: 'JSX (JavaScript XML) is a syntax extension that looks like HTML inside JavaScript. Babel/TypeScript compiles it to React.createElement() calls. JSX is not required — you could write React.createElement() manually — but JSX makes component trees readable. Key JSX rules: use className (not class), camelCase event names (onClick not onclick), self-close empty tags, wrap multiple elements in a fragment (<> </>) or a parent element.',
     tip: `// JSX
@@ -7397,22 +7408,21 @@ const el = React.createElement(
 );
 
 // JSX rules:
-// ✅ className not class
-// ✅ htmlFor not for
+// ✅ className not class, htmlFor not for
 // ✅ camelCase events: onClick, onChange, onSubmit
-// ✅ Self-close: <img /> <input /> <br />
-// ✅ Expressions in {}: {user.name}, {isOpen ? 'Yes' : 'No'}
-// ✅ Multiple elements → fragment: <> ... </>
-// ❌ Statements in JSX (no if/for — use ternary or .map())`
+// ✅ Self-close empty tags: <img /> <br /> <input />
+// ✅ Expressions in {}: {user.name}, {active ? 'On' : 'Off'}
+// ✅ Multiple roots → wrap in fragment: <> ... </>
+// ❌ No statements in JSX — use ternary / .map() instead`
   },
   {
-    category: 'React Basics', difficulty: 'Beginner',
-    question: 'What are components and props in React?',
-    answer: 'A component is a reusable function that accepts props and returns JSX. Props (properties) are the inputs — read-only data passed from parent to child. Components must be pure: same props → same output, no side effects during render. Data flows one way: parent → child. To send data up, pass a callback function as a prop.',
-    tip: `// Function component — preferred modern style
+    category: 'Fundamentals', difficulty: 'Beginner',
+    question: 'What are Props and how does one-way data flow work?',
+    answer: 'Props are read-only inputs passed from parent to child — the primary mechanism for component communication. Components must be pure: same props always produce the same output. Data flows one way: parent → child. To pass data upward, the parent sends a callback function as a prop and the child calls it. This predictability is the core of React\'s mental model.',
+    tip: `// Function component receiving props
 function UserCard({ name, role, onSelect }) {
   return (
-    <div className="card">
+    <div>
       <h2>{name}</h2>
       <span>{role}</span>
       <button onClick={() => onSelect(name)}>Select</button>
@@ -7420,103 +7430,141 @@ function UserCard({ name, role, onSelect }) {
   );
 }
 
-// Usage — parent passes props
+// Parent passes data down + callback up
 function App() {
   const handleSelect = (name) => console.log('Selected:', name);
   return (
     <UserCard
       name="Alice"
       role="Admin"
-      onSelect={handleSelect}  // callback for upward data flow
+      onSelect={handleSelect}   // child calls this to send data UP
     />
   );
 }
 
 // Props rules:
-// ✅ Props are READ-ONLY — never mutate props
+// ✅ READ-ONLY — never mutate props inside a component
 // ✅ Any JS value: string, number, object, array, function, JSX
-// ✅ Destructure in params: ({ name, role }) instead of (props)
 // ✅ Default values: function Card({ size = 'md' }) {}
-// ✅ children prop: content between opening/closing tags`
+// ✅ children prop: content between <Card> ... </Card> tags
+// ✅ Spread: <Input {...fieldProps} /> passes all keys as props`
   },
   {
-    category: 'React Basics', difficulty: 'Beginner',
-    question: 'How does conditional rendering and list rendering work in React?',
-    answer: 'React renders JSX expressions — so you use JavaScript for logic. Conditionals: ternary operator (? :) or short-circuit (&&) inside JSX. Lists: .map() returns an array of JSX elements. Every list item needs a unique key prop so React can track items during reconciliation and avoid unnecessary re-renders.',
-    tip: `function Feed({ isLoading, error, posts }) {
-  // Early return pattern for loading/error states
-  if (isLoading) return <Spinner />;
-  if (error)     return <ErrorMsg message={error} />;
+    category: 'Fundamentals', difficulty: 'Beginner',
+    question: 'What is State in React and how does it differ from Props?',
+    answer: 'State is local, mutable data owned by a component. Unlike props (external inputs), state is internal and can change over time. Updating state with the setter triggers a re-render. React batches state updates for performance. State should be the minimum data needed to describe the UI — derived values should be computed, not stored as state.',
+    tip: `import { useState } from 'react';
 
-  return (
-    <div>
-      {/* Conditional rendering */}
-      {posts.length === 0 && <p>No posts yet.</p>}
+// Primitive state
+const [count, setCount] = useState(0);
+setCount(5);                      // set directly
+setCount(prev => prev + 1);       // updater fn — safe with batching
 
-      {posts.length > 0 ? (
-        <p>{posts.length} posts found</p>
-      ) : null}
+// Object state — ALWAYS spread to create a new reference
+const [user, setUser] = useState({ name: 'Alice', age: 25 });
+setUser(prev => ({ ...prev, age: 26 }));  // ✅ new object
+// user.age = 26; setUser(user);           // ❌ same ref, no re-render
 
-      {/* List rendering — key is required! */}
-      <ul>
-        {posts.map(post => (
-          <li key={post.id}>          {/* key must be unique & stable */}
-            <h3>{post.title}</h3>
-            <p>{post.body}</p>
-          </li>
-        ))}
-      </ul>
-    </div>
-  );
+// Array state
+const [items, setItems] = useState([]);
+setItems(prev => [...prev, newItem]);          // ✅ add
+setItems(prev => prev.filter(i => i.id !== id)); // ✅ remove
+
+// Props vs State:
+// Props   → passed from parent, READ-ONLY in this component
+// State   → owned by this component, MUTABLE via setter
+// Both    → changing either triggers a re-render
+
+// What NOT to put in state:
+// ❌ Derived data: const total = items.reduce(...) — compute it
+// ❌ Props copies: state mirrors a prop → out-of-sync bugs`
+  },
+
+  // ── Lifecycle ────────────────────────────────────────────
+  {
+    category: 'Lifecycle', difficulty: 'Beginner',
+    question: 'What happens during the Mounting phase in React?',
+    answer: 'Mounting is when a component is created and inserted into the DOM for the first time. In functional components, this maps to useEffect(() => { ... }, []) — the empty dependency array means "run once after the first render". This is where you initialize data: fetch from APIs, subscribe to external stores, set up timers, or read from localStorage.',
+    tip: `// useEffect with [] runs once after mount
+import { useState, useEffect } from 'react';
+
+function UserProfile({ userId }) {
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  // Mounting: fetch initial data
+  useEffect(() => {
+    fetch('/api/users/' + userId)
+      .then(r => r.json())
+      .then(data => { setUser(data); setLoading(false); });
+  }, []);  // empty array = runs on mount only
+
+  if (loading) return <p>Loading...</p>;
+  return <h1>{user.name}</h1>;
 }
 
-// ❌ Bad key — index changes on sort/filter → wrong re-renders
-posts.map((p, i) => <li key={i}>{p.title}</li>)
-
-// ✅ Good key — stable unique ID from data
-posts.map(p => <li key={p.id}>{p.title}</li>)`
+// Common mounting tasks:
+// fetch initial data, set up event listeners
+// start timers, subscribe to external stores
+// initialize 3rd-party libraries (charts, maps)`
   },
   {
-    category: 'React Basics', difficulty: 'Beginner',
-    question: 'What are controlled vs uncontrolled components in React forms?',
-    answer: 'Controlled component: React state is the single source of truth for the input value. Every keystroke triggers onChange → updates state → re-renders input. Full control for validation, formatting, disabling. Uncontrolled component: the DOM manages its own state; you read the value via a ref when needed (e.g. on submit). Simpler for basic forms but less flexible.',
-    tip: `// Controlled component — React drives the value
-function LoginForm() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+    category: 'Lifecycle', difficulty: 'Beginner',
+    question: 'What triggers the Updating phase and how do you react to it?',
+    answer: 'A component updates (re-renders) when its state or props change. React re-runs the function top-to-bottom, diffs the virtual DOM, and applies minimal DOM changes. useEffect with a dependency array runs after mount AND after any render where a listed dep changed — this replaces componentDidUpdate.',
+    tip: `// useEffect([dep]) runs after mount AND when dep changes
+useEffect(() => {
+  setLoading(true);
+  fetchUser(userId)
+    .then(setUser)
+    .finally(() => setLoading(false));
+}, [userId]);  // re-runs every time userId changes
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    // email and password are always in sync with state
-    login(email, password);
-  };
+// What triggers a re-render:
+// 1. useState setter called
+// 2. Props from parent changed
+// 3. useContext value changed
+// 4. Parent re-rendered (unless React.memo wraps this child)
 
-  return (
-    <form onSubmit={handleSubmit}>
-      <input
-        value={email}                          // controlled by state
-        onChange={e => setEmail(e.target.value)}
-        type="email"
-      />
-      <input
-        value={password}
-        onChange={e => setPassword(e.target.value)}
-        type="password"
-      />
-      <button type="submit">Login</button>
-    </form>
-  );
-}
+// Preventing unnecessary updates:
+// React.memo(Component)            skip if props unchanged
+// useMemo(() => calc, [dep])       cache computed value
+// useCallback(fn, [dep])           stable function reference
 
-// Uncontrolled component — ref reads DOM value on demand
-function SimpleForm() {
-  const emailRef = useRef();
-  const onSubmit = (e) => {
-    e.preventDefault();
-    console.log(emailRef.current.value);  // read on submit
-  };
-  return <form onSubmit={onSubmit}><input ref={emailRef} /></form>;
-}`
+// Anti-patterns:
+// setState inside useEffect without correct deps  -> loop
+// object/array in deps without useMemo            -> new ref every render`
+  },
+  {
+    category: 'Lifecycle', difficulty: 'Beginner',
+    question: 'What happens during the Unmounting phase and why does cleanup matter?',
+    answer: 'Unmounting is when a component is removed from the DOM. The function returned from useEffect runs on unmount (and before each re-run of that effect). Without cleanup you get memory leaks: event listeners accumulate, timers fire into unmounted components, and fetch calls try to update state that no longer exists. Always clean up what you set up.',
+    tip: `// Return a cleanup function from useEffect
+useEffect(() => {
+  // Setup
+  const controller = new AbortController();
+  fetch('/api/data', { signal: controller.signal })
+    .then(r => r.json()).then(setData);
+
+  return () => controller.abort();   // cleanup: cancel fetch on unmount
+}, []);
+
+useEffect(() => {
+  const handler = (e) => setKey(e.key);
+  window.addEventListener('keydown', handler);
+  return () => window.removeEventListener('keydown', handler);
+}, []);
+
+useEffect(() => {
+  const id = setInterval(() => setTick(t => t + 1), 1000);
+  return () => clearInterval(id);   // cleanup timer
+}, []);
+
+// Cleanup checklist:
+// abort pending fetch requests
+// clear setTimeout / setInterval
+// remove event listeners (window, document, socket)
+// unsubscribe from observables / stores`
   },
 
   // ── Hooks ────────────────────────────────────────────────
@@ -7707,6 +7755,115 @@ function Counter() {
 // → you want predictable, testable state transitions`
   },
 
+  // ── Data Flow ────────────────────────────────────────────
+  {
+    category: 'Data Flow', difficulty: 'Beginner',
+    question: 'What is one-way data binding and why does React use it?',
+    answer: 'One-way data binding means data flows in a single direction: from parent to child via props. A child cannot directly modify its parent\'s state. This makes data flow predictable and easy to trace — when a bug appears, you follow the data upward. Two-way binding (like Angular\'s ngModel) updates state automatically on input change, but can cause hard-to-trace cycles.',
+    tip: `// One-way: parent owns state, child renders it
+function Parent() {
+  const [name, setName] = useState('Alice');
+  return <Child name={name} onChange={setName} />;
+}
+
+// Child receives data (down) and calls callback (up)
+function Child({ name, onChange }) {
+  return (
+    <input
+      value={name}                        // data flows IN via props
+      onChange={e => onChange(e.target.value)} // data flows OUT via callback
+    />
+  );
+}
+
+// Two-way binding pattern (simulated):
+// <input value={state} onChange={e => setState(e.target.value)} />
+
+// Why one-way is better:
+// ✅ Predictable — one source of truth
+// ✅ Debuggable — trace state changes up the tree
+// ✅ Testable — pure functions in, pure output out
+// ✅ No hidden mutation surprises`
+  },
+  {
+    category: 'Data Flow', difficulty: 'Beginner',
+    question: 'What is "lifting state up" and when do you do it?',
+    answer: 'Lifting state up means moving shared state to the closest common ancestor of all components that need it. When two sibling components need the same data, neither can directly share state — so the parent holds it and passes it down as props. This keeps a single source of truth.',
+    tip: `// Problem: two siblings need to share the same filter value
+// ❌ Each manages its own state — they go out of sync
+
+// ✅ Lift state to the common parent
+function SearchPage() {
+  const [query, setQuery] = useState('');  // lifted up here
+
+  return (
+    <div>
+      {/* SearchBar reads and writes the shared query */}
+      <SearchBar query={query} onQueryChange={setQuery} />
+      {/* ResultsList reads the same query */}
+      <ResultsList query={query} />
+    </div>
+  );
+}
+
+function SearchBar({ query, onQueryChange }) {
+  return (
+    <input
+      value={query}
+      onChange={e => onQueryChange(e.target.value)}
+      placeholder="Search..."
+    />
+  );
+}
+
+function ResultsList({ query }) {
+  const results = useFilteredData(query);
+  return <ul>{results.map(r => <li key={r.id}>{r.title}</li>)}</ul>;
+}
+
+// Rule of thumb:
+// Lift state to the LOWEST common ancestor that needs it.
+// Don't over-lift — unnecessary re-renders happen higher up.`
+  },
+  {
+    category: 'Data Flow', difficulty: 'Intermediate',
+    question: 'What is the Context API and when should you use it instead of props?',
+    answer: 'Context lets you share values across the component tree without passing props at every level (prop drilling). createContext() creates the context, a Provider sets the value, and useContext() reads it anywhere below the Provider. Use context for truly global state: current user, theme, locale, feature flags. Avoid it for high-frequency updates (every keystroke) — all consumers re-render on every context change.',
+    tip: `// 1. Create context with a default value
+const ThemeContext = createContext('light');
+
+// 2. Provide the value at the top of the tree
+function App() {
+  const [theme, setTheme] = useState('dark');
+  return (
+    <ThemeContext.Provider value={{ theme, setTheme }}>
+      <Navbar />
+      <Main />
+    </ThemeContext.Provider>
+  );
+}
+
+// 3. Consume anywhere below — no prop drilling needed
+function Navbar() {
+  const { theme, setTheme } = useContext(ThemeContext);
+  return (
+    <button onClick={() => setTheme(t => t === 'dark' ? 'light' : 'dark')}>
+      {theme}
+    </button>
+  );
+}
+
+// Good Context use-cases:
+// current user / auth state
+// theme / color scheme
+// locale / language
+// feature flags
+
+// Bad use-cases (prefer Zustand / Redux):
+// frequent updates (search input, mouse position)
+// complex server state (use React Query / SWR instead)`
+  },
+
   // ── Performance ──────────────────────────────────────────
   {
     category: 'Performance', difficulty: 'Intermediate',
@@ -7803,179 +7960,239 @@ const preloadDashboard = () => import('./pages/Dashboard');
 // Changing userId creates a fresh Input with no stale state`
   },
 
-  // ── SSR & Next.js ────────────────────────────────────────
+  // ── Ecosystem ────────────────────────────────────────────
   {
-    category: 'SSR & Next.js', difficulty: 'Intermediate',
-    question: 'What are CSR, SSR, SSG, and ISR — and when do you use each?',
-    answer: 'CSR (Client-Side Rendering): browser downloads JS bundle, runs it, fetches data — slow first load, bad SEO. SSR (Server-Side Rendering): server renders HTML on every request — fast first paint, always fresh, higher server cost. SSG (Static Site Generation): HTML generated at build time — fastest, best for CDN, but data can be stale. ISR (Incremental Static Regeneration): SSG pages that regenerate in the background after a time interval — best of SSG and SSR.',
-    tip: `//  Strategy     │ Rendered When  │ Data Fresh │ SEO  │ Cost
-// ─────────────┼────────────────┼────────────┼──────┼──────
-//  CSR         │ In browser     │ On demand  │  ❌  │ Low
-//  SSR         │ Each request   │ Always     │  ✅  │ High
-//  SSG         │ Build time     │ At build   │  ✅  │ Low
-//  ISR         │ Build + revalidate│ Near-fresh│ ✅  │ Low
+    category: 'Ecosystem', difficulty: 'Intermediate',
+    question: 'How does React Router work for client-side navigation?',
+    answer: 'React Router is the standard client-side routing library for React SPAs. BrowserRouter wraps the app, Routes/Route define URL-to-component mappings, and Link/NavLink replace anchor tags for navigation without full page reloads. useNavigate() programmatically redirects, useParams() reads URL params, and useLocation() reads the current path.',
+    tip: `import { BrowserRouter, Routes, Route, Link, NavLink,
+         useNavigate, useParams } from 'react-router-dom';
 
-// Use CSR  for: dashboards, admin UIs (no SEO needed)
-// Use SSR  for: personalized pages, real-time stock/scores
-// Use SSG  for: blog, docs, marketing pages (data rarely changes)
-// Use ISR  for: product pages, news (fresh enough + fast + cheap)
-
-// Next.js App Router:
-// Default      → Server Component (SSR / RSC)
-// 'use client' → Client Component (CSR)
-// generateStaticParams() → SSG for dynamic routes
-// revalidate = 60        → ISR (regenerate every 60 seconds)
-
-// In Next.js page:
-export const revalidate = 60; // ISR — regenerate every 60s`
-  },
-  {
-    category: 'SSR & Next.js', difficulty: 'Intermediate',
-    question: 'What is the difference between Server Components and Client Components in Next.js?',
-    answer: 'React Server Components (RSC) run only on the server — they can fetch data directly (no useEffect), access backend resources, and never ship their code to the browser (smaller bundle). Client Components ("use client") run in the browser — they can use useState, useEffect, event handlers, and browser APIs. In Next.js App Router, all components are Server Components by default; add "use client" at the top to make one a Client Component.',
-    tip: `// Server Component (default in App Router)
-// ✅ Async — can await fetch/DB directly
-// ✅ No JS sent to browser
-// ✅ Access filesystem, env vars, DB
-// ❌ No hooks (useState, useEffect)
-// ❌ No event handlers (onClick)
-// ❌ No browser APIs (window, localStorage)
-
-async function ProductPage({ params }) {
-  const product = await db.products.findById(params.id); // direct DB!
-  return <ProductView product={product} />;
-}
-
-// Client Component — add "use client" directive at top
-'use client';
-import { useState } from 'react';
-
-function AddToCart({ productId }) {
-  const [added, setAdded] = useState(false);
+// App setup
+function App() {
   return (
-    <button onClick={() => setAdded(true)}>
-      {added ? 'Added!' : 'Add to Cart'}
-    </button>
+    <BrowserRouter>
+      <nav>
+        <NavLink to="/" end>Home</NavLink>
+        <NavLink to="/blog">Blog</NavLink>
+      </nav>
+      <Routes>
+        <Route path="/"           element={<Home />} />
+        <Route path="/blog"       element={<BlogList />} />
+        <Route path="/blog/:slug" element={<BlogPost />} />
+        <Route path="*"           element={<NotFound />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
 
-// Composition pattern — Server wraps Client:
-// ProductPage (Server) → renders AddToCart (Client)
-// ✅ Server fetches data, Client handles interaction
-// ❌ Client component CANNOT import Server component`
+// Reading URL params in a child component
+function BlogPost() {
+  const { slug } = useParams();   // /blog/hello-world → slug='hello-world'
+  return <h1>Post: {slug}</h1>;
+}
+
+// Programmatic navigation
+function LoginButton() {
+  const navigate = useNavigate();
+  return <button onClick={() => navigate('/dashboard')}>Login</button>;
+}
+
+// Nested routes — layout stays, inner page swaps
+<Route path="/dashboard" element={<DashboardLayout />}>
+  <Route index     element={<Overview />} />
+  <Route path="settings" element={<Settings />} />
+</Route>`
   },
   {
-    category: 'SSR & Next.js', difficulty: 'Intermediate',
-    question: 'How does data fetching work in Next.js App Router?',
-    answer: 'In the App Router, Server Components are async functions — fetch data directly with await. Next.js extends the native fetch() with caching and revalidation options. For mutations, use Server Actions (async functions that run on the server, called from Client Components). No need for getServerSideProps or getStaticProps (Pages Router patterns).',
-    tip: `// Server Component — direct async data fetch
-async function BlogPost({ params }) {
-  // Cached by default (like SSG)
-  const post = await fetch('https://api.example.com/posts/' + params.id, {
-    next: { revalidate: 3600 }  // ISR: revalidate every hour
-  }).then(r => r.json());
+    category: 'Ecosystem', difficulty: 'Intermediate',
+    question: 'Redux vs Zustand vs Context API — when do you use each?',
+    answer: 'Context API is built into React — good for low-frequency global values (theme, locale, current user). Redux (with Redux Toolkit) is a battle-tested state machine for large apps with complex state logic, time-travel debugging, and middleware. Zustand is a lightweight alternative: minimal boilerplate, no Provider needed, direct store subscriptions. Choose based on complexity: Context → Zustand → Redux Toolkit.',
+    tip: `// Context API — simple, built-in, no extra library
+const CountCtx = createContext(0);
+// ⚠️ All consumers re-render on every change — avoid for frequent updates
 
-  // No cache — fresh on every request (SSR)
-  const views = await fetch('/api/views/' + params.id, {
-    cache: 'no-store'
-  }).then(r => r.json());
+// Zustand — minimal, no Provider, component subscribes to slices
+import { create } from 'zustand';
 
-  return <article><h1>{post.title}</h1><p>Views: {views}</p></article>;
+const useStore = create((set) => ({
+  count: 0,
+  increment: () => set(s => ({ count: s.count + 1 })),
+  reset:     () => set({ count: 0 }),
+}));
+
+function Counter() {
+  const { count, increment } = useStore();
+  return <button onClick={increment}>{count}</button>;
 }
 
-// Server Action — mutation runs on server, called from client
-'use server';
-async function submitComment(formData) {
-  const comment = formData.get('comment');
-  await db.comments.create({ text: comment });
-  revalidatePath('/blog/' + formData.get('postId'));
-}
+// Redux Toolkit — structured, powerful, more setup
+import { configureStore, createSlice } from '@reduxjs/toolkit';
 
-// Client form using Server Action
-'use client';
-function CommentForm({ postId }) {
+const counterSlice = createSlice({
+  name: 'counter',
+  initialState: { value: 0 },
+  reducers: {
+    increment: s => { s.value++; },   // Immer lets you mutate
+  }
+});
+
+// Decision guide:
+// Context     simple global values (theme, user, locale)
+// Zustand     medium apps, easy migration from useState
+// Redux Toolkit  large teams, complex flows, devtools needed`
+  },
+  {
+    category: 'Ecosystem', difficulty: 'Intermediate',
+    question: 'How do you test React components with React Testing Library and Jest?',
+    answer: 'React Testing Library (RTL) tests components through user interactions — find elements by accessible queries (role, label, text) rather than implementation details (class names, test IDs). This gives confidence the component works as users expect. Jest provides the test runner, assertions, and mocking. userEvent simulates real user interactions; waitFor handles async updates.',
+    tip: `import { render, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import LoginForm from './LoginForm';
+
+test('calls onLogin with email and password on submit', async () => {
+  const onLogin = jest.fn();
+  render(<LoginForm onLogin={onLogin} />);
+
+  // Find by accessible role/label (like a real user would)
+  await userEvent.type(screen.getByLabelText('Email'), 'alice@example.com');
+  await userEvent.type(screen.getByLabelText('Password'), 'secret');
+  await userEvent.click(screen.getByRole('button', { name: /login/i }));
+
+  expect(onLogin).toHaveBeenCalledWith({
+    email: 'alice@example.com',
+    password: 'secret',
+  });
+});
+
+// Query priority (most to least preferred):
+// getByRole        most semantic (button, heading, input)
+// getByLabelText   form fields with labels
+// getByText        any visible text
+// getByTestId      last resort — implementation detail
+
+// Async: waitFor waits for DOM to stabilize
+await waitFor(() => expect(screen.getByText('Welcome!')).toBeInTheDocument());
+
+// RTL principle:
+// Test behavior, not implementation.
+// If a refactor doesn't change user experience, tests shouldn't break.`
+  },
+
+  // ── Advanced ─────────────────────────────────────────────
+  {
+    category: 'Advanced', difficulty: 'Intermediate',
+    question: 'What is SSR with Next.js — CSR vs SSR vs SSG vs ISR?',
+    answer: 'CSR: browser runs JS and fetches data — slow first load, bad SEO. SSR: server renders HTML on every request — fast first paint, always fresh, higher cost. SSG: HTML generated at build time — fastest, CDN-cacheable, stale risk. ISR: SSG pages that regenerate in the background after a configurable interval — near-fresh data without full SSR cost. Next.js App Router: all components are Server Components by default; add "use client" for interactivity.',
+    tip: `//  Strategy  Rendered When       SEO   Data
+//  CSR       In browser          No    On demand
+//  SSR       Each request        Yes   Always fresh
+//  SSG       Build time          Yes   At build
+//  ISR       Build + revalidate  Yes   Near-fresh
+
+// Next.js App Router defaults:
+// - All components are Server Components (no JS shipped)
+// - 'use client' at top → Client Component (useState OK)
+// - fetch() extended with cache options
+
+// SSG (static, cached forever)
+const data = await fetch(url, { cache: 'force-cache' });
+
+// SSR (fresh on every request)
+const data = await fetch(url, { cache: 'no-store' });
+
+// ISR (regenerate every 60 seconds)
+const data = await fetch(url, { next: { revalidate: 60 } });
+
+// Hydration: server sends HTML → browser loads JS → React
+// attaches event handlers to existing DOM. Mismatch between
+// server and client render causes hydration errors.`
+  },
+  {
+    category: 'Advanced', difficulty: 'Advanced',
+    question: 'What is Concurrent Rendering in React 18 and what does it enable?',
+    answer: 'Concurrent rendering lets React interrupt, pause, and resume rendering work — so the browser stays responsive during heavy renders. Enabled by createRoot() in React 18. Key primitives: startTransition() marks a state update as non-urgent (can be interrupted by higher-priority input), useDeferredValue() defers re-rendering of a slow component. This eliminates UI freezes during expensive updates like large list filtering.',
+    tip: `import { createRoot, startTransition, useDeferredValue, useTransition }
+  from 'react';
+
+// React 18: use createRoot instead of ReactDOM.render
+const root = createRoot(document.getElementById('root'));
+root.render(<App />);
+
+// startTransition — mark low-priority updates
+function SearchPage() {
+  const [input, setInput]   = useState('');
+  const [query, setQuery]   = useState('');
+  const [isPending, startTr] = useTransition();
+
+  function handleChange(e) {
+    setInput(e.target.value);             // urgent: update input immediately
+    startTr(() => setQuery(e.target.value)); // non-urgent: can be interrupted
+  }
+
   return (
-    <form action={submitComment}>
-      <input name="comment" />
-      <input type="hidden" name="postId" value={postId} />
-      <button type="submit">Post</button>
-    </form>
+    <>
+      <input value={input} onChange={handleChange} />
+      {isPending && <Spinner />}
+      <BigResultsList query={query} />    {/* deferred render */}
+    </>
   );
-}`
-  },
-  {
-    category: 'SSR & Next.js', difficulty: 'Intermediate',
-    question: 'What is hydration in React SSR and what causes hydration errors?',
-    answer: 'Hydration is the process where React takes server-rendered HTML and attaches event listeners / state to make it interactive. React "hydrates" by rendering the component tree client-side and matching it to the existing DOM. A hydration mismatch occurs when the server HTML and client render produce different output — React warns and may re-render, causing a flash. Common causes: using Date.now() / Math.random() in render, browser-only APIs, locale-specific formatting.',
-    tip: `// SSR lifecycle:
-// 1. Server renders component to HTML string
-// 2. Browser receives and displays HTML immediately (fast!)
-// 3. JS bundle loads
-// 4. React hydrates: renders component again, diffs with DOM
-// 5. Event listeners attached → page is now interactive
-
-// Hydration mismatch causes:
-// ❌ Different output on server vs client
-
-// Bad — Math.random() differs each run
-function Avatar() {
-  return <div style={{ color: randomColor() }}>...</div>;
 }
 
-// Bad — Date differs between server and client
-function Timestamp() {
-  return <time>{new Date().toLocaleString()}</time>; // locale mismatch!
+// useDeferredValue — defer re-render of a slow subtree
+function App({ text }) {
+  const deferredText = useDeferredValue(text);  // lags behind text
+  return <SlowList text={deferredText} />;
 }
 
-// ✅ Fix: suppress for truly dynamic content
-<div suppressHydrationWarning>{new Date().toLocaleString()}</div>
-
-// ✅ Fix: render on client only
-const [mounted, setMounted] = useState(false);
-useEffect(() => setMounted(true), []);
-if (!mounted) return null;
-
-// ✅ Fix: use stable values
-// Store random/date values in state initialized on client only`
+// Key point: UI stays responsive — typing feels instant
+// even while React re-renders a 10,000-item list.`
   },
   {
-    category: 'SSR & Next.js', difficulty: 'Advanced',
-    question: 'How does the Next.js App Router file-based routing system work?',
-    answer: 'Next.js App Router uses the file system as the router. Every folder inside app/ can have a page.tsx (the page), layout.tsx (persistent wrapper — does not remount on navigation), loading.tsx (Suspense fallback), error.tsx (error boundary), and not-found.tsx. Dynamic segments use [param] folders. Route groups use (group) folders (no URL impact). Parallel routes use @slot folders.',
-    tip: `// File structure → URL mapping:
-app/
-├── layout.tsx          → root layout (wraps everything)
-├── page.tsx            → /
-├── globals.css
-├── about/
-│   └── page.tsx        → /about
-├── blog/
-│   ├── page.tsx        → /blog
-│   ├── loading.tsx     → shown while blog loads (Suspense)
-│   ├── error.tsx       → error boundary for /blog
-│   └── [slug]/
-│       └── page.tsx    → /blog/my-post  (params.slug = "my-post")
-├── (marketing)/        → route group — no effect on URL
-│   ├── pricing/page.tsx→ /pricing
-│   └── features/page.tsx→ /features
-└── dashboard/
-    ├── layout.tsx      → persistent sidebar (no remount!)
-    └── page.tsx        → /dashboard
+    category: 'Advanced', difficulty: 'Intermediate',
+    question: 'How do Suspense and Error Boundaries work in React?',
+    answer: 'Suspense lets you declaratively show a fallback UI while a child component is loading (lazy-loaded code, data fetching). Error Boundaries are class components that catch errors in their subtree via getDerivedStateFromError / componentDidCatch — they prevent the whole app from crashing. In Next.js App Router, loading.tsx is a Suspense boundary and error.tsx is an Error Boundary.',
+    tip: `import { lazy, Suspense } from 'react';
 
-// layout.tsx — wraps children, persists across navigations
-export default function Layout({ children }) {
+// Suspense + lazy loading — show fallback while chunk loads
+const HeavyChart = lazy(() => import('./HeavyChart'));
+
+function Dashboard() {
   return (
-    <html lang="en">
-      <body><Navbar />{children}<Footer /></body>
-    </html>
+    <Suspense fallback={<div>Loading chart...</div>}>
+      <HeavyChart />
+    </Suspense>
   );
 }
 
-// Dynamic page
-export default function BlogPost({ params, searchParams }) {
-  // params.slug = "my-post"  (from [slug] folder)
-  // searchParams.page = "2"  (from ?page=2)
-}`
+// Error Boundary — catch runtime errors in child components
+class ErrorBoundary extends React.Component {
+  state = { hasError: false, error: null };
+
+  static getDerivedStateFromError(error) {
+    return { hasError: true, error };
+  }
+  componentDidCatch(error, info) {
+    logErrorToService(error, info.componentStack);
+  }
+  render() {
+    if (this.state.hasError) {
+      return <h2>Something went wrong: {this.state.error.message}</h2>;
+    }
+    return this.props.children;
+  }
+}
+
+// Usage — wrap risky subtrees
+<ErrorBoundary>
+  <Suspense fallback={<Spinner />}>
+    <UserDashboard />
+  </Suspense>
+</ErrorBoundary>
+
+// Next.js equivalents:
+// loading.tsx  → automatic Suspense boundary for the route
+// error.tsx    → automatic Error Boundary for the route`
   },
 ];
 
@@ -12641,10 +12858,13 @@ const CATEGORY_COLORS = {
   'CSS Layouts':      '#d946ef',
   'Tailwind CSS':     '#a21caf',
   // React & SSR
-  'React Basics': '#61dafb',
-  'Hooks':        '#38bdf8',
-  'Performance':  '#0ea5e9',
-  'SSR & Next.js':'#0284c7',
+  'Fundamentals': '#61dafb',
+  'Lifecycle':    '#38bdf8',
+  'Hooks':        '#0ea5e9',
+  'Data Flow':    '#0369a1',
+  'Performance':  '#7c3aed',
+  'Ecosystem':    '#a855f7',
+  'Advanced':     '#7e22ce',
   // Node.js
   'Node.js Basics':           '#68a063',
   'Modules & npm':            '#4ade80',
