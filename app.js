@@ -7344,9 +7344,45 @@ clinic flame  -- node app.js    // flame graph`
 ];
 
 /* ═══════════════════════════════════════════════════════════
-   REACT & SSR — 24 cards across 7 categories
+   REACT & SSR — 25 cards across 8 categories
 ═══════════════════════════════════════════════════════════ */
 const REACT_CARDS = [
+
+  // ── Overview ─────────────────────────────────────────────
+  {
+    category: 'Overview', difficulty: 'Beginner',
+    question: 'React mindmap — what are the 7 core areas and how do they connect?',
+    answer: 'React is organized into 7 areas: 1) Fundamentals (components, JSX, props, state). 2) Lifecycle (mounting, updating, unmounting via hooks). 3) Hooks (useState, useEffect, useContext, useReducer, custom hooks). 4) Data Flow (one-way binding, lifting state, Context API). 5) Performance (Virtual DOM, memoization, code splitting). 6) Ecosystem (React Router, Redux/Zustand, testing). 7) Advanced (SSR/Next.js, concurrent rendering, Suspense & Error Boundaries).',
+    tip: `REACT
+│
+├─ 1. Fundamentals   Components (Functional vs Class) · JSX · Props · State
+│
+├─ 2. Lifecycle      Mounting → Updating → Unmounting
+│                    useEffect([], [dep], cleanup)
+│
+├─ 3. Hooks          useState · useEffect · useContext
+│                    useReducer · Custom Hooks
+│
+├─ 4. Data Flow      One-way binding · Lifting state up · Context API
+│
+├─ 5. Performance    Virtual DOM · React.memo · useMemo · useCallback
+│                    Code splitting · React.lazy · Suspense
+│
+├─ 6. Ecosystem      React Router · Redux / Zustand / Context
+│                    Testing (Jest, React Testing Library)
+│
+└─ 7. Advanced       SSR & Next.js (CSR/SSR/SSG/ISR)
+                     Concurrent rendering (startTransition)
+                     Suspense & Error Boundaries
+
+CORE INTERVIEW KNOWLEDGE
+  Declarative:   describe what UI should look like, React handles updates
+  Components:    reusable, isolated pieces of UI
+  State vs Props props = inputs (read-only), state = internal + dynamic
+  Hooks:         modern way to manage state and lifecycle in functional components
+  Virtual DOM:   improves perf by minimising direct DOM manipulation
+  Data flow:     one-way, predictable; Context or Redux for global state`
+  },
 
   // ── Fundamentals ─────────────────────────────────────────
   {
@@ -12858,6 +12894,7 @@ const CATEGORY_COLORS = {
   'CSS Layouts':      '#d946ef',
   'Tailwind CSS':     '#a21caf',
   // React & SSR
+  'Overview':     '#22d3ee',
   'Fundamentals': '#61dafb',
   'Lifecycle':    '#38bdf8',
   'Hooks':        '#0ea5e9',
