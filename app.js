@@ -12988,15 +12988,22 @@ const SUBJECTS = {
    SUBJECT GROUPS  (controls menu bar sections)
 ═══════════════════════════════════════════════════════════ */
 const SUBJECT_GROUPS = {
-  'Core':     ['DSA', 'Internet', 'Linux', 'Tricked Memory'],
-  'Backend':  ['Python', 'C#', 'SQL', 'Database', 'API', 'Node.js', 'Testing & Containers'],
-  'Frontend': ['JavaScript', 'React & SSR', 'CSS & Tailwind'],
+  'Core':        ['DSA', 'Internet', 'Linux', 'Tricked Memory'],
+  'Backend':     ['Python', 'C#', 'SQL', 'Database', 'API', 'Node.js', 'Testing & Containers'],
+  'Frontend':    ['JavaScript', 'React & SSR', 'CSS & Tailwind'],
+  'Cheat Sheet': ['Junior Dev Daily Essentials'],
+};
+
+// Subjects that open a separate page instead of loading flash cards
+const LINK_SUBJECTS = {
+  'Junior Dev Daily Essentials': 'cheatsheet.html',
 };
 
 const GROUP_COLORS = {
-  'Core':     '#f97316',
-  'Backend':  '#6366f1',
-  'Frontend': '#61dafb',
+  'Core':        '#f97316',
+  'Backend':     '#6366f1',
+  'Frontend':    '#61dafb',
+  'Cheat Sheet': '#10b981',
 };
 
 /* ═══════════════════════════════════════════════════════════
@@ -13187,6 +13194,22 @@ function buildSubjectMenu() {
     btnRow.className = 'group-btns';
 
     subjects.forEach(subject => {
+      // Link subjects open a separate page
+      if (LINK_SUBJECTS[subject]) {
+        const a = document.createElement('a');
+        a.className  = 'subject-btn';
+        a.textContent = subject;
+        a.href       = LINK_SUBJECTS[subject];
+        a.target     = '_blank';
+        a.rel        = 'noopener';
+        const color  = GROUP_COLORS[groupName] || '#10b981';
+        a.style.textDecoration = 'none';
+        a.addEventListener('mouseenter', () => { a.style.borderColor = color; a.style.color = color; });
+        a.addEventListener('mouseleave', () => { a.style.borderColor = ''; a.style.color = ''; });
+        btnRow.appendChild(a);
+        return;
+      }
+
       const btn = document.createElement('button');
       btn.className   = 'subject-btn' + (subject === state.activeSubject ? ' active' : '');
       btn.textContent = subject;

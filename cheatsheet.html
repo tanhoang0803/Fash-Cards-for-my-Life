@@ -1,0 +1,1127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Junior Dev Daily Essentials</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0d0f14;
+    --surface: #13161d;
+    --border: #1e2330;
+    --border2: #252a38;
+    --js: #f7df1e;
+    --js-dim: #f7df1e22;
+    --react: #61dafb;
+    --react-dim: #61dafb22;
+    --sql: #00c896;
+    --sql-dim: #00c89622;
+    --linux: #ff6b4a;
+    --linux-dim: #ff6b4a22;
+    --text: #e2e8f0;
+    --muted: #8892a4;
+    --code: #c9d1e0;
+    --comment: #4a5568;
+    --string: #a8d8a8;
+    --keyword: #7eb8f7;
+    --fn: #ffc966;
+    --accent: #ffffff;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Syne', sans-serif;
+    font-size: 14px;
+    line-height: 1.5;
+    width: 1600px;
+    margin: 0 auto;
+    padding: 32px;
+  }
+
+  /* ── HEADER ── */
+  .header {
+    text-align: center;
+    margin-bottom: 28px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--border2);
+  }
+  .header h1 {
+    font-size: 28px;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    color: #fff;
+    text-transform: uppercase;
+  }
+  .header p {
+    color: var(--muted);
+    font-size: 14px;
+    margin-top: 4px;
+    font-family: 'JetBrains Mono', monospace;
+    letter-spacing: 2px;
+  }
+  .pills {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 12px;
+  }
+  .pill {
+    padding: 3px 14px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .pill-js { background: var(--js-dim); color: var(--js); border: 1px solid #f7df1e44; }
+  .pill-react { background: var(--react-dim); color: var(--react); border: 1px solid #61dafb44; }
+  .pill-sql { background: var(--sql-dim); color: var(--sql); border: 1px solid #00c89644; }
+  .pill-linux { background: var(--linux-dim); color: var(--linux); border: 1px solid #ff6b4a44; }
+
+  /* ── GRID ── */
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+  .grid-4 { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+
+  /* ── SECTION CARD ── */
+  .section-title {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    font-family: 'JetBrains Mono', monospace;
+    margin-bottom: 16px;
+    padding: 8px 14px;
+    border-radius: 6px;
+    display: inline-block;
+  }
+  .section-title.js { background: var(--js-dim); color: var(--js); }
+  .section-title.react { background: var(--react-dim); color: var(--react); }
+  .section-title.sql { background: var(--sql-dim); color: var(--sql); }
+  .section-title.linux { background: var(--linux-dim); color: var(--linux); }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px;
+    break-inside: avoid;
+  }
+  .card.js-card { border-top: 2px solid var(--js); }
+  .card.react-card { border-top: 2px solid var(--react); }
+  .card.sql-card { border-top: 2px solid var(--sql); }
+  .card.linux-card { border-top: 2px solid var(--linux); }
+
+  .card h3 {
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    margin-bottom: 10px;
+  }
+  .card h3.js { color: var(--js); }
+  .card h3.react { color: var(--react); }
+  .card h3.sql { color: var(--sql); }
+  .card h3.linux { color: var(--linux); }
+
+  .card h4 {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin: 12px 0 6px;
+    padding-bottom: 4px;
+    border-bottom: 1px solid var(--border);
+  }
+  .card h4:first-of-type { margin-top: 4px; }
+
+  /* ── CODE BLOCKS ── */
+  pre, code {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+  }
+  pre {
+    background: #0a0c11;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 10px 12px;
+    overflow-x: auto;
+    margin: 6px 0;
+    line-height: 1.65;
+    white-space: pre;
+  }
+  .c { color: var(--code); }
+  .k { color: var(--keyword); } /* keyword */
+  .s { color: var(--string); }  /* string */
+  .f { color: var(--fn); }      /* function/value */
+  .cm { color: var(--comment); font-style: italic; } /* comment */
+  .js-c { color: var(--js); font-weight: 600; }
+  .r-c { color: var(--react); font-weight: 600; }
+  .sql-c { color: var(--sql); font-weight: 600; }
+  .lx-c { color: var(--linux); font-weight: 600; }
+
+  /* ── INLINE TABLE ── */
+  .ref-table { width: 100%; border-collapse: collapse; margin: 6px 0; }
+  .ref-table td {
+    padding: 4px 6px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12.5px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+  .ref-table td:first-child { color: var(--fn); white-space: nowrap; padding-right: 12px; }
+  .ref-table td:last-child { color: var(--muted); }
+  .ref-table tr:last-child td { border-bottom: none; }
+
+  /* ── NOTE / TIP ── */
+  .tip {
+    background: #1a1e2a;
+    border-left: 3px solid var(--comment);
+    padding: 6px 10px;
+    border-radius: 0 4px 4px 0;
+    color: var(--muted);
+    font-size: 12.5px;
+    margin: 6px 0;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .tip.js-tip { border-color: var(--js); }
+  .tip.react-tip { border-color: var(--react); }
+  .tip.sql-tip { border-color: var(--sql); }
+  .tip.linux-tip { border-color: var(--linux); }
+
+  /* ── DIVIDER ── */
+  .divider {
+    border: none;
+    border-top: 1px solid var(--border2);
+    margin: 20px 0;
+  }
+
+  /* ── BIG LABEL ── */
+  .big-label {
+    font-size: 22px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .big-label .num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    font-weight: 700;
+    width: 28px;
+    height: 28px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .big-label.js { color: var(--js); }
+  .big-label.js .num { background: var(--js); color: #000; }
+  .big-label.react { color: var(--react); }
+  .big-label.react .num { background: var(--react); color: #000; }
+  .big-label.sql { color: var(--sql); }
+  .big-label.sql .num { background: var(--sql); color: #000; }
+  .big-label.linux { color: var(--linux); }
+  .big-label.linux .num { background: var(--linux); color: #000; }
+
+  /* ── SPAN HELPERS ── */
+  .row { display: flex; gap: 12px; margin: 5px 0; }
+  .badge {
+    display: inline-block;
+    font-size: 11px;
+    font-family: 'JetBrains Mono', monospace;
+    padding: 1px 7px;
+    border-radius: 4px;
+    font-weight: 600;
+    margin-right: 4px;
+  }
+  .badge-js { background: var(--js-dim); color: var(--js); border: 1px solid #f7df1e33; }
+  .badge-react { background: var(--react-dim); color: var(--react); border: 1px solid #61dafb33; }
+
+  .full-span { grid-column: 1 / -1; }
+  .span2 { grid-column: span 2; }
+
+  @media print {
+    body { width: 100%; padding: 10px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <h1>Junior Developer — Daily Essentials</h1>
+  <p>JAVASCRIPT · REACT + REDUX · SQL · LINUX — QUICK REFERENCE</p>
+  <div class="pills">
+    <span class="pill pill-js">JS ES6+</span>
+    <span class="pill pill-react">React + Redux</span>
+    <span class="pill pill-sql">SQL / PostgreSQL</span>
+    <span class="pill pill-linux">Linux CLI</span>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     JAVASCRIPT
+══════════════════════════════════════════ -->
+<div class="big-label js"><span class="num">1</span> JavaScript</div>
+
+<div class="grid-4">
+  <!-- Variables & Types -->
+  <div class="card js-card">
+    <h3 class="js">Variables & Types</h3>
+    <h4>Declaration</h4>
+<pre><span class="k">let</span>   <span class="c">x = 5;</span>          <span class="cm">// reassignable</span>
+<span class="k">const</span> <span class="c">PI = 3.14;</span>     <span class="cm">// constant</span>
+<span class="k">var</span>   <span class="c">old = </span><span class="s">'avoid'</span><span class="c">;</span>  <span class="cm">// function-scoped</span></pre>
+    <h4>Types</h4>
+<pre><span class="cm">// Primitives</span>
+<span class="k">typeof</span> <span class="f">42</span>          <span class="cm">// "number"</span>
+<span class="k">typeof</span> <span class="s">"hi"</span>       <span class="cm">// "string"</span>
+<span class="k">typeof</span> <span class="k">true</span>       <span class="cm">// "boolean"</span>
+<span class="k">typeof</span> <span class="k">undefined</span>  <span class="cm">// "undefined"</span>
+<span class="k">typeof</span> <span class="k">null</span>       <span class="cm">// "object" ⚠️ bug</span>
+<span class="k">typeof</span> <span class="f">Symbol()</span>   <span class="cm">// "symbol"</span>
+<span class="k">typeof</span> <span class="f">42n</span>        <span class="cm">// "bigint"</span>
+<span class="cm">// Reference</span>
+<span class="k">typeof</span> <span class="c">{}  </span><span class="cm">// "object"</span>
+<span class="k">typeof</span> <span class="c">[] </span><span class="cm">// "object" (use Array.isArray)</span>
+<span class="k">typeof</span> <span class="f">fn </span><span class="cm">// "function"</span></pre>
+    <h4>Truthy / Falsy</h4>
+<pre><span class="cm">// Falsy: false, 0, "", null,</span>
+<span class="cm">//        undefined, NaN</span>
+<span class="cm">// Everything else is truthy</span></pre>
+  </div>
+
+  <!-- Scope, Closures, Hoisting -->
+  <div class="card js-card">
+    <h3 class="js">Scope & Closures</h3>
+    <h4>Hoisting</h4>
+<pre><span class="cm">// var declarations hoisted (not value)</span>
+<span class="c">console.log(x);</span> <span class="cm">// undefined</span>
+<span class="k">var</span> <span class="c">x = </span><span class="f">5</span><span class="c">;</span>
+<span class="cm">// let/const: TDZ error if used early</span>
+
+<span class="cm">// Function declarations hoisted fully</span>
+<span class="f">greet</span><span class="c">();</span> <span class="cm">// works!</span>
+<span class="k">function</span> <span class="f">greet</span><span class="c">() { ... }</span></pre>
+    <h4>Closure</h4>
+<pre><span class="k">function</span> <span class="f">counter</span><span class="c">() {</span>
+  <span class="k">let</span> <span class="c">count = </span><span class="f">0</span><span class="c">;</span>
+  <span class="k">return</span> <span class="c">() => ++count;</span>
+<span class="c">}</span>
+<span class="k">const</span> <span class="c">inc = </span><span class="f">counter</span><span class="c">();</span>
+<span class="c">inc(); </span><span class="cm">// 1</span>
+<span class="c">inc(); </span><span class="cm">// 2</span>
+<span class="cm">// Inner fn "closes over" count</span></pre>
+    <h4>Scope Chain</h4>
+<pre><span class="k">let</span> <span class="c">outer = </span><span class="s">'A'</span><span class="c">;</span>
+<span class="k">function</span> <span class="f">fn</span><span class="c">() {</span>
+  <span class="k">let</span> <span class="c">inner = </span><span class="s">'B'</span><span class="c">;</span>
+  <span class="cm">// can access outer, not vice versa</span>
+<span class="c">}</span></pre>
+  </div>
+
+  <!-- Functions & this -->
+  <div class="card js-card">
+    <h3 class="js">Functions & <code>this</code></h3>
+    <h4>Function Types</h4>
+<pre><span class="cm">// Declaration</span>
+<span class="k">function</span> <span class="f">add</span><span class="c">(a, b) { </span><span class="k">return</span><span class="c"> a + b; }</span>
+
+<span class="cm">// Expression</span>
+<span class="k">const</span> <span class="c">add = </span><span class="k">function</span><span class="c">(a, b) { ... };</span>
+
+<span class="cm">// Arrow (no own `this`)</span>
+<span class="k">const</span> <span class="c">add = (a, b) => a + b;</span>
+
+<span class="cm">// Default params</span>
+<span class="k">function</span> <span class="f">greet</span><span class="c">(name = </span><span class="s">'World'</span><span class="c">) {</span>
+  <span class="k">return</span> <span class="s">`Hello </span><span class="c">${name}</span><span class="s">`</span><span class="c">;</span>
+<span class="c">}</span>
+
+<span class="cm">// Rest params</span>
+<span class="k">function</span> <span class="f">sum</span><span class="c">(...nums) {</span>
+  <span class="k">return</span> <span class="c">nums.</span><span class="f">reduce</span><span class="c">((a, b) => a + b);</span>
+<span class="c">}</span></pre>
+    <h4><code>this</code> Binding</h4>
+<pre><span class="cm">// Regular fn: this = caller</span>
+<span class="cm">// Arrow fn: this = surrounding scope</span>
+<span class="k">const</span> <span class="c">obj = { name: </span><span class="s">'Bob'</span><span class="c">,</span>
+  <span class="f">greet</span><span class="c">() { </span><span class="k">return</span> <span class="k">this</span><span class="c">.name; }</span>
+<span class="c">};</span>
+<span class="c">obj.</span><span class="f">greet</span><span class="c">();</span> <span class="cm">// "Bob"</span>
+<span class="cm">// Explicit bind:</span>
+<span class="c">fn.</span><span class="f">call</span><span class="c">(ctx, a, b)</span>
+<span class="c">fn.</span><span class="f">apply</span><span class="c">(ctx, [a, b])</span>
+<span class="k">const</span> <span class="c">bound = fn.</span><span class="f">bind</span><span class="c">(ctx);</span></pre>
+  </div>
+
+  <!-- ES6+ -->
+  <div class="card js-card">
+    <h3 class="js">ES6+ Essentials</h3>
+    <h4>Destructuring</h4>
+<pre><span class="cm">// Object</span>
+<span class="k">const</span> <span class="c">{ name, age = </span><span class="f">0</span><span class="c"> } = user;</span>
+<span class="k">const</span> <span class="c">{ name: n } = user;</span> <span class="cm">// rename</span>
+
+<span class="cm">// Array</span>
+<span class="k">const</span> <span class="c">[first, second, ...rest] = arr;</span>
+
+<span class="cm">// In function params</span>
+<span class="k">function</span> <span class="f">show</span><span class="c">({ name, age }) { ... }</span></pre>
+    <h4>Spread & Rest</h4>
+<pre><span class="cm">// Spread: expand</span>
+<span class="k">const</span> <span class="c">arr2 = [...arr1, </span><span class="f">4</span><span class="c">, </span><span class="f">5</span><span class="c">];</span>
+<span class="k">const</span> <span class="c">obj2 = { ...obj1, age: </span><span class="f">30</span><span class="c"> };</span>
+<span class="f">Math.max</span><span class="c">(...nums);</span>
+
+<span class="cm">// Rest: collect remaining</span>
+<span class="k">const</span> <span class="c">[head, ...tail] = [</span><span class="f">1</span><span class="c">,</span><span class="f">2</span><span class="c">,</span><span class="f">3</span><span class="c">];</span></pre>
+    <h4>Template Literals</h4>
+<pre><span class="k">const</span> <span class="c">msg = </span><span class="s">`Hello ${name}, you are ${age} years old`</span><span class="c">;</span>
+<span class="cm">// Multi-line — just press Enter inside backticks</span></pre>
+    <h4>Short-circuit</h4>
+<pre><span class="k">const</span> <span class="c">val = a ?? </span><span class="s">'default'</span><span class="c">;</span> <span class="cm">// null/undef</span>
+<span class="k">const</span> <span class="c">val = a || </span><span class="s">'fallback'</span><span class="c">;</span> <span class="cm">// falsy</span>
+<span class="c">user?.address?.city</span> <span class="cm">// optional chain</span></pre>
+  </div>
+</div>
+
+<div class="grid-4">
+  <!-- Arrays -->
+  <div class="card js-card">
+    <h3 class="js">Arrays & Iteration</h3>
+    <h4>Core Methods</h4>
+<pre><span class="k">const</span> <span class="c">nums = [</span><span class="f">1</span><span class="c">,</span><span class="f">2</span><span class="c">,</span><span class="f">3</span><span class="c">,</span><span class="f">4</span><span class="c">,</span><span class="f">5</span><span class="c">];</span>
+
+<span class="cm">// map — transform each element</span>
+<span class="c">nums.</span><span class="f">map</span><span class="c">(x => x * </span><span class="f">2</span><span class="c">);</span>
+<span class="cm">// [2,4,6,8,10]</span>
+
+<span class="cm">// filter — keep matching elements</span>
+<span class="c">nums.</span><span class="f">filter</span><span class="c">(x => x > </span><span class="f">2</span><span class="c">);</span>
+<span class="cm">// [3,4,5]</span>
+
+<span class="cm">// reduce — accumulate to one value</span>
+<span class="c">nums.</span><span class="f">reduce</span><span class="c">((sum, x) => sum + x, </span><span class="f">0</span><span class="c">);</span>
+<span class="cm">// 15</span>
+
+<span class="cm">// find / findIndex</span>
+<span class="c">nums.</span><span class="f">find</span><span class="c">(x => x > </span><span class="f">3</span><span class="c">);</span>     <span class="cm">// 4</span>
+<span class="c">nums.</span><span class="f">findIndex</span><span class="c">(x => x===</span><span class="f">3</span><span class="c">);</span><span class="cm">// 2</span>
+
+<span class="cm">// some / every</span>
+<span class="c">nums.</span><span class="f">some</span><span class="c">(x => x > </span><span class="f">4</span><span class="c">);</span>   <span class="cm">// true</span>
+<span class="c">nums.</span><span class="f">every</span><span class="c">(x => x > </span><span class="f">0</span><span class="c">);</span>  <span class="cm">// true</span>
+
+<span class="cm">// flat / flatMap</span>
+<span class="c">[[</span><span class="f">1</span><span class="c">],[</span><span class="f">2</span><span class="c">]].</span><span class="f">flat</span><span class="c">();</span>          <span class="cm">// [1,2]</span>
+<span class="c">nums.</span><span class="f">flatMap</span><span class="c">(x=>[x,x*</span><span class="f">2</span><span class="c">]);</span></pre>
+    <h4>Mutation Methods</h4>
+<pre><span class="c">arr.</span><span class="f">push</span><span class="c">(v)     </span><span class="cm">// add end</span>
+<span class="c">arr.</span><span class="f">pop</span><span class="c">()       </span><span class="cm">// remove end</span>
+<span class="c">arr.</span><span class="f">unshift</span><span class="c">(v)  </span><span class="cm">// add start</span>
+<span class="c">arr.</span><span class="f">shift</span><span class="c">()     </span><span class="cm">// remove start</span>
+<span class="c">arr.</span><span class="f">splice</span><span class="c">(i,n) </span><span class="cm">// remove n from i</span>
+<span class="c">arr.</span><span class="f">sort</span><span class="c">((a,b)=>a-b) </span><span class="cm">// numeric sort</span>
+<span class="c">arr.</span><span class="f">reverse</span><span class="c">()</span></pre>
+  </div>
+
+  <!-- Objects & Classes -->
+  <div class="card js-card">
+    <h3 class="js">Objects & Classes</h3>
+    <h4>Object Patterns</h4>
+<pre><span class="k">const</span> <span class="c">name = </span><span class="s">'Alice'</span><span class="c">;</span>
+<span class="k">const</span> <span class="c">user = {</span>
+  <span class="c">name,</span>               <span class="cm">// shorthand</span>
+  <span class="f">greet</span><span class="c">() { ... },</span>   <span class="cm">// method shorthand</span>
+  <span class="c">[</span><span class="s">'key'</span><span class="c">]: </span><span class="s">'dynamic'</span>  <span class="cm">// computed key</span>
+<span class="c">};</span>
+
+<span class="cm">// Useful Object methods</span>
+<span class="c">Object.</span><span class="f">keys</span><span class="c">(user)    </span><span class="cm">// ["name","greet"]</span>
+<span class="c">Object.</span><span class="f">values</span><span class="c">(user)  </span><span class="cm">// values array</span>
+<span class="c">Object.</span><span class="f">entries</span><span class="c">(user) </span><span class="cm">// [[k,v],...]</span>
+<span class="c">Object.</span><span class="f">assign</span><span class="c">({}, a, b) </span><span class="cm">// merge</span>
+<span class="c">Object.</span><span class="f">freeze</span><span class="c">(obj)   </span><span class="cm">// immutable</span></pre>
+    <h4>ES6 Classes</h4>
+<pre><span class="k">class</span> <span class="f">Animal</span><span class="c"> {</span>
+  <span class="cm">#name; // private field</span>
+  <span class="f">constructor</span><span class="c">(name) {</span>
+    <span class="k">this</span><span class="c">.#name = name;</span>
+  <span class="c">}</span>
+  <span class="f">speak</span><span class="c">() {</span>
+    <span class="k">return</span> <span class="s">`${</span><span class="k">this</span><span class="s">.#name} makes a sound`</span><span class="c">;</span>
+  <span class="c">}</span>
+<span class="c">}</span>
+<span class="k">class</span> <span class="f">Dog</span> <span class="k">extends</span> <span class="f">Animal</span><span class="c"> {</span>
+  <span class="f">speak</span><span class="c">() {</span>
+    <span class="k">return super</span><span class="c">.</span><span class="f">speak</span><span class="c">() + </span><span class="s">' Woof!'</span><span class="c">;</span>
+  <span class="c">}</span>
+<span class="c">}</span></pre>
+    <h4>Map & Set</h4>
+<pre><span class="k">const</span> <span class="c">m = </span><span class="k">new</span> <span class="f">Map</span><span class="c">();</span>
+<span class="c">m.</span><span class="f">set</span><span class="c">(</span><span class="s">'a'</span><span class="c">, </span><span class="f">1</span><span class="c">); m.</span><span class="f">get</span><span class="c">(</span><span class="s">'a'</span><span class="c">);</span>
+<span class="k">const</span> <span class="c">s = </span><span class="k">new</span> <span class="f">Set</span><span class="c">([</span><span class="f">1</span><span class="c">,</span><span class="f">2</span><span class="c">,</span><span class="f">2</span><span class="c">,</span><span class="f">3</span><span class="c">]);</span>
+<span class="cm">// Set {1, 2, 3} — unique values</span>
+<span class="k">const</span> <span class="c">unique = [...</span><span class="k">new</span> <span class="f">Set</span><span class="c">(arr)];</span></pre>
+  </div>
+
+  <!-- Async JS -->
+  <div class="card js-card">
+    <h3 class="js">Async JavaScript</h3>
+    <h4>Promises</h4>
+<pre><span class="k">const</span> <span class="c">p = </span><span class="k">new</span> <span class="f">Promise</span><span class="c">((resolve, reject) => {</span>
+  <span class="cm">// async work...</span>
+  <span class="f">resolve</span><span class="c">(data);</span>  <span class="cm">// success</span>
+  <span class="f">reject</span><span class="c">(error);   </span><span class="cm">// failure</span>
+<span class="c">});</span>
+<span class="c">p.</span><span class="f">then</span><span class="c">(data => ...)</span>
+ <span class="c">.</span><span class="f">catch</span><span class="c">(err => ...)</span>
+ <span class="c">.</span><span class="f">finally</span><span class="c">(() => ...);</span>
+
+<span class="cm">// Multiple promises</span>
+<span class="c">Promise.</span><span class="f">all</span><span class="c">([p1, p2])</span>    <span class="cm">// all succeed</span>
+<span class="c">Promise.</span><span class="f">race</span><span class="c">([p1, p2])</span>   <span class="cm">// first settles</span>
+<span class="c">Promise.</span><span class="f">allSettled</span><span class="c">([...])</span><span class="cm">// all settle</span></pre>
+    <h4>Async / Await</h4>
+<pre><span class="k">async function</span> <span class="f">fetchUser</span><span class="c">(id) {</span>
+  <span class="k">try</span> <span class="c">{</span>
+    <span class="k">const</span> <span class="c">res = </span><span class="k">await</span> <span class="f">fetch</span><span class="c">(</span><span class="s">`/api/users/${id}`</span><span class="c">);</span>
+    <span class="k">if</span> <span class="c">(!</span><span class="c">res.ok) </span><span class="k">throw new</span> <span class="f">Error</span><span class="c">(res.status);</span>
+    <span class="k">const</span> <span class="c">data = </span><span class="k">await</span> <span class="c">res.</span><span class="f">json</span><span class="c">();</span>
+    <span class="k">return</span> <span class="c">data;</span>
+  <span class="c">} </span><span class="k">catch</span> <span class="c">(err) {</span>
+    <span class="c">console.</span><span class="f">error</span><span class="c">(</span><span class="s">'Error:'</span><span class="c">, err);</span>
+  <span class="c">}</span>
+<span class="c">}</span>
+
+<span class="cm">// Parallel with async/await</span>
+<span class="k">const</span> <span class="c">[a, b] = </span><span class="k">await</span> <span class="c">Promise.</span><span class="f">all</span><span class="c">([</span><span class="f">p1</span><span class="c">(), </span><span class="f">p2</span><span class="c">()]);</span></pre>
+    <h4>Event Loop</h4>
+<pre><span class="cm">// Call Stack → Web APIs → Task Queue</span>
+<span class="cm">// Microtasks (Promises) before macrotasks</span>
+<span class="cm">// (setTimeout, setInterval)</span>
+<span class="f">setTimeout</span><span class="c">(() => </span><span class="cm">/*macro*/</span><span class="c">, </span><span class="f">0</span><span class="c">);</span>
+<span class="c">Promise.</span><span class="f">resolve</span><span class="c">().</span><span class="f">then</span><span class="c">(() => </span><span class="cm">/*micro*/</span><span class="c">);</span></pre>
+  </div>
+
+  <!-- DOM & Browser -->
+  <div class="card js-card">
+    <h3 class="js">DOM & Browser</h3>
+    <h4>Selecting Elements</h4>
+<pre><span class="c">document.</span><span class="f">querySelector</span><span class="c">(</span><span class="s">'#id'</span><span class="c">);</span>
+<span class="c">document.</span><span class="f">querySelectorAll</span><span class="c">(</span><span class="s">'.cls'</span><span class="c">);</span>
+<span class="c">document.</span><span class="f">getElementById</span><span class="c">(</span><span class="s">'id'</span><span class="c">);</span></pre>
+    <h4>Manipulation</h4>
+<pre><span class="c">el.textContent = </span><span class="s">'text'</span><span class="c">;</span>
+<span class="c">el.innerHTML = </span><span class="s">'&lt;b&gt;bold&lt;/b&gt;'</span><span class="c">;</span>
+<span class="c">el.classList.</span><span class="f">add</span><span class="c">(</span><span class="s">'active'</span><span class="c">);</span>
+<span class="c">el.classList.</span><span class="f">toggle</span><span class="c">(</span><span class="s">'hidden'</span><span class="c">);</span>
+<span class="c">el.setAttribute(</span><span class="s">'href'</span><span class="c">, </span><span class="s">'/path'</span><span class="c">);</span>
+<span class="c">el.style.color = </span><span class="s">'red'</span><span class="c">;</span>
+<span class="c">parent.</span><span class="f">appendChild</span><span class="c">(child);</span>
+<span class="c">el.</span><span class="f">remove</span><span class="c">();</span></pre>
+    <h4>Events</h4>
+<pre><span class="c">el.</span><span class="f">addEventListener</span><span class="c">(</span><span class="s">'click'</span><span class="c">, (e) => {</span>
+  <span class="c">e.</span><span class="f">preventDefault</span><span class="c">();</span>  <span class="cm">// stop default</span>
+  <span class="c">e.</span><span class="f">stopPropagation</span><span class="c">();</span> <span class="cm">// stop bubble</span>
+  <span class="c">e.target;             </span><span class="cm">// element clicked</span>
+<span class="c">});</span>
+<span class="cm">// Event delegation — listen on parent:</span>
+<span class="c">list.</span><span class="f">addEventListener</span><span class="c">(</span><span class="s">'click'</span><span class="c">, e => {</span>
+  <span class="k">if</span> <span class="c">(e.target.</span><span class="f">matches</span><span class="c">(</span><span class="s">'li'</span><span class="c">)) { ... }</span>
+<span class="c">});</span></pre>
+    <h4>Storage & Utilities</h4>
+<pre><span class="c">localStorage.</span><span class="f">setItem</span><span class="c">(</span><span class="s">'k'</span><span class="c">, JSON.</span><span class="f">stringify</span><span class="c">(v));</span>
+<span class="c">localStorage.</span><span class="f">getItem</span><span class="c">(</span><span class="s">'k'</span><span class="c">);</span>
+<span class="cm">// Debounce: wait until user stops typing</span>
+<span class="k">const</span> <span class="c">debounce = (fn, ms) => {</span>
+  <span class="k">let</span> <span class="c">timer;</span>
+  <span class="k">return</span> <span class="c">(...args) => {</span>
+    <span class="f">clearTimeout</span><span class="c">(timer);</span>
+    <span class="c">timer = </span><span class="f">setTimeout</span><span class="c">(() => </span><span class="f">fn</span><span class="c">(...args), ms);</span>
+  <span class="c">};</span>
+<span class="c">};</span></pre>
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- ══════════════════════════════════════════
+     REACT + REDUX
+══════════════════════════════════════════ -->
+<div class="big-label react"><span class="num">2</span> React + Redux</div>
+
+<div class="grid-4">
+  <!-- Components & JSX -->
+  <div class="card react-card">
+    <h3 class="react">Components & JSX</h3>
+    <h4>Functional Component</h4>
+<pre><span class="cm">// Always start with capital letter</span>
+<span class="k">function</span> <span class="f">UserCard</span><span class="c">({ name, age, onClick }) {</span>
+  <span class="k">return</span> <span class="c">(</span>
+    <span class="r-c">&lt;div</span> <span class="c">className=</span><span class="s">"card"</span><span class="r-c">&gt;</span>
+      <span class="r-c">&lt;h2&gt;</span><span class="c">{name}</span><span class="r-c">&lt;/h2&gt;</span>
+      <span class="r-c">&lt;p&gt;</span><span class="c">Age: {age}</span><span class="r-c">&lt;/p&gt;</span>
+      <span class="r-c">&lt;button</span> <span class="c">onClick={onClick}</span><span class="r-c">&gt;</span><span class="c">Click</span><span class="r-c">&lt;/button&gt;</span>
+    <span class="r-c">&lt;/div&gt;</span>
+  <span class="c">);</span>
+<span class="c">}</span>
+<span class="cm">// Export</span>
+<span class="k">export default</span> <span class="c">UserCard;</span>
+<span class="k">export</span> <span class="c">{ UserCard };</span> <span class="cm">// named</span></pre>
+    <h4>JSX Rules</h4>
+<pre><span class="cm">// 1. Single root element (or Fragment)</span>
+<span class="k">return</span> <span class="c">(</span>
+  <span class="r-c">&lt;&gt;</span>
+    <span class="r-c">&lt;A /&gt;&lt;B /&gt;</span>
+  <span class="r-c">&lt;/&gt;</span>
+<span class="c">);</span>
+<span class="cm">// 2. className, not class</span>
+<span class="cm">// 3. htmlFor, not for</span>
+<span class="cm">// 4. Self-close empty tags &lt;br /&gt;</span>
+<span class="cm">// 5. JS in {curly braces}</span>
+<span class="cm">// 6. Conditional rendering</span>
+<span class="c">{isLoggedIn && </span><span class="r-c">&lt;Dashboard /&gt;</span><span class="c">}</span>
+<span class="c">{isLoggedIn ? </span><span class="r-c">&lt;A /&gt;</span><span class="c"> : </span><span class="r-c">&lt;B /&gt;</span><span class="c">}</span>
+<span class="cm">// 7. Lists must have key prop</span>
+<span class="c">{items.</span><span class="f">map</span><span class="c">(item => (</span>
+  <span class="r-c">&lt;li</span> <span class="c">key={item.id}</span><span class="r-c">&gt;</span><span class="c">{item.name}</span><span class="r-c">&lt;/li&gt;</span>
+<span class="c">))}</span></pre>
+  </div>
+
+  <!-- Hooks -->
+  <div class="card react-card">
+    <h3 class="react">Core Hooks</h3>
+    <h4>useState</h4>
+<pre><span class="k">const</span> <span class="c">[count, setCount] = </span><span class="f">useState</span><span class="c">(</span><span class="f">0</span><span class="c">);</span>
+<span class="cm">// Never mutate state directly!</span>
+<span class="f">setCount</span><span class="c">(count + </span><span class="f">1</span><span class="c">);</span>
+<span class="f">setCount</span><span class="c">(prev => prev + </span><span class="f">1</span><span class="c">);</span>
+<span class="cm">// Objects: spread to update</span>
+<span class="f">setUser</span><span class="c">(prev => ({ ...prev, age: </span><span class="f">30</span><span class="c"> }));</span>
+<span class="cm">// Arrays: use map/filter (no mutation)</span>
+<span class="f">setItems</span><span class="c">(prev => [...prev, newItem]);</span>
+<span class="f">setItems</span><span class="c">(prev => prev.</span><span class="f">filter</span><span class="c">(i=>i.id!==id));</span></pre>
+    <h4>useEffect</h4>
+<pre><span class="cm">// Runs after every render</span>
+<span class="f">useEffect</span><span class="c">(() => { ... });</span>
+
+<span class="cm">// Runs once (mount)</span>
+<span class="f">useEffect</span><span class="c">(() => { ... }, []);</span>
+
+<span class="cm">// Runs when dep changes</span>
+<span class="f">useEffect</span><span class="c">(() => { ... }, [userId]);</span>
+
+<span class="cm">// Cleanup (unmount / before re-run)</span>
+<span class="f">useEffect</span><span class="c">(() => {</span>
+  <span class="k">const</span> <span class="c">timer = </span><span class="f">setInterval</span><span class="c">(fn, </span><span class="f">1000</span><span class="c">);</span>
+  <span class="k">return</span> <span class="c">() => </span><span class="f">clearInterval</span><span class="c">(timer);</span>
+<span class="c">}, []);</span>
+
+<span class="cm">// Fetch data pattern</span>
+<span class="f">useEffect</span><span class="c">(() => {</span>
+  <span class="k">async function</span> <span class="f">load</span><span class="c">() {</span>
+    <span class="k">const</span> <span class="c">data = </span><span class="k">await</span> <span class="f">fetchUsers</span><span class="c">();</span>
+    <span class="f">setUsers</span><span class="c">(data);</span>
+  <span class="c">}</span>
+  <span class="f">load</span><span class="c">();</span>
+<span class="c">}, []);</span></pre>
+  </div>
+
+  <!-- More Hooks -->
+  <div class="card react-card">
+    <h3 class="react">More Hooks & Patterns</h3>
+    <h4>useContext</h4>
+<pre><span class="cm">// 1. Create context</span>
+<span class="k">const</span> <span class="c">ThemeCtx = React.</span><span class="f">createContext</span><span class="c">(</span><span class="k">null</span><span class="c">);</span>
+
+<span class="cm">// 2. Provide at top level</span>
+<span class="k">function</span> <span class="f">App</span><span class="c">() {</span>
+  <span class="k">const</span> <span class="c">[theme, setTheme] = </span><span class="f">useState</span><span class="c">(</span><span class="s">'dark'</span><span class="c">);</span>
+  <span class="k">return</span> <span class="c">(</span>
+    <span class="r-c">&lt;ThemeCtx.Provider</span> <span class="c">value={{ theme, setTheme }}</span><span class="r-c">&gt;</span>
+      <span class="r-c">&lt;Page /&gt;</span>
+    <span class="r-c">&lt;/ThemeCtx.Provider&gt;</span>
+  <span class="c">);</span>
+<span class="c">}</span>
+<span class="cm">// 3. Consume anywhere</span>
+<span class="k">const</span> <span class="c">{ theme } = </span><span class="f">useContext</span><span class="c">(ThemeCtx);</span></pre>
+    <h4>useReducer</h4>
+<pre><span class="k">const</span> <span class="c">reducer = (state, action) => {</span>
+  <span class="k">switch</span> <span class="c">(action.type) {</span>
+    <span class="k">case</span> <span class="s">'INC'</span><span class="c">: </span><span class="k">return</span> <span class="c">{ ...state, count: state.count+</span><span class="f">1</span><span class="c"> };</span>
+    <span class="k">default</span><span class="c">: </span><span class="k">return</span> <span class="c">state;</span>
+  <span class="c">}</span>
+<span class="c">};</span>
+<span class="k">const</span> <span class="c">[state, dispatch] = </span><span class="f">useReducer</span><span class="c">(reducer, { count: </span><span class="f">0</span><span class="c"> });</span>
+<span class="f">dispatch</span><span class="c">({ type: </span><span class="s">'INC'</span><span class="c"> });</span></pre>
+    <h4>useMemo & useCallback</h4>
+<pre><span class="cm">// useMemo — memoize expensive value</span>
+<span class="k">const</span> <span class="c">sorted = </span><span class="f">useMemo</span><span class="c">(</span>
+  <span class="c">() => items.</span><span class="f">sort</span><span class="c">(...),</span>
+  <span class="c">[items]</span>
+<span class="c">);</span>
+<span class="cm">// useCallback — memoize function ref</span>
+<span class="k">const</span> <span class="c">handleClick = </span><span class="f">useCallback</span><span class="c">(</span>
+  <span class="c">() => { ... },</span>
+  <span class="c">[dep]</span>
+<span class="c">);</span>
+<span class="cm">// React.memo — skip re-render if props same</span>
+<span class="k">export default</span> <span class="c">React.</span><span class="f">memo</span><span class="c">(MyComponent);</span></pre>
+  </div>
+
+  <!-- Redux -->
+  <div class="card react-card">
+    <h3 class="react">Redux Toolkit</h3>
+    <h4>Setup Store</h4>
+<pre><span class="cm">// store.js</span>
+<span class="k">import</span> <span class="c">{ configureStore } </span><span class="k">from</span> <span class="s">'@reduxjs/toolkit'</span><span class="c">;</span>
+<span class="k">import</span> <span class="c">counterReducer </span><span class="k">from</span> <span class="s">'./counterSlice'</span><span class="c">;</span>
+
+<span class="k">export const</span> <span class="c">store = </span><span class="f">configureStore</span><span class="c">({</span>
+  <span class="c">reducer: { counter: counterReducer },</span>
+<span class="c">});</span>
+
+<span class="cm">// index.js — wrap App</span>
+<span class="r-c">&lt;Provider</span> <span class="c">store={store}</span><span class="r-c">&gt;</span>
+  <span class="r-c">&lt;App /&gt;</span>
+<span class="r-c">&lt;/Provider&gt;</span></pre>
+    <h4>Create Slice</h4>
+<pre><span class="cm">// counterSlice.js</span>
+<span class="k">import</span> <span class="c">{ createSlice } </span><span class="k">from</span> <span class="s">'@reduxjs/toolkit'</span><span class="c">;</span>
+
+<span class="k">const</span> <span class="c">counterSlice = </span><span class="f">createSlice</span><span class="c">({</span>
+  <span class="c">name: </span><span class="s">'counter'</span><span class="c">,</span>
+  <span class="c">initialState: { value: </span><span class="f">0</span><span class="c"> },</span>
+  <span class="c">reducers: {</span>
+    <span class="f">increment</span><span class="c">(state) { state.value++; },</span>
+    <span class="f">decrement</span><span class="c">(state) { state.value--; },</span>
+    <span class="f">addBy</span><span class="c">(state, action) {</span>
+      <span class="c">state.value += action.payload;</span>
+    <span class="c">},</span>
+  <span class="c">},</span>
+<span class="c">});</span>
+<span class="k">export const</span> <span class="c">{ increment, decrement, addBy } =</span>
+  <span class="c">counterSlice.actions;</span>
+<span class="k">export default</span> <span class="c">counterSlice.reducer;</span></pre>
+    <h4>Use in Component</h4>
+<pre><span class="k">import</span> <span class="c">{ useSelector, useDispatch } </span><span class="k">from</span> <span class="s">'react-redux'</span><span class="c">;</span>
+<span class="k">import</span> <span class="c">{ increment, addBy } </span><span class="k">from</span> <span class="s">'./counterSlice'</span><span class="c">;</span>
+
+<span class="k">function</span> <span class="f">Counter</span><span class="c">() {</span>
+  <span class="k">const</span> <span class="c">count = </span><span class="f">useSelector</span><span class="c">(s => s.counter.value);</span>
+  <span class="k">const</span> <span class="c">dispatch = </span><span class="f">useDispatch</span><span class="c">();</span>
+  <span class="k">return</span> <span class="c">(</span>
+    <span class="r-c">&lt;button</span> <span class="c">onClick={() => </span><span class="f">dispatch</span><span class="c">(</span><span class="f">addBy</span><span class="c">(</span><span class="f">5</span><span class="c">))}</span><span class="r-c">&gt;</span>
+      <span class="c">{count}</span>
+    <span class="r-c">&lt;/button&gt;</span>
+  <span class="c">);</span>
+<span class="c">}</span></pre>
+  </div>
+</div>
+
+<div class="grid-2">
+  <!-- Lifecycle mental model -->
+  <div class="card react-card">
+    <h3 class="react">Lifecycle → useEffect Map</h3>
+<pre><span class="cm">// componentDidMount  (run once on mount)</span>
+<span class="f">useEffect</span><span class="c">(() => { </span><span class="f">fetchData</span><span class="c">(); }, []);</span>
+
+<span class="cm">// componentDidUpdate  (run on dep change)</span>
+<span class="f">useEffect</span><span class="c">(() => { </span><span class="f">updateTitle</span><span class="c">(); }, [title]);</span>
+
+<span class="cm">// componentWillUnmount  (cleanup)</span>
+<span class="f">useEffect</span><span class="c">(() => {</span>
+  <span class="k">const</span> <span class="c">sub = </span><span class="f">subscribe</span><span class="c">();</span>
+  <span class="k">return</span> <span class="c">() => </span><span class="f">unsubscribe</span><span class="c">(sub);</span>
+<span class="c">}, []);</span>
+
+<span class="cm">// getDerivedStateFromProps — useMemo / derive from props</span>
+<span class="k">const</span> <span class="c">fullName = </span><span class="f">useMemo</span><span class="c">(</span>
+  <span class="c">() => `${firstName} ${lastName}`,</span>
+  <span class="c">[firstName, lastName]</span>
+<span class="c">);</span>
+
+<span class="cm">// Error Boundary (still class-based in React 18)</span>
+<span class="k">class</span> <span class="f">ErrBoundary</span> <span class="k">extends</span> <span class="f">React.Component</span> <span class="c">{</span>
+  <span class="f">componentDidCatch</span><span class="c">(error, info) { ... }</span>
+  <span class="f">render</span><span class="c">() {</span>
+    <span class="k">return</span> <span class="k">this</span><span class="c">.state.hasError</span>
+      <span class="c">? </span><span class="r-c">&lt;h1&gt;</span><span class="c">Something broke</span><span class="r-c">&lt;/h1&gt;</span>
+      <span class="c">: </span><span class="k">this</span><span class="c">.props.children;</span>
+  <span class="c">}</span>
+<span class="c">}</span></pre>
+  </div>
+
+  <!-- Custom Hook + Async Redux -->
+  <div class="card react-card">
+    <h3 class="react">Custom Hook + Async Redux (Thunk)</h3>
+    <h4>Custom Hook — reusable logic</h4>
+<pre><span class="k">function</span> <span class="f">useFetch</span><span class="c">(url) {</span>
+  <span class="k">const</span> <span class="c">[data, setData] = </span><span class="f">useState</span><span class="c">(</span><span class="k">null</span><span class="c">);</span>
+  <span class="k">const</span> <span class="c">[loading, setLoading] = </span><span class="f">useState</span><span class="c">(</span><span class="k">true</span><span class="c">);</span>
+  <span class="k">const</span> <span class="c">[error, setError] = </span><span class="f">useState</span><span class="c">(</span><span class="k">null</span><span class="c">);</span>
+  <span class="f">useEffect</span><span class="c">(() => {</span>
+    <span class="f">fetch</span><span class="c">(url)</span>
+      <span class="c">.</span><span class="f">then</span><span class="c">(r => r.</span><span class="f">json</span><span class="c">()).</span><span class="f">then</span><span class="c">(</span><span class="f">setData</span><span class="c">)</span>
+      <span class="c">.</span><span class="f">catch</span><span class="c">(</span><span class="f">setError</span><span class="c">).</span><span class="f">finally</span><span class="c">(() => </span><span class="f">setLoading</span><span class="c">(</span><span class="k">false</span><span class="c">));</span>
+  <span class="c">}, [url]);</span>
+  <span class="k">return</span> <span class="c">{ data, loading, error };</span>
+<span class="c">}</span>
+<span class="cm">// Usage: const { data, loading } = useFetch('/api/users');</span></pre>
+    <h4>createAsyncThunk (async Redux)</h4>
+<pre><span class="k">export const</span> <span class="c">fetchUsers = </span><span class="f">createAsyncThunk</span><span class="c">(</span>
+  <span class="s">'users/fetch'</span><span class="c">,</span>
+  <span class="k">async</span> <span class="c">(id, { rejectWithValue }) => {</span>
+    <span class="k">try</span> <span class="c">{ </span><span class="k">return await</span> <span class="f">api.getUsers</span><span class="c">(id); }</span>
+    <span class="k">catch</span> <span class="c">(e) { </span><span class="k">return</span> <span class="f">rejectWithValue</span><span class="c">(e.message); }</span>
+  <span class="c">}</span>
+<span class="c">);</span>
+<span class="cm">// In slice extraReducers:</span>
+<span class="c">builder</span>
+  <span class="c">.</span><span class="f">addCase</span><span class="c">(fetchUsers.pending, s => { s.loading=</span><span class="k">true</span><span class="c">; })</span>
+  <span class="c">.</span><span class="f">addCase</span><span class="c">(fetchUsers.fulfilled, (s, a) => {</span>
+    <span class="c">s.loading = </span><span class="k">false</span><span class="c">; s.users = a.payload;</span>
+  <span class="c">})</span>
+  <span class="c">.</span><span class="f">addCase</span><span class="c">(fetchUsers.rejected, (s, a) => {</span>
+    <span class="c">s.error = a.payload;</span>
+  <span class="c">});</span></pre>
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- ══════════════════════════════════════════
+     SQL
+══════════════════════════════════════════ -->
+<div class="big-label sql"><span class="num">3</span> SQL — PostgreSQL</div>
+
+<div class="grid-4">
+  <!-- Core Query -->
+  <div class="card sql-card">
+    <h3 class="sql">Core Query Structure</h3>
+<pre><span class="cm">-- Execution order (not write order):</span>
+<span class="cm">-- FROM → JOIN → WHERE → GROUP BY</span>
+<span class="cm">-- → HAVING → SELECT → ORDER BY → LIMIT</span>
+
+<span class="sql-c">SELECT</span>   <span class="c">u.name, COUNT(o.id) </span><span class="sql-c">AS</span> <span class="c">order_count</span>
+<span class="sql-c">FROM</span>     <span class="c">users u</span>
+<span class="sql-c">LEFT JOIN</span> <span class="c">orders o </span><span class="sql-c">ON</span> <span class="c">u.id = o.user_id</span>
+<span class="sql-c">WHERE</span>    <span class="c">u.active = </span><span class="k">true</span>
+<span class="sql-c">GROUP BY</span> <span class="c">u.id, u.name</span>
+<span class="sql-c">HAVING</span>   <span class="c">COUNT(o.id) > </span><span class="f">2</span>
+<span class="sql-c">ORDER BY</span> <span class="c">order_count </span><span class="sql-c">DESC</span>
+<span class="sql-c">LIMIT</span>    <span class="f">10</span><span class="c">;</span></pre>
+    <h4>WHERE Conditions</h4>
+<pre><span class="sql-c">WHERE</span> <span class="c">age </span><span class="sql-c">BETWEEN</span> <span class="f">18</span> <span class="sql-c">AND</span> <span class="f">65</span>
+<span class="sql-c">WHERE</span> <span class="c">country </span><span class="sql-c">IN</span> <span class="c">(</span><span class="s">'VN'</span><span class="c">, </span><span class="s">'SG'</span><span class="c">, </span><span class="s">'TH'</span><span class="c">)</span>
+<span class="sql-c">WHERE</span> <span class="c">name </span><span class="sql-c">LIKE</span> <span class="s">'A%'</span>     <span class="cm">-- starts with A</span>
+<span class="sql-c">WHERE</span> <span class="c">name </span><span class="sql-c">ILIKE</span> <span class="s">'%alice%'</span><span class="cm">-- case-insensitive</span>
+<span class="sql-c">WHERE</span> <span class="c">email </span><span class="sql-c">IS NULL</span>
+<span class="sql-c">WHERE</span> <span class="c">email </span><span class="sql-c">IS NOT NULL</span>
+<span class="sql-c">WHERE NOT</span> <span class="c">(status = </span><span class="s">'inactive'</span><span class="c">)</span></pre>
+    <h4>CASE WHEN</h4>
+<pre><span class="sql-c">SELECT</span> <span class="c">name,</span>
+  <span class="sql-c">CASE</span>
+    <span class="sql-c">WHEN</span> <span class="c">score >= </span><span class="f">90</span> <span class="sql-c">THEN</span> <span class="s">'A'</span>
+    <span class="sql-c">WHEN</span> <span class="c">score >= </span><span class="f">80</span> <span class="sql-c">THEN</span> <span class="s">'B'</span>
+    <span class="sql-c">ELSE</span> <span class="s">'C'</span>
+  <span class="sql-c">END AS</span> <span class="c">grade</span>
+<span class="sql-c">FROM</span> <span class="c">students;</span></pre>
+  </div>
+
+  <!-- JOINs -->
+  <div class="card sql-card">
+    <h3 class="sql">JOIN Patterns</h3>
+    <h4>Join Types</h4>
+<pre><span class="cm">-- INNER JOIN: only matching rows</span>
+<span class="sql-c">SELECT</span> <span class="c">* </span><span class="sql-c">FROM</span> <span class="c">users u</span>
+<span class="sql-c">INNER JOIN</span> <span class="c">orders o </span><span class="sql-c">ON</span> <span class="c">u.id = o.user_id;</span>
+
+<span class="cm">-- LEFT JOIN: all from left + matched right</span>
+<span class="sql-c">SELECT</span> <span class="c">u.name, o.id</span>
+<span class="sql-c">FROM</span> <span class="c">users u</span>
+<span class="sql-c">LEFT JOIN</span> <span class="c">orders o </span><span class="sql-c">ON</span> <span class="c">u.id = o.user_id;</span>
+
+<span class="cm">-- Unmatched rows only (anti-join)</span>
+<span class="sql-c">WHERE</span> <span class="c">o.id </span><span class="sql-c">IS NULL</span><span class="c">;</span>
+
+<span class="cm">-- Self-join: compare rows in same table</span>
+<span class="sql-c">SELECT</span> <span class="c">e.name, m.name </span><span class="sql-c">AS</span> <span class="c">manager</span>
+<span class="sql-c">FROM</span> <span class="c">employees e</span>
+<span class="sql-c">LEFT JOIN</span> <span class="c">employees m </span><span class="sql-c">ON</span> <span class="c">e.manager_id = m.id;</span></pre>
+    <h4>GROUP BY Patterns</h4>
+<pre><span class="cm">-- Count per group</span>
+<span class="sql-c">SELECT</span> <span class="c">country, </span><span class="sql-c">COUNT</span><span class="c">(*) </span><span class="sql-c">FROM</span> <span class="c">users</span>
+<span class="sql-c">GROUP BY</span> <span class="c">country;</span>
+
+<span class="cm">-- Find duplicates</span>
+<span class="sql-c">SELECT</span> <span class="c">email, </span><span class="sql-c">COUNT</span><span class="c">(*)</span>
+<span class="sql-c">FROM</span> <span class="c">users </span><span class="sql-c">GROUP BY</span> <span class="c">email</span>
+<span class="sql-c">HAVING COUNT</span><span class="c">(*) > </span><span class="f">1</span><span class="c">;</span>
+
+<span class="cm">-- Aggregates</span>
+<span class="sql-c">COUNT</span><span class="c">(*) · </span><span class="sql-c">SUM</span><span class="c">(col) · </span><span class="sql-c">AVG</span><span class="c">(col)</span>
+<span class="sql-c">MIN</span><span class="c">(col) · </span><span class="sql-c">MAX</span><span class="c">(col)</span>
+<span class="sql-c">COUNT</span><span class="c">(</span><span class="sql-c">DISTINCT</span> <span class="c">col)</span></pre>
+  </div>
+
+  <!-- Subqueries + Window -->
+  <div class="card sql-card">
+    <h3 class="sql">Subqueries & Window Fns</h3>
+    <h4>Subquery Patterns</h4>
+<pre><span class="cm">-- IN subquery</span>
+<span class="sql-c">SELECT</span> <span class="c">* </span><span class="sql-c">FROM</span> <span class="c">products</span>
+<span class="sql-c">WHERE</span> <span class="c">category_id </span><span class="sql-c">IN</span> <span class="c">(</span>
+  <span class="sql-c">SELECT</span> <span class="c">id </span><span class="sql-c">FROM</span> <span class="c">categories</span>
+  <span class="sql-c">WHERE</span> <span class="c">active = </span><span class="k">true</span>
+<span class="c">);</span>
+
+<span class="cm">-- Scalar subquery</span>
+<span class="sql-c">SELECT</span> <span class="c">name,</span>
+  <span class="c">(</span><span class="sql-c">SELECT COUNT</span><span class="c">(*) </span><span class="sql-c">FROM</span> <span class="c">orders o</span>
+   <span class="sql-c">WHERE</span> <span class="c">o.user_id = u.id) </span><span class="sql-c">AS</span> <span class="c">total</span>
+<span class="sql-c">FROM</span> <span class="c">users u;</span>
+
+<span class="cm">-- EXISTS</span>
+<span class="sql-c">SELECT</span> <span class="c">* </span><span class="sql-c">FROM</span> <span class="c">users u</span>
+<span class="sql-c">WHERE EXISTS</span> <span class="c">(</span>
+  <span class="sql-c">SELECT</span> <span class="f">1</span> <span class="sql-c">FROM</span> <span class="c">orders o</span>
+  <span class="sql-c">WHERE</span> <span class="c">o.user_id = u.id</span>
+<span class="c">);</span></pre>
+    <h4>Window Functions</h4>
+<pre><span class="cm">-- Syntax: fn() OVER (PARTITION BY .. ORDER BY ..)</span>
+
+<span class="cm">-- Row number per partition</span>
+<span class="sql-c">SELECT</span> <span class="c">name, score,</span>
+  <span class="sql-c">ROW_NUMBER() OVER</span> <span class="c">(</span>
+    <span class="sql-c">PARTITION BY</span> <span class="c">dept_id</span>
+    <span class="sql-c">ORDER BY</span> <span class="c">score </span><span class="sql-c">DESC</span>
+  <span class="c">) </span><span class="sql-c">AS</span> <span class="c">rank</span>
+<span class="sql-c">FROM</span> <span class="c">employees;</span>
+
+<span class="cm">-- Running total</span>
+<span class="sql-c">SUM</span><span class="c">(amount) </span><span class="sql-c">OVER</span> <span class="c">(</span><span class="sql-c">ORDER BY</span> <span class="c">created_at)</span>
+
+<span class="cm">-- Lag/Lead (previous/next row)</span>
+<span class="sql-c">LAG</span><span class="c">(salary, </span><span class="f">1</span><span class="c">) </span><span class="sql-c">OVER</span> <span class="c">(</span><span class="sql-c">ORDER BY</span> <span class="c">hire_date)</span></pre>
+  </div>
+
+  <!-- DML + Indexes -->
+  <div class="card sql-card">
+    <h3 class="sql">Data Modification & CTEs</h3>
+    <h4>INSERT / UPDATE / DELETE</h4>
+<pre><span class="cm">-- INSERT</span>
+<span class="sql-c">INSERT INTO</span> <span class="c">users (name, email, age)</span>
+<span class="sql-c">VALUES</span> <span class="c">(</span><span class="s">'Alice'</span><span class="c">, </span><span class="s">'a@b.com'</span><span class="c">, </span><span class="f">28</span><span class="c">)</span>
+<span class="sql-c">RETURNING</span> <span class="c">id;</span> <span class="cm">-- get back inserted ID</span>
+
+<span class="cm">-- INSERT multiple rows</span>
+<span class="sql-c">INSERT INTO</span> <span class="c">tags (name) </span><span class="sql-c">VALUES</span>
+  <span class="c">(</span><span class="s">'js'</span><span class="c">), (</span><span class="s">'react'</span><span class="c">), (</span><span class="s">'sql'</span><span class="c">);</span>
+
+<span class="cm">-- UPDATE</span>
+<span class="sql-c">UPDATE</span> <span class="c">users</span>
+<span class="sql-c">SET</span> <span class="c">age = </span><span class="f">29</span><span class="c">, updated_at = </span><span class="sql-c">NOW</span><span class="c">()</span>
+<span class="sql-c">WHERE</span> <span class="c">id = </span><span class="f">5</span><span class="c">;</span>
+
+<span class="cm">-- DELETE</span>
+<span class="sql-c">DELETE FROM</span> <span class="c">sessions</span>
+<span class="sql-c">WHERE</span> <span class="c">expired_at < </span><span class="sql-c">NOW</span><span class="c">();</span></pre>
+    <h4>CTE (WITH clause)</h4>
+<pre><span class="cm">-- Readable, reusable named subquery</span>
+<span class="sql-c">WITH</span> <span class="c">top_users </span><span class="sql-c">AS</span> <span class="c">(</span>
+  <span class="sql-c">SELECT</span> <span class="c">user_id, </span><span class="sql-c">SUM</span><span class="c">(amount) </span><span class="sql-c">AS</span> <span class="c">total</span>
+  <span class="sql-c">FROM</span> <span class="c">orders</span>
+  <span class="sql-c">GROUP BY</span> <span class="c">user_id</span>
+  <span class="sql-c">HAVING SUM</span><span class="c">(amount) > </span><span class="f">1000</span>
+<span class="c">)</span>
+<span class="sql-c">SELECT</span> <span class="c">u.name, t.total</span>
+<span class="sql-c">FROM</span> <span class="c">users u</span>
+<span class="sql-c">JOIN</span> <span class="c">top_users t </span><span class="sql-c">ON</span> <span class="c">u.id = t.user_id;</span></pre>
+    <h4>Top N per Group</h4>
+<pre><span class="cm">-- Top 1 score per department</span>
+<span class="sql-c">WITH</span> <span class="c">ranked </span><span class="sql-c">AS</span> <span class="c">(</span>
+  <span class="sql-c">SELECT</span> <span class="c">*, </span><span class="sql-c">ROW_NUMBER() OVER</span> <span class="c">(</span>
+    <span class="sql-c">PARTITION BY</span> <span class="c">dept_id</span>
+    <span class="sql-c">ORDER BY</span> <span class="c">score </span><span class="sql-c">DESC</span>
+  <span class="c">) </span><span class="sql-c">AS</span> <span class="c">rn</span>
+  <span class="sql-c">FROM</span> <span class="c">employees</span>
+<span class="c">)</span>
+<span class="sql-c">SELECT</span> <span class="c">* </span><span class="sql-c">FROM</span> <span class="c">ranked </span><span class="sql-c">WHERE</span> <span class="c">rn = </span><span class="f">1</span><span class="c">;</span></pre>
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- ══════════════════════════════════════════
+     LINUX
+══════════════════════════════════════════ -->
+<div class="big-label linux"><span class="num">4</span> Linux CLI</div>
+
+<div class="grid-4">
+  <!-- Files -->
+  <div class="card linux-card">
+    <h3 class="linux">File & Dir Management</h3>
+    <h4>Navigation</h4>
+    <table class="ref-table">
+      <tr><td>pwd</td><td>Print current directory</td></tr>
+      <tr><td>ls -la</td><td>List all (hidden + details)</td></tr>
+      <tr><td>cd /path</td><td>Change to absolute path</td></tr>
+      <tr><td>cd ..</td><td>Go up one level</td></tr>
+      <tr><td>cd ~</td><td>Go to home directory</td></tr>
+      <tr><td>cd -</td><td>Go to previous directory</td></tr>
+    </table>
+    <h4>Create / Copy / Move / Delete</h4>
+    <table class="ref-table">
+      <tr><td>mkdir -p a/b/c</td><td>Create nested dirs</td></tr>
+      <tr><td>touch file.txt</td><td>Create empty file</td></tr>
+      <tr><td>cp src dst</td><td>Copy file</td></tr>
+      <tr><td>cp -r src/ dst/</td><td>Copy directory</td></tr>
+      <tr><td>mv old new</td><td>Move / rename</td></tr>
+      <tr><td>rm file.txt</td><td>Delete file</td></tr>
+      <tr><td>rm -rf dir/</td><td>Force delete dir</td></tr>
+    </table>
+    <h4>View File Content</h4>
+    <table class="ref-table">
+      <tr><td>cat file</td><td>Print entire file</td></tr>
+      <tr><td>less file</td><td>Paginated view (q to quit)</td></tr>
+      <tr><td>head -n 20 file</td><td>First 20 lines</td></tr>
+      <tr><td>tail -f log.txt</td><td>Follow log in real-time</td></tr>
+      <tr><td>wc -l file</td><td>Count lines</td></tr>
+    </table>
+  </div>
+
+  <!-- Search & Text -->
+  <div class="card linux-card">
+    <h3 class="linux">Search & Text Processing</h3>
+    <h4>find — locate files</h4>
+<pre><span class="cm"># Find by name</span>
+<span class="lx-c">find</span> . -name <span class="s">"*.js"</span>
+
+<span class="cm"># Find by type (f=file, d=dir)</span>
+<span class="lx-c">find</span> . -type f -name <span class="s">"*.log"</span>
+
+<span class="cm"># Find & execute command</span>
+<span class="lx-c">find</span> . -name <span class="s">"*.tmp"</span> -delete
+
+<span class="cm"># Find modified in last 7 days</span>
+<span class="lx-c">find</span> . -mtime -7</pre>
+    <h4>grep — search in files</h4>
+<pre><span class="cm"># Basic search</span>
+<span class="lx-c">grep</span> <span class="s">"error"</span> app.log
+
+<span class="cm"># Case-insensitive</span>
+<span class="lx-c">grep</span> -i <span class="s">"error"</span> app.log
+
+<span class="cm"># Recursive in all files</span>
+<span class="lx-c">grep</span> -r <span class="s">"TODO"</span> src/
+
+<span class="cm"># Show line number</span>
+<span class="lx-c">grep</span> -n <span class="s">"function"</span> app.js
+
+<span class="cm"># Invert (lines NOT matching)</span>
+<span class="lx-c">grep</span> -v <span class="s">"debug"</span> app.log
+
+<span class="cm"># With regex</span>
+<span class="lx-c">grep</span> -E <span class="s">"error|warn"</span> app.log</pre>
+    <h4>sort, uniq, cut, awk</h4>
+<pre><span class="c">cat f | </span><span class="lx-c">sort</span> | <span class="lx-c">uniq</span> -c  <span class="cm"># count unique</span>
+<span class="lx-c">cut</span> -d<span class="s">','</span> -f1 data.csv   <span class="cm"># 1st CSV column</span>
+<span class="lx-c">awk</span> <span class="s">'{print $2}'</span> file     <span class="cm"># 2nd field</span>
+<span class="lx-c">sed</span> <span class="s">'s/foo/bar/g'</span> file   <span class="cm"># replace text</span></pre>
+  </div>
+
+  <!-- Permissions & Process -->
+  <div class="card linux-card">
+    <h3 class="linux">Permissions & Processes</h3>
+    <h4>chmod — change permissions</h4>
+<pre><span class="cm"># Octal: r=4, w=2, x=1</span>
+<span class="cm"># 755 = rwxr-xr-x</span>
+<span class="cm"># 644 = rw-r--r--</span>
+<span class="lx-c">chmod</span> 755 script.sh   <span class="cm"># owner=rwx group=r-x other=r-x</span>
+<span class="lx-c">chmod</span> +x script.sh    <span class="cm"># add execute for all</span>
+<span class="lx-c">chmod</span> -R 644 dir/     <span class="cm"># recursive</span>
+<span class="lx-c">chown</span> user:group file <span class="cm"># change owner</span></pre>
+    <h4>Process Management</h4>
+    <table class="ref-table">
+      <tr><td>ps aux</td><td>List all processes</td></tr>
+      <tr><td>top / htop</td><td>Live process monitor</td></tr>
+      <tr><td>kill -9 PID</td><td>Force kill by PID</td></tr>
+      <tr><td>pkill node</td><td>Kill by name</td></tr>
+      <tr><td>jobs</td><td>List background jobs</td></tr>
+      <tr><td>cmd &amp;</td><td>Run in background</td></tr>
+      <tr><td>fg %1</td><td>Bring job 1 to foreground</td></tr>
+      <tr><td>Ctrl+C</td><td>Interrupt current process</td></tr>
+      <tr><td>Ctrl+Z</td><td>Suspend process</td></tr>
+    </table>
+    <h4>Disk & Memory</h4>
+    <table class="ref-table">
+      <tr><td>df -h</td><td>Disk usage (human readable)</td></tr>
+      <tr><td>du -sh dir/</td><td>Directory size</td></tr>
+      <tr><td>free -h</td><td>RAM usage</td></tr>
+    </table>
+  </div>
+
+  <!-- Networking & Shell -->
+  <div class="card linux-card">
+    <h3 class="linux">Networking & Shell Tips</h3>
+    <h4>Network Commands</h4>
+    <table class="ref-table">
+      <tr><td>ip addr show</td><td>Show IP addresses</td></tr>
+      <tr><td>ping google.com</td><td>Test connectivity</td></tr>
+      <tr><td>curl -X GET url</td><td>HTTP GET request</td></tr>
+      <tr><td>curl -X POST -d '{}' url</td><td>POST with data</td></tr>
+      <tr><td>wget url</td><td>Download file</td></tr>
+      <tr><td>ssh user@host</td><td>SSH into server</td></tr>
+      <tr><td>scp f user@h:/path</td><td>Secure copy to server</td></tr>
+      <tr><td>netstat -tulpn</td><td>Open ports</td></tr>
+    </table>
+    <h4>Pipes & Redirection</h4>
+<pre><span class="cm"># Pipe: send output to next command</span>
+<span class="c">cat f.txt | </span><span class="lx-c">grep</span> <span class="s">"err"</span> | <span class="lx-c">wc</span> -l
+
+<span class="cm"># Redirect output to file</span>
+<span class="c">echo </span><span class="s">"hello"</span> > out.txt    <span class="cm"># overwrite</span>
+<span class="c">echo </span><span class="s">"hello"</span> >> out.txt   <span class="cm"># append</span>
+<span class="c">cmd 2> err.log            </span><span class="cm"># stderr to file</span>
+<span class="c">cmd > out.txt 2>&1        </span><span class="cm"># both to file</span></pre>
+    <h4>Variables & Scripts</h4>
+<pre><span class="cm">#!/bin/bash</span>
+<span class="lx-c">NAME</span>=<span class="s">"World"</span>
+<span class="c">echo </span><span class="s">"Hello $NAME"</span>
+
+<span class="cm"># Conditionals</span>
+<span class="k">if</span> <span class="c">[ -f </span><span class="s">"file.txt"</span> <span class="c">]; </span><span class="k">then</span>
+  <span class="c">echo </span><span class="s">"exists"</span>
+<span class="k">fi</span>
+
+<span class="cm"># Loop</span>
+<span class="k">for</span> <span class="c">f </span><span class="k">in</span> <span class="c">*.js; </span><span class="k">do</span>
+  <span class="c">echo </span><span class="s">"$f"</span>
+<span class="k">done</span></pre>
+    <h4>Common Flags Memory Aid</h4>
+<pre><span class="cm">-h  human-readable   -r  recursive</span>
+<span class="cm">-f  force            -v  verbose</span>
+<span class="cm">-i  interactive      -n  dry run / line no</span>
+<span class="cm">-a  all (hidden)     -l  long format</span></pre>
+  </div>
+</div>
+
+<!-- Footer -->
+<div style="text-align:center; color: var(--comment); font-family:'JetBrains Mono',monospace; font-size:12px; margin-top:20px; padding-top:16px; border-top:1px solid var(--border);">
+  Junior Developer Daily Essentials · JavaScript · React + Redux · SQL · Linux · 2024
+</div>
+
+</body>
+</html>
