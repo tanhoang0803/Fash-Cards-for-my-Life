@@ -12989,7 +12989,8 @@ const SUBJECTS = {
 ═══════════════════════════════════════════════════════════ */
 const SUBJECT_GROUPS = {
   'Core':        ['DSA', 'Internet', 'Linux', 'Tricked Memory'],
-  'Backend':     ['Python', 'C#', 'SQL', 'Database', 'API', 'Node.js', 'Testing & Containers'],
+  'Language':    ['Python', 'C#'],
+  'Backend':     ['SQL', 'Database', 'API', 'Node.js', 'Testing & Containers'],
   'Frontend':    ['JavaScript', 'React & SSR', 'CSS & Tailwind'],
   'Cheat Sheet': ['Junior Dev Daily Essentials'],
 };
@@ -13001,6 +13002,7 @@ const LINK_SUBJECTS = {
 
 const GROUP_COLORS = {
   'Core':        '#f97316',
+  'Language':    '#ec4899',
   'Backend':     '#6366f1',
   'Frontend':    '#61dafb',
   'Cheat Sheet': '#10b981',
