@@ -10669,6 +10669,1320 @@ const user = await userService.get('/users/' + userId);
 
 
 /* ═══════════════════════════════════════════════════════════
+   EXPRESS.JS — 40 cards across 8 categories
+═══════════════════════════════════════════════════════════ */
+const EXPRESS_CARDS = [
+
+  /* ── Overview ── */
+  {
+    category: 'Overview', difficulty: 'Beginner',
+    question: 'Express.js Learning Mindmap — what are the 6 core areas and key learning paths?',
+    answer: '6 core areas: 1) Fundamentals — minimal web framework, setup, routing, middleware, req/res. 2) Core Express — routing system, Router, middleware types, static files, error handling. 3) Daily Tools — body parsing, cookies, sessions, logging, validation, security. 4) Async & Data — async routes, MongoDB/Mongoose, SQL/ORM, REST CRUD, GraphQL. 5) Advanced Topics — middleware flow, centralized errors, performance, testing, deployment. 6) Ecosystem — MERN stack, Socket.IO, microservices, serverless, alternatives.',
+    tip: `EXPRESS.JS
+│
+├─ 1. Fundamentals
+│   ├─ What it is      Minimalist web framework for Node.js
+│   ├─ Setup           const express = require('express'); const app = express();
+│   ├─ Routing         app.get('/', (req,res) => res.send('Hello'));
+│   ├─ Middleware       app.use(express.json());
+│   └─ Request/Response req.query · req.params · req.body · res.json()
+│
+├─ 2. Core Express
+│   ├─ Routing System  app.get/post/put/delete · route params (:id)
+│   ├─ Express Router  express.Router() for modular routes
+│   ├─ Middleware      built-in · third-party · custom
+│   ├─ Static Files    app.use(express.static('public'))
+│   └─ Error Handling  app.use((err,req,res,next) => { ... })
+│
+├─ 3. Daily Tools
+│   ├─ Body Parsing    express.json() · express.urlencoded()
+│   ├─ Cookies         cookie-parser
+│   ├─ Sessions        express-session · JWT authentication
+│   ├─ Logging         morgan · Winston
+│   ├─ Validation      express-validator · Joi
+│   └─ Security        helmet · cors · rate limiting
+│
+├─ 4. Async & Data
+│   ├─ Async Handling  async/await in routes · try/catch · next(err)
+│   ├─ MongoDB         Mongoose models · CRUD operations
+│   ├─ SQL             Sequelize · Prisma · raw queries
+│   ├─ REST APIs       CRUD endpoints · status codes · JSON
+│   └─ GraphQL         Apollo Server Express integration
+│
+├─ 5. Advanced Topics
+│   ├─ Middleware Flow  order matters · next() · skip with next('route')
+│   ├─ Error Handling   centralized 4-arg middleware
+│   ├─ Performance      compression · caching · clustering
+│   ├─ Testing          Supertest · Jest · Mocha/Chai
+│   └─ Deployment       pm2 · Docker · CI/CD pipelines
+│
+└─ 6. Ecosystem
+    ├─ Full-stack       MERN (MongoDB, Express, React, Node)
+    ├─ Real-time        Socket.IO integration
+    ├─ Microservices    Express + RabbitMQ/Kafka
+    ├─ Serverless       AWS Lambda · Azure Functions
+    └─ Alternatives     Koa · Fastify · NestJS
+
+LEARNING PATHS
+Backend Dev:           Fundamentals → Core Express → Middleware → REST APIs → Database → Security → Deployment
+Full-stack Dev:        JS → Node.js → Express → React → MERN stack → Testing → Performance
+Microservices/Cloud:   Express → Async/Data → Microservices → Serverless → CI/CD → Kubernetes
+
+INTERVIEW CORE
+Express basics:   routing, middleware, request/response cycle
+Middleware:       functions that run before/after routes, can modify req/res
+Error handling:   centralized error middleware with next(err)
+REST APIs:        CRUD endpoints, proper status codes, JSON responses
+Security:         helmet, cors, JWT, rate limiting
+Ecosystem:        MERN stack, microservices, serverless deployment`
+  },
+
+  /* ── Fundamentals ── */
+  {
+    category: 'Fundamentals', difficulty: 'Beginner',
+    question: 'What is Express.js and why use it over plain Node.js http module?',
+    answer: 'Express.js is a **minimal, unopinionated web framework** built on top of Node.js http module. It adds: **routing** (map URLs to handlers), **middleware** (pipeline of functions), **easier req/res API**, and **templating support**. Plain Node.js http requires manual URL parsing, header management, and body reading. Express handles all that boilerplate. Used in 80%+ of Node.js APIs. Very lightweight — no ORM, no auth, no templating forced on you.',
+    tip: `// Plain Node.js — verbose
+const http = require('http');
+http.createServer((req, res) => {
+    if (req.url === '/' && req.method === 'GET') {
+        res.writeHead(200, { 'Content-Type': 'text/plain' });
+        res.end('Hello World');
+    }
+}).listen(3000);
+
+// Express — clean & concise
+const express = require('express');
+const app = express();
+
+app.get('/', (req, res) => {
+    res.send('Hello World');
+});
+
+app.listen(3000, () => console.log('Server on port 3000'));`
+  },
+  {
+    category: 'Fundamentals', difficulty: 'Beginner',
+    question: 'How do you set up Express.js from scratch and start a basic server?',
+    answer: 'Install with `npm install express`. Create `app.js`: import express, create an app instance, define routes, start listening. Use `express.json()` middleware to parse JSON bodies. Use `nodemon` for auto-restart during development. Structure: **app** (config) → **routes** (endpoints) → **listen** (start server).',
+    tip: `// 1. Install
+// npm install express
+// npm install --save-dev nodemon
+
+// 2. app.js
+const express = require('express');
+const app = express();
+const PORT = process.env.PORT || 3000;
+
+// Built-in middleware
+app.use(express.json());                          // parse JSON bodies
+app.use(express.urlencoded({ extended: true }));  // parse form data
+
+// Routes
+app.get('/', (req, res) => {
+    res.json({ message: 'API is running' });
+});
+
+// Start server
+app.listen(PORT, () => {
+    console.log('Server running on port ' + PORT);
+});
+
+// 3. package.json scripts
+// "dev": "nodemon app.js"
+// "start": "node app.js"`
+  },
+  {
+    category: 'Fundamentals', difficulty: 'Beginner',
+    question: 'How does Express routing work? (route methods, paths, parameters)',
+    answer: 'Express routing maps **HTTP methods + URL paths** to handler functions. Route params (`:id`) capture dynamic segments from the URL. `req.params` holds them. Query strings (`?key=val`) go to `req.query`. Use `app.route()` to chain methods on the same path. `app.all()` handles all methods.',
+    tip: `// HTTP method routing
+app.get('/users',        getAllUsers);   // GET
+app.post('/users',       createUser);   // POST
+app.put('/users/:id',    updateUser);   // PUT
+app.delete('/users/:id', deleteUser);   // DELETE
+
+// Route parameters
+app.get('/users/:id/posts/:postId', (req, res) => {
+    const { id, postId } = req.params;   // dynamic URL segments
+    res.json({ userId: id, postId });
+});
+
+// Query strings  GET /search?q=express&page=2
+app.get('/search', (req, res) => {
+    const { q, page = 1 } = req.query;
+    res.json({ query: q, page });
+});
+
+// Chained methods on same path
+app.route('/products')
+    .get((req, res)  => res.json(products))
+    .post((req, res) => { products.push(req.body); res.status(201).json(req.body); });`
+  },
+  {
+    category: 'Fundamentals', difficulty: 'Beginner',
+    question: 'What is middleware in Express? How does app.use() work?',
+    answer: 'Middleware is a **function that runs between the request and response**. Signature: `(req, res, next)`. Must call `next()` to pass control to the next middleware, or send a response to end the chain. `app.use()` registers middleware globally (all routes) or for a path prefix. Middleware runs **in registration order** — order matters. Use cases: logging, auth, body parsing, error handling.',
+    tip: `// Middleware signature
+function myMiddleware(req, res, next) {
+    // 1. Execute logic
+    console.log('Request received:', req.method, req.url);
+    req.requestTime = Date.now();   // augment req object
+    // 2. Pass control forward
+    next();
+    // OR send response (ends chain):  res.status(401).json({ error: 'Unauthorized' });
+}
+
+// Register globally (all routes)
+app.use(myMiddleware);
+
+// Register for path prefix only
+app.use('/api', myMiddleware);
+
+// Register built-in middleware
+app.use(express.json());                         // parse JSON body
+app.use(express.urlencoded({ extended: true })); // parse URL-encoded forms
+app.use(express.static('public'));               // serve static files
+
+// Middleware chain
+app.get('/protected', authenticate, authorize, (req, res) => {
+    res.json({ data: 'secret' });   // runs only if both middleware call next()
+});`
+  },
+  {
+    category: 'Fundamentals', difficulty: 'Beginner',
+    question: 'What are the key properties of req (request) and res (response) in Express?',
+    answer: '**req** holds everything about the incoming request: `req.params` (URL params), `req.query` (query string), `req.body` (parsed body — needs middleware), `req.headers`, `req.method`, `req.url`, `req.ip`. **res** sends the response: `res.send()` (auto content-type), `res.json()` (JSON), `res.status()` (set status code), `res.redirect()`, `res.render()` (templates), `res.set()` (headers). Chain: `res.status(201).json(data)`.',
+    tip: `// REQ — reading the request
+app.post('/example/:id', (req, res) => {
+    req.params.id       // URL parameter    /example/42  → '42'
+    req.query.filter    // query string     ?filter=active
+    req.body.name       // parsed body      { "name": "Alice" }
+    req.headers['authorization']  // header value
+    req.method          // 'POST'
+    req.url             // '/example/42?filter=active'
+    req.ip              // client IP
+
+    // RES — sending the response
+    res.send('plain text');                    // text/html
+    res.json({ id: 1, name: 'Alice' });        // application/json
+    res.status(201).json({ created: true });   // status + JSON
+    res.status(404).send('Not found');
+    res.redirect('/new-url');                  // 302 redirect
+    res.set('X-Custom-Header', 'value');       // set header
+    res.sendFile(__dirname + '/file.html');
+});`
+  },
+
+  /* ── Core Express ── */
+  {
+    category: 'Core Express', difficulty: 'Beginner',
+    question: 'How does express.Router() work and why use it for modular routing?',
+    answer: '`express.Router()` creates a **mini Express app** — a modular set of routes and middleware. Mount it on a path with `app.use()`. This separates route logic into dedicated files (users.js, products.js) keeping `app.js` clean. Each Router can have its own middleware applied only to that group of routes.',
+    tip: `// routes/users.js
+const express = require('express');
+const router  = express.Router();
+
+// Middleware only for this router
+router.use((req, res, next) => {
+    console.log('Users router hit');
+    next();
+});
+
+router.get('/',    getAllUsers);       // GET  /users
+router.get('/:id', getUserById);      // GET  /users/:id
+router.post('/',   createUser);       // POST /users
+router.put('/:id', updateUser);       // PUT  /users/:id
+router.delete('/:id', deleteUser);    // DELETE /users/:id
+
+module.exports = router;
+
+// app.js — mount the router
+const usersRouter    = require('./routes/users');
+const productsRouter = require('./routes/products');
+
+app.use('/users',    usersRouter);
+app.use('/products', productsRouter);
+
+// Clean folder structure:
+// routes/users.js · routes/products.js · routes/auth.js`
+  },
+  {
+    category: 'Core Express', difficulty: 'Beginner',
+    question: 'What are the 3 types of Express middleware and how does each work?',
+    answer: '**1. Built-in**: `express.json()`, `express.urlencoded()`, `express.static()` — bundled with Express 4.16+. **2. Third-party**: install via npm — `morgan` (logging), `cors`, `helmet`, `cookie-parser`, `compression`. **3. Custom**: functions you write with `(req, res, next)` signature — auth checks, request logging, data validation, attaching DB to req.',
+    tip: `// 1. Built-in middleware
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(express.static('public'));
+
+// 2. Third-party middleware
+const morgan = require('morgan');
+const cors   = require('cors');
+const helmet = require('helmet');
+
+app.use(morgan('dev'));             // request logging
+app.use(cors({ origin: 'https://myapp.com' }));
+app.use(helmet());                 // security headers
+
+// 3. Custom middleware
+function authenticate(req, res, next) {
+    const token = req.headers.authorization?.split(' ')[1];
+    if (!token) return res.status(401).json({ error: 'No token' });
+    try {
+        req.user = jwt.verify(token, process.env.JWT_SECRET);
+        next();
+    } catch (err) {
+        res.status(403).json({ error: 'Invalid token' });
+    }
+}
+
+function requestLogger(req, res, next) {
+    console.log('[' + new Date().toISOString() + '] ' + req.method + ' ' + req.url);
+    next();
+}
+
+app.use(requestLogger);
+app.get('/profile', authenticate, (req, res) => res.json(req.user));`
+  },
+  {
+    category: 'Core Express', difficulty: 'Beginner',
+    question: 'How do you serve static files and configure Express for production?',
+    answer: '`express.static()` serves files from a directory — no route handlers needed. Set `Cache-Control` headers for browser caching. In production: serve static files via **nginx** or a CDN (not Express directly — Express is slow at file serving). Use `compression` middleware to gzip responses. Set `NODE_ENV=production` to enable optimizations.',
+    tip: `// Serve public/ folder — /public/style.css accessible at /style.css
+app.use(express.static('public'));
+
+// With options
+app.use(express.static('public', {
+    maxAge: '1d',                   // Cache-Control: max-age=86400
+    etag:   true,                   // Enable ETags
+    index:  'index.html',           // Default file
+}));
+
+// Serve from multiple directories
+app.use(express.static('public'));
+app.use(express.static('uploads'));
+
+// Mount at a URL prefix
+app.use('/static', express.static('public'));   // /static/style.css
+
+// Production: gzip compression
+const compression = require('compression');
+app.use(compression());             // compresses all responses
+
+// Virtual path prefix
+app.use('/files', express.static(path.join(__dirname, 'uploads')));`
+  },
+  {
+    category: 'Core Express', difficulty: 'Intermediate',
+    question: 'How does error handling work in Express? (4-arg middleware, error types)',
+    answer: 'Express error middleware has **4 arguments**: `(err, req, res, next)`. Must be registered **last**, after all other routes. Pass errors to it by calling `next(err)` from any route or middleware. Sync errors thrown in routes are caught automatically; async errors must be explicitly passed with `next(err)`. Create custom error classes for structured error responses.',
+    tip: `// Custom error class
+class AppError extends Error {
+    constructor(message, statusCode) {
+        super(message);
+        this.statusCode = statusCode;
+    }
+}
+
+// Route — throw or call next(err)
+app.get('/user/:id', async (req, res, next) => {
+    try {
+        const user = await User.findById(req.params.id);
+        if (!user) throw new AppError('User not found', 404);
+        res.json(user);
+    } catch (err) {
+        next(err);   // pass to error middleware
+    }
+});
+
+// 404 handler — no route matched
+app.use((req, res, next) => {
+    next(new AppError('Route not found', 404));
+});
+
+// Global error middleware — MUST be last, MUST have 4 args
+app.use((err, req, res, next) => {
+    const status  = err.statusCode || 500;
+    const message = err.message    || 'Internal Server Error';
+    console.error(err.stack);
+    res.status(status).json({ error: message });
+});`
+  },
+  {
+    category: 'Core Express', difficulty: 'Beginner',
+    question: 'How do you structure a real Express.js project? (folder layout, separation of concerns)',
+    answer: 'Separate concerns: **routes** (URL → handler), **controllers** (business logic), **models** (DB schema), **middleware** (shared logic), **services** (external calls). Keep `app.js` minimal — just config and mounting. Use `server.js` for `listen()`. This makes testing easier (import app without starting server) and code readable.',
+    tip: `// Recommended structure
+// project/
+// ├─ app.js           — express config, middleware, mount routes
+// ├─ server.js        — app.listen(PORT)
+// ├─ routes/
+// │   ├─ users.js     — router definition
+// │   └─ products.js
+// ├─ controllers/
+// │   ├─ userController.js   — request handlers
+// │   └─ productController.js
+// ├─ models/
+// │   └─ User.js     — Mongoose / Sequelize model
+// ├─ middleware/
+// │   ├─ auth.js     — JWT verification
+// │   └─ validate.js — input validation
+// ├─ services/
+// │   └─ emailService.js   — external integrations
+// └─ config/
+//     └─ db.js       — database connection
+
+// app.js
+const express = require('express');
+const app = express();
+
+app.use(express.json());
+app.use(require('./middleware/requestLogger'));
+
+app.use('/api/users',    require('./routes/users'));
+app.use('/api/products', require('./routes/products'));
+
+app.use(require('./middleware/errorHandler'));   // last
+
+module.exports = app;   // export for testing
+
+// server.js
+const app  = require('./app');
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => console.log('Server on port ' + PORT));`
+  },
+
+  /* ── Daily Tools ── */
+  {
+    category: 'Daily Tools', difficulty: 'Beginner',
+    question: 'How do you handle request body parsing in Express? (JSON, URL-encoded, multipart)',
+    answer: '`express.json()` parses `application/json` bodies into `req.body`. `express.urlencoded()` parses HTML form submissions. For file uploads (multipart/form-data), use **multer**. Always validate `req.body` after parsing — never trust user input. Set `limit` to prevent large payload attacks.',
+    tip: `// JSON body  — Content-Type: application/json
+app.use(express.json({ limit: '10kb' }));   // limit payload size
+
+// URL-encoded form  — Content-Type: application/x-www-form-urlencoded
+app.use(express.urlencoded({ extended: true, limit: '10kb' }));
+
+// Route reads req.body
+app.post('/users', (req, res) => {
+    const { name, email } = req.body;   // works after middleware
+    res.status(201).json({ name, email });
+});
+
+// File uploads with multer
+const multer = require('multer');
+const upload = multer({
+    dest: 'uploads/',
+    limits: { fileSize: 5 * 1024 * 1024 },  // 5MB limit
+    fileFilter: (req, file, cb) => {
+        if (file.mimetype.startsWith('image/')) cb(null, true);
+        else cb(new Error('Only images allowed'));
+    }
+});
+
+app.post('/upload', upload.single('photo'), (req, res) => {
+    res.json({ file: req.file });   // req.file has file info
+});`
+  },
+  {
+    category: 'Daily Tools', difficulty: 'Intermediate',
+    question: 'How do you implement sessions and JWT authentication in Express?',
+    answer: '**Sessions**: server stores session data, sends cookie with session ID. Use `express-session` + a session store (Redis, MongoDB) in production — default memory store leaks. **JWT**: stateless, server sends a signed token, client stores it and sends in Authorization header. JWT scales better (no server storage), but cannot be revoked until expiry. Use short TTL + refresh tokens.',
+    tip: `// Option A — Session-based auth
+const session = require('express-session');
+app.use(session({
+    secret:            process.env.SESSION_SECRET,
+    resave:            false,
+    saveUninitialized: false,
+    cookie: { secure: true, httpOnly: true, maxAge: 24*60*60*1000 }
+}));
+
+app.post('/login', async (req, res) => {
+    const user = await User.findByCredentials(req.body.email, req.body.password);
+    req.session.userId = user.id;   // store in session
+    res.json({ message: 'Logged in' });
+});
+
+// Option B — JWT auth
+const jwt = require('jsonwebtoken');
+
+app.post('/login', async (req, res) => {
+    const user  = await User.findByCredentials(req.body.email, req.body.password);
+    const token = jwt.sign({ id: user.id, role: user.role },
+                            process.env.JWT_SECRET,
+                            { expiresIn: '15m' });
+    res.json({ token });
+});
+
+// JWT middleware
+function auth(req, res, next) {
+    const token = req.headers.authorization?.split(' ')[1];
+    if (!token) return res.status(401).json({ error: 'No token' });
+    req.user = jwt.verify(token, process.env.JWT_SECRET);
+    next();
+}
+
+app.get('/profile', auth, (req, res) => res.json(req.user));`
+  },
+  {
+    category: 'Daily Tools', difficulty: 'Beginner',
+    question: 'How do you add logging to Express? (morgan for HTTP logs, Winston for app logs)',
+    answer: '**morgan** logs HTTP requests (method, URL, status, duration). **Winston** is a general-purpose logger — supports log levels, multiple transports (console, file, external services), structured JSON logs. In production: log to files or a logging service (Datadog, Loggly, CloudWatch). Never log sensitive data (passwords, tokens). Use log levels: error, warn, info, debug.',
+    tip: `// morgan — HTTP request logger
+const morgan = require('morgan');
+app.use(morgan('dev'));      // dev: colored, short
+app.use(morgan('combined')); // combined: Apache-style, for production
+
+// winston — application logger
+const winston = require('winston');
+const logger  = winston.createLogger({
+    level: process.env.LOG_LEVEL || 'info',
+    format: winston.format.combine(
+        winston.format.timestamp(),
+        winston.format.json()                // structured JSON logs
+    ),
+    transports: [
+        new winston.transports.Console(),
+        new winston.transports.File({ filename: 'logs/error.log', level: 'error' }),
+        new winston.transports.File({ filename: 'logs/combined.log' }),
+    ],
+});
+
+// Use in routes
+app.get('/users', async (req, res, next) => {
+    try {
+        logger.info('Fetching users', { userId: req.user?.id });
+        const users = await User.find();
+        res.json(users);
+    } catch (err) {
+        logger.error('Failed to fetch users', { error: err.message });
+        next(err);
+    }
+});`
+  },
+  {
+    category: 'Daily Tools', difficulty: 'Intermediate',
+    question: 'How do you validate request data in Express? (express-validator, Joi)',
+    answer: 'Never trust user input — always validate and sanitize. **express-validator**: chain validators on route definition, check `validationResult(req)` in handler. **Joi**: define a schema object, call `schema.validate(data)` — returns errors or clean value. Create reusable validation middleware. Validate early and fail fast — reject bad requests before hitting the database.',
+    tip: `// Option A — express-validator
+const { body, param, validationResult } = require('express-validator');
+
+const createUserRules = [
+    body('name').trim().notEmpty().withMessage('Name required'),
+    body('email').isEmail().normalizeEmail().withMessage('Invalid email'),
+    body('password').isLength({ min: 8 }).withMessage('Min 8 chars'),
+    body('age').optional().isInt({ min: 18 }).withMessage('Must be 18+'),
+];
+
+function validate(req, res, next) {
+    const errors = validationResult(req);
+    if (!errors.isEmpty())
+        return res.status(400).json({ errors: errors.array() });
+    next();
+}
+
+app.post('/users', createUserRules, validate, createUser);
+
+// Option B — Joi
+const Joi = require('joi');
+
+const userSchema = Joi.object({
+    name:     Joi.string().trim().min(1).required(),
+    email:    Joi.string().email().required(),
+    password: Joi.string().min(8).required(),
+    age:      Joi.number().integer().min(18).optional(),
+});
+
+function validateBody(schema) {
+    return (req, res, next) => {
+        const { error, value } = schema.validate(req.body, { abortEarly: false });
+        if (error) return res.status(400).json({ errors: error.details });
+        req.body = value;   // use sanitized value
+        next();
+    };
+}
+
+app.post('/users', validateBody(userSchema), createUser);`
+  },
+  {
+    category: 'Daily Tools', difficulty: 'Intermediate',
+    question: 'How do you secure an Express API? (helmet, cors, rate limiting)',
+    answer: '**helmet** sets secure HTTP headers (XSS protection, no sniff, HSTS, etc.) with one line. **cors** controls which origins can call your API — always whitelist, never use `*` in production. **express-rate-limit** prevents brute force and DoS by limiting requests per IP. Also: use HTTPS, sanitize inputs, validate JWT, hash passwords with bcrypt, never expose stack traces in production.',
+    tip: `const helmet    = require('helmet');
+const cors      = require('cors');
+const rateLimit = require('express-rate-limit');
+
+// helmet — security headers (always first)
+app.use(helmet());
+// Sets: X-XSS-Protection, X-Frame-Options, X-Content-Type-Options,
+//       Strict-Transport-Security, Content-Security-Policy, etc.
+
+// cors — control allowed origins
+app.use(cors({
+    origin:      ['https://myapp.com', 'https://admin.myapp.com'],
+    methods:     ['GET', 'POST', 'PUT', 'DELETE'],
+    credentials: true,              // allow cookies / auth headers
+}));
+
+// rate limiting — 100 requests per 15 minutes per IP
+const limiter = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    max:      100,
+    message:  { error: 'Too many requests, please try again later' },
+    standardHeaders: true,
+    legacyHeaders:   false,
+});
+app.use('/api/', limiter);
+
+// Stricter limit for auth routes
+const authLimiter = rateLimit({ windowMs: 15 * 60 * 1000, max: 10 });
+app.use('/api/auth', authLimiter);
+
+// Never expose stack traces in production
+app.use((err, req, res, next) => {
+    const isProd = process.env.NODE_ENV === 'production';
+    res.status(err.statusCode || 500).json({
+        error:  err.message,
+        stack:  isProd ? undefined : err.stack,
+    });
+});`
+  },
+
+  /* ── Async & Data ── */
+  {
+    category: 'Async & Data', difficulty: 'Intermediate',
+    question: 'How do you handle async errors in Express routes? (async/await patterns)',
+    answer: 'Express 4 does not catch async errors automatically — you must catch them and call `next(err)`. Wrap every async route in try/catch, or use an `asyncHandler` wrapper to avoid repeating boilerplate. Express 5 (beta) auto-catches rejected promises. The `express-async-errors` package also patches Express 4 to do this automatically.',
+    tip: `// Option A — manual try/catch (verbose but explicit)
+app.get('/users/:id', async (req, res, next) => {
+    try {
+        const user = await User.findById(req.params.id);
+        if (!user) return res.status(404).json({ error: 'Not found' });
+        res.json(user);
+    } catch (err) {
+        next(err);   // sends to error middleware
+    }
+});
+
+// Option B — asyncHandler wrapper (DRY)
+const asyncHandler = fn => (req, res, next) =>
+    Promise.resolve(fn(req, res, next)).catch(next);
+
+app.get('/users/:id', asyncHandler(async (req, res) => {
+    const user = await User.findById(req.params.id);
+    if (!user) return res.status(404).json({ error: 'Not found' });
+    res.json(user);
+}));
+
+// Option C — express-async-errors package
+require('express-async-errors');   // patches Express 4
+// Now async errors auto-flow to error middleware — no try/catch needed
+app.get('/users/:id', async (req, res) => {
+    const user = await User.findById(req.params.id);
+    if (!user) throw new AppError('Not found', 404);   // just throw!
+    res.json(user);
+});`
+  },
+  {
+    category: 'Async & Data', difficulty: 'Intermediate',
+    question: 'How do you connect Express to MongoDB using Mongoose?',
+    answer: 'Install `mongoose`, connect in `config/db.js`, define **Schema + Model**, use the model in controllers. Mongoose provides: schema validation, middleware (pre/post hooks), query chaining, population (joins). Store the connection string in `.env`. Handle connection errors and reconnect logic. Disconnect in tests.',
+    tip: `// config/db.js
+const mongoose = require('mongoose');
+
+async function connectDB() {
+    await mongoose.connect(process.env.MONGO_URI, {
+        useNewUrlParser:    true,
+        useUnifiedTopology: true,
+    });
+    console.log('MongoDB connected');
+}
+
+module.exports = connectDB;
+
+// models/User.js
+const mongoose = require('mongoose');
+
+const userSchema = new mongoose.Schema({
+    name:      { type: String, required: true, trim: true },
+    email:     { type: String, required: true, unique: true, lowercase: true },
+    password:  { type: String, required: true, minlength: 8 },
+    role:      { type: String, enum: ['user', 'admin'], default: 'user' },
+    createdAt: { type: Date, default: Date.now },
+});
+
+// Mongoose middleware — hash password before save
+userSchema.pre('save', async function(next) {
+    if (this.isModified('password'))
+        this.password = await bcrypt.hash(this.password, 12);
+    next();
+});
+
+module.exports = mongoose.model('User', userSchema);
+
+// controllers/userController.js
+const User = require('../models/User');
+
+exports.getUsers    = async (req, res) => { res.json(await User.find().select('-password')); };
+exports.createUser  = async (req, res) => { res.status(201).json(await User.create(req.body)); };
+exports.updateUser  = async (req, res) => { res.json(await User.findByIdAndUpdate(req.params.id, req.body, { new: true })); };
+exports.deleteUser  = async (req, res) => { await User.findByIdAndDelete(req.params.id); res.status(204).send(); };`
+  },
+  {
+    category: 'Async & Data', difficulty: 'Intermediate',
+    question: 'How do you connect Express to SQL databases using Sequelize or Prisma?',
+    answer: '**Sequelize**: classic ORM — define models with JS class syntax, supports MySQL/PostgreSQL/SQLite. **Prisma**: modern ORM — define schema in `schema.prisma`, auto-generates a typed client. Prisma has better TypeScript support and migration tooling. Both support: relations, transactions, raw queries. Use migrations to manage schema changes — never manually alter production DB.',
+    tip: `// --- PRISMA ---
+// 1. Install: npm install @prisma/client
+//    npx prisma init  →  creates prisma/schema.prisma
+
+// prisma/schema.prisma
+// model User {
+//   id    Int    @id @default(autoincrement())
+//   name  String
+//   email String @unique
+//   posts Post[]
+// }
+
+// 2. Migrate: npx prisma migrate dev --name init
+// 3. Generate client: npx prisma generate
+
+// config/db.js (Prisma)
+const { PrismaClient } = require('@prisma/client');
+const prisma = new PrismaClient();
+module.exports = prisma;
+
+// controllers/userController.js (Prisma)
+const prisma = require('../config/db');
+
+exports.getUsers   = async (req, res) => { res.json(await prisma.user.findMany()); };
+exports.createUser = async (req, res) => {
+    const user = await prisma.user.create({ data: req.body });
+    res.status(201).json(user);
+};
+
+// --- SEQUELIZE ---
+const { Sequelize, DataTypes } = require('sequelize');
+const sequelize = new Sequelize(process.env.DATABASE_URL);
+
+const User = sequelize.define('User', {
+    name:  { type: DataTypes.STRING, allowNull: false },
+    email: { type: DataTypes.STRING, unique: true, allowNull: false },
+});
+
+sequelize.sync({ alter: true });   // sync schema on startup (dev only)`
+  },
+  {
+    category: 'Async & Data', difficulty: 'Intermediate',
+    question: 'How do you build a complete REST CRUD API with Express?',
+    answer: 'REST CRUD maps HTTP methods to resource operations: **GET /resource** (list all), **GET /resource/:id** (get one), **POST /resource** (create), **PUT /resource/:id** (full update), **PATCH /resource/:id** (partial update), **DELETE /resource/:id** (delete). Use proper status codes: 200 OK, 201 Created, 204 No Content, 400 Bad Request, 401 Unauthorized, 403 Forbidden, 404 Not Found, 500 Server Error.',
+    tip: `// routes/products.js
+const router = require('express').Router();
+const ctrl   = require('../controllers/productController');
+const auth   = require('../middleware/auth');
+const { validateBody } = require('../middleware/validate');
+const { productSchema } = require('../schemas/productSchema');
+
+router.get('/',     ctrl.getAll);                         // list
+router.get('/:id',  ctrl.getOne);                         // get one
+router.post('/',    auth, validateBody(productSchema), ctrl.create);   // create
+router.put('/:id',  auth, validateBody(productSchema), ctrl.update);   // full update
+router.patch('/:id',auth, ctrl.partialUpdate);            // partial update
+router.delete('/:id', auth, ctrl.remove);                 // delete
+
+// controllers/productController.js
+const Product = require('../models/Product');
+
+exports.getAll    = async (req, res) => {
+    const { page = 1, limit = 20, sort = 'createdAt' } = req.query;
+    const products = await Product.find()
+        .sort(sort).skip((page-1)*limit).limit(Number(limit));
+    res.json({ data: products, page, limit });
+};
+exports.getOne    = async (req, res, next) => {
+    const p = await Product.findById(req.params.id);
+    if (!p) return next(new AppError('Not found', 404));
+    res.json(p);
+};
+exports.create    = async (req, res) => { res.status(201).json(await Product.create(req.body)); };
+exports.update    = async (req, res) => { res.json(await Product.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true })); };
+exports.remove    = async (req, res) => { await Product.findByIdAndDelete(req.params.id); res.status(204).send(); };`
+  },
+  {
+    category: 'Async & Data', difficulty: 'Advanced',
+    question: 'How do you integrate GraphQL with Express using Apollo Server?',
+    answer: 'Install `@apollo/server` and `@as-integrations/express`. Define a **type schema** (SDL — types, queries, mutations). Write **resolvers** that return data. Mount Apollo on an Express route. GraphQL allows clients to request exactly the fields they need — eliminates over-fetching. Use **DataLoader** to batch DB queries and avoid the N+1 problem.',
+    tip: `const express = require('express');
+const { ApolloServer } = require('@apollo/server');
+const { expressMiddleware } = require('@as-integrations/express');
+
+// Define schema (SDL — no backtick template used here for brevity)
+const typeDefs = '
+  type User { id: ID!  name: String!  email: String! }
+  type Query { users: [User!]!  user(id: ID!): User }
+  type Mutation { createUser(name: String!, email: String!): User! }
+';
+
+// Define resolvers
+const resolvers = {
+    Query: {
+        users:  ()         => User.find(),
+        user:   (_, {id})  => User.findById(id),
+    },
+    Mutation: {
+        createUser: (_, args) => User.create(args),
+    },
+};
+
+// Wire up Apollo + Express
+async function startServer() {
+    const app    = express();
+    const server = new ApolloServer({ typeDefs, resolvers });
+    await server.start();
+
+    app.use(express.json());
+    app.use('/graphql', expressMiddleware(server, {
+        context: async ({ req }) => ({ user: req.user })  // pass auth context
+    }));
+
+    app.listen(4000, () => console.log('GraphQL at http://localhost:4000/graphql'));
+}
+startServer();`
+  },
+
+  /* ── Advanced Topics ── */
+  {
+    category: 'Advanced Topics', difficulty: 'Intermediate',
+    question: 'How does middleware execution order work in Express? (next, next("route"), branching)',
+    answer: 'Middleware runs in **registration order** — first `app.use()`, then matching routes. `next()` passes to next middleware. `next("route")` skips remaining handlers on the current route and moves to the next matching route. `next(err)` jumps to error middleware. Calling `res.send()` ends the chain — do not call `next()` after sending. Middleware before routes acts as a gate; middleware after routes handles 404s.',
+    tip: `// Execution order demonstration
+app.use(loggerMiddleware);      // 1st — runs for all requests
+app.use('/api', authMiddleware); // 2nd — runs only for /api/* routes
+
+app.get('/api/users',
+    checkCache,                 // 3rd — check cache first
+    validateQuery,              // 4th — validate params
+    async (req, res) => {       // 5th — actual handler
+        res.json(await User.find());
+    }
+);
+
+// next('route') — skip remaining handlers, go to next matching route
+app.get('/users/:id',
+    (req, res, next) => {
+        if (req.params.id === 'me') next('route');  // skip to next app.get('/users/:id')
+        else next();
+    },
+    (req, res) => res.json({ lookup: 'by id' })
+);
+app.get('/users/:id', (req, res) => res.json({ lookup: 'current user' }));
+
+// 404 — place AFTER all routes
+app.use((req, res) => res.status(404).json({ error: 'Not found' }));
+
+// Error handler — ALWAYS last, ALWAYS 4 args
+app.use((err, req, res, next) => {
+    res.status(err.status || 500).json({ error: err.message });
+});`
+  },
+  {
+    category: 'Advanced Topics', difficulty: 'Intermediate',
+    question: 'How do you improve Express performance? (compression, caching, clustering)',
+    answer: '**Compression**: gzip responses with `compression` middleware — reduces transfer size 70%+. **Caching**: set `Cache-Control` headers for static assets; use Redis for API response caching. **Clustering**: use Node.js `cluster` or **pm2 cluster mode** to use all CPU cores. **HTTP/2**: use with `spdy` or nginx proxy. **Production checklist**: disable x-powered-by header, enable gzip, serve static via nginx, use CDN.',
+    tip: `// 1. Compression middleware
+const compression = require('compression');
+app.use(compression({ level: 6, threshold: 1024 }));   // compress >1KB responses
+
+// 2. Response caching with Redis
+const redis = require('redis');
+const client = redis.createClient({ url: process.env.REDIS_URL });
+
+function cache(ttlSeconds) {
+    return async (req, res, next) => {
+        const key    = 'cache:' + req.url;
+        const cached = await client.get(key);
+        if (cached) return res.json(JSON.parse(cached));
+        res.sendResponse = res.json.bind(res);
+        res.json = async (body) => {
+            await client.setEx(key, ttlSeconds, JSON.stringify(body));
+            res.sendResponse(body);
+        };
+        next();
+    };
+}
+
+app.get('/products', cache(60), getProducts);   // cache 60 seconds
+
+// 3. Disable x-powered-by (security)
+app.disable('x-powered-by');
+
+// 4. pm2 cluster mode (ecosystem.config.js)
+// module.exports = {
+//   apps: [{ name: 'api', script: 'server.js', instances: 'max', exec_mode: 'cluster' }]
+// };
+// pm2 start ecosystem.config.js`
+  },
+  {
+    category: 'Advanced Topics', difficulty: 'Intermediate',
+    question: 'How do you test an Express API with Supertest and Jest?',
+    answer: '**Supertest** sends HTTP requests directly to an Express app without starting a real server — perfect for integration tests. Import `app` (not `server.js`), pass to `request(app)`. Test status codes, response bodies, headers. Use `beforeAll`/`afterAll` for DB setup/teardown. Mock external services. Aim for: unit tests (controllers), integration tests (routes + DB), and e2e tests.',
+    tip: `// app.js — export app without listen()
+module.exports = app;
+
+// server.js — only file that calls listen
+const app  = require('./app');
+app.listen(3000);
+
+// __tests__/users.test.js
+const request  = require('supertest');
+const app      = require('../app');
+const mongoose = require('mongoose');
+
+beforeAll(async () => {
+    await mongoose.connect(process.env.TEST_MONGO_URI);
+});
+
+afterAll(async () => {
+    await mongoose.connection.dropDatabase();
+    await mongoose.connection.close();
+});
+
+afterEach(async () => {
+    await User.deleteMany({});   // clean state between tests
+});
+
+describe('POST /api/users', () => {
+    it('creates a user and returns 201', async () => {
+        const res = await request(app)
+            .post('/api/users')
+            .send({ name: 'Alice', email: 'alice@test.com', password: 'secret123' });
+
+        expect(res.statusCode).toBe(201);
+        expect(res.body.name).toBe('Alice');
+        expect(res.body.password).toBeUndefined();   // never return password
+    });
+
+    it('returns 400 for invalid email', async () => {
+        const res = await request(app)
+            .post('/api/users')
+            .send({ name: 'Bob', email: 'not-an-email' });
+        expect(res.statusCode).toBe(400);
+    });
+});`
+  },
+  {
+    category: 'Advanced Topics', difficulty: 'Intermediate',
+    question: 'How do you deploy an Express app? (pm2, Docker, environment config)',
+    answer: 'Use **pm2** for process management on a VM — auto-restart on crash, cluster mode, log management. Use **Docker** to containerize — consistent environments, easy to scale. Store secrets in `.env` with `dotenv` in dev; use environment variables in production (never commit secrets). Use a reverse proxy (nginx) in front of Express for SSL termination, static files, and load balancing.',
+    tip: `// 1. Environment variables
+// .env (dev only — never commit)
+// PORT=3000
+// NODE_ENV=development
+// MONGO_URI=mongodb://localhost/mydb
+// JWT_SECRET=supersecret
+
+require('dotenv').config();   // load .env in dev
+
+// 2. pm2 (process manager)
+// npm install -g pm2
+// pm2 start server.js --name api --instances max --exec-mode cluster
+// pm2 save  →  pm2 startup  (auto-start on reboot)
+
+// 3. Dockerfile
+// FROM node:20-alpine
+// WORKDIR /app
+// COPY package*.json ./
+// RUN npm ci --only=production
+// COPY . .
+// EXPOSE 3000
+// CMD ["node", "server.js"]
+
+// 4. docker-compose.yml (dev)
+// services:
+//   api:
+//     build: .
+//     ports: ["3000:3000"]
+//     environment:
+//       - NODE_ENV=production
+//       - MONGO_URI=mongodb://mongo:27017/mydb
+//   mongo:
+//     image: mongo:7
+
+// 5. nginx reverse proxy (excerpt)
+// server {
+//   listen 80;
+//   location / { proxy_pass http://localhost:3000; }
+//   location /static { root /var/www; expires 1d; }
+// }`
+  },
+
+  /* ── Ecosystem ── */
+  {
+    category: 'Ecosystem', difficulty: 'Intermediate',
+    question: 'How does the MERN stack work? (MongoDB, Express, React, Node.js)',
+    answer: 'MERN is a **full-stack JavaScript** architecture: **MongoDB** stores data as JSON documents, **Express** provides the REST API layer, **React** is the frontend SPA, **Node.js** is the runtime. Express serves a JSON API; React fetches data via `fetch`/Axios. In production, React is built to static files served by nginx or Express itself. Single language (JavaScript) across the entire stack.',
+    tip: `// MERN architecture
+//
+// Browser (React SPA)
+//    │  fetch('/api/users')
+//    ▼
+// nginx / Express (port 3000)
+//    │  routes/users.js
+//    ▼
+// MongoDB (Mongoose)
+//
+// Express serves: static React build + /api/* routes
+
+// server.js — serve React build in production
+const path = require('path');
+app.use('/api/users',    require('./routes/users'));
+app.use('/api/products', require('./routes/products'));
+
+// Serve React build
+if (process.env.NODE_ENV === 'production') {
+    app.use(express.static(path.join(__dirname, '../client/build')));
+    app.get('*', (req, res) =>                          // catch-all for React Router
+        res.sendFile(path.join(__dirname, '../client/build/index.html'))
+    );
+}
+
+// React — fetch from Express API
+useEffect(() => {
+    fetch('/api/users')
+        .then(r => r.json())
+        .then(setUsers);
+}, []);`
+  },
+  {
+    category: 'Ecosystem', difficulty: 'Intermediate',
+    question: 'How do you add real-time features to Express using Socket.IO?',
+    answer: '**Socket.IO** adds WebSocket support on top of Express — bidirectional, event-based communication. Share the same HTTP server between Express and Socket.IO. Emit events from server to clients and vice versa. Use **rooms** to group connections (e.g., a chat room). Scales horizontally with the `socket.io-redis` adapter (Redis pub/sub).',
+    tip: `const express   = require('express');
+const http      = require('http');
+const { Server } = require('socket.io');
+
+const app    = express();
+const server = http.createServer(app);   // share server
+const io     = new Server(server, {
+    cors: { origin: 'http://localhost:3000' }
+});
+
+// Socket.IO events
+io.on('connection', (socket) => {
+    console.log('User connected:', socket.id);
+
+    // Join a room
+    socket.on('join-room', (roomId) => {
+        socket.join(roomId);
+        io.to(roomId).emit('user-joined', { id: socket.id });
+    });
+
+    // Chat message
+    socket.on('message', ({ roomId, text }) => {
+        io.to(roomId).emit('message', { from: socket.id, text });
+    });
+
+    socket.on('disconnect', () => console.log('User disconnected'));
+});
+
+// Express REST + Socket.IO on same port
+server.listen(3000);
+
+// Client-side (browser)
+// const socket = io('http://localhost:3000');
+// socket.emit('join-room', 'room-1');
+// socket.on('message', (msg) => console.log(msg));`
+  },
+  {
+    category: 'Ecosystem', difficulty: 'Advanced',
+    question: 'How do you build microservices with Express? (message queues, inter-service communication)',
+    answer: 'Split a monolith into small, independent services — each with its own Express server and database. Communication: **HTTP/REST** (simple, synchronous), **gRPC** (fast, typed), **Message queues** (async, decoupled) — RabbitMQ or Kafka. An **API Gateway** routes requests to services. Use service discovery (Consul, Kubernetes DNS) in production. Each service deploys independently.',
+    tip: `// Order Service — publishes event
+const amqp = require('amqplib');
+
+async function publishOrderCreated(order) {
+    const conn    = await amqp.connect(process.env.RABBITMQ_URL);
+    const channel = await conn.createChannel();
+    await channel.assertQueue('order.created', { durable: true });
+    channel.sendToQueue('order.created', Buffer.from(JSON.stringify(order)));
+    console.log('Published order.created event');
+}
+
+app.post('/orders', async (req, res) => {
+    const order = await Order.create(req.body);
+    await publishOrderCreated(order);
+    res.status(201).json(order);
+});
+
+// Email Service — consumes event
+async function startConsumer() {
+    const conn    = await amqp.connect(process.env.RABBITMQ_URL);
+    const channel = await conn.createChannel();
+    await channel.assertQueue('order.created', { durable: true });
+    channel.consume('order.created', async (msg) => {
+        const order = JSON.parse(msg.content.toString());
+        await sendConfirmationEmail(order.userEmail, order);
+        channel.ack(msg);
+    });
+}
+
+// API Gateway (Express)
+const { createProxyMiddleware } = require('http-proxy-middleware');
+app.use('/api/orders',   createProxyMiddleware({ target: 'http://order-service:3001' }));
+app.use('/api/products', createProxyMiddleware({ target: 'http://product-service:3002' }));`
+  },
+  {
+    category: 'Ecosystem', difficulty: 'Advanced',
+    question: 'How do you deploy Express as a serverless function? (AWS Lambda, Azure Functions)',
+    answer: 'Wrap Express with `serverless-http` — converts Lambda events to Express req/res. Deploy with **AWS SAM**, **Serverless Framework**, or **AWS CDK**. Benefits: no server management, pay per request, auto-scale. Trade-offs: **cold starts** (first request latency), stateless (no memory between requests, use Redis/DB), limited execution time (15 min max on Lambda). Good for: low-traffic APIs, event-driven workloads.',
+    tip: `// 1. Install: npm install serverless-http
+
+// handler.js (AWS Lambda)
+const express       = require('express');
+const serverless    = require('serverless-http');
+
+const app = express();
+app.use(express.json());
+
+app.get('/users',    getUsers);
+app.post('/users',   createUser);
+
+// DB connection — use connection pooling with care
+// Initialize outside handler to reuse across warm invocations
+let dbConnection;
+async function getDB() {
+    if (!dbConnection) dbConnection = await connectDB();
+    return dbConnection;
+}
+
+// Export for Lambda
+module.exports.handler = serverless(app);
+
+// serverless.yml (Serverless Framework)
+// service: my-api
+// provider:
+//   name: aws
+//   runtime: nodejs20.x
+// functions:
+//   api:
+//     handler: handler.handler
+//     events:
+//       - http:
+//           path: /{proxy+}
+//           method: any
+
+// Warm-up trick — ping every 5 min to avoid cold starts
+// Use AWS CloudWatch scheduled event or serverless-plugin-warmup`
+  },
+
+  /* ── Interview ── */
+  {
+    category: 'Interview', difficulty: 'Beginner',
+    question: 'Interview: What is middleware in Express and how does it work?',
+    answer: 'Middleware is a **function with (req, res, next) signature** that runs between the request arriving and the response being sent. It can: read/modify req and res, end the request-response cycle, or call `next()` to pass control to the next function. Express is essentially a **pipeline of middleware** — every route handler is middleware. Common uses: logging, authentication, input validation, error handling.',
+    tip: `// Middleware = function(req, res, next)
+function logRequest(req, res, next) {
+    console.log(req.method, req.url);   // 1. do something
+    next();                             // 2. pass control forward
+}
+
+// Multiple middleware per route
+app.get('/dashboard',
+    authenticate,    // check JWT token
+    authorize,       // check user role
+    logRequest,      // log the request
+    (req, res) => {  // final handler
+        res.json({ data: 'dashboard' });
+    }
+);
+
+// Key interview points:
+// - Runs IN ORDER of registration
+// - Must call next() OR send a response — never both
+// - next(err) jumps to error-handling middleware
+// - 4-arg (err,req,res,next) = error middleware
+// - app.use() registers for all methods/paths
+// - Path prefix: app.use('/admin', adminMiddleware)`
+  },
+  {
+    category: 'Interview', difficulty: 'Intermediate',
+    question: 'Interview: How does Express handle async errors? What happens if you forget try/catch?',
+    answer: 'In Express 4, **uncaught async errors crash the process** or hang the request. You must explicitly call `next(err)` in a catch block. Express 5 (beta) auto-catches rejected promises. The `express-async-errors` package backports this to Express 4. Best practice: use a wrapper like `asyncHandler(fn)` that catches rejections and calls `next(err)` automatically.',
+    tip: `// BAD — async error silently hangs the request in Express 4
+app.get('/bad', async (req, res) => {
+    const data = await riskyOperation();   // if this throws — request hangs forever!
+    res.json(data);
+});
+
+// GOOD — manual try/catch
+app.get('/good', async (req, res, next) => {
+    try {
+        const data = await riskyOperation();
+        res.json(data);
+    } catch (err) {
+        next(err);   // sends to error middleware
+    }
+});
+
+// BEST — asyncHandler wrapper (write once, use everywhere)
+const asyncHandler = fn => (req, res, next) =>
+    Promise.resolve(fn(req, res, next)).catch(next);
+
+app.get('/best', asyncHandler(async (req, res) => {
+    const data = await riskyOperation();
+    res.json(data);
+}));
+
+// Error middleware (always last in app.js)
+app.use((err, req, res, next) => {
+    console.error(err.stack);
+    res.status(err.status || 500).json({ error: err.message });
+});`
+  },
+  {
+    category: 'Interview', difficulty: 'Beginner',
+    question: 'Interview: Explain the Express request/response cycle from browser to response.',
+    answer: '1. Browser sends HTTP request. 2. Express receives it in Node.js http server. 3. Request passes through **global middleware** (helmet, cors, body parser, logger). 4. Express matches the URL + method to a **route**. 5. Request passes through **route-specific middleware** (auth, validation). 6. **Route handler** processes the request (DB query, logic). 7. **res.json()** sends response back. 8. If error occurs at any point, **error middleware** sends error response.',
+    tip: `// Full request/response cycle:
+//
+// Client: GET /api/users?page=2
+//         Authorization: Bearer <token>
+//           │
+//           ▼
+// [1] morgan logger        — logs method + URL
+// [2] helmet               — adds security headers
+// [3] cors                 — checks origin header
+// [4] express.json()       — parses body (GET has none)
+//           │
+//           ▼
+// [5] Route match: GET /api/users
+// [6] authenticate         — verifies JWT, sets req.user
+// [7] validateQuery        — checks req.query.page is a number
+//           │
+//           ▼
+// [8] Route handler:
+//     const users = await User.find()
+//                       .skip(20).limit(20);
+//     res.json({ data: users, page: 2 });
+//           │
+//           ▼
+// [9] Response sent to client: 200 OK { data: [...], page: 2 }
+//
+// If authenticate fails → next(new AppError('Unauthorized', 401))
+// → jumps to error middleware → 401 { error: 'Unauthorized' }`
+  },
+  {
+    category: 'Interview', difficulty: 'Intermediate',
+    question: 'Interview: How do you secure an Express API? (checklist)',
+    answer: 'Security checklist: **helmet** (secure headers), **cors** (whitelist origins), **rate limiting** (prevent brute force), **input validation** (never trust user data), **JWT/OAuth** (stateless auth), **bcrypt** (hash passwords), **HTTPS only**, **environment variables** (no hardcoded secrets), **SQL/NoSQL injection prevention** (use parameterized queries/ORM), **error messages** (never expose stack traces in production).',
+    tip: `// Security checklist — one-liner overview
+
+// 1. HTTP headers
+app.use(helmet());
+
+// 2. CORS
+app.use(cors({ origin: ['https://myapp.com'] }));
+
+// 3. Rate limiting
+app.use('/api', rateLimit({ windowMs: 15*60*1000, max: 100 }));
+
+// 4. Body size limit
+app.use(express.json({ limit: '10kb' }));
+
+// 5. Input validation (never skip)
+app.post('/users', validateBody(userSchema), createUser);
+
+// 6. Auth — JWT
+const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, { expiresIn: '15m' });
+
+// 7. Passwords — bcrypt
+const hash = await bcrypt.hash(password, 12);
+
+// 8. Parameterized queries (Mongoose/Prisma handles this)
+User.findOne({ email: req.body.email });   // safe — no injection risk
+
+// 9. Hide stack traces in prod
+app.use((err, req, res, next) => {
+    res.status(err.status || 500).json({
+        error: err.message,
+        stack: process.env.NODE_ENV === 'production' ? undefined : err.stack,
+    });
+});
+
+// 10. Never commit .env — use .gitignore`
+  },
+  {
+    category: 'Interview', difficulty: 'Intermediate',
+    question: 'Interview: What are REST API best practices in Express?',
+    answer: 'REST best practices: **Use nouns** not verbs in URLs (`/users` not `/getUsers`). **Use proper HTTP methods** (GET=read, POST=create, PUT=replace, PATCH=update, DELETE=delete). **Correct status codes** (201 for create, 204 for delete, 400 for bad input, 401 for unauth, 404 for not found). **Versioning** (`/api/v1/users`). **Pagination** for list endpoints. **Consistent JSON structure**. **HATEOAS** links (optional). **Idempotency** for PUT/DELETE.',
+    tip: `// URL design — nouns, plural, nested for relations
+GET    /api/v1/users               — list all users
+GET    /api/v1/users/:id           — get one user
+POST   /api/v1/users               — create user
+PUT    /api/v1/users/:id           — full replace
+PATCH  /api/v1/users/:id           — partial update
+DELETE /api/v1/users/:id           — delete user
+GET    /api/v1/users/:id/posts     — user's posts (nested)
+
+// Status codes
+201 Created    — POST success, return created resource
+204 No Content — DELETE success (no body)
+400 Bad Request — validation error (include details)
+401 Unauthorized — missing/invalid auth token
+403 Forbidden  — valid token but no permission
+404 Not Found  — resource doesn't exist
+409 Conflict   — duplicate resource (email already taken)
+422 Unprocessable Entity — semantic validation error
+500 Internal Server Error — unexpected server error
+
+// Consistent response structure
+// Success:  { data: {...}, meta: { page, total } }
+// Error:    { error: 'message', details: [...] }
+
+// Pagination
+GET /users?page=2&limit=20&sort=-createdAt`
+  },
+  {
+    category: 'Interview', difficulty: 'Intermediate',
+    question: 'Interview: Express vs Fastify vs NestJS vs Koa — when to choose each?',
+    answer: '**Express**: most popular, huge ecosystem, minimal & flexible, perfect for APIs & microservices. Best choice for 90% of projects. **Fastify**: 2x faster than Express (schema-based validation, JSON serialization), TypeScript-first, built-in logging. Choose for high-performance APIs. **NestJS**: opinionated, Angular-style architecture (decorators, DI), excellent for large teams and enterprise. **Koa**: by Express creators, uses async/await natively, smaller core. Choose if you want Express but cleaner async.',
+    tip: `// Express — flexible, minimal
+const app = express();
+app.get('/users', async (req, res) => res.json(await getUsers()));
+
+// Fastify — performance + schema validation
+const fastify = require('fastify')();
+fastify.get('/users', {
+    schema: {
+        response: {
+            200: {
+                type: 'array',
+                items: { type: 'object', properties: { id: { type: 'number' } } }
+            }
+        }
+    }
+}, async (request, reply) => getUsers());
+
+// NestJS — decorators + DI (TypeScript)
+// @Controller('users')
+// class UsersController {
+//   constructor(private usersService: UsersService) {}
+//   @Get()  findAll() { return this.usersService.findAll(); }
+//   @Post() create(@Body() dto: CreateUserDto) { ... }
+// }
+
+// Decision guide:
+// Small project / quick API    → Express
+// High performance (10k+ rps) → Fastify
+// Large team / enterprise      → NestJS
+// Express but cleaner async    → Koa`
+  },
+
+];
+
+
+/* ═══════════════════════════════════════════════════════════
    REACT & SSR — 31 cards across 9 categories
 ═══════════════════════════════════════════════════════════ */
 const REACT_CARDS = [
@@ -16304,6 +17618,7 @@ const SUBJECTS = {
   'Linux':      LINUX_CARDS,
   'API':        API_CARDS,
   'Node.js':    NODEJS_CARDS,
+  'Express.js': EXPRESS_CARDS,
   'React & SSR': REACT_CARDS,
   'CSS & Tailwind': CSS_CARDS,
   'Testing & Containers': DEVOPS_CARDS,
@@ -16316,7 +17631,7 @@ const SUBJECTS = {
 const SUBJECT_GROUPS = {
   'Core':        ['DSA', 'Internet', 'Linux', 'Tricked Memory'],
   'Language':    ['Python', 'C#', 'C++'],
-  'Backend':     ['SQL', 'Database', 'API', 'Node.js', 'Testing & Containers'],
+  'Backend':     ['SQL', 'Database', 'API', 'Node.js', 'Express.js', 'Testing & Containers'],
   'Frontend':    ['JavaScript', 'React & SSR', 'CSS & Tailwind'],
   'Cheat Sheet': ['Junior Dev Daily Essentials'],
 };
@@ -16349,6 +17664,7 @@ const SUBJECT_COLORS = {
   'Linux':      '#f97316',
   'API':        '#6366f1',
   'Node.js':    '#68a063',
+  'Express.js': '#595959',
   'React & SSR':    '#61dafb',
   'CSS & Tailwind': '#e879f9',
   'Testing & Containers': '#14b8a6',
@@ -16433,6 +17749,9 @@ const CATEGORY_COLORS = {
   'Ecosystem':    '#a855f7',
   'Advanced':     '#7e22ce',
   'Interview':    '#be185d',
+  // Express.js
+  'Core Express': '#595959',
+  'Async & Data': '#404040',
   // Node.js
   'Node.js Basics':           '#68a063',
   'Async Patterns':           '#4ade80',
