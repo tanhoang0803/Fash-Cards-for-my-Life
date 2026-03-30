@@ -6761,637 +6761,1294 @@ DATA ANALYST QUERY PATTERNS
 ];
 
 /* ═══════════════════════════════════════════════════════════
-   DATABASE — Relational + NoSQL  |  20 cards  Beginner → Advanced
+   DATABASE — 42 cards across 9 categories
 ═══════════════════════════════════════════════════════════ */
 const DATABASE_CARDS = [
 
-  /* ── Relational DB ── */
+  /* ── Overview ── */
   {
-    category: 'Relational DB', difficulty: 'Beginner',
-    question: 'What is a relational database and how does it work?',
-    answer: 'A relational database stores data in tables (relations) made of rows and columns. Tables are linked via foreign keys. A DBMS (Database Management System) like PostgreSQL, MySQL, or SQL Server enforces data integrity, handles concurrent access, and uses SQL as the query language. Data is stored on disk durably; queries are executed by the query planner/optimizer which finds the most efficient execution plan.',
-    tip: `-- Core concepts at a glance:
--- Table  = relation (like a spreadsheet with schema)
--- Row    = record / tuple
--- Column = attribute (has a fixed data type)
--- Schema = the structure definition
+    category: 'Overview', difficulty: 'Beginner',
+    question: 'Database Learning Mindmap — what are the 7 core areas and key learning paths?',
+    answer: '7 core areas: 1) Fundamentals — data models, SQL basics, normalization, keys, indexes. 2) Core Concepts — joins, aggregation, transactions (ACID), views, stored procedures. 3) Daily Tools — CRUD ops, constraints, indexing, query plans, security, backup. 4) Advanced Topics — optimization, concurrency, partitioning, replication, CAP theorem. 5) Database Types — relational, document, key-value, columnar, graph, time-series, realtime. 6) Building for Scale — observability (instrumentation, monitoring, telemetry) and mitigation strategies. 7) Ecosystem — cloud DBs, big data, analytics, DevOps, real-world use.',
+    tip: `DATABASES
+│
+├─ 1. Fundamentals
+│   ├─ Data Models     relational · document · key-value · graph · time-series
+│   ├─ SQL Basics      SELECT · FROM · WHERE · ORDER BY · LIMIT
+│   ├─ Normalization   1NF · 2NF · 3NF · BCNF
+│   ├─ Keys            primary · foreign · unique · composite
+│   └─ Indexes         clustered · non-clustered · composite
+│
+├─ 2. Core Concepts
+│   ├─ Joins           INNER · LEFT · RIGHT · FULL · CROSS
+│   ├─ Aggregation     COUNT · SUM · AVG · MIN · MAX · GROUP BY · HAVING
+│   ├─ Transactions    ACID properties · COMMIT · ROLLBACK
+│   ├─ Views           virtual tables · security · abstraction
+│   └─ Stored Procs    procedures · triggers · functions
+│
+├─ 3. Daily Tools
+│   ├─ CRUD Ops        INSERT · SELECT · UPDATE · DELETE
+│   ├─ Constraints     NOT NULL · CHECK · DEFAULT
+│   ├─ Indexing        performance tuning · covering indexes
+│   ├─ Query Plans     EXPLAIN · optimizer · cost-based planning
+│   ├─ Security        roles · privileges · GRANT/REVOKE
+│   └─ Backup/Restore  dump · replication · snapshots
+│
+├─ 4. Advanced Topics
+│   ├─ Optimization    query tuning · denormalization · caching
+│   ├─ Concurrency     isolation levels · locks · deadlocks
+│   ├─ Partitioning    horizontal · vertical · sharding
+│   ├─ Replication     master-slave · multi-master · eventual consistency
+│   └─ CAP Theorem     consistency · availability · partition tolerance
+│
+├─ 5. Database Types
+│   ├─ Relational      MySQL · PostgreSQL · Oracle · SQL Server
+│   ├─ Document        MongoDB · CouchDB
+│   ├─ Key-Value       Redis · DynamoDB
+│   ├─ Columnar        Cassandra · ClickHouse · ScyllaDB
+│   ├─ Graph           Neo4j · AWS Neptune · DGraph
+│   ├─ Time-series     InfluxDB · TimescaleDB
+│   └─ Realtime        Firebase · RethinkDB
+│
+├─ 6. Building for Scale
+│   ├─ Observability   instrumentation · monitoring · telemetry
+│   └─ Mitigation      graceful degradation · throttling · backpressure
+│                      loadshifting · circuit breaker
+│
+└─ 7. Ecosystem
+    ├─ Cloud DBs       AWS RDS · Aurora · Google Cloud Spanner · Azure SQL
+    ├─ Big Data        Hadoop · Spark SQL · Hive
+    ├─ Analytics       OLAP cubes · data warehouses · ETL pipelines
+    ├─ DevOps          migrations · schema versioning · CI/CD integration
+    └─ Real-world      e-commerce · banking · social networks · IoT
 
--- Popular relational databases:
--- PostgreSQL — open-source, feature-rich, ACID, JSON support
--- MySQL      — fast reads, widely hosted, web apps
--- SQLite     — embedded, zero-config, local/mobile apps
--- SQL Server — Microsoft, enterprise, Azure integration
--- Oracle     — enterprise, high-volume, complex queries`
+LEARNING PATHS
+SQL/Relational:    Fundamentals → Core Concepts → CRUD → Transactions → Optimization → Security
+NoSQL Focus:       Fundamentals → Data Models → Document/KV/Graph → Partitioning → Replication → CAP
+Scale/Reliability: Core DBs → Observability → Mitigation → Cloud DBs → Big Data → CI/CD
+
+INTERVIEW CORE
+Normalization vs Denormalization: trade-offs between reducing redundancy and optimizing queries
+Indexes:           how they improve read performance, when they hurt (write-heavy workloads)
+Transactions:      ACID properties and isolation levels
+Joins:             patterns for combining data across tables
+NoSQL trade-offs:  flexibility vs consistency, CAP theorem
+Scaling:           observability (monitoring, telemetry) and mitigation (throttling, circuit breakers)`
+  },
+
+  /* ── Fundamentals ── */
+  {
+    category: 'Fundamentals', difficulty: 'Beginner',
+    question: 'What are the main database data models and when to use each?',
+    answer: '**Relational**: structured data in tables with relationships — best for complex queries, transactions, consistency (MySQL, PostgreSQL). **Document**: JSON-like nested documents — best for flexible, hierarchical data (MongoDB, CouchDB). **Key-Value**: simple key → value lookups — best for caching, sessions (Redis, DynamoDB). **Graph**: nodes and edges — best for social networks, recommendations (Neo4j). **Time-series**: optimized for time-stamped data — best for metrics, IoT (InfluxDB). Choose based on data shape, query patterns, and consistency needs.',
+    tip: `// Data model comparison
+
+// Relational — structured, relationships enforced
+// users table:  id | name  | email
+// orders table: id | user_id | total | created_at
+// JOIN to query across tables
+
+// Document — flexible, nested
+// { id: 1, name: 'Alice', orders: [{ total: 50 }, { total: 30 }] }
+// Good when data is read/written together
+
+// Key-Value — ultra fast, simple
+// SET session:abc123  '{"userId":1,"role":"admin"}'
+// GET session:abc123
+// Use for: cache · sessions · feature flags
+
+// Graph — relationships are first-class
+// (Alice)-[:FOLLOWS]->(Bob)-[:FOLLOWS]->(Carol)
+// Traverse: find all mutual friends in 2 hops
+
+// Time-series — append-only, time index
+// cpu_usage,host=web01 value=72.3 1700000000
+// Optimized for: range queries by time, downsampling
+
+// Choice guide:
+// Complex queries + joins    → Relational (PostgreSQL)
+// Flexible / hierarchical    → Document (MongoDB)
+// Cache / fast lookup        → Key-Value (Redis)
+// Connected data             → Graph (Neo4j)
+// Metrics / IoT              → Time-series (InfluxDB)`
   },
   {
-    category: 'Relational DB', difficulty: 'Intermediate',
-    question: 'What are ACID properties and why do they matter?',
-    answer: '**Atomicity**: a transaction is all-or-nothing — if any step fails, all changes are rolled back. **Consistency**: a transaction brings the DB from one valid state to another, respecting all constraints. **Isolation**: concurrent transactions behave as if executed serially — one cannot see another\'s uncommitted changes. **Durability**: once committed, data survives crashes (written to disk/WAL). ACID prevents data corruption in concurrent, failure-prone environments.',
-    tip: `-- Classic example: bank transfer
+    category: 'Fundamentals', difficulty: 'Beginner',
+    question: 'What are the core SQL query clauses? (SELECT, WHERE, ORDER BY, LIMIT)',
+    answer: 'SQL query structure: `SELECT` (which columns) → `FROM` (which table) → `WHERE` (filter rows) → `GROUP BY` (aggregate) → `HAVING` (filter groups) → `ORDER BY` (sort) → `LIMIT` (max rows). This is the **written order**. The **execution order** is different: FROM → WHERE → GROUP BY → HAVING → SELECT → ORDER BY → LIMIT. Always filter with WHERE before aggregating with GROUP BY.',
+    tip: `-- Basic query anatomy
+SELECT name, email, age          -- 2. pick columns
+FROM   users                     -- 1. pick table
+WHERE  age > 18                  -- 3. filter rows
+  AND  status = 'active'
+ORDER BY name ASC                -- 4. sort
+LIMIT  10 OFFSET 20;             -- 5. paginate (page 3)
+
+-- Execution order (different from written order!)
+-- FROM → WHERE → GROUP BY → HAVING → SELECT → ORDER BY → LIMIT
+
+-- Filtering with conditions
+SELECT * FROM products
+WHERE  price BETWEEN 10 AND 100
+  AND  category IN ('books', 'electronics')
+  AND  name LIKE '%pro%';        -- % = wildcard
+
+-- Aliases
+SELECT u.name AS customer, o.total AS order_total
+FROM   users u
+JOIN   orders o ON u.id = o.user_id;
+
+-- Distinct values
+SELECT DISTINCT country FROM customers;
+
+-- NULL handling
+SELECT * FROM users WHERE phone IS NULL;
+SELECT COALESCE(phone, 'N/A') FROM users;`
+  },
+  {
+    category: 'Fundamentals', difficulty: 'Intermediate',
+    question: 'What is database normalization? (1NF, 2NF, 3NF, BCNF)',
+    answer: '**Normalization** removes data redundancy and prevents anomalies (update, insert, delete). **1NF**: atomic values, no repeating groups — each column holds one value. **2NF**: no partial dependencies — non-key columns depend on the whole primary key (applies to composite keys). **3NF**: no transitive dependencies — non-key columns depend only on the primary key, not on other non-key columns. **BCNF**: stricter 3NF — every determinant must be a candidate key. Trade-off: higher normal forms = less redundancy but more JOINs.',
+    tip: `-- Violation of 1NF: repeating groups
+-- BAD: order_id | items = 'book,pen,ruler'  (comma-separated)
+-- GOOD: separate order_items table
+-- order_id | item_name | quantity
+
+-- Violation of 2NF (composite PK: student_id + course_id):
+-- BAD: student_id | course_id | student_name | grade
+--      student_name depends only on student_id (partial dependency)
+-- GOOD: students(student_id, student_name)
+--        enrollments(student_id, course_id, grade)
+
+-- Violation of 3NF:
+-- BAD: order_id | customer_id | customer_city
+--      customer_city depends on customer_id, not order_id (transitive)
+-- GOOD: orders(order_id, customer_id)
+--        customers(customer_id, customer_city)
+
+-- BCNF example:
+-- Course(student, subject, teacher)
+-- If teacher determines subject, teacher is a determinant
+-- but not a candidate key → BCNF violation
+-- Fix: Teacher(teacher_id, subject) + Enrollment(student, teacher_id)
+
+-- Rule of thumb
+-- 1NF: no repeating groups
+-- 2NF: + no partial dependencies
+-- 3NF: + no transitive dependencies
+-- BCNF: + every determinant is a candidate key`
+  },
+  {
+    category: 'Fundamentals', difficulty: 'Beginner',
+    question: 'What are the different types of database keys?',
+    answer: '**Primary Key**: uniquely identifies each row — no NULL, no duplicates. One per table. **Foreign Key**: references a primary key in another table — enforces referential integrity. **Unique Key**: like PK but allows one NULL, can have multiple per table. **Composite Key**: primary key made of two or more columns. **Candidate Key**: any column(s) that could be the PK. **Surrogate Key**: system-generated ID (auto-increment, UUID) — no business meaning. **Natural Key**: real-world value used as PK (email, SSN) — avoid in practice.',
+    tip: `CREATE TABLE users (
+    user_id   INT          PRIMARY KEY,   -- surrogate PK (auto)
+    email     VARCHAR(255) UNIQUE,        -- unique key (one NULL allowed)
+    ssn       CHAR(11)     UNIQUE,        -- another unique key
+    name      VARCHAR(100) NOT NULL
+);
+
+CREATE TABLE orders (
+    order_id   INT PRIMARY KEY,
+    user_id    INT NOT NULL,
+    product_id INT NOT NULL,
+    quantity   INT,
+
+    -- Foreign key — referential integrity
+    FOREIGN KEY (user_id) REFERENCES users(user_id)
+        ON DELETE CASCADE,               -- delete orders when user deleted
+    FOREIGN KEY (product_id) REFERENCES products(product_id)
+        ON DELETE RESTRICT,              -- prevent deletion if orders exist
+
+    -- Composite unique constraint
+    UNIQUE (user_id, product_id)         -- one order per user per product
+);
+
+-- Composite primary key
+CREATE TABLE enrollment (
+    student_id INT,
+    course_id  INT,
+    grade      CHAR(1),
+    PRIMARY KEY (student_id, course_id)  -- composite PK
+);`
+  },
+  {
+    category: 'Fundamentals', difficulty: 'Intermediate',
+    question: 'How do database indexes work? (clustered, non-clustered, composite)',
+    answer: 'An index is a **separate data structure** (usually B-Tree) that stores sorted column values with pointers to row locations — like a book index. **Clustered index**: data rows physically stored in index order — one per table, usually the PK. **Non-clustered index**: separate structure pointing to rows — multiple allowed. **Composite index**: covers multiple columns — follows left-prefix rule. Indexes speed up reads but slow down writes (every INSERT/UPDATE/DELETE must update all indexes). Over-indexing is a common mistake.',
+    tip: `-- Create indexes
+CREATE INDEX idx_users_email    ON users(email);           -- non-clustered
+CREATE INDEX idx_orders_date    ON orders(created_at);
+CREATE INDEX idx_orders_user_date ON orders(user_id, created_at);  -- composite
+
+-- Left-prefix rule for composite index (user_id, created_at)
+SELECT * FROM orders WHERE user_id = 5;               -- USES index
+SELECT * FROM orders WHERE user_id = 5 AND created_at > '2024-01-01';  -- USES index
+SELECT * FROM orders WHERE created_at > '2024-01-01'; -- SKIPS index (no user_id)
+
+-- Covering index — index contains all needed columns (no table lookup)
+CREATE INDEX idx_cover ON orders(user_id, status, total);
+SELECT status, total FROM orders WHERE user_id = 5;   -- index-only scan
+
+-- When indexes help
+-- ✓ Columns in WHERE, JOIN ON, ORDER BY
+-- ✓ High-cardinality columns (many distinct values)
+-- ✓ Read-heavy tables
+
+-- When indexes hurt
+-- ✗ Columns with few distinct values (gender, boolean)
+-- ✗ Write-heavy tables (every write updates indexes)
+-- ✗ Small tables (full scan is faster)
+
+-- Check if index is used
+EXPLAIN SELECT * FROM orders WHERE user_id = 5;`
+  },
+
+  /* ── Core Concepts ── */
+  {
+    category: 'Core Concepts', difficulty: 'Beginner',
+    question: 'What are SQL JOIN types and when to use each?',
+    answer: '**INNER JOIN**: only rows with matching values in both tables. **LEFT JOIN**: all rows from left + matching right (NULL where no match). **RIGHT JOIN**: all rows from right + matching left. **FULL OUTER JOIN**: all rows from both sides, NULLs where no match. **CROSS JOIN**: cartesian product — every row from A × every row from B. **SELF JOIN**: join a table to itself (hierarchy, manager relationships). Most common in practice: INNER and LEFT.',
+    tip: `-- Sample data
+-- users: (1,Alice), (2,Bob), (3,Carol)
+-- orders: (1,1,$50), (2,1,$30), (3,4,$20)  -- user_id 4 doesn't exist
+
+-- INNER JOIN — only matched rows
+SELECT u.name, o.total
+FROM users u INNER JOIN orders o ON u.id = o.user_id;
+-- Alice $50 · Alice $30   (Bob, Carol excluded; order with user_id=4 excluded)
+
+-- LEFT JOIN — all users, even without orders
+SELECT u.name, o.total
+FROM users u LEFT JOIN orders o ON u.id = o.user_id;
+-- Alice $50 · Alice $30 · Bob NULL · Carol NULL
+
+-- Find users with NO orders
+SELECT u.name FROM users u
+LEFT JOIN orders o ON u.id = o.user_id
+WHERE o.id IS NULL;            -- Bob · Carol
+
+-- FULL OUTER JOIN (PostgreSQL/SQL Server)
+SELECT u.name, o.total
+FROM users u FULL OUTER JOIN orders o ON u.id = o.user_id;
+-- Includes orphan orders (user_id=4 → NULL name)
+
+-- SELF JOIN — employee/manager hierarchy
+SELECT e.name AS employee, m.name AS manager
+FROM employees e LEFT JOIN employees m ON e.manager_id = m.id;`
+  },
+  {
+    category: 'Core Concepts', difficulty: 'Beginner',
+    question: 'How do SQL aggregation functions and GROUP BY work?',
+    answer: '**Aggregate functions** calculate a single value from a set of rows: `COUNT`, `SUM`, `AVG`, `MIN`, `MAX`. **GROUP BY** groups rows sharing the same value into a single summary row — aggregation applies to each group. **HAVING** filters groups (like WHERE but after aggregation). Rule: every column in SELECT must either be in GROUP BY or wrapped in an aggregate function.',
+    tip: `-- Basic aggregates
+SELECT COUNT(*)       FROM orders;          -- total orders
+SELECT COUNT(DISTINCT user_id) FROM orders; -- unique customers
+SELECT SUM(total)     FROM orders;          -- revenue
+SELECT AVG(total)     FROM orders;          -- avg order value
+SELECT MIN(created_at) FROM orders;         -- first order date
+
+-- GROUP BY — aggregate per group
+SELECT user_id,
+       COUNT(*)   AS order_count,
+       SUM(total) AS total_spent
+FROM   orders
+GROUP BY user_id
+ORDER BY total_spent DESC;
+
+-- HAVING — filter groups (WHERE filters rows, HAVING filters groups)
+SELECT user_id, COUNT(*) AS cnt, SUM(total) AS spent
+FROM   orders
+GROUP BY user_id
+HAVING SUM(total) > 100    -- only high-value customers
+ORDER BY spent DESC;
+
+-- Combining WHERE + GROUP BY + HAVING
+SELECT category, AVG(price) AS avg_price
+FROM   products
+WHERE  status = 'active'   -- filter rows first
+GROUP BY category
+HAVING AVG(price) > 50     -- then filter groups
+ORDER BY avg_price DESC;`
+  },
+  {
+    category: 'Core Concepts', difficulty: 'Intermediate',
+    question: 'What are database transactions and ACID properties?',
+    answer: '**Transaction**: a group of operations treated as a single unit — all succeed or all fail. **ACID**: **A**tomicity (all or nothing), **C**onsistency (data stays valid), **I**solation (concurrent transactions don\'t interfere), **D**urability (committed data survives crashes). Use `BEGIN`/`START TRANSACTION`, `COMMIT` (save), `ROLLBACK` (undo). Transactions are essential for financial operations, inventory updates, or any multi-step data change.',
+    tip: `-- Bank transfer — must be atomic (both or neither)
 BEGIN;
-  UPDATE accounts SET balance = balance - 500 WHERE id = 1;
-  UPDATE accounts SET balance = balance + 500 WHERE id = 2;
-  -- If the second UPDATE fails, the first is rolled back (Atomicity)
-  -- Both updates are invisible to others until COMMIT (Isolation)
-COMMIT;
--- After COMMIT the data is on disk (Durability)
--- Both accounts still satisfy balance >= 0 constraint (Consistency)
 
--- Isolation levels (weakest → strongest):
--- READ UNCOMMITTED  — sees dirty reads (rare to use)
--- READ COMMITTED    — default in PostgreSQL/SQL Server
--- REPEATABLE READ   — default in MySQL
--- SERIALIZABLE      — strongest, no anomalies, slowest`
-  },
-  {
-    category: 'Relational DB', difficulty: 'Intermediate',
-    question: 'What is the difference between normalization and denormalization?',
-    answer: 'Normalization organises tables to eliminate redundancy (splitting data into related tables). Benefits: no update anomalies, smaller storage. Downside: requires JOINs for reads. Denormalization intentionally adds redundancy (duplicating data, pre-joining tables) to speed up frequent reads at the cost of harder writes. OLTP systems favour normalization; OLAP/analytics systems often denormalize into star schemas or wide tables.',
-    tip: `-- Normalized (3NF) — no redundancy, JOINs needed for reads
--- employees(id, name, dept_id FK)
--- departments(id, name, location)
+UPDATE accounts SET balance = balance - 500
+WHERE  account_id = 1;         -- debit sender
 
--- Denormalized — faster reads, redundant data
--- employees(id, name, dept_name, dept_location)  ← duplicated!
--- Problem: if dept moves, update EVERY employee row
+UPDATE accounts SET balance = balance + 500
+WHERE  account_id = 2;         -- credit receiver
 
--- Practical middle ground:
--- Normalize the write model (OLTP tables)
--- Denormalize for read models (materialized views, read replicas)
+-- If anything fails between BEGIN and COMMIT:
+ROLLBACK;                       -- undo both changes
 
--- Materialized view — pre-computed JOIN stored on disk
-CREATE MATERIALIZED VIEW emp_dept AS
-  SELECT e.name, d.name AS dept, d.location
-  FROM employees e JOIN departments d ON e.dept_id = d.id;
-REFRESH MATERIALIZED VIEW emp_dept;  -- update it`
-  },
-  {
-    category: 'Relational DB', difficulty: 'Intermediate',
-    question: 'How do database indexes work under the hood?',
-    answer: 'The default index type is a **B-tree** (balanced tree): O(log n) lookup, range queries, ORDER BY. **Hash index**: O(1) equality lookup only — no range queries. **GIN** (PostgreSQL): full-text search, array/JSONB containment. **GiST**: geometric data, nearest-neighbour. Indexes trade write speed and disk space for read speed. A composite index `(a, b)` helps queries on `a` or `(a, b)` but NOT on `b` alone (leftmost prefix rule).',
-    tip: `-- B-tree (default) — equality + range + ORDER BY
-CREATE INDEX idx_orders_date ON orders(created_at);
+COMMIT;                         -- both changes saved permanently
 
--- Composite — left-prefix rule
-CREATE INDEX idx_name_age ON users(last_name, age);
--- Helps: WHERE last_name = ?
--- Helps: WHERE last_name = ? AND age > ?
--- DOES NOT help: WHERE age > ?  (missing left prefix)
+-- ACID breakdown:
+-- Atomicity:   if UPDATE 2 fails, UPDATE 1 is rolled back
+-- Consistency: balance can never go negative (CHECK constraint)
+-- Isolation:   concurrent transfer doesn't see partial state
+-- Durability:  after COMMIT, survives a server crash
 
--- Partial — index only what you query
-CREATE INDEX idx_pending ON orders(created_at)
-WHERE status = 'pending';
-
--- Covering index — includes extra columns, avoids table lookup
-CREATE INDEX idx_cover ON orders(user_id) INCLUDE (total, status);
-
--- Check index usage
-EXPLAIN ANALYZE SELECT * FROM orders WHERE created_at > NOW() - INTERVAL '7 days';`
-  },
-  {
-    category: 'Relational DB', difficulty: 'Intermediate',
-    question: 'What is connection pooling and why is it essential?',
-    answer: 'Opening a database connection is expensive (~50–100ms, memory per connection). Connection pooling maintains a pool of pre-opened connections that are reused across requests. Without pooling, a high-traffic app opens hundreds of connections simultaneously, overwhelming the DB. Tools: **PgBouncer** (PostgreSQL), built-in pools in ORMs. Key settings: `min_pool`, `max_pool`, `timeout`, `idle_timeout`.',
-    tip: `-- PostgreSQL can handle ~100-300 connections before degrading
--- A Node.js app with 10 workers each opening 10 conns = 100 conns
-
--- pg (Node.js) — built-in pool
-import { Pool } from 'pg';
-const pool = new Pool({
-  host:     'localhost',
-  database: 'myapp',
-  max:      20,          // max connections in pool
-  idleTimeoutMillis: 30000,
-  connectionTimeoutMillis: 2000,
-});
-
-// Reuse connection from pool
-const { rows } = await pool.query('SELECT * FROM users WHERE id = $1', [id]);
-
--- PgBouncer sits between app and Postgres:
--- App → PgBouncer (thousands of connections ok)
--- PgBouncer → Postgres (small fixed pool, e.g. 50)`
-  },
-  {
-    category: 'Relational DB', difficulty: 'Intermediate',
-    question: 'What is an ORM and what are its trade-offs?',
-    answer: 'An ORM (Object-Relational Mapper) maps database tables to classes/objects in code, letting you query the DB using your language instead of raw SQL. Examples: **Prisma**, **TypeORM**, **Sequelize** (Node.js); **SQLAlchemy** (Python); **Entity Framework** (C#); **Hibernate** (Java). Trade-offs: ORMs boost productivity and prevent SQL injection by default, but can generate inefficient queries, hide performance issues, and are harder to optimise for complex queries.',
-    tip: `// Prisma (Node.js) — type-safe ORM
-const user = await prisma.user.findUnique({
-  where:   { id: 1 },
-  include: { orders: { where: { status: 'completed' } } }
-});
-
-// Equivalent raw SQL Prisma generates:
-// SELECT u.*, o.* FROM users u
-// LEFT JOIN orders o ON o.user_id = u.id
-// WHERE u.id = 1 AND o.status = 'completed'
-
-// When to drop to raw SQL (Prisma example)
-const result = await prisma.$queryRaw\`
-  SELECT department, AVG(salary) FROM employees
-  GROUP BY department HAVING AVG(salary) > 50000
-\`;`
-  },
-  {
-    category: 'Relational DB', difficulty: 'Advanced',
-    question: 'What are transaction isolation levels and what anomalies do they prevent?',
-    answer: 'Isolation levels control what a transaction can "see" from concurrent transactions. Anomalies: **Dirty Read** (reading uncommitted data), **Non-repeatable Read** (same query returns different rows in one transaction), **Phantom Read** (new rows appear in a re-executed query). Higher isolation = fewer anomalies but more locking/blocking. Most apps work fine with READ COMMITTED.',
-    tip: `--                    Dirty   Non-repeatable  Phantom
--- READ UNCOMMITTED      ✅ possible  ✅ possible    ✅ possible
--- READ COMMITTED        ❌ prevented ✅ possible    ✅ possible  ← PG default
--- REPEATABLE READ       ❌ prevented ❌ prevented   ✅ possible  ← MySQL default
--- SERIALIZABLE          ❌ prevented ❌ prevented   ❌ prevented (slowest)
-
--- Set isolation level for a transaction
+-- Savepoints — partial rollback
 BEGIN;
+INSERT INTO orders VALUES (1, 100);
+SAVEPOINT after_order;
+INSERT INTO payments VALUES (1, 100);  -- this fails
+ROLLBACK TO after_order;               -- only undo payment
+COMMIT;                                -- order still saved`
+  },
+  {
+    category: 'Core Concepts', difficulty: 'Intermediate',
+    question: 'What are database views and stored procedures?',
+    answer: '**View**: a named SQL query stored in the DB — acts like a virtual table. Benefits: simplify complex queries, enforce security (hide sensitive columns), provide abstraction (change underlying table without changing queries). **Materialized view**: stores query results physically — faster but must be refreshed. **Stored Procedure**: SQL code saved in the DB and executed by name — reduces network round trips, centralizes business logic. **Trigger**: automatic stored procedure that fires on INSERT/UPDATE/DELETE.',
+    tip: `-- View — virtual table
+CREATE VIEW active_customers AS
+SELECT id, name, email, total_orders
+FROM   users u
+JOIN   (SELECT user_id, COUNT(*) AS total_orders FROM orders GROUP BY user_id) o
+       ON u.id = o.user_id
+WHERE  u.status = 'active';
+
+SELECT * FROM active_customers WHERE total_orders > 5;  -- use like a table
+DROP VIEW active_customers;
+
+-- Security: expose only non-sensitive columns
+CREATE VIEW public_users AS
+SELECT id, name, created_at FROM users;  -- hides email, password_hash
+
+-- Stored procedure (MySQL syntax)
+DELIMITER //
+CREATE PROCEDURE TransferFunds(
+    IN from_id INT, IN to_id INT, IN amount DECIMAL(10,2)
+)
+BEGIN
+    START TRANSACTION;
+    UPDATE accounts SET balance = balance - amount WHERE id = from_id;
+    UPDATE accounts SET balance = balance + amount WHERE id = to_id;
+    COMMIT;
+END //
+DELIMITER ;
+
+CALL TransferFunds(1, 2, 500.00);
+
+-- Trigger — auto-run on change
+CREATE TRIGGER log_price_change
+AFTER UPDATE ON products
+FOR EACH ROW
+    INSERT INTO audit_log(product_id, old_price, new_price, changed_at)
+    VALUES (NEW.id, OLD.price, NEW.price, NOW());`
+  },
+
+  /* ── Daily Tools ── */
+  {
+    category: 'Daily Tools', difficulty: 'Beginner',
+    question: 'How do you perform CRUD operations in SQL?',
+    answer: '**CRUD** = Create, Read, Update, Delete. **INSERT**: add new rows. **SELECT**: query rows (can filter, sort, join). **UPDATE**: modify existing rows — always use WHERE or you update every row. **DELETE**: remove rows — always use WHERE or you delete everything. Use transactions for multi-step operations. In production: soft delete (set `deleted_at`) instead of hard DELETE to preserve history.',
+    tip: `-- CREATE (INSERT)
+INSERT INTO users (name, email, age) VALUES ('Alice', 'alice@example.com', 30);
+
+-- Multiple rows at once
+INSERT INTO products (name, price, category) VALUES
+    ('Laptop',  999.99, 'electronics'),
+    ('Mouse',    29.99, 'electronics'),
+    ('Notebook',  4.99, 'stationery');
+
+-- READ (SELECT)
+SELECT id, name, email FROM users WHERE age > 18 ORDER BY name LIMIT 10;
+
+-- UPDATE — ALWAYS use WHERE
+UPDATE users SET email = 'new@example.com', updated_at = NOW()
+WHERE  id = 42;
+
+-- UPDATE multiple rows
+UPDATE products SET price = price * 0.9   -- 10% discount
+WHERE  category = 'electronics';
+
+-- DELETE — ALWAYS use WHERE
+DELETE FROM users WHERE id = 42;
+
+-- Soft delete (preferred in production)
+ALTER TABLE users ADD COLUMN deleted_at TIMESTAMP NULL;
+UPDATE users SET deleted_at = NOW() WHERE id = 42;
+SELECT * FROM users WHERE deleted_at IS NULL;   -- active users only
+
+-- Upsert (insert or update if exists)
+INSERT INTO settings (user_id, theme) VALUES (1, 'dark')
+ON DUPLICATE KEY UPDATE theme = 'dark';         -- MySQL
+-- ON CONFLICT (user_id) DO UPDATE SET theme = 'dark';  -- PostgreSQL`
+  },
+  {
+    category: 'Daily Tools', difficulty: 'Beginner',
+    question: 'What are SQL constraints and how do they enforce data integrity?',
+    answer: 'Constraints are rules the DB enforces on column values, preventing invalid data from being inserted. **NOT NULL**: column must have a value. **UNIQUE**: no duplicate values (one NULL allowed). **PRIMARY KEY**: NOT NULL + UNIQUE, identifies each row. **FOREIGN KEY**: value must exist in referenced table. **CHECK**: custom rule (age > 0). **DEFAULT**: value used when not provided. Define at column level or table level. Constraints fail fast at the DB layer — better than catching in application code.',
+    tip: `CREATE TABLE employees (
+    id         INT           PRIMARY KEY,               -- NOT NULL + UNIQUE
+    name       VARCHAR(100)  NOT NULL,                  -- required
+    email      VARCHAR(255)  UNIQUE NOT NULL,           -- unique + required
+    age        INT           CHECK (age >= 18 AND age <= 100),
+    salary     DECIMAL(10,2) CHECK (salary > 0),
+    status     VARCHAR(20)   DEFAULT 'active',          -- default value
+    role       VARCHAR(20)   DEFAULT 'employee'
+                             CHECK (role IN ('employee','manager','admin')),
+    dept_id    INT,
+    manager_id INT,
+
+    FOREIGN KEY (dept_id)    REFERENCES departments(id) ON DELETE SET NULL,
+    FOREIGN KEY (manager_id) REFERENCES employees(id),  -- self-reference
+    CONSTRAINT chk_salary_range CHECK (salary BETWEEN 1000 AND 500000)
+);
+
+-- Adding constraints after table creation
+ALTER TABLE users ADD CONSTRAINT chk_age CHECK (age >= 0);
+ALTER TABLE orders ADD CONSTRAINT fk_user FOREIGN KEY (user_id) REFERENCES users(id);
+
+-- Remove constraint
+ALTER TABLE users DROP CONSTRAINT chk_age;
+
+-- Disable temporarily (use with care!)
+SET FOREIGN_KEY_CHECKS = 0;  -- MySQL
+ALTER TABLE orders DISABLE TRIGGER ALL;  -- PostgreSQL`
+  },
+  {
+    category: 'Daily Tools', difficulty: 'Intermediate',
+    question: 'How do you read and use query execution plans? (EXPLAIN)',
+    answer: '`EXPLAIN` shows how the database executes a query — what indexes it uses, how many rows it scans, and the join order. **Key columns**: `type` (access method — ALL is worst/full scan, ref/range are better, const is best), `rows` (estimated rows scanned), `key` (index used), `Extra` (Using filesort, Using temporary = slow). Use `EXPLAIN ANALYZE` in PostgreSQL for actual execution stats. Always check slow queries with EXPLAIN before adding indexes.',
+    tip: `-- MySQL EXPLAIN
+EXPLAIN SELECT * FROM orders WHERE user_id = 5;
+-- type:  ref     (good — using index)
+-- key:   idx_orders_user_id
+-- rows:  12      (estimated rows scanned)
+-- Extra: Using index condition
+
+-- Full table scan — BAD
+EXPLAIN SELECT * FROM orders WHERE YEAR(created_at) = 2024;
+-- type:  ALL     (bad — no index used, function wraps column)
+-- rows:  500000  (scanning all rows)
+-- Fix: WHERE created_at >= '2024-01-01' AND created_at < '2025-01-01'
+
+-- PostgreSQL EXPLAIN ANALYZE (actual runtime)
+EXPLAIN ANALYZE
+SELECT u.name, COUNT(o.id) AS orders
+FROM   users u LEFT JOIN orders o ON u.id = o.user_id
+GROUP BY u.name;
+-- Shows: actual time, rows, loops, memory usage
+
+-- Common problem patterns
+-- 'Using filesort'     → add index on ORDER BY column
+-- 'Using temporary'    → complex GROUP BY/DISTINCT — may need index
+-- 'Full table scan'    → missing index or index not used
+-- 'Using index'        → covering index — very fast
+
+-- Force index (last resort)
+SELECT * FROM orders USE INDEX (idx_user_date)
+WHERE user_id = 5 AND created_at > '2024-01-01';`
+  },
+  {
+    category: 'Daily Tools', difficulty: 'Intermediate',
+    question: 'How do you manage database security? (roles, privileges, GRANT/REVOKE)',
+    answer: 'Apply **principle of least privilege** — grant only what each user or app needs. Create **roles** (groups of privileges) and assign users to roles. Use separate DB users for: read-only reports, app (read+write), admin (DDL). **GRANT** gives permissions, **REVOKE** removes them. Privileges: SELECT, INSERT, UPDATE, DELETE, CREATE, DROP, ALL PRIVILEGES. Never use the root/superuser account for application connections.',
+    tip: `-- Create users
+CREATE USER 'app_user'@'%'     IDENTIFIED BY 'strongpassword';  -- MySQL
+CREATE USER 'report_user'@'%'  IDENTIFIED BY 'strongpassword';
+
+-- Grant specific privileges
+GRANT SELECT, INSERT, UPDATE, DELETE ON mydb.* TO 'app_user'@'%';
+GRANT SELECT ON mydb.* TO 'report_user'@'%';  -- read-only
+
+-- Grant on specific table only
+GRANT SELECT ON mydb.products TO 'report_user'@'%';
+
+-- PostgreSQL — roles
+CREATE ROLE readonly;
+GRANT SELECT ON ALL TABLES IN SCHEMA public TO readonly;
+CREATE USER report_user WITH PASSWORD 'pass';
+GRANT readonly TO report_user;
+
+-- Revoke permissions
+REVOKE DELETE ON mydb.orders FROM 'app_user'@'%';
+REVOKE ALL PRIVILEGES ON mydb.* FROM 'old_user'@'%';
+
+-- View grants
+SHOW GRANTS FOR 'app_user'@'%';              -- MySQL
+SELECT * FROM information_schema.role_table_grants WHERE grantee = 'app_user';
+
+-- Row-level security (PostgreSQL)
+CREATE POLICY user_isolation ON orders
+    USING (user_id = current_setting('app.user_id')::INT);
+ALTER TABLE orders ENABLE ROW LEVEL SECURITY;`
+  },
+  {
+    category: 'Daily Tools', difficulty: 'Intermediate',
+    question: 'How do you back up and restore a database?',
+    answer: '**Logical backup**: export SQL statements with `mysqldump` / `pg_dump` — portable but slow for large DBs. **Physical backup**: copy data files directly — faster, size-efficient. **Point-in-time recovery (PITR)**: combine full backup + binary/WAL logs to restore to any moment. **Replication**: real-time copy to a replica — for HA, not a backup (replica reflects all errors too). Backup strategy: full backup weekly + incremental daily + test restores quarterly.',
+    tip: `# MySQL — logical backup
+mysqldump -u root -p mydb > backup.sql           # full DB
+mysqldump -u root -p mydb users orders > partial.sql  # specific tables
+mysqldump --all-databases > all_dbs.sql
+
+# Restore
+mysql -u root -p mydb < backup.sql
+
+# PostgreSQL — logical backup
+pg_dump -U postgres mydb > backup.sql
+pg_dump -U postgres -Fc mydb > backup.dump      # custom format (compressed)
+
+# Restore PostgreSQL
+psql -U postgres mydb < backup.sql
+pg_restore -U postgres -d mydb backup.dump
+
+# Automated backup script (cron)
+# 0 2 * * * mysqldump -u root -pPASS mydb | gzip > /backups/db_\$(date +%F).sql.gz
+# Find and delete backups older than 30 days:
+# find /backups -name '*.sql.gz' -mtime +30 -delete
+
+# Physical backup with xtrabackup (MySQL)
+# xtrabackup --backup --target-dir=/backups/full
+
+# Test restore regularly!
+# A backup you haven't tested is not a backup.`
+  },
+
+  /* ── Advanced Topics ── */
+  {
+    category: 'Advanced Topics', difficulty: 'Intermediate',
+    question: 'How do you optimize slow database queries?',
+    answer: '**Step 1**: Identify slow queries — `SHOW SLOW QUERY LOG` (MySQL) or `pg_stat_statements` (PostgreSQL). **Step 2**: `EXPLAIN` the query to see the plan. **Step 3**: Add missing indexes on WHERE/JOIN/ORDER BY columns. **Step 4**: Rewrite — avoid `SELECT *`, avoid functions on indexed columns, avoid subqueries in WHERE. **Step 5**: Denormalize if joins are too expensive (duplicate data for read performance). **Step 6**: Cache results in Redis. **Step 7**: Partition large tables.',
+    tip: `-- Common slow query patterns and fixes
+
+-- BAD: function on indexed column disables index
+SELECT * FROM orders WHERE YEAR(created_at) = 2024;
+-- GOOD: use range instead
+SELECT * FROM orders WHERE created_at >= '2024-01-01' AND created_at < '2025-01-01';
+
+-- BAD: wildcard at start disables index
+SELECT * FROM users WHERE name LIKE '%alice%';
+-- GOOD: use full-text search or prefix match
+SELECT * FROM users WHERE name LIKE 'alice%';
+
+-- BAD: SELECT * fetches unnecessary columns
+SELECT * FROM orders WHERE user_id = 5;
+-- GOOD: select only needed columns
+SELECT id, total, status FROM orders WHERE user_id = 5;
+
+-- BAD: N+1 problem — one query per row
+-- users.forEach(u => db.query('SELECT * FROM orders WHERE user_id = ?', u.id))
+-- GOOD: single JOIN or IN clause
+SELECT u.id, u.name, o.total FROM users u JOIN orders o ON u.id = o.user_id;
+
+-- Slow log analysis (MySQL)
+SET GLOBAL slow_query_log = ON;
+SET GLOBAL long_query_time = 1;  -- log queries > 1 second
+-- Then: mysqldumpslow -s t /var/log/mysql/slow.log`
+  },
+  {
+    category: 'Advanced Topics', difficulty: 'Advanced',
+    question: 'What are transaction isolation levels and how do they handle concurrency?',
+    answer: 'Isolation levels control what concurrent transactions can see. **Read Uncommitted**: see uncommitted changes (dirty reads). **Read Committed** (default in PostgreSQL): only see committed data — prevents dirty reads. **Repeatable Read** (default in MySQL): same rows every read within transaction — prevents phantom reads in MySQL. **Serializable**: transactions run as if sequential — maximum isolation, lowest concurrency. Problems: **dirty read**, **non-repeatable read**, **phantom read**, **lost update**.',
+    tip: `-- Concurrency problems demonstrated
+
+-- 1. Dirty read (Read Uncommitted only)
+-- T1: UPDATE balance = 900 (not yet committed)
+-- T2: SELECT balance → reads 900 (dirty!)
+-- T1: ROLLBACK → balance is still 1000
+
+-- 2. Non-repeatable read
+-- T1: SELECT balance → 1000
+-- T2: UPDATE balance = 900; COMMIT
+-- T1: SELECT balance again → 900 (changed!)
+
+-- 3. Phantom read
+-- T1: SELECT COUNT(*) FROM orders WHERE user_id=1 → 5
+-- T2: INSERT new order for user 1; COMMIT
+-- T1: SELECT COUNT(*) → 6 (phantom row appeared!)
+
+-- 4. Lost update
+-- T1: read balance=1000, T2: read balance=1000
+-- T1: write 900, T2: write 800 → T1's update is lost
+
+-- Set isolation level
 SET TRANSACTION ISOLATION LEVEL REPEATABLE READ;
-  SELECT balance FROM accounts WHERE id = 1;
-  -- ... do calculations ...
-  UPDATE accounts SET balance = ... WHERE id = 1;
+BEGIN;
+SELECT * FROM accounts WHERE id = 1;
+-- ... other operations ...
+COMMIT;
+
+-- Levels and what they prevent:
+-- READ UNCOMMITTED: nothing
+-- READ COMMITTED:   dirty reads
+-- REPEATABLE READ:  dirty + non-repeatable reads
+-- SERIALIZABLE:     all above + phantom reads`
+  },
+  {
+    category: 'Advanced Topics', difficulty: 'Advanced',
+    question: 'What are database partitioning and sharding strategies?',
+    answer: '**Partitioning**: split a large table into smaller pieces within one DB server. **Horizontal (row) partitioning**: divide by rows — range (by date), list (by region), hash (by ID). **Vertical partitioning**: split columns into separate tables. **Sharding**: distribute data across multiple servers — each shard holds a subset. Shard key choice is critical — bad key causes hot spots. Sharding adds complexity: cross-shard queries, transactions, and joins become hard.',
+    tip: `-- Range partitioning (PostgreSQL) — by date
+CREATE TABLE orders (
+    id         INT,
+    user_id    INT,
+    created_at DATE NOT NULL
+) PARTITION BY RANGE (created_at);
+
+CREATE TABLE orders_2023 PARTITION OF orders
+    FOR VALUES FROM ('2023-01-01') TO ('2024-01-01');
+CREATE TABLE orders_2024 PARTITION OF orders
+    FOR VALUES FROM ('2024-01-01') TO ('2025-01-01');
+
+-- MySQL list partitioning — by region
+CREATE TABLE sales (id INT, region VARCHAR(20), amount DECIMAL)
+PARTITION BY LIST COLUMNS(region) (
+    PARTITION p_us   VALUES IN ('US', 'CA'),
+    PARTITION p_eu   VALUES IN ('UK', 'DE', 'FR'),
+    PARTITION p_asia VALUES IN ('JP', 'CN', 'IN')
+);
+
+-- Hash partitioning — even distribution
+CREATE TABLE users (id INT, name VARCHAR(100))
+PARTITION BY HASH(id) PARTITIONS 4;
+
+-- Sharding (application-level) — conceptual
+-- Shard key: user_id % 4 → routes to shard 0,1,2, or 3
+-- Shard 0: user_ids 0,4,8,12,...
+-- Shard 1: user_ids 1,5,9,13,...
+-- Problem: moving data if you add shards (consistent hashing)`
+  },
+  {
+    category: 'Advanced Topics', difficulty: 'Advanced',
+    question: 'What is database replication and the CAP theorem?',
+    answer: '**Replication**: copy data from a primary to replicas. **Master-slave**: reads from replicas, writes to master — scales reads but master is single write point. **Multi-master**: multiple write nodes — concurrent writes cause conflicts. **Eventual consistency**: replicas catch up asynchronously — briefly stale. **CAP theorem**: a distributed DB can guarantee only 2 of 3: **C**onsistency (every read gets latest write), **A**vailability (every request gets a response), **P**artition tolerance (works despite network failures). Since network failures always happen, choose CP or AP.',
+    tip: `-- Replication lag example (MySQL)
+SHOW SLAVE STATUS;  -- check Seconds_Behind_Master
+-- If lag is high: reads from replica may return stale data
+
+-- MySQL master-slave setup (my.cnf on master)
+-- [mysqld]
+-- server-id = 1
+-- log_bin   = /var/log/mysql/mysql-bin.log
+
+-- On slave:
+-- CHANGE MASTER TO MASTER_HOST='primary-host', ...;
+-- START SLAVE;
+
+-- CAP theorem in practice:
+--
+-- CP systems (Consistency + Partition tolerance):
+--   HBase, Zookeeper, CockroachDB
+--   → Returns error if can't guarantee consistent data
+--   → Best for: banking, inventory (correctness over availability)
+--
+-- AP systems (Availability + Partition tolerance):
+--   Cassandra, DynamoDB, CouchDB
+--   → Always responds, may return stale data
+--   → Best for: social feeds, shopping carts (availability over consistency)
+--
+-- CA (Consistency + Availability) only works on single node:
+--   Traditional RDBMS (MySQL, PostgreSQL) — not distributed
+
+-- Conflict resolution in multi-master:
+-- Last-write-wins (LWW) · vector clocks · CRDTs`
+  },
+
+  /* ── Database Types ── */
+  {
+    category: 'Database Types', difficulty: 'Beginner',
+    question: 'When to use relational databases? (MySQL, PostgreSQL, Oracle, SQL Server)',
+    answer: '**Relational DBs** store structured data in tables with defined schemas and enforce relationships via foreign keys. Best for: complex queries with JOINs, multi-table transactions (banking, e-commerce), strong consistency requirements, reporting. **PostgreSQL**: open source, feature-rich, JSON support, great for complex queries. **MySQL**: most popular web DB, excellent community, fast reads. **Oracle/SQL Server**: enterprise, licensing cost, advanced features. Default choice for 80% of applications.',
+    tip: `-- PostgreSQL strengths — JSON, arrays, window functions
+-- Store JSON alongside relational data
+ALTER TABLE products ADD COLUMN metadata JSONB;
+UPDATE products SET metadata = '{"color":"red","weight":1.5}' WHERE id = 1;
+SELECT * FROM products WHERE metadata->>'color' = 'red';
+SELECT * FROM products WHERE metadata @> '{"color":"red"}';
+
+-- Array columns
+CREATE TABLE tags_demo (id INT, tags TEXT[]);
+INSERT INTO tags_demo VALUES (1, ARRAY['nodejs','javascript','backend']);
+SELECT * FROM tags_demo WHERE 'nodejs' = ANY(tags);
+
+-- Window functions (PostgreSQL/MySQL 8+)
+SELECT name, salary,
+       RANK() OVER (PARTITION BY dept_id ORDER BY salary DESC) AS rank_in_dept,
+       AVG(salary) OVER (PARTITION BY dept_id) AS dept_avg
+FROM   employees;
+
+-- Full-text search
+SELECT * FROM articles
+WHERE  to_tsvector('english', content) @@ to_tsquery('database & optimization');
+
+-- When to choose:
+-- PostgreSQL: complex queries, JSON, geospatial (PostGIS), analytics
+-- MySQL:      web apps, read-heavy, large community
+-- Oracle:     enterprise, legacy systems, huge scale
+-- SQL Server: Windows/.NET ecosystem, BI tools`
+  },
+  {
+    category: 'Database Types', difficulty: 'Intermediate',
+    question: 'When to use document databases? (MongoDB, CouchDB)',
+    answer: '**Document DBs** store data as JSON/BSON documents — no fixed schema. Each document can have different fields. Best for: hierarchical/nested data that is read/written together, flexible schemas that evolve rapidly, catalogs, CMS, user profiles. **MongoDB**: most popular, rich query language, aggregation pipeline, supports transactions. **CouchDB**: HTTP API, offline sync, eventual consistency. Avoid when: you need complex multi-collection JOINs — that signals relational data.',
+    tip: `// MongoDB — document structure
+{
+    _id:    ObjectId('...'),
+    name:   'Alice',
+    email:  'alice@example.com',
+    address: {                         // nested document
+        street: '123 Main St',
+        city:   'New York',
+        zip:    '10001'
+    },
+    orders: [                          // embedded array
+        { product: 'Laptop', total: 999 },
+        { product: 'Mouse',  total:  29 }
+    ],
+    tags: ['premium', 'verified']
+}
+
+// CRUD operations
+db.users.insertOne({ name: 'Bob', email: 'bob@example.com' });
+db.users.find({ 'address.city': 'New York' });
+db.users.find({ tags: 'premium' });
+db.users.updateOne({ _id: id }, { $set: { name: 'Robert' }, $push: { tags: 'vip' } });
+db.users.deleteOne({ _id: id });
+
+// Aggregation pipeline
+db.orders.aggregate([
+    { $match:  { status: 'completed' } },
+    { $group:  { _id: '$user_id', total: { $sum: '$amount' } } },
+    { $sort:   { total: -1 } },
+    { $limit:  10 }
+]);
+
+// Index
+db.users.createIndex({ email: 1 }, { unique: true });
+db.users.createIndex({ 'address.city': 1, createdAt: -1 });`
+  },
+  {
+    category: 'Database Types', difficulty: 'Intermediate',
+    question: 'When to use key-value databases? (Redis, DynamoDB)',
+    answer: '**Key-value DBs** store and retrieve values by a single key — the simplest and fastest data model. Best for: caching, sessions, rate limiting, feature flags, pub/sub messaging. **Redis**: in-memory, microsecond latency, supports strings/hashes/lists/sets/sorted sets, pub/sub, expiry (TTL). **DynamoDB**: AWS managed, serverless scale, single-digit millisecond latency, great for massive scale. Key-value is not queryable — you can only look up by exact key.',
+    tip: `// Redis — common patterns
+
+// 1. Caching with TTL
+await redis.set('user:42', JSON.stringify(user), 'EX', 3600);  // expire in 1h
+const cached = await redis.get('user:42');
+
+// 2. Session storage
+await redis.hset('session:abc123', { userId: 42, role: 'admin' });
+await redis.expire('session:abc123', 86400);    // 24h TTL
+
+// 3. Rate limiting (sliding window)
+const key    = 'ratelimit:' + ip;
+const count  = await redis.incr(key);
+if (count === 1) await redis.expire(key, 60);   // first request sets 60s window
+if (count > 100) return res.status(429).send('Too many requests');
+
+// 4. Pub/Sub
+// Publisher
+await redis.publish('notifications', JSON.stringify({ userId: 1, msg: 'Hello' }));
+// Subscriber
+redis.subscribe('notifications', (msg) => console.log(JSON.parse(msg)));
+
+// 5. Sorted sets — leaderboard
+await redis.zadd('leaderboard', 1500, 'alice');
+await redis.zadd('leaderboard', 2300, 'bob');
+const top10 = await redis.zrevrange('leaderboard', 0, 9, 'WITHSCORES');
+
+// DynamoDB — single-table design
+// PK: USER#42     SK: PROFILE     → user record
+// PK: USER#42     SK: ORDER#001   → user's order`
+  },
+  {
+    category: 'Database Types', difficulty: 'Intermediate',
+    question: 'When to use columnar, graph, and time-series databases?',
+    answer: '**Columnar** (Cassandra, ClickHouse): store data by column not row — fast aggregations and analytics over millions of rows, write-optimized. Best for: IoT data, analytics, event logs. **Graph** (Neo4j): data stored as nodes + edges — fast traversal of relationships. Best for: social networks, recommendation engines, fraud detection, knowledge graphs. **Time-series** (InfluxDB, TimescaleDB): optimized for sequential time-stamped data — fast range queries, automatic rollup/retention. Best for: metrics, monitoring, IoT sensors.',
+    tip: `// --- COLUMNAR: Cassandra ---
+// Data model — designed for write speed, no JOINs
+// CREATE TABLE sensor_readings (
+//   device_id UUID,
+//   reading_time TIMESTAMP,
+//   temperature FLOAT,
+//   humidity FLOAT,
+//   PRIMARY KEY (device_id, reading_time)
+// ) WITH CLUSTERING ORDER BY (reading_time DESC);
+// SELECT * FROM sensor_readings WHERE device_id=? AND reading_time > ?;
+
+// ClickHouse — analytical queries (billions of rows in seconds)
+// SELECT date, AVG(revenue), COUNT(*)
+// FROM sales WHERE date >= '2024-01-01'
+// GROUP BY date ORDER BY date;
+
+// --- GRAPH: Neo4j (Cypher query language) ---
+// Create nodes and relationships
+// CREATE (alice:User {name:'Alice'})-[:FOLLOWS]->(bob:User {name:'Bob'})
+// Find friends of friends
+// MATCH (u:User {name:'Alice'})-[:FOLLOWS]->()-[:FOLLOWS]->(fof)
+// RETURN fof.name
+
+// --- TIME-SERIES: InfluxDB ---
+// Write
+// cpu,host=web01,region=us value=72.3 1700000000000000000
+// Query (Flux language)
+// from(bucket: 'metrics')
+//   |> range(start: -1h)
+//   |> filter(fn: (r) => r.host == 'web01')
+//   |> mean()
+
+// TimescaleDB — PostgreSQL extension
+// SELECT time_bucket('5 minutes', time) AS bucket, AVG(value)
+// FROM cpu_metrics WHERE time > NOW() - INTERVAL '1 hour'
+// GROUP BY bucket ORDER BY bucket;`
+  },
+
+  /* ── Building for Scale ── */
+  {
+    category: 'Building for Scale', difficulty: 'Advanced',
+    question: 'How do you implement database observability? (instrumentation, monitoring, telemetry)',
+    answer: '**Observability** = knowing what\'s happening inside your DB without guessing. Three pillars: **Instrumentation** (add measurement points — slow query logs, query counters, connection pool stats). **Monitoring** (dashboards + alerts — watch query latency, connections, CPU, disk, replication lag). **Telemetry** (structured metrics + traces — correlate slow DB queries to specific API calls using tracing). Key metrics: p99 query latency, active connections, cache hit rate, replication lag, deadlocks/second.',
+    tip: `// Instrumentation — measure at DB level
+
+// MySQL slow query log
+SET GLOBAL slow_query_log = ON;
+SET GLOBAL long_query_time = 0.5;     // log queries > 500ms
+// SHOW VARIABLES LIKE 'slow_query_log_file';
+
+// PostgreSQL — pg_stat_statements extension
+CREATE EXTENSION pg_stat_statements;
+SELECT query, calls, mean_exec_time, total_exec_time
+FROM pg_stat_statements
+ORDER BY total_exec_time DESC
+LIMIT 10;                              // top 10 slowest queries
+
+// Connection pool monitoring
+// Max connections used, queue depth, idle connections
+
+// Application-level instrumentation (Node.js + Prisma)
+// prisma.$use(async (params, next) => {
+//   const start  = Date.now();
+//   const result = await next(params);
+//   const ms     = Date.now() - start;
+//   if (ms > 500) logger.warn('Slow query', { model: params.model, action: params.action, ms });
+//   metrics.histogram('db_query_duration_ms', ms, { model: params.model });
+//   return result;
+// });
+
+// Key metrics to monitor:
+// - Query latency (p50, p95, p99)
+// - Active connections vs max_connections
+// - Buffer/cache hit rate (should be >99%)
+// - Replication lag (seconds behind primary)
+// - Lock wait time / deadlocks per minute
+// - Disk IOPS and throughput`
+  },
+  {
+    category: 'Building for Scale', difficulty: 'Advanced',
+    question: 'What are database mitigation strategies for high-scale systems?',
+    answer: '**Graceful Degradation**: serve cached/stale data when DB is slow — better than an error page. **Throttling**: limit query rate per client — protect DB from overload. **Backpressure**: slow down producers when consumers (DB) can\'t keep up — use a queue. **Load Shifting**: move heavy reports/analytics queries to off-peak hours or a read replica. **Circuit Breaker**: if DB error rate exceeds threshold, stop trying — return cached response immediately and retry after a cooldown.',
+    tip: `// 1. Graceful degradation — serve stale cache on DB timeout
+async function getProducts() {
+    try {
+        const products = await db.query('SELECT * FROM products', { timeout: 2000 });
+        await redis.set('products_cache', JSON.stringify(products), 'EX', 300);
+        return products;
+    } catch (err) {
+        logger.warn('DB slow, serving stale cache');
+        const cached = await redis.get('products_cache');
+        return cached ? JSON.parse(cached) : [];   // fallback to empty
+    }
+}
+
+// 2. Throttling — rate limit DB writes per user
+async function recordEvent(userId, event) {
+    const key   = 'throttle:' + userId;
+    const count = await redis.incr(key);
+    if (count === 1) await redis.expire(key, 60);
+    if (count > 50) throw new Error('Rate limit exceeded');
+    await db.insert('events', { userId, event });
+}
+
+// 3. Backpressure — queue writes, drain at safe rate
+// const queue = new Queue('db-writes', { redis });
+// queue.process(5, async (job) => db.insert('events', job.data)); // 5 concurrent
+
+// 4. Load shifting — send analytics to replica
+const primaryDB  = createConnection(process.env.DB_PRIMARY);
+const replicaDB  = createConnection(process.env.DB_REPLICA);
+// Reports/analytics → replicaDB (read replica, may be slightly stale)
+// Writes + critical reads → primaryDB
+
+// 5. Circuit breaker (opossum library)
+// const breaker = new CircuitBreaker(dbQuery, { timeout: 3000, errorThresholdPercentage: 50 });
+// breaker.fallback(() => getCachedResponse());`
+  },
+
+  /* ── Ecosystem ── */
+  {
+    category: 'Ecosystem', difficulty: 'Intermediate',
+    question: 'What are the main cloud database services and when to choose each?',
+    answer: '**AWS RDS**: managed MySQL/PostgreSQL/Oracle/SQL Server — automated backups, patches, multi-AZ failover. **Aurora**: AWS-native, 5x faster than MySQL, serverless option, auto-scales storage. **Google Cloud Spanner**: globally distributed relational DB — horizontal scale with strong consistency. Rare but powerful. **Azure SQL**: managed SQL Server — best for Microsoft/.NET stack. **DynamoDB**: AWS serverless NoSQL — infinite scale, pay per request. Choose cloud DBs for: no DBA overhead, built-in HA, automatic backups.',
+    tip: `// AWS RDS — Terraform example
+// resource "aws_db_instance" "main" {
+//   engine               = "postgres"
+//   engine_version       = "15.3"
+//   instance_class       = "db.t3.medium"
+//   allocated_storage    = 100
+//   storage_encrypted    = true
+//   multi_az             = true          // auto-failover
+//   backup_retention_period = 7          // 7 days backup
+//   deletion_protection  = true
+// }
+
+// Aurora Serverless v2 — scales automatically
+// resource "aws_rds_cluster" "aurora" {
+//   engine      = "aurora-postgresql"
+//   engine_mode = "provisioned"
+//   serverlessv2_scaling_configuration {
+//     min_capacity = 0.5     // 0.5 ACU minimum
+//     max_capacity = 128     // scale up to 128 ACU
+//   }
+// }
+
+// Connection pooling (mandatory for serverless)
+// Use PgBouncer or RDS Proxy — Lambda opens too many connections otherwise
+
+// Cost comparison guide (rough estimates)
+// RDS t3.medium PostgreSQL: ~$50/month
+// Aurora Serverless:        ~$0.06/ACU-hour + storage
+// DynamoDB:                 ~$0.25/million reads + $1.25/million writes
+// Cloud Spanner:            ~$0.90/node-hour (expensive, for global scale)
+
+// Backups in cloud DBs:
+// RDS: automated daily backups + transaction log PITR
+// DynamoDB: on-demand or continuous backups`
+  },
+  {
+    category: 'Ecosystem', difficulty: 'Advanced',
+    question: 'What is the big data ecosystem and how does it integrate with databases?',
+    answer: '**Big Data** is data too large or complex for traditional RDBMS — petabytes, unstructured. **Hadoop**: distributed storage (HDFS) + processing (MapReduce). **Spark SQL**: in-memory distributed processing — 100x faster than MapReduce. **Hive**: SQL interface on top of Hadoop — query data in HDFS. **ETL pipelines**: Extract (from source DB/APIs), Transform (clean, join, aggregate), Load (into warehouse). **Data warehouse**: optimized for analytics, not transactions — Snowflake, BigQuery, Redshift. OLAP (analytics) vs OLTP (transactions).',
+    tip: `// ETL pipeline — conceptual flow
+//
+// [Source DBs]  →  [Extract]  →  [Transform]  →  [Load]  →  [Warehouse]
+// MySQL/Postgres    pg_dump       dbt / Spark       COPY       BigQuery
+// REST APIs         Airbyte       SQL transforms    INSERT     Snowflake
+// Event streams     Kafka         Python/PySpark    S3 → load  Redshift
+
+// Spark SQL — process billions of rows
+// val df = spark.read.jdbc(url, "orders", connectionProperties)
+// df.filter("created_at > '2024-01-01'")
+//   .groupBy("category")
+//   .agg(sum("total").as("revenue"))
+//   .orderBy(desc("revenue"))
+//   .write.parquet("s3://data-lake/revenue-by-category/")
+
+// dbt (data build tool) — SQL-based transforms
+// -- models/monthly_revenue.sql
+-- SELECT
+--   DATE_TRUNC('month', created_at) AS month,
+--   SUM(total) AS revenue,
+--   COUNT(DISTINCT user_id) AS customers
+-- FROM {{ ref('orders') }}
+-- WHERE status = 'completed'
+-- GROUP BY 1
+
+// OLTP vs OLAP
+// OLTP: many small read/write transactions — normalized schema
+// OLAP: few large analytical queries — denormalized star/snowflake schema
+//   Fact table:      orders (measures: amount, quantity)
+//   Dimension tables: date, customer, product, region`
+  },
+  {
+    category: 'Ecosystem', difficulty: 'Intermediate',
+    question: 'How do you manage database migrations and schema versioning?',
+    answer: '**Migrations**: versioned, ordered scripts that change the DB schema. Each migration has an **up** (apply) and **down** (rollback). Tools: **Flyway** (Java), **Liquibase** (XML/SQL), **Alembic** (Python), **Prisma Migrate**, **Knex.js** migrations. Key practices: never edit old migrations, always test rollback, run in CI before deploy, use a migration lock table to prevent concurrent runs. Schema changes that break running code (drop column, rename) need **expand-contract pattern** (two-phase deployment).',
+    tip: `// Knex.js migrations (Node.js)
+// knex migrate:make create_users_table
+
+// migrations/001_create_users.js
+exports.up = function(knex) {
+    return knex.schema.createTable('users', (table) => {
+        table.increments('id');
+        table.string('name',    100).notNullable();
+        table.string('email',   255).unique().notNullable();
+        table.timestamp('created_at').defaultTo(knex.fn.now());
+    });
+};
+
+exports.down = function(knex) {
+    return knex.schema.dropTable('users');
+};
+
+// knex migrate:latest    — run all pending migrations
+// knex migrate:rollback  — undo last batch
+// knex migrate:status    — see migration history
+
+// Expand-contract pattern (zero-downtime rename):
+// Phase 1: ADD new column, write to both old+new (old code still works)
+// ALTER TABLE users ADD COLUMN full_name VARCHAR(100);
+// UPDATE users SET full_name = name;
+
+// Phase 2: deploy new code that reads new column
+// Phase 3: DROP old column (old code no longer running)
+// ALTER TABLE users DROP COLUMN name;
+
+// CI/CD integration
+// - Run migrations in pipeline before deploying app
+// - Use --dry-run to preview changes
+// - Lock table prevents concurrent migration runs`
+  },
+  {
+    category: 'Ecosystem', difficulty: 'Intermediate',
+    question: 'How are databases used in real-world applications?',
+    answer: '**E-commerce**: relational DB (products, orders, inventory) + Redis (cart, sessions) + Elasticsearch (product search). **Banking**: strict RDBMS for ACID transactions, partitioned by account range, encrypted at rest. **Social networks**: graph DB for connections + document DB for posts + Redis for feeds. **IoT/Monitoring**: time-series DB for sensor data + data warehouse for historical analysis. **Content platforms**: document DB for flexible content + CDN caching + search engine. Each system typically uses 2–3 DB types for different concerns.',
+    tip: `// E-commerce stack example
+//
+// PostgreSQL:   products · orders · inventory · users (structured, ACID)
+// Redis:        shopping cart · sessions · rate limiting · flash sale counters
+// Elasticsearch: product search · autocomplete · faceted filtering
+// S3:           product images · order receipts (object storage)
+//
+// Order flow:
+// 1. User adds item → Redis INCR cart:userId:productId
+// 2. Checkout → BEGIN transaction in PostgreSQL
+//    - Check stock: SELECT FOR UPDATE
+//    - Decrement inventory
+//    - Insert order
+//    - COMMIT
+// 3. Publish event → Kafka/RabbitMQ → email service, analytics
+
+// Social network stack:
+// Neo4j:     friend/follow graph, recommendations (2nd-degree connections)
+// MongoDB:   posts, comments, profiles (flexible schema)
+// Redis:     news feed cache (pre-computed per user), likes counter
+// Cassandra: activity logs, notifications (write-heavy, time-ordered)
+
+// Monitoring / IoT:
+// InfluxDB:  raw sensor readings (high write rate, TTL auto-expiry)
+// TimescaleDB: downsampled hourly/daily aggregates
+// Grafana:   dashboards reading from both
+// BigQuery:  long-term analytical queries on archived data`
+  },
+
+  /* ── Interview ── */
+  {
+    category: 'Interview', difficulty: 'Intermediate',
+    question: 'Interview: Normalization vs Denormalization — when to use each?',
+    answer: '**Normalization** removes redundancy by splitting data into related tables. Pros: no update anomalies, consistent data, smaller storage. Cons: JOINs for every query — slower reads. **Denormalization** duplicates data to avoid JOINs. Pros: faster reads, simpler queries. Cons: data can go out of sync, more storage, complex updates. Use normalization as the default (3NF). Denormalize selectively when: EXPLAIN shows expensive JOINs on hot queries, read volume >> write volume, caching is not enough.',
+    tip: `-- Normalized (3NF) — no redundancy, needs JOINs
+-- users:    id | name | email
+-- products: id | name | price | category_id
+-- orders:   id | user_id | product_id | quantity | created_at
+-- categories: id | name
+
+SELECT u.name, p.name, o.quantity
+FROM orders o
+JOIN users u    ON o.user_id    = u.id
+JOIN products p ON o.product_id = p.id;   -- 2 JOINs
+
+-- Denormalized — duplicate data, no JOINs
+-- orders: id | user_name | user_email | product_name | product_price | quantity
+-- Problem: if user changes email → must update ALL their orders
+-- But: read query is just SELECT * FROM orders WHERE user_id = 5
+
+-- Decision framework:
+-- Write-heavy / data must be consistent → Normalize
+-- Read-heavy / query performance critical → Denormalize (specific tables)
+-- Always: index first, then denormalize if still slow
+-- Cache (Redis) is often a better alternative to denormalization
+
+-- Hybrid: store normalized in PostgreSQL, denormalized view in Redis/Elasticsearch
+-- Normalize in DB, denormalize at the cache/search layer`
+  },
+  {
+    category: 'Interview', difficulty: 'Intermediate',
+    question: 'Interview: How do indexes work and when do they hurt performance?',
+    answer: 'An index is a **B-Tree** (or Hash) data structure built on one or more columns — stores sorted values with pointers to rows. Speeds up: WHERE lookups, JOINs, ORDER BY, GROUP BY. **When they hurt**: every INSERT/UPDATE/DELETE must also update all indexes — write-heavy tables slow down significantly. Also hurt when: column has low cardinality (boolean, gender), query returns >20% of rows (full scan is faster), table is tiny. Rule of thumb: index foreign keys always, index WHERE/ORDER BY columns, avoid over-indexing.',
+    tip: `-- Index internals (B-Tree)
+-- CREATE INDEX idx_users_email ON users(email);
+-- Sorted structure: 'alice@..' → row 42, 'bob@..' → row 7, ...
+-- Binary search: O(log n) instead of O(n) full scan
+
+-- Indexes that HELP
+CREATE INDEX ON orders(user_id);          -- FK lookup
+CREATE INDEX ON orders(created_at);       -- date range queries
+CREATE INDEX ON products(category, price); -- composite: filter + sort
+CREATE INDEX ON users(email) WHERE active = true;  -- partial index
+
+-- Indexes that HURT or DON'T HELP
+-- Low cardinality (only 2 values — DB ignores index and scans anyway)
+CREATE INDEX ON users(gender);            -- useless
+
+-- Function on indexed column — index not used!
+SELECT * FROM users WHERE LOWER(email) = 'alice@example.com';  -- no index
+-- Fix: use expression index
+CREATE INDEX ON users(LOWER(email));
+
+-- Write-heavy table — index cost > benefit
+-- Logging/events table: millions of inserts/second
+-- Each insert updates 5 indexes → 5x write overhead
+
+-- Interview answer formula:
+-- Indexes use B-Tree, stored separately from table
+-- Speed up reads via binary search (O log n vs O n)
+-- Each index = extra write on INSERT/UPDATE/DELETE
+-- Sweet spot: read >> write, high cardinality, selective queries`
+  },
+  {
+    category: 'Interview', difficulty: 'Intermediate',
+    question: 'Interview: Explain ACID properties and isolation levels.',
+    answer: '**Atomicity**: transaction is all-or-nothing — if any step fails, everything rolls back. **Consistency**: DB moves from one valid state to another — constraints never violated. **Isolation**: concurrent transactions don\'t see each other\'s intermediate state. **Durability**: once committed, data survives crashes (written to disk/WAL). Isolation levels trade off between concurrency and correctness: Read Committed (default) prevents dirty reads. Repeatable Read prevents non-repeatable reads. Serializable prevents all anomalies but lowest concurrency.',
+    tip: `-- ACID example: bank transfer
+BEGIN;
+
+-- Atomicity: both updates or neither
+UPDATE accounts SET balance = balance - 500 WHERE id = 1;
+UPDATE accounts SET balance = balance + 500 WHERE id = 2;
+
+-- Consistency: CHECK constraint prevents negative balance
+-- If balance - 500 < 0 → constraint violation → ROLLBACK
+
+-- Isolation: another transaction reading account 1
+--            during this transaction sees old balance (READ COMMITTED)
+
+COMMIT;
+-- Durability: committed to WAL (Write-Ahead Log) before returning OK
+
+-- Isolation levels — what each prevents
+-- READ UNCOMMITTED: nothing (dirty reads allowed)
+-- READ COMMITTED:   dirty reads               ← PostgreSQL default
+-- REPEATABLE READ:  dirty + non-repeatable    ← MySQL default
+-- SERIALIZABLE:     all anomalies             ← strictest
+
+-- Common interview scenario: which level for a bank?
+-- At least REPEATABLE READ to prevent double-spend
+-- Better: SERIALIZABLE with SELECT ... FOR UPDATE
+
+BEGIN;
+SELECT balance FROM accounts WHERE id = 1 FOR UPDATE;  -- lock row
+-- now no other transaction can modify this row
+UPDATE accounts SET balance = balance - 500 WHERE id = 1;
 COMMIT;`
   },
-
-  /* ── NoSQL ── */
   {
-    category: 'NoSQL', difficulty: 'Beginner',
-    question: 'What is NoSQL and why does it exist?',
-    answer: 'NoSQL ("Not Only SQL") databases were created to solve problems relational DBs struggle with: horizontal scaling (sharding across many machines), flexible/schema-less data, and very high write throughput. Types: **Document** (MongoDB), **Key-Value** (Redis, DynamoDB), **Column-family** (Cassandra), **Graph** (Neo4j). NoSQL sacrifices some ACID guarantees for availability and scale. Choose based on your data model, access patterns, and scale needs.',
-    tip: `-- When NoSQL makes sense:
--- ✅ Schema changes frequently (products with different attributes)
--- ✅ Massive horizontal scale (billions of writes/day)
--- ✅ Simple key-based lookups at very high speed (caching)
--- ✅ Hierarchical/document-shaped data (avoid JOIN hell)
--- ✅ Graph relationships (social networks, recommendations)
+    category: 'Interview', difficulty: 'Intermediate',
+    question: 'Interview: When to use SQL vs NoSQL? What are the trade-offs?',
+    answer: '**SQL** (relational): fixed schema, strong ACID, complex queries/JOINs, vertical scaling. Best for: financial systems, e-commerce, anything requiring data integrity and complex queries. **NoSQL**: flexible schema, horizontal scaling, eventual consistency (usually), optimized for specific access patterns. Best for: large-scale reads/writes, flexible/evolving data, specific patterns (cache, graph, time-series). The "SQL vs NoSQL" debate is outdated — modern apps use both. PostgreSQL now supports JSON, arrays, and full-text search.',
+    tip: `// Decision matrix
 
--- When relational is better:
--- ✅ Complex relationships + JOINs
--- ✅ Strong consistency required (financial, medical)
--- ✅ Ad-hoc queries and reporting
--- ✅ Rich query language (SQL)
+// Choose SQL (PostgreSQL/MySQL) when:
+// ✓ Data has clear structure and relationships
+// ✓ You need ACID transactions (banking, inventory)
+// ✓ Complex queries with multiple JOINs
+// ✓ Schema is stable and well-defined
+// ✓ Team knows SQL well
 
--- Many modern systems use BOTH (polyglot persistence)`
-  },
-  {
-    category: 'NoSQL', difficulty: 'Beginner',
-    question: 'What is MongoDB and how does it model data?',
-    answer: 'MongoDB is a document database. Data is stored as BSON documents (Binary JSON) inside collections (like tables). Documents in the same collection can have different fields — schema-less by default. Embed related data inside one document to avoid joins. Reference (store an ID) when data is large, shared, or needs independent updates. MongoDB supports rich queries, aggregation pipelines, and indexes.',
-    tip: `// Document — a JSON-like object
-{
-  "_id": ObjectId("507f1f77bcf86cd799439011"),
-  "name": "Alice",
-  "email": "alice@mail.com",
-  "address": {                    // embedded document
-    "city": "Hanoi",
-    "zip": "10000"
-  },
-  "orders": [                     // embedded array
-    { "product": "Phone", "price": 999 },
-    { "product": "Case",  "price": 19  }
-  ],
-  "createdAt": ISODate("2026-03-01")
-}
+// Choose MongoDB (Document) when:
+// ✓ Data is hierarchical / nested (read/written together)
+// ✓ Schema changes frequently (MVP, agile development)
+// ✓ Each record can have different fields
+// ✓ Content management, catalogs, user profiles
 
-// Query in Node.js (Mongoose)
-const users = await User.find({ "address.city": "Hanoi" })
-                        .sort({ createdAt: -1 })
-                        .limit(10);`
+// Choose Redis (Key-Value) when:
+// ✓ You need microsecond reads
+// ✓ Use case: cache · sessions · rate limiting · pub/sub
+// ✓ Data fits in RAM
+
+// Choose Cassandra (Columnar) when:
+// ✓ Massive write throughput (IoT, logs, events)
+// ✓ Linear horizontal scale across data centers
+// ✓ Queries always include partition key (no ad-hoc queries)
+
+// Real answer in interview:
+// 'I'd use PostgreSQL as the primary store for structured transactional
+//  data, Redis for caching and sessions, and Elasticsearch for full-text
+//  search — choosing each tool for its strengths.'`
   },
   {
-    category: 'NoSQL', difficulty: 'Intermediate',
-    question: 'What is Redis and what is it used for?',
-    answer: 'Redis is an in-memory key-value store (also supports disk persistence). Sub-millisecond read/write latency. Data structures: strings, hashes, lists, sets, sorted sets, streams, bitmaps. Common uses: **caching** (reduce DB load), **session storage**, **rate limiting**, **pub/sub messaging**, **leaderboards** (sorted sets), **job queues** (lists/streams). Data fits in RAM — not for large datasets as primary storage.',
-    tip: `// Node.js — ioredis
-import Redis from 'ioredis';
-const redis = new Redis();
+    category: 'Interview', difficulty: 'Advanced',
+    question: 'Interview: How do you scale a database that is becoming a bottleneck?',
+    answer: '**Step 1 — Measure first**: use EXPLAIN, slow query logs, pg_stat_statements. **Step 2 — Query optimization**: add indexes, rewrite slow queries. **Step 3 — Caching**: add Redis in front — cache frequent reads. **Step 4 — Read replicas**: route reads to replicas, writes to primary. **Step 5 — Connection pooling**: PgBouncer/RDS Proxy — DB can\'t handle thousands of connections. **Step 6 — Partitioning**: split large tables by date/region. **Step 7 — Sharding**: distribute data across multiple DB instances. **Last resort — switch DB type**: if relational fundamentally doesn\'t fit.',
+    tip: `// Scaling ladder — try in order
 
-// Cache-aside pattern
-async function getUser(id) {
-  const cached = await redis.get('user:' + id);
-  if (cached) return JSON.parse(cached);     // cache hit
+// 1. EXPLAIN + indexes (free, immediate)
+EXPLAIN ANALYZE SELECT * FROM orders WHERE user_id = 5;
+CREATE INDEX CONCURRENTLY ON orders(user_id);  // no table lock
 
-  const user = await db.findUser(id);        // cache miss
-  await redis.setex('user:' + id, 3600, JSON.stringify(user)); // TTL 1hr
-  return user;
-}
+// 2. Query cache with Redis
+const cached = await redis.get('user:5:orders');
+if (cached) return JSON.parse(cached);
+const orders = await db.query('SELECT * FROM orders WHERE user_id = 5');
+await redis.setEx('user:5:orders', 300, JSON.stringify(orders));
 
-// Rate limiting — 100 requests per minute per IP
-const key = 'ratelimit:' + ip;
-const count = await redis.incr(key);
-if (count === 1) await redis.expire(key, 60);
-if (count > 100) throw new Error('Rate limit exceeded');
+// 3. Read replica (in app router)
+const primaryDB = createPool(process.env.DB_PRIMARY);
+const replicaDB = createPool(process.env.DB_REPLICA);
+// Writes → primaryDB, reads → replicaDB
 
-// Leaderboard with sorted set
-await redis.zadd('leaderboard', score, userId);
-await redis.zrevrange('leaderboard', 0, 9, 'WITHSCORES'); // top 10`
+// 4. Connection pooling (PgBouncer config)
+// pool_mode = transaction    (most efficient)
+// max_client_conn = 10000    (clients can connect)
+// default_pool_size = 20     (actual DB connections)
+
+// 5. Partitioning (PostgreSQL)
+// CREATE TABLE orders_2024 PARTITION OF orders
+// FOR VALUES FROM ('2024-01-01') TO ('2025-01-01');
+
+// 6. Application-level sharding
+// const shard = userId % 4;  // route to shard 0-3
+// const db = shards[shard];
+
+// Interview formula:
+// 'I'd first profile with EXPLAIN, then add indexes,
+//  then add Redis caching, then read replicas.
+//  Sharding is a last resort due to operational complexity.'`
   },
   {
-    category: 'NoSQL', difficulty: 'Intermediate',
-    question: 'What is Apache Cassandra and when should you use it?',
-    answer: 'Cassandra is a wide-column distributed database designed for massive write throughput and high availability with no single point of failure. Data is partitioned across nodes by a partition key. It has no JOINs and limited query flexibility — you design tables around query patterns (query-first design). Best for: time-series data (IoT, logs, metrics), write-heavy workloads, and data that spans multiple data centres.',
-    tip: `-- Cassandra CQL — SQL-like but very different rules
--- Table design must match your query exactly
+    category: 'Interview', difficulty: 'Advanced',
+    question: 'Interview: Explain CAP theorem and its practical implications.',
+    answer: '**CAP theorem**: a distributed database can only guarantee 2 of 3 — **Consistency** (every read returns the latest write), **Availability** (every request gets a response), **Partition tolerance** (system works despite network failures). Since network partitions always happen in distributed systems, you must choose between **CP** (sacrifice availability during partition — return error) or **AP** (sacrifice consistency during partition — return stale data). Most modern systems are tunable: configure your consistency level per query.',
+    tip: `// CAP in practice — real systems
 
--- Time-series: sensor readings per device per hour
-CREATE TABLE sensor_readings (
-  device_id  UUID,
-  recorded   TIMESTAMP,
-  temp       FLOAT,
-  humidity   FLOAT,
-  PRIMARY KEY (device_id, recorded)  -- device_id = partition key
-) WITH CLUSTERING ORDER BY (recorded DESC);
+// CP — Consistency + Partition tolerance
+// Returns error/timeout if can't guarantee consistency
+// Systems: HBase, Zookeeper, etcd, CockroachDB, Google Spanner
+// Use when: banking, inventory, booking (correctness critical)
 
--- Query — MUST include partition key
-SELECT * FROM sensor_readings
-WHERE device_id = ? AND recorded > ? AND recorded < ?;
+// Example: book last hotel room
+// CP system: locks the row across all nodes before confirming
+// → possible timeout, but never double-booked
 
--- Cassandra guarantees: AP (Available + Partition tolerant)
--- Eventual consistency by default; tunable per query
--- Handles millions of writes/second across clusters`
-  },
-  {
-    category: 'NoSQL', difficulty: 'Intermediate',
-    question: 'What is a Graph database and when does it excel?',
-    answer: 'Graph databases store data as nodes (entities) and edges (relationships) with properties on both. Queries traverse relationships in O(1) per hop regardless of total data size — unlike SQL JOINs which slow down as the table grows. Use cases: social networks (friends of friends), recommendation engines, fraud detection, knowledge graphs, access control (who has permission to what). **Neo4j** is the most popular; AWS Neptune, ArangoDB are alternatives.',
-    tip: `// Neo4j — Cypher query language
+// AP — Availability + Partition tolerance
+// Always responds, may return stale data
+// Systems: Cassandra, DynamoDB, CouchDB, Riak
+// Use when: social feeds, shopping cart, DNS (availability critical)
 
-// Create nodes and relationship
-CREATE (alice:Person {name: 'Alice', age: 30})
-CREATE (bob:Person {name: 'Bob', age: 25})
-CREATE (alice)-[:FOLLOWS {since: 2024}]->(bob);
+// Example: social media like count
+// AP system: each node has its own count, sync later
+// → always responds, count may be off by a few seconds
 
-// Find friends of friends (2 hops)
-MATCH (me:Person {name: 'Alice'})-[:FOLLOWS*2]->(fof)
-WHERE NOT (me)-[:FOLLOWS]->(fof)
-RETURN fof.name;
+// Cassandra tunable consistency
+// CONSISTENCY ONE;     // fastest, least consistent (AP)
+// CONSISTENCY QUORUM;  // majority of nodes agree (balanced)
+// CONSISTENCY ALL;     // all nodes must agree (CP, slowest)
 
-// Shortest path between two people
-MATCH path = shortestPath(
-  (a:Person {name:'Alice'})-[:FOLLOWS*]-(b:Person {name:'Charlie'})
-)
-RETURN path;
+// DynamoDB consistency
+// Eventual consistency read: cheaper, may return stale
+// Strongly consistent read:  2x cost, always latest
 
-// SQL equivalent of "friends of friends" degrades at scale
-// Graph DB traversal stays fast regardless of data volume`
-  },
-  {
-    category: 'NoSQL', difficulty: 'Intermediate',
-    question: 'What is the CAP Theorem?',
-    answer: 'CAP Theorem states that a distributed system can guarantee at most 2 of 3 properties simultaneously. **Consistency**: every read gets the most recent write. **Availability**: every request receives a response (not necessarily latest data). **Partition Tolerance**: system works despite network failures between nodes. Since network partitions always happen in reality, the real choice is **CP** (consistent, may be unavailable) vs **AP** (available, may return stale data).',
-    tip: `-- CP systems — prioritise Consistency
--- MongoDB (with majority write concern)
--- HBase, Zookeeper, etcd
--- → Returns error rather than stale data during partition
--- → Good for: financial data, inventory
-
--- AP systems — prioritise Availability
--- Cassandra, DynamoDB, CouchDB
--- → Returns possibly stale data during partition
--- → Good for: social feeds, shopping carts, DNS
-
--- CA systems — only possible without partitions (single node)
--- Traditional RDBMS on one server
-
--- PACELC (extension of CAP):
--- Even without partition, choose: Latency vs Consistency
--- DynamoDB: configurable per-request consistency level`
-  },
-  {
-    category: 'NoSQL', difficulty: 'Beginner',
-    question: 'When should you choose SQL vs NoSQL?',
-    answer: 'Choose **SQL** when: data has clear relationships, you need JOINs, strong consistency is required (financial, medical), schema is stable, ad-hoc queries are needed. Choose **NoSQL** when: schema evolves frequently, need to scale horizontally to many machines, data is document/graph/time-series shaped, you need very high write throughput or low latency at scale. Many production systems use both (polyglot persistence).',
-    tip: `-- Use SQL (PostgreSQL) for:
-✅ User accounts, orders, payments (relational + ACID)
-✅ Reporting & analytics (rich SQL aggregations)
-✅ Any data needing complex queries
-
--- Use MongoDB for:
-✅ Product catalog (varying attributes per product)
-✅ CMS / blog posts (flexible document structure)
-✅ Event logs with nested data
-
--- Use Redis for:
-✅ Session storage, caching, rate limiting
-✅ Real-time leaderboards
-
--- Use Cassandra for:
-✅ IoT time-series, clickstream, audit logs
-✅ Billions of writes/day across regions
-
--- Real architecture: PostgreSQL + Redis + maybe MongoDB
--- Start with PostgreSQL — scale to NoSQL only when needed`
+// Interview summary:
+// 'CAP says you can't have all three in a distributed system.
+//  Since partitions are unavoidable, real choice is CP vs AP.
+//  I'd use CP for financial data, AP for social/content features,
+//  and tools like DynamoDB that let you tune per-query.'`
   },
 
-  /* ── DB Design & Perf ── */
-  {
-    category: 'DB Design & Perf', difficulty: 'Intermediate',
-    question: 'What is the N+1 query problem and how do you fix it?',
-    answer: 'The N+1 problem occurs when code executes 1 query to fetch N records, then N more queries to fetch related data — one per record. For 100 users, that\'s 101 queries instead of 2. It is the most common ORM performance pitfall. Fix with eager loading (`JOIN` or `include`) to fetch related data in one query, or batch loading (DataLoader pattern).',
-    tip: `// N+1 problem (bad) — 1 + N queries
-const users = await User.findAll();          // query 1
-for (const user of users) {
-  const orders = await user.getOrders();     // query per user → N queries!
-}
-
-// Fix 1: eager loading (JOIN) — 2 queries total
-const users = await User.findAll({
-  include: [{ model: Order }]                // single JOIN query
-});
-
-// Fix 2: DataLoader (batch + cache per request)
-const loader = new DataLoader(async (userIds) => {
-  const orders = await Order.findAll({ where: { userId: userIds } });
-  return userIds.map(id => orders.filter(o => o.userId === id));
-});
-
-// Fix 3: raw SQL with JOIN
-SELECT u.*, o.* FROM users u
-LEFT JOIN orders o ON o.user_id = u.id;`
-  },
-  {
-    category: 'DB Design & Perf', difficulty: 'Advanced',
-    question: 'What is database sharding and when do you need it?',
-    answer: 'Sharding horizontally partitions data across multiple database servers (shards). Each shard holds a subset of rows, determined by a shard key (e.g. user_id % N). Enables horizontal scaling beyond a single server\'s limits. Challenges: cross-shard JOINs are hard/impossible, shard key choice is critical (avoid hotspots), rebalancing requires careful migration. Consider sharding only after exhausting: indexing, query optimization, read replicas, and vertical scaling.',
-    tip: `-- Sharding by user_id (hash-based)
--- Shard 0: users where user_id % 4 = 0  → DB server 0
--- Shard 1: users where user_id % 4 = 1  → DB server 1
--- Shard 2: users where user_id % 4 = 2  → DB server 2
--- Shard 3: users where user_id % 4 = 3  → DB server 3
-
--- Range-based sharding
--- Shard 0: user_id 1       → 10,000,000
--- Shard 1: user_id 10M+1   → 20,000,000
-
--- Problems to watch for:
--- Hotspot: shard 0 gets all new users (time-based key)
--- Cross-shard: "find users in Hanoi" → query ALL shards
--- Joins: impossible across shards at DB level
-
--- Alternatives before sharding:
--- 1. Read replicas     (scale reads)
--- 2. Vertical scaling  (bigger machine)
--- 3. Caching (Redis)   (reduce DB load)
--- 4. Table partitioning (within one server)`
-  },
-  {
-    category: 'DB Design & Perf', difficulty: 'Intermediate',
-    question: 'What is database replication and what types exist?',
-    answer: 'Replication copies data from a primary (leader) server to one or more replicas (followers). Types: **Primary-Replica** (most common) — all writes go to primary, reads can go to replicas; if primary fails, a replica is promoted. **Multi-Primary** — multiple writable nodes, risk of write conflicts. **Synchronous** replication waits for replica acknowledgment (safe but slower). **Asynchronous** is faster but replica may lag.',
-    tip: `-- Primary-Replica setup (most common)
--- App writes → Primary DB
--- App reads  → Replica 1 / Replica 2  (load balanced)
-
--- Benefits:
--- ✅ Scale read traffic (replicas handle SELECT queries)
--- ✅ High availability (promote replica if primary dies)
--- ✅ Backups on replica (no impact on primary performance)
-
--- Replication lag — replica may be seconds behind primary
--- Problem: user writes then immediately reads — sees old data
--- Solution: read-your-own-writes (route user to primary for 1s after write)
-
--- PostgreSQL replication (postgresql.conf)
--- wal_level = replica
--- max_wal_senders = 5
-
--- Connection routing example (Node.js)
-const writeDb = new Pool({ host: 'primary.db.com' });
-const readDb  = new Pool({ host: 'replica.db.com' });`
-  },
-  {
-    category: 'DB Design & Perf', difficulty: 'Intermediate',
-    question: 'What are database migrations and how do you manage them?',
-    answer: 'A database migration is a versioned, incremental change to the database schema (adding a column, creating a table, adding an index). Migrations are stored as files in version control alongside code. This ensures every environment (dev, staging, prod) has the same schema. Tools: **Flyway**, **Liquibase** (Java), **Alembic** (Python), **Prisma Migrate**, **Knex.js** (Node). Always write both `up` (apply) and `down` (rollback) migrations.',
-    tip: `-- Migration file: 001_create_users.sql
--- UP
-CREATE TABLE users (
-  id         SERIAL PRIMARY KEY,
-  email      VARCHAR(255) UNIQUE NOT NULL,
-  created_at TIMESTAMP DEFAULT NOW()
-);
-CREATE INDEX idx_users_email ON users(email);
-
--- DOWN (rollback)
-DROP TABLE IF EXISTS users;
-
--- Knex.js migration (Node.js)
-exports.up = knex =>
-  knex.schema.createTable('users', t => {
-    t.increments('id').primary();
-    t.string('email', 255).unique().notNullable();
-    t.timestamp('created_at').defaultTo(knex.fn.now());
-  });
-
-exports.down = knex => knex.schema.dropTable('users');
-
--- Run migrations
--- knex migrate:latest    (apply all pending)
--- knex migrate:rollback  (undo last batch)`
-  },
-  {
-    category: 'DB Design & Perf', difficulty: 'Advanced',
-    question: 'What is the difference between optimistic and pessimistic locking?',
-    answer: '**Pessimistic locking**: lock the row when you read it — no one else can modify it until you release. Safe but reduces concurrency and can cause deadlocks. **Optimistic locking**: read without locking, check at write time that no one modified it (using a version number or timestamp). If it changed, retry or reject. Better for low-contention workloads. Most web apps use optimistic locking; pessimistic for high-contention or critical sections.',
-    tip: `-- Pessimistic locking — lock row on SELECT
-BEGIN;
-SELECT * FROM accounts WHERE id = 1 FOR UPDATE;  -- locks the row
--- Now safe to read + update, no one else can touch it
-UPDATE accounts SET balance = balance - 500 WHERE id = 1;
-COMMIT;  -- lock released
-
--- Optimistic locking — version column pattern
--- Schema: ADD COLUMN version INT DEFAULT 1
-
--- Read
-SELECT id, balance, version FROM accounts WHERE id = 1;
--- Returns: id=1, balance=1000, version=5
-
--- Write — only if version hasn't changed
-UPDATE accounts
-SET balance = 500, version = version + 1
-WHERE id = 1 AND version = 5;  -- fails if someone else updated
-
--- Check rows affected: if 0, conflict → retry or error
--- Prisma handles this automatically with @updatedAt or @version`
-  },
-
-  /* ── PostgreSQL ── */
-  {
-    category: 'PostgreSQL', difficulty: 'Beginner',
-    question: 'What makes PostgreSQL stand out among relational databases?',
-    answer: 'PostgreSQL is a powerful, open-source object-relational database (ORDBMS) with 35+ years of active development. Key strengths: full ACID compliance, MVCC for concurrency without read locks, native JSON/JSONB support (NoSQL inside SQL), rich indexing (B-tree, Hash, GIN, GiST, BRIN), table inheritance, custom types and functions, full-text search, and a massive extension ecosystem (PostGIS, pgvector, TimescaleDB).',
-    tip: `-- Check version
-SELECT version();
-
--- Key advantages over MySQL:
--- ✅ Better SQL standards compliance
--- ✅ JSONB (binary JSON) — indexed and fast
--- ✅ Advanced indexing (GIN, GiST, partial, expression)
--- ✅ Full-text search built-in
--- ✅ CTEs (WITH queries), window functions
--- ✅ Table partitioning and inheritance
--- ✅ PostGIS for geospatial data
--- ✅ LISTEN/NOTIFY for pub/sub
-
--- Common PostgreSQL data types
-INTEGER, BIGINT, NUMERIC(p,s)    -- numbers
-TEXT, VARCHAR(n), CHAR(n)        -- strings (prefer TEXT)
-BOOLEAN                          -- true/false
-TIMESTAMP WITH TIME ZONE         -- always use with TZ!
-UUID                             -- universally unique ID
-JSONB                            -- binary JSON (indexable)
-ARRAY                            -- native array columns`
-  },
-  {
-    category: 'PostgreSQL', difficulty: 'Beginner',
-    question: 'How does MVCC (Multi-Version Concurrency Control) work in PostgreSQL?',
-    answer: 'MVCC allows readers and writers to not block each other. Instead of locking rows for reads, PostgreSQL keeps multiple versions of a row — each transaction sees a snapshot of the data as it existed when the transaction started. Readers never block writers, writers never block readers. Old row versions are cleaned up by the VACUUM process.',
-    tip: `-- MVCC in action: no locking between reader and writer
-
--- Transaction A (long-running read):
-BEGIN;
-SELECT * FROM orders WHERE status = 'pending';
--- sees 100 rows at time T1
-
--- Transaction B (concurrent write, commits at T2):
-BEGIN;
-UPDATE orders SET status = 'shipped' WHERE id = 1;
-COMMIT;
-
--- Transaction A (still in its snapshot):
-SELECT * FROM orders WHERE status = 'pending';
--- still sees 100 rows! (sees T1 snapshot, not T2)
-COMMIT;
-
--- Key points:
--- ✅ Readers never block writers
--- ✅ Writers never block readers
--- ⚠️  Old row versions accumulate → VACUUM cleans up
--- Auto-vacuum runs in background; tune for high-write tables`
-  },
-  {
-    category: 'PostgreSQL', difficulty: 'Intermediate',
-    question: 'What is JSONB in PostgreSQL and when should you use it?',
-    answer: 'JSONB stores JSON as a decomposed binary format — it is parsed on write, stored efficiently, and supports indexing with GIN indexes. This makes JSONB fast to query. Use JSONB when: some attributes vary per row (semi-structured data), you need NoSQL flexibility inside a relational schema, or you are prototyping a schema that may evolve. Prefer dedicated columns for frequently-queried or joined fields.',
-    tip: `-- Create table with JSONB column
-CREATE TABLE products (
-  id      SERIAL PRIMARY KEY,
-  name    TEXT NOT NULL,
-  attrs   JSONB
-);
-
--- Insert
-INSERT INTO products (name, attrs)
-VALUES ('Laptop', '{"brand":"Dell","ram":16,"tags":["sale","refurb"]}');
-
--- Query JSONB fields
-SELECT attrs->>'brand'          FROM products;  -- text
-SELECT attrs->'ram'             FROM products;  -- JSON value
-SELECT attrs#>>'{tags,0}'       FROM products;  -- "sale"
-
--- Filter on JSONB
-SELECT * FROM products WHERE attrs->>'brand' = 'Dell';
-SELECT * FROM products WHERE attrs @> '{"ram": 16}';  -- contains
-
--- GIN index for fast JSONB queries
-CREATE INDEX idx_products_attrs ON products USING GIN (attrs);
-
--- Check if key exists
-SELECT * FROM products WHERE attrs ? 'brand';`
-  },
-  {
-    category: 'PostgreSQL', difficulty: 'Intermediate',
-    question: 'What index types does PostgreSQL offer and when do you use each?',
-    answer: 'PostgreSQL has several index types: B-tree (default, for =, <, >, BETWEEN, LIKE prefix), Hash (equality only, rarely needed), GIN (arrays, JSONB, full-text search — many values per row), GiST (geometric data, PostGIS, full-text), BRIN (very large tables with naturally-ordered data like timestamps — tiny size, approximate), Partial (index only rows matching a condition).',
-    tip: `-- B-tree (default) — equality and range queries
-CREATE INDEX idx_orders_created ON orders (created_at);
-CREATE INDEX idx_users_email ON users (email);
-
--- GIN — JSONB and full-text search
-CREATE INDEX idx_products_attrs ON products USING GIN (attrs);
-CREATE INDEX idx_articles_fts   ON articles
-  USING GIN (to_tsvector('english', title || ' ' || body));
-
--- Partial index — only index relevant rows
-CREATE INDEX idx_orders_pending
-  ON orders (created_at)
-  WHERE status = 'pending';
--- Much smaller, faster for queries that filter on status='pending'
-
--- Expression index
-CREATE INDEX idx_users_lower_email ON users (LOWER(email));
-
--- Check index usage
-EXPLAIN ANALYZE SELECT * FROM orders WHERE status = 'pending';
--- Look for "Index Scan" vs "Seq Scan"
-
--- Find unused indexes
-SELECT * FROM pg_stat_user_indexes WHERE idx_scan = 0;`
-  },
-  {
-    category: 'PostgreSQL', difficulty: 'Intermediate',
-    question: 'How do CTEs and Window Functions work in PostgreSQL?',
-    answer: 'A CTE (Common Table Expression) with the WITH keyword names a temporary result set you can reference like a table — great for breaking complex queries into readable steps. Window Functions (OVER clause) compute aggregates across a set of rows related to the current row without collapsing them into groups — use for running totals, rankings, and moving averages.',
-    tip: `-- CTE: break complex query into named steps
-WITH monthly_revenue AS (
-  SELECT
-    DATE_TRUNC('month', created_at) AS month,
-    SUM(amount)                     AS revenue
-  FROM orders
-  WHERE status = 'completed'
-  GROUP BY 1
-),
-ranked AS (
-  SELECT *, RANK() OVER (ORDER BY revenue DESC) AS rnk
-  FROM monthly_revenue
-)
-SELECT * FROM ranked WHERE rnk <= 3;
-
--- Window Functions — no row collapsing
-SELECT
-  id,
-  amount,
-  SUM(amount)  OVER (ORDER BY created_at)           AS running_total,
-  AVG(amount)  OVER (PARTITION BY user_id)          AS user_avg,
-  RANK()       OVER (PARTITION BY dept ORDER BY salary DESC) AS rank,
-  LAG(amount)  OVER (ORDER BY created_at)           AS prev_amount,
-  LEAD(amount) OVER (ORDER BY created_at)           AS next_amount,
-  ROW_NUMBER() OVER (ORDER BY created_at)           AS row_num
-FROM orders;`
-  },
-  {
-    category: 'PostgreSQL', difficulty: 'Advanced',
-    question: 'How do you optimize slow queries in PostgreSQL?',
-    answer: 'Use EXPLAIN ANALYZE to see the actual query plan and execution times. Key problem signs: Seq Scan on large tables (missing index), high rows estimate vs actual (stale statistics — run ANALYZE), nested loop on large datasets (may need hash join), high cost nodes. Tune with: proper indexes, partial indexes, rewriting joins, VACUUM/ANALYZE, pg_stat_statements for identifying the slowest queries system-wide.',
-    tip: `-- See query plan with timing
-EXPLAIN ANALYZE
-SELECT * FROM orders o
-JOIN users u ON u.id = o.user_id
-WHERE o.status = 'pending' AND o.created_at > NOW() - INTERVAL '7 days';
-
--- Key plan nodes to look for:
--- Seq Scan        → no index used (add one!)
--- Index Scan      → good
--- Index Only Scan → best (all data in index)
--- Hash Join       → good for large sets
--- Nested Loop     → fast for small sets, slow for large
--- Bitmap Heap Scan → combines index results
-
--- Refresh statistics (helps planner make better choices)
-ANALYZE orders;
-
--- Find slowest queries (enable pg_stat_statements first)
-SELECT query, mean_exec_time, calls
-FROM pg_stat_statements
-ORDER BY mean_exec_time DESC
-LIMIT 10;
-
--- Kill long-running query
-SELECT pg_cancel_backend(pid)
-FROM pg_stat_activity
-WHERE state = 'active' AND query_start < NOW() - INTERVAL '5 min';`
-  },
 ];
+
 
 /* ═══════════════════════════════════════════════════════════
    INTERNET — 20 cards  |  Beginner → Intermediate → Advanced
@@ -17216,10 +17873,13 @@ const CATEGORY_COLORS = {
   'Hashing':         '#fbbf24',
   'Interview':       '#d97706',
   // Database
-  'Relational DB':    '#ec4899',
-  'NoSQL':            '#f472b6',
-  'DB Design & Perf': '#be185d',
-  'PostgreSQL':       '#0369a1',
+  'Core Concepts':      '#ec4899',
+  'Database Types':     '#f472b6',
+  'Building for Scale': '#be185d',
+  'Relational DB':      '#db2777',
+  'NoSQL':              '#9d174d',
+  'DB Design & Perf':   '#831843',
+  'PostgreSQL':         '#0369a1',
   // SQL
   'Core':                '#38bdf8',
   'SQL Basics':          '#06b6d4',
