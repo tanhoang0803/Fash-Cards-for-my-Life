@@ -17090,12 +17090,19 @@ LIMIT    3;                                   -- ➐ top 3 only
 /* ═══════════════════════════════════════════════════════════
    PLACEHOLDER PACKS  (no cards yet)
 ═══════════════════════════════════════════════════════════ */
-const HTML_CARDS     = [];
-const CSS_ONLY_CARDS = [];
-const NPM_CARDS      = [];
-const GIT_CARDS      = [];
-const TAILWIND_CARDS = [];
-const REDUX_CARDS    = [];
+const HTML_CARDS          = [];
+const CSS_ONLY_CARDS      = [];
+const NPM_CARDS           = [];
+const GIT_CARDS           = [];
+const TAILWIND_CARDS      = [];
+const REDUX_CARDS         = [];
+const POSTGRESQL_CARDS    = [];
+const JWT_CARDS           = [];
+const REDIS_CARDS         = [];
+const CICD_CARDS          = [];
+const AI_ASSIST_CARDS     = [];
+const THIRD_PARTY_CARDS   = [];
+const ARCHITECTURE_CARDS  = [];
 
 /* ═══════════════════════════════════════════════════════════
    SUBJECTS
@@ -17111,9 +17118,16 @@ const SUBJECTS = {
   'Internet':   INTERNET_CARDS,
   'Linux':      LINUX_CARDS,
   'API':        API_CARDS,
-  'Node.js':    NODEJS_CARDS,
-  'Express.js': EXPRESS_CARDS,
-  'Html':           HTML_CARDS,
+  'Node.js':              NODEJS_CARDS,
+  'Express.js':           EXPRESS_CARDS,
+  'PostgreSQL':           POSTGRESQL_CARDS,
+  'JWT authentication':   JWT_CARDS,
+  'Redis':                REDIS_CARDS,
+  'CI/CD':                CICD_CARDS,
+  'AI-assist':            AI_ASSIST_CARDS,
+  'Third-party generation': THIRD_PARTY_CARDS,
+  'Architecture':         ARCHITECTURE_CARDS,
+  'Html':                 HTML_CARDS,
   'CSS':            CSS_ONLY_CARDS,
   'npm':            NPM_CARDS,
   'Git/Github':     GIT_CARDS,
@@ -17132,7 +17146,7 @@ const SUBJECT_GROUPS = {
   'Core':        ['DSA', 'Internet', 'Linux', 'Tricked Memory'],
   'Language':    ['Python', 'C#', 'C++', 'JavaScript'],
   'Frontend':    ['Html', 'CSS', 'npm', 'Git/Github', 'Tailwind CSS', 'React & SSR', 'Redux'],
-  'Backend':     ['SQL', 'Database', 'API', 'Node.js', 'Express.js', 'Testing & Containers'],
+  'Backend':     ['Node.js', 'Express.js', 'SQL', 'Database', 'PostgreSQL', 'API', 'JWT authentication', 'Redis', 'Testing & Containers', 'CI/CD', 'AI-assist', 'Third-party generation', 'Architecture'],
   'DevOps':      [],
 };
 
@@ -17173,7 +17187,14 @@ const SUBJECT_COLORS = {
   'Tailwind CSS':   '#38bdf8',
   'React & SSR':    '#61dafb',
   'Redux':          '#764abc',
+  'PostgreSQL':           '#336791',
+  'JWT authentication':   '#d63aff',
+  'Redis':                '#dc382d',
   'Testing & Containers': '#14b8a6',
+  'CI/CD':                '#f59e0b',
+  'AI-assist':            '#10b981',
+  'Third-party generation': '#8b5cf6',
+  'Architecture':         '#64748b',
   'Tricked Memory': '#f43f5e',
 };
 
