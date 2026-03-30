@@ -2238,73 +2238,140 @@ asyncio.run(main())`
 ];
 
 /* ═══════════════════════════════════════════════════════════
-   C# — 18 cards across 3 categories
+   C# — 46 cards across 9 categories
 ═══════════════════════════════════════════════════════════ */
 const CSHARP_CARDS = [
 
-  /* ── C# Basics ── */
+  /* ── Overview ── */
   {
-    category: 'C# Basics', difficulty: 'Beginner',
-    question: 'What are the basic data types in C#?',
-    answer: 'C# is statically typed — every variable must have a declared type. Common types: `int` (32-bit integer), `long` (64-bit), `double` (64-bit float), `decimal` (high-precision money), `bool` (`true`/`false`), `char` (single character), `string` (immutable text, reference type). Use `var` to let the compiler infer the type — it is still statically typed.',
+    category: 'Overview', difficulty: 'Beginner',
+    question: 'C# Learning Mindmap — what are the 7 core areas and key learning paths?',
+    answer: '7 core areas: 1) Fundamentals — syntax, types, operators, control flow, methods. 2) Core C# — OOP, properties, interfaces, structs/enums, collections, exceptions. 3) Modern C# — LINQ, async/await, pattern matching, records, nullable types. 4) Useful Daily Tools — file I/O, generics, delegates, events, attributes, testing. 5) Data Structures & Algorithms. 6) Advanced Topics — concurrency, memory, reflection, unsafe code, performance. 7) Ecosystem — .NET runtime, ASP.NET Core, Unity, Azure.',
+    tip: `C#
+│
+├─ 1. Fundamentals
+│   ├─ Syntax & Types   int · double · string · bool · var · dynamic
+│   ├─ Operators        + - * / % · == != < > · && || !
+│   ├─ Control Flow     if/else · switch · for · foreach · while · do-while
+│   ├─ Methods          return types · parameters · overloading · default params
+│   └─ Namespaces       using · namespace · assemblies
+│
+├─ 2. Core C#
+│   ├─ OOP              class · object · inheritance · polymorphism · encapsulation
+│   ├─ Properties       get/set · auto-properties · init-only
+│   ├─ Interfaces       interface · implementation · multiple inheritance
+│   ├─ Structs & Enums  value types · enum constants
+│   ├─ Collections      List<T> · Dictionary<K,V> · Queue · Stack
+│   └─ Exception        try · catch · finally · throw
+│
+├─ 3. Modern C# (C# 7-12)
+│   ├─ LINQ             from...select · where · group · join
+│   ├─ Async/Await      Task<T> · async methods · await keyword
+│   ├─ Pattern Matching switch expressions · type patterns
+│   ├─ Records          immutable data classes
+│   ├─ Nullable Types   int? · null-coalescing (??) · ?. operator
+│   └─ New Features     tuples · local functions · ranges
+│
+├─ 4. Useful Daily Tools
+│   ├─ File I/O         StreamReader · StreamWriter · File.ReadAllText()
+│   ├─ Generics         List<T> · generic methods · constraints
+│   ├─ Delegates        Func<> · Action<> · Predicate<>
+│   ├─ Events           event keyword · publisher/subscriber
+│   ├─ Attributes       [Serializable] · [Obsolete] · custom attributes
+│   └─ Unit Testing     NUnit · xUnit · MSTest
+│
+├─ 5. Data Structures & Algorithms
+│   ├─ Arrays & Strings
+│   ├─ Linked List · Stack · Queue
+│   ├─ Trees · Graphs
+│   ├─ Sorting          quicksort · mergesort · Array.Sort()
+│   └─ Searching        binary search · LINQ queries
+│
+├─ 6. Advanced Topics
+│   ├─ Concurrency      Parallel.For · PLINQ · async streams
+│   ├─ Memory           garbage collection · IDisposable · using blocks
+│   ├─ Reflection       System.Reflection · dynamic type loading
+│   ├─ Unsafe Code      pointers · stackalloc · fixed
+│   └─ Performance      Span<T> · ValueTask · benchmarking
+│
+└─ 7. Ecosystem & Applications
+    ├─ .NET Runtime     CLR · JIT · assemblies · NuGet packages
+    ├─ Web Dev          ASP.NET Core · MVC · Razor Pages · Blazor
+    ├─ Desktop          WPF · WinForms · MAUI
+    ├─ Mobile           Xamarin · .NET MAUI
+    ├─ Cloud            Azure SDK · microservices · gRPC
+    └─ Game Dev         Unity Engine (C# scripting)
+
+LEARNING PATHS
+Backend Dev:    Fundamentals → Core C# → LINQ → Async/Await → ASP.NET Core → Azure
+Desktop/Mobile: Fundamentals → OOP → Collections → WPF/WinForms → Xamarin/MAUI
+Game Dev:       Fundamentals → Core C# → Events/Delegates → Unity → Performance
+
+INTERVIEW CORE
+OOP pillars · LINQ · Async/Await · Delegates & Events · Memory management · Ecosystem`
+  },
+
+  /* ── Fundamentals ── */
+  {
+    category: 'Fundamentals', difficulty: 'Beginner',
+    question: 'What are the basic data types in C#, and what is the difference between `var` and `dynamic`?',
+    answer: 'Core types: `int` (32-bit integer), `long` (64-bit), `double` (64-bit float), `decimal` (high-precision money), `bool` (true/false), `char` (single character), `string` (immutable text). `var` — compiler infers the type at compile time, still strongly typed. `dynamic` — type checking deferred to runtime, bypasses type safety. Value types (`int`, `struct`) copy on assignment; reference types (`class`, `string`) copy the reference.',
     tip: `int    age    = 30;
 double price  = 9.99;
-decimal tax   = 0.08m;   // 'm' suffix for decimal
+decimal tax   = 0.08m;   // 'm' suffix required
 bool   active = true;
 char   grade  = 'A';
 string name   = "Alice";
 
-// Type inference — compiler knows it's an int
-var count = 42;
+// var — inferred at compile time, still strongly typed
+var count = 42;            // int
+var items = new List<string>();
 
-// Checking type
-Console.WriteLine(age.GetType());  // System.Int32
-Console.WriteLine(name is string); // True`
-  },
-  {
-    category: 'C# Basics', difficulty: 'Beginner',
-    question: 'What is the difference between value types and reference types?',
-    answer: 'Value types (`int`, `double`, `bool`, `struct`, `enum`) store data directly on the stack — assignment copies the value. Reference types (`class`, `string`, `array`, `interface`) store a reference (pointer) on the stack; the actual object lives on the heap — assignment copies the reference, so both variables point to the same object. `string` is immutable despite being a reference type.',
-    tip: `// Value type — copy on assign
-int a = 5;
-int b = a;
+// dynamic — resolved at runtime (no IntelliSense, no type safety)
+dynamic obj = "hello";
+obj = 42;                  // valid at compile time
+Console.WriteLine(obj.GetType());  // System.Int32
+
+// Value type — copy on assign
+int a = 5, b = a;
 b = 10;
 Console.WriteLine(a); // 5 (unchanged)
 
-// Reference type — shared reference
+// Reference type — both point to same object
 var list1 = new List<int> { 1, 2 };
-var list2 = list1;         // same object!
+var list2 = list1;
 list2.Add(3);
-Console.WriteLine(list1.Count); // 3
-
-// Copy a list properly
-var list3 = new List<int>(list1);  // independent copy`
+Console.WriteLine(list1.Count); // 3`
   },
   {
-    category: 'C# Basics', difficulty: 'Beginner',
-    question: 'How does string interpolation and string formatting work in C#?',
-    answer: 'C# offers several ways to format strings. `$"..."` (string interpolation, C# 6+) is the most readable — embed any expression in `{}`. `string.Format()` is the classic approach. Verbatim strings `@"..."` treat backslashes literally (useful for file paths and regex). Raw string literals `"""..."""` (C# 11+) need no escaping at all.',
-    tip: `string name  = "Alice";
-int    age   = 30;
-double score = 95.678;
+    category: 'Fundamentals', difficulty: 'Beginner',
+    question: 'What operators does C# support?',
+    answer: 'Arithmetic: `+` `-` `*` `/` `%`. Comparison: `==` `!=` `<` `>` `<=` `>=`. Logical: `&&` (AND), `||` (OR), `!` (NOT). Compound assignment: `+=` `-=` `*=` `/=`. Ternary: `condition ? a : b`. Null-handling: `??` (null-coalescing), `?.` (null-conditional), `??=` (null-coalescing assignment). Integer division truncates — cast to double for decimal result.',
+    tip: `int a = 10, b = 3;
+Console.WriteLine(a % b);        // 1 (remainder)
+Console.WriteLine(a / b);        // 3 (integer division)
+Console.WriteLine((double)a / b); // 3.333...
 
-// String interpolation (preferred)
-Console.WriteLine($"Name: {name}, Age: {age}");
-Console.WriteLine($"Score: {score:F2}");      // 95.68
-Console.WriteLine($"Upper: {name.ToUpper()}");
+// Compound assignment
+a += 5;    // a = a + 5
+a *= 2;    // a = a * 2
 
-// Verbatim — backslashes are literal
-string path = @"C:\\Users\\Alice\\file.txt";
+// Ternary
+string label = a > b ? "bigger" : "smaller";
 
-// Useful string methods
-"  hello  ".Trim()          // "hello"
-"a,b,c".Split(',')          // ["a","b","c"]
-string.Join("-", new[]{"a","b"}) // "a-b"`
+// Logical short-circuit
+bool safe = (b != 0) && (a / b > 2);  // checks b != 0 first
+
+// Null-handling operators
+string? s = null;
+string display = s ?? "Guest";   // "Guest" when s is null
+int?   len     = s?.Length;      // null (no NullReferenceException)
+s ??= "Default";                 // assign only if null`
   },
   {
-    category: 'C# Basics', difficulty: 'Beginner',
-    question: 'How do `if/else` and `switch` work in C#?',
-    answer: 'C# supports classic `if/else if/else` blocks and `switch` statements. Modern C# (8+) adds `switch expressions` — concise, expression-based pattern matching that returns a value. The `when` keyword adds a condition guard to a case. Switch expressions are exhaustive — the compiler warns if cases are missing.',
+    category: 'Fundamentals', difficulty: 'Beginner',
+    question: 'How do control flow statements work in C#? (if/else, switch, loops)',
+    answer: 'Branching: `if/else if/else`. Switch expressions (C# 8+) return a value and use `_` as default. Loops: `for` (index-based), `foreach` (any IEnumerable — cleanest for collections), `while` (condition first), `do-while` (runs at least once). `break` exits a loop, `continue` skips to next iteration.',
     tip: `int score = 85;
 
 // Classic if/else
@@ -2313,197 +2380,133 @@ else if (score >= 80) Console.WriteLine("B");
 else                  Console.WriteLine("C");
 
 // Switch expression (C# 8+) — returns a value
-string grade = score switch
-{
+string grade = score switch {
     >= 90 => "A",
     >= 80 => "B",
     >= 70 => "C",
-    _     => "F"   // _ is the default/discard
+    _     => "F"    // _ = default
 };
 
-// With when guard
-string label = score switch
-{
-    100            => "Perfect",
-    >= 90 and < 100=> "Excellent",
-    _              => "Keep going"
-};`
-  },
-  {
-    category: 'C# Basics', difficulty: 'Beginner',
-    question: 'How do loops work in C#?',
-    answer: 'C# has four loop constructs. `for`: classic index-based loop. `foreach`: iterates any `IEnumerable` — cleanest for collections. `while`: condition-first loop. `do/while`: body runs at least once. Use `break` to exit early, `continue` to skip to the next iteration. LINQ methods (`Where`, `Select`) often replace explicit loops.',
-    tip: `// for — index-based
-for (int i = 0; i < 5; i++)
-    Console.WriteLine(i);
+// for — index-based
+for (int i = 0; i < 5; i++) Console.WriteLine(i);
 
-// foreach — clean collection iteration
+// foreach — cleanest for collections
 var fruits = new List<string> { "apple", "banana" };
-foreach (var fruit in fruits)
-    Console.WriteLine(fruit);
+foreach (var fruit in fruits) Console.WriteLine(fruit);
 
-// while
+// while / do-while
 int n = 0;
-while (n < 5) n++;
-
-// do/while — runs body at least once
-do {
-    Console.WriteLine("runs once even if false");
-} while (false);
-
-// Range (C# 9+)
-foreach (var i in 1..=5)  // 1,2,3,4,5
-    Console.WriteLine(i);`
+while (n < 3) n++;
+do { Console.WriteLine("runs at least once"); } while (false);`
   },
   {
-    category: 'C# Basics', difficulty: 'Beginner',
-    question: 'How do methods work in C#?',
-    answer: 'Methods are defined with an access modifier, return type, name, and parameters. `void` means no return value. Parameters can have default values (optional), be passed by reference (`ref`/`out`), or collected with `params`. Method overloading allows multiple methods with the same name but different parameter signatures.',
-    tip: `// Basic method
-public int Add(int a, int b) => a + b;  // expression body
+    category: 'Fundamentals', difficulty: 'Beginner',
+    question: 'How do methods work in C#? (return types, parameters, overloading, default params)',
+    answer: 'Methods have an access modifier, return type, name, and parameters. `void` = no return value. Default parameters make arguments optional. `params` accepts variable-length argument lists. `ref`/`out` pass by reference. Overloading = same name, different signature. Expression body (`=>`) is concise for single-expression methods.',
+    tip: `// Expression body
+public int Add(int a, int b) => a + b;
 
-// Optional parameters with defaults
-public string Greet(string name, string greeting = "Hello")
-    => $"{greeting}, {name}!";
+// Default parameters
+public string Greet(string name, string prefix = "Hello")
+    => prefix + ", " + name + "!";
 
-// out parameter — return multiple values
-public bool TryParse(string s, out int result)
-{
-    return int.TryParse(s, out result);
-}
+Greet("Alice");          // "Hello, Alice!"
+Greet("Bob", "Hi");      // "Hi, Bob!"
 
-// params — variable number of arguments
-public int Sum(params int[] nums)
-    => nums.Sum();
+// params — variable argument count
+public int Sum(params int[] nums) => nums.Sum();
+Sum(1, 2, 3, 4, 5);     // 15
 
-Sum(1, 2, 3, 4, 5);  // 15
+// out — return multiple values
+public bool TryParseAge(string s, out int age)
+    => int.TryParse(s, out age);
 
-// Overloading
+if (TryParseAge("30", out int a)) Console.WriteLine(a); // 30
+
+// Overloading — same name, different signature
 public double Add(double a, double b) => a + b;`
   },
   {
-    category: 'C# Basics', difficulty: 'Beginner',
-    question: 'How do arrays and `List<T>` work in C#?',
-    answer: 'Arrays are fixed-size, contiguous memory — fast but inflexible. `List<T>` is a dynamic array that grows automatically — preferred for most use cases. Both offer O(1) random access by index. `List<T>` has methods like `Add`, `Remove`, `Contains`, `Sort`, `Find`. Use `Dictionary<K,V>` for key-value lookup and `HashSet<T>` for unique collections.',
-    tip: `// Array — fixed size
-int[] nums = { 1, 2, 3, 4, 5 };
-int[] arr  = new int[3];     // [0, 0, 0]
-arr[0] = 10;
-
-// List<T> — dynamic, preferred
-var list = new List<string> { "a", "b" };
-list.Add("c");
-list.Remove("a");
-list.Contains("b");  // true
-list.Count;          // 2
-
-// Dictionary<K,V>
-var scores = new Dictionary<string, int>
+    category: 'Fundamentals', difficulty: 'Beginner',
+    question: 'How do namespaces and assemblies work in C#?',
+    answer: 'A namespace groups related types to avoid naming conflicts. `using` imports a namespace. An assembly (.dll/.exe) is the compiled unit of deployment. NuGet distributes assemblies as packages. C# 10+ adds `global using` (project-wide) and file-scoped namespaces (no extra nesting).',
+    tip: `// Traditional namespace
+namespace MyApp.Services
 {
-    ["Alice"] = 95,
-    ["Bob"]   = 87
-};
-scores.TryGetValue("Alice", out int score); // safe lookup`
-  },
-  {
-    category: 'C# Basics', difficulty: 'Beginner',
-    question: 'How does exception handling work in C#?',
-    answer: 'Use `try/catch/finally`. `try` wraps risky code. `catch(ExceptionType ex)` handles specific exceptions — always catch the most specific type first. `finally` always runs (cleanup, closing resources). `throw` re-throws the current exception (preserves stack trace). `when` adds a filter condition. `using` is the preferred way to auto-dispose `IDisposable` resources.',
-    tip: `try
-{
-    var text = await File.ReadAllTextAsync(path);
-    var data = JsonSerializer.Deserialize<Config>(text);
-}
-catch (FileNotFoundException ex)
-{
-    _logger.LogWarning("Missing: {File}", ex.FileName);
-}
-catch (JsonException ex) when (ex.Message.Contains("token"))
-{
-    throw new InvalidConfigException("Bad JSON", ex); // wrap
-}
-finally
-{
-    _logger.LogInformation("Done"); // always runs
+    public class UserService { }
 }
 
-// using — auto-disposes (calls Dispose on exit)
-using var conn = new SqlConnection(connectionString);
-await conn.OpenAsync();`
+// File-scoped namespace (C# 10+) — no extra braces
+namespace MyApp.Models;
+public class Product { }
+
+// Importing
+using System.Collections.Generic;
+using MyApp.Services;
+
+// Global using (C# 10+) — put in GlobalUsings.cs
+global using System.Text.Json;
+
+// NuGet
+// dotnet add package Newtonsoft.Json
+
+// .csproj — project file
+// <TargetFramework>net9.0</TargetFramework>
+// <PackageReference Include="Serilog" Version="4.0.0" />
+
+// dotnet CLI
+// dotnet build  →  dotnet run  →  dotnet test  →  dotnet publish`
   },
 
-  /* ── OOP & Patterns ── */
+  /* ── Core C# ── */
   {
-    category: 'OOP & Patterns', difficulty: 'Beginner',
-    question: 'How do classes and objects work in C#?',
-    answer: 'A class is a blueprint; an object is an instance created with `new`. Classes have fields (data), properties (encapsulated fields), methods (behaviour), and constructors (initialisation). C# supports access modifiers: `public`, `private`, `protected`, `internal`. Use `static` for members that belong to the class itself rather than any instance.',
-    tip: `public class BankAccount
-{
-    // Property with private setter
-    public string Owner  { get; }
-    public decimal Balance { get; private set; }
-
-    // Constructor
-    public BankAccount(string owner, decimal initial = 0)
-    {
-        Owner   = owner;
-        Balance = initial;
-    }
-
-    // Method
-    public void Deposit(decimal amount)
-    {
-        if (amount <= 0) throw new ArgumentException("Must be positive");
-        Balance += amount;
-    }
+    category: 'Core C#', difficulty: 'Beginner',
+    question: 'What are the four pillars of OOP and how does C# implement them?',
+    answer: '**Encapsulation**: access modifiers (`private`, `public`, `protected`, `internal`) hide internal state. **Abstraction**: `interface` or `abstract class` defines a contract without revealing implementation. **Inheritance**: `: BaseClass` — single inheritance; `sealed` prevents further subclassing. **Polymorphism**: `virtual`/`override` — correct method called at runtime based on actual object type.',
+    tip: `// Encapsulation
+public class BankAccount {
+    private decimal _balance;
+    public decimal Balance => _balance;
+    public void Deposit(decimal n) { if (n > 0) _balance += n; }
 }
 
-// Usage
-var account = new BankAccount("Alice", 1000m);
-account.Deposit(500m);
-Console.WriteLine(account.Balance); // 1500`
-  },
-  {
-    category: 'OOP & Patterns', difficulty: 'Intermediate',
-    question: 'What is the difference between an interface and an abstract class?',
-    answer: 'Interface: defines a contract (method/property signatures) with no state. A class can implement multiple interfaces. Abstract class: can have concrete methods, fields, and constructors — but only single inheritance. Rule of thumb: use interfaces for capabilities (`IDisposable`, `ILogger`); use abstract classes for shared base behaviour with some implementation provided.',
-    tip: `// Interface — multiple allowed
-public interface ILogger {
-    void Log(string message);
-    void LogError(string msg) => Log($"ERROR: {msg}"); // default impl (C#8+)
-}
-public interface ISaveable { void Save(); }
+// Inheritance
+public class Animal { public virtual  string Sound() => "..."; }
+public class Dog   : Animal { public override string Sound() => "Woof"; }
+public class Cat   : Animal { public override string Sound() => "Meow"; }
 
-// Abstract class — single inheritance, shared logic
+// Polymorphism — runtime dispatch
+Animal pet = new Dog();
+Console.WriteLine(pet.Sound()); // "Woof"
+
+// Abstraction
 public abstract class Shape {
-    public string Color { get; set; } = "Red";
-    public abstract double Area();          // must override
-    public void Print() => Console.WriteLine($"{Color}: {Area():F2}");
+    public abstract double Area();
+    public void Print() => Console.WriteLine(Area());
 }
-
-public class Circle : Shape, ILogger, ISaveable {
+public class Circle : Shape {
     public double Radius { get; init; }
     public override double Area() => Math.PI * Radius * Radius;
-    public void Log(string m)  => Console.WriteLine(m);
-    public void Save()         => Console.WriteLine("Saved");
-}`
+}
+
+// sealed — no further subclassing
+public sealed class Config { }`
   },
   {
-    category: 'OOP & Patterns', difficulty: 'Intermediate',
-    question: 'What are properties in C# and how do they differ from fields?',
-    answer: 'A field is a plain variable on a class. A property wraps a field with `get`/`set` accessors, enabling validation, computed values, and change notification. Auto-properties generate the backing field automatically. `init` (C# 9+) allows setting only during object initialisation. Properties are the standard for public data — they allow implementation changes without breaking the API.',
-    tip: `public class Person
-{
+    category: 'Core C#', difficulty: 'Beginner',
+    question: 'How do properties work in C#? (get/set, auto-properties, init-only)',
+    answer: 'A property wraps a backing field with `get`/`set` accessors — enabling validation and change notification. Auto-properties generate the backing field automatically. `private set` restricts modification to the class. `init` (C# 9+) allows setting only during construction. Computed properties have `get` only and no backing field.',
+    tip: `public class Person {
     // Auto-property
-    public string Name { get; set; }
+    public string Name { get; set; } = "";
 
-    // Init-only — set in constructor or object initializer
-    public string Id { get; init; }
+    // Init-only — set in constructor or object initializer only
+    public string Id { get; init; } = "";
 
-    // Private setter — only class can change it
+    // Private setter — only this class can change it
     public int Age { get; private set; }
 
-    // Computed (no backing field)
+    // Computed — no backing field
     public bool IsAdult => Age >= 18;
 
     // Full property with validation
@@ -2515,157 +2518,1275 @@ public class Circle : Shape, ILogger, ISaveable {
     }
 }
 
-// Object initializer syntax
-var p = new Person { Name = "Alice", Id = "001" };`
+// Object initializer
+var p = new Person { Name = "Alice", Id = "A01" };
+// p.Id = "X";  // ERROR — init-only after construction`
   },
   {
-    category: 'OOP & Patterns', difficulty: 'Intermediate',
-    question: 'What are generics in C# and why use them?',
-    answer: 'Generics allow classes, methods, and interfaces to be parameterised by type, providing compile-time type safety without boxing/unboxing overhead. `List<T>` is a generic class — you get type-safe collections without casting. Constraints (`where T : class`, `where T : IComparable<T>`, `where T : new()`) restrict valid type arguments.',
-    tip: `// Generic class
-public class Stack<T>
-{
-    private readonly List<T> _data = new();
-    public void Push(T item) => _data.Add(item);
-    public T    Pop()  { var v = _data[^1]; _data.RemoveAt(_data.Count-1); return v; }
-    public T    Peek() => _data[^1];
-    public bool IsEmpty => _data.Count == 0;
+    category: 'Core C#', difficulty: 'Intermediate',
+    question: 'What are interfaces in C# and how do they enable multiple inheritance?',
+    answer: 'An interface defines a contract — method/property signatures with no instance state. A class can implement multiple interfaces (unlike single class inheritance). C# 8+ allows default implementations. Use interfaces for capabilities (`IDisposable`, `ILogger`, `IEnumerable`). Difference from abstract class: interfaces have no constructors or instance fields.',
+    tip: `public interface ILogger {
+    void Log(string message);
+    // Default implementation (C# 8+)
+    void LogError(string m) => Log("[ERROR] " + m);
 }
 
-// Generic method with constraint
-public T Max<T>(T a, T b) where T : IComparable<T>
-    => a.CompareTo(b) >= 0 ? a : b;
+public interface ISaveable { void Save(); }
 
-Max(3, 7);          // 7
-Max("apple","banana"); // "banana"
-
-var stack = new Stack<string>();
-stack.Push("hello");`
-  },
-  {
-    category: 'OOP & Patterns', difficulty: 'Intermediate',
-    question: 'What are records in C# and when should you use them?',
-    answer: 'Records (C# 9+) are types designed for immutable data. They auto-generate value-based equality (`==` compares all properties), `ToString()`, and `GetHashCode()`. `with` expressions create modified copies non-destructively. Use records for DTOs, API response models, value objects, and command/query objects — anywhere immutability and equality by value matter.',
-    tip: `// Positional record — concise syntax
-public record Point(double X, double Y);
-
-var p1 = new Point(1, 2);
-var p2 = p1 with { Y = 5 };  // copy with one change
-
-Console.WriteLine(p1 == new Point(1, 2)); // true (value equality)
-Console.WriteLine(p2);                    // Point { X = 1, Y = 5 }
-
-// Extended record with methods
-public record Person(string Name, int Age)
-{
-    public bool IsAdult => Age >= 18;
+// Multiple interfaces — solves single-inheritance limit
+public class FileLogger : ILogger, ISaveable {
+    public void Log(string msg)  => Console.WriteLine(msg);
+    public void Save()           => File.WriteAllText("log.txt", "saved");
 }
 
-// record struct (C# 10+) — value type record
-public record struct Coordinate(float Lat, float Lng);`
+// Interface as type — polymorphism
+ILogger logger = new FileLogger();
+logger.Log("Started");
+
+// Common .NET interfaces
+// IEnumerable<T>  — foreach support
+// IDisposable     — using statement support
+// IComparable<T>  — sorting support
+// INotifyPropertyChanged — WPF/MAUI data binding`
   },
   {
-    category: 'OOP & Patterns', difficulty: 'Intermediate',
-    question: 'What are delegates and events in C#?',
-    answer: 'A delegate is a type-safe function pointer — it holds references to methods matching a specific signature. `event` wraps a delegate and enforces the publish-subscribe pattern: only the declaring class can invoke it; subscribers can only `+=` or `-=`. `Action<T>` (void return) and `Func<T, TResult>` are built-in generic delegates. Events are the foundation of the Observer pattern.',
-    tip: `// Built-in delegates: Func & Action
-Func<int, int, int> add = (a, b) => a + b;
-Action<string>       log = Console.WriteLine;
-add(3, 4);  // 7
+    category: 'Core C#', difficulty: 'Beginner',
+    question: 'What are structs and enums in C#?',
+    answer: 'A `struct` is a value type — stack-allocated, copied on assignment. Best for small immutable data. An `enum` defines named integer constants (more readable than magic numbers). Enum values default to `int` starting at 0. `[Flags]` enables bitwise combination. `Enum.TryParse` converts strings to enum values safely.',
+    tip: `// Struct — value type
+public struct Point {
+    public int X { get; init; }
+    public int Y { get; init; }
+    public double Distance => Math.Sqrt(X*X + Y*Y);
+}
+var p1 = new Point { X = 3, Y = 4 };
+var p2 = p1;   // full copy — independent
 
-// Event — publish/subscribe
-public class Button
-{
-    public event EventHandler<string> Clicked;
+// Enum — named constants
+public enum Status { Pending, Active, Inactive, Deleted }
+Status s = Status.Active;
+Console.WriteLine((int)s);  // 1
 
-    public void Click(string label)
-        => Clicked?.Invoke(this, label);  // null-safe invoke
+// Flags — combine values with |
+[Flags]
+public enum Permission { None=0, Read=1, Write=2, Execute=4 }
+var access = Permission.Read | Permission.Write;  // 3
+access.HasFlag(Permission.Read);                  // true
+
+// Parse from string
+if (Enum.TryParse<Status>("Active", out var parsed))
+    Console.WriteLine(parsed);`
+  },
+  {
+    category: 'Core C#', difficulty: 'Beginner',
+    question: 'What collection types does C# offer? (List, Dictionary, Queue, Stack)',
+    answer: '`List<T>`: dynamic array, O(1) access. `Dictionary<K,V>`: O(1) key lookup. `Queue<T>`: FIFO — `Enqueue`/`Dequeue`. `Stack<T>`: LIFO — `Push`/`Pop`. `HashSet<T>`: unique values, O(1) lookup. `LinkedList<T>`: O(1) insert/remove at any known node. Prefer interface types (`IEnumerable<T>`, `IList<T>`) in method parameters for flexibility.',
+    tip: `// List<T> — dynamic array
+var list = new List<string> { "a", "b", "c" };
+list.Add("d");  list.Remove("a");
+list.Contains("b");  // true
+list.Sort();
+list.Find(x => x == "b"); // "b"
+
+// Dictionary<K,V>
+var scores = new Dictionary<string, int> { ["Alice"] = 95 };
+scores["Bob"] = 87;
+scores.TryGetValue("Alice", out int s); // safe get
+
+// Queue<T> — FIFO
+var queue = new Queue<int>();
+queue.Enqueue(1); queue.Enqueue(2);
+queue.Dequeue();  // 1 (remove)
+queue.Peek();     // 2 (no remove)
+
+// Stack<T> — LIFO
+var stack = new Stack<int>();
+stack.Push(1); stack.Push(2); stack.Push(3);
+stack.Pop();   // 3
+stack.Peek();  // 2
+
+// HashSet<T> — unique values
+var set = new HashSet<string> { "a", "b", "a" };  // {"a","b"}`
+  },
+  {
+    category: 'Core C#', difficulty: 'Beginner',
+    question: 'How does exception handling work in C#? (try/catch/finally/throw)',
+    answer: '`try` wraps risky code. `catch(Type ex)` handles specific exceptions — most specific first. `finally` always runs (cleanup). `throw` re-throws preserving the stack trace. `when` adds a filter condition. `using` auto-disposes `IDisposable` resources even if an exception occurs.',
+    tip: `try {
+    var text = File.ReadAllText(path);
+    var data = JsonSerializer.Deserialize<Config>(text);
+}
+catch (FileNotFoundException ex) {
+    Console.WriteLine("Missing: " + ex.FileName);
+}
+catch (JsonException ex) when (ex.Message.Contains("token")) {
+    throw new InvalidOperationException("Bad config JSON", ex);
+}
+finally {
+    Console.WriteLine("Always runs — cleanup here");
 }
 
-var btn = new Button();
-btn.Clicked += (sender, label) =>
-    Console.WriteLine($"Clicked: {label}");
+// using — guaranteed Dispose even on exception
+using var reader = new StreamReader("file.txt");
+string content = reader.ReadToEnd();
 
-btn.Click("Submit");  // Clicked: Submit`
+// Custom exception
+public class NotFoundException : Exception {
+    public NotFoundException(string id)
+        : base("Item not found: " + id) { }
+}
+
+throw new NotFoundException("USER-42");`
   },
 
-  /* ── LINQ & Async ── */
+  /* ── Modern C# ── */
   {
-    category: 'LINQ & Async', difficulty: 'Intermediate',
-    question: 'What is LINQ and how do you use it?',
-    answer: 'LINQ (Language Integrated Query) provides a uniform syntax to query collections, databases (EF Core), XML, and more. Queries are lazy — they execute only when iterated (`ToList()`, `foreach`). Two styles: method syntax (lambda chains, preferred) and query syntax (SQL-like). Core methods: `Where`, `Select`, `OrderBy`, `GroupBy`, `Join`, `First`, `Any`, `All`, `Count`, `Sum`, `Aggregate`.',
-    tip: `var people = new List<Person> { ... };
+    category: 'Modern C#', difficulty: 'Intermediate',
+    question: 'What is LINQ and how do you use it? (from/select, where, group, join)',
+    answer: 'LINQ (Language Integrated Query) gives a unified syntax to query any `IEnumerable<T>`, database (EF Core), or XML. Queries are lazy — they execute only when iterated. Method syntax (lambda chains) is preferred. Query syntax is SQL-like. Core methods: `Where`, `Select`, `OrderBy`, `GroupBy`, `Join`, `FirstOrDefault`, `Any`/`All`, `Count`/`Sum`/`Max`.',
+    tip: `var people = new List<Person> { /* ... */ };
 
 // Method syntax (preferred)
-var result = people
-    .Where(p => p.Age > 18)
+var adults = people
+    .Where(p => p.Age >= 18)
     .OrderBy(p => p.Name)
     .Select(p => new { p.Name, p.Age })
     .ToList();
 
-// Query syntax (SQL-like)
-var result2 = from p in people
-              where p.Age > 18
-              orderby p.Name
-              select new { p.Name, p.Age };
+// Query syntax — SQL-like
+var result = from p in people
+             where p.Age >= 18
+             orderby p.Name
+             select new { p.Name, p.Age };
 
-// Useful aggregates
-people.Any(p => p.Age > 65);             // bool
-people.Count(p => p.IsActive);           // int
-people.Max(p => p.Salary);              // decimal
-people.GroupBy(p => p.Department);      // grouped`
+// GroupBy
+var byDept = people
+    .GroupBy(p => p.Department)
+    .Select(g => new { Dept = g.Key, Count = g.Count() });
+
+// Join
+var joined = from e in employees
+             join d in departments on e.DeptId equals d.Id
+             select new { e.Name, d.DeptName };
+
+// Aggregates
+people.Any(p => p.Age > 65);     // bool
+people.Max(p => p.Salary);       // decimal
+people.Count(p => p.IsActive);   // int`
   },
   {
-    category: 'LINQ & Async', difficulty: 'Intermediate',
-    question: 'How does async/await work in C#?',
-    answer: '`async` marks a method asynchronous — it returns `Task` or `Task<T>`. `await` suspends the method and releases the thread back to the thread pool until the awaited task completes, then resumes. Avoid `.Result` or `.Wait()` — they block the thread and can deadlock. Use `Task.WhenAll` to run tasks in parallel. Use `ConfigureAwait(false)` in library code.',
+    category: 'Modern C#', difficulty: 'Intermediate',
+    question: 'How does async/await work in C#? (Task<T>, async methods, await keyword)',
+    answer: '`async` marks a method asynchronous — returns `Task` or `Task<T>`. `await` suspends execution and releases the thread back to the pool until the task completes. Avoid `.Result`/`.Wait()` — they block and can deadlock. Use `Task.WhenAll` for parallel tasks, `CancellationToken` for cancellation.',
     tip: `public async Task<string> GetDataAsync(string url)
 {
     using var client = new HttpClient();
-    // Thread is freed while waiting — not blocked
-    var response = await client.GetAsync(url);
+    var response = await client.GetAsync(url);      // thread freed here
     response.EnsureSuccessStatusCode();
     return await response.Content.ReadAsStringAsync();
 }
 
-// Run two tasks in parallel
+// Parallel — run both at same time
 var t1 = GetDataAsync(url1);
 var t2 = GetDataAsync(url2);
-await Task.WhenAll(t1, t2);
+var results = await Task.WhenAll(t1, t2);
+
+// Cancellation
+public async Task LongTaskAsync(CancellationToken ct) {
+    for (int i = 0; i < 100; i++) {
+        ct.ThrowIfCancellationRequested();
+        await Task.Delay(100, ct);
+    }
+}
 
 // Async stream (C# 8+)
+public async IAsyncEnumerable<int> GetItemsAsync() {
+    for (int i = 0; i < 10; i++) {
+        await Task.Delay(50);
+        yield return i;
+    }
+}
 await foreach (var item in GetItemsAsync())
-    Console.WriteLine(item);`
+    Console.WriteLine(item);
+
+// PITFALLS
+// .Result / .Wait()  — blocks thread, can deadlock
+// async void         — exceptions crash the process`
   },
   {
-    category: 'LINQ & Async', difficulty: 'Intermediate',
-    question: 'What is Dependency Injection in C# / ASP.NET Core?',
-    answer: 'DI is a pattern where a class receives its dependencies from outside rather than creating them. ASP.NET Core has a built-in DI container. Register services with lifetimes: `Singleton` (one instance for the app), `Scoped` (one per HTTP request), `Transient` (new instance every time). Inject via constructor — the container resolves the whole dependency graph automatically.',
-    tip: `// Register in Program.cs
-builder.Services.AddSingleton<IConfig, AppConfig>();
-builder.Services.AddScoped<IUserRepository, UserRepository>();
-builder.Services.AddTransient<IEmailService, SmtpEmailService>();
+    category: 'Modern C#', difficulty: 'Intermediate',
+    question: 'What is pattern matching in C# and how do switch expressions work?',
+    answer: 'Pattern matching (C# 7+) tests a value\'s type/shape and extracts data in one step. `switch` expressions (C# 8+) return a value, are exhaustive, and use `_` as default. Supports type patterns, property patterns, relational patterns, and `when` guards.',
+    tip: `// Type pattern
+object obj = "hello";
+if (obj is string s && s.Length > 3)
+    Console.WriteLine(s.ToUpper());
 
-// Inject via constructor (preferred)
-public class UserService
+// switch expression — returns a value
+string Classify(object o) => o switch {
+    int i when i < 0  => "negative",
+    int i             => "positive: " + i,
+    string s          => "string len " + s.Length,
+    null              => "null",
+    _                 => "other"
+};
+
+// Property pattern
+string msg = order switch {
+    { Status: "paid", Total: > 100 } => "VIP order",
+    { Status: "paid"               } => "Paid order",
+    { Status: "pending"            } => "Awaiting payment",
+    _                                => "Unknown"
+};
+
+// Relational + logical patterns (C# 9+)
+string Grade(int score) => score switch {
+    >= 90           => "A",
+    >= 80 and < 90  => "B",
+    >= 70 and < 80  => "C",
+    _               => "F"
+};`
+  },
+  {
+    category: 'Modern C#', difficulty: 'Intermediate',
+    question: 'What are records in C# and when should you use them?',
+    answer: 'Records (C# 9+) auto-generate value-based equality (`==` compares all properties), `ToString()`, and `GetHashCode()`. `with` expressions create modified copies non-destructively. `record struct` (C# 10+) is a value-type record. Use records for DTOs, API models, value objects — anywhere immutability and equality by value matter.',
+    tip: `// Positional record — concise
+public record Point(double X, double Y);
+
+var p1 = new Point(1, 2);
+var p2 = p1 with { Y = 5 };    // non-destructive copy
+
+Console.WriteLine(p1 == new Point(1, 2));  // true — value equality!
+Console.WriteLine(p2);                     // Point { X = 1, Y = 5 }
+
+// Record with extra members
+public record Person(string Name, int Age) {
+    public bool IsAdult => Age >= 18;
+}
+
+// record struct (C# 10+) — value type
+public record struct Color(byte R, byte G, byte B);
+
+// Common use cases
+public record CreateUserRequest(string Email, string Password);
+public record UserDto(int Id, string Name, string Email);
+
+// Deconstruction
+var (name, age) = new Person("Alice", 30);
+Console.WriteLine(name); // Alice`
+  },
+  {
+    category: 'Modern C#', difficulty: 'Intermediate',
+    question: 'How do nullable types and null-handling operators work in C#?',
+    answer: '`T?` makes value types nullable (`int?`, `bool?`). Null operators: `??` (null-coalescing — return right if left is null), `?.` (null-conditional — short-circuit to null), `??=` (assign if null). In C# 8+ with nullable reference types enabled, the compiler warns about potential null dereferences.',
+    tip: `// Nullable value type
+int? age = null;
+age.HasValue      // false
+age ?? 0          // 0 (fallback)
+age?.ToString()   // null (no exception)
+
+// Null-coalescing chain
+int? x = null, y = 5;
+int result = x ?? y ?? 0;   // 5
+
+// Null-coalescing assignment
+string? name = null;
+name ??= "Default";          // now "Default"
+
+// Null-conditional — safe chaining
+var upper = name?.ToUpper()?.Trim();
+var len   = name?.Length;    // int?
+
+// Nullable reference types (C# 8+)
+// Enable in .csproj: <Nullable>enable</Nullable>
+string? maybeNull = GetName();
+string  safe      = maybeNull ?? throw new InvalidOperationException();
+
+// Null-forgiving operator — suppress warning
+string forced = maybeNull!;
+
+// Pattern null check
+if (maybeNull is { } value)   // matches only non-null
+    Console.WriteLine(value.Length);`
+  },
+  {
+    category: 'Modern C#', difficulty: 'Intermediate',
+    question: 'What are the notable new features in modern C#? (tuples, local functions, ranges, default interface methods)',
+    answer: '**Tuples** (C# 7+): lightweight multi-value return. **Local functions** (C# 7+): methods inside methods. **Ranges & Indices** (C# 8+): `^1` = last element, `1..4` = slice. **Default interface methods** (C# 8+): add methods without breaking implementations. **Top-level statements** (C# 9+): no class/Main boilerplate. **Global using** / **File-scoped namespaces** (C# 10+).',
+    tip: `// Tuples — named elements
+(string Name, int Age) GetUser() => ("Alice", 30);
+var (name, age) = GetUser();   // deconstruct
+Console.WriteLine(name);       // Alice
+
+// Local function — defined inside a method
+int Fibonacci(int n) {
+    return Calc(n);
+    int Calc(int x) => x <= 1 ? x : Calc(x-1) + Calc(x-2);
+}
+
+// Ranges & Indices (C# 8+)
+var arr = new[] { 0, 1, 2, 3, 4, 5 };
+var last  = arr[^1];    // 5
+var slice = arr[1..4];  // [1,2,3]
+var tail  = arr[3..];   // [3,4,5]
+
+// Default interface methods (C# 8+)
+public interface IShape {
+    double Area();
+    string Describe() => "Area: " + Area().ToString("F2");
+}
+
+// Top-level statements (C# 9+)
+// Console.WriteLine("Hello!"); // no class/Main needed`
+  },
+
+  /* ── Useful Daily Tools ── */
+  {
+    category: 'Useful Daily Tools', difficulty: 'Beginner',
+    question: 'How do you read and write files in C#? (StreamReader, StreamWriter, File class)',
+    answer: '`File` class: one-liners for small files (`ReadAllText`, `WriteAllText`, `ReadAllLines`, `AppendAllText`). For large files use `StreamReader`/`StreamWriter` to process line by line. Always wrap in `using`. Use async variants in async contexts.',
+    tip: `// File class — one-liners
+string content = File.ReadAllText("data.txt");
+string[] lines = File.ReadAllLines("data.txt");
+File.WriteAllText("out.txt", "Hello!");
+File.AppendAllText("log.txt", "entry\n");
+bool exists = File.Exists("data.txt");
+
+// StreamReader — large files, line by line
+using var reader = new StreamReader("large.csv");
+while (!reader.EndOfStream) {
+    string? line = reader.ReadLine();
+    Console.WriteLine(line);
+}
+
+// StreamWriter
+using var writer = new StreamWriter("output.txt", append: true);
+writer.WriteLine("Line 1");
+
+// Async (preferred in async methods)
+string text = await File.ReadAllTextAsync("data.txt");
+await File.WriteAllTextAsync("out.txt", "async write");
+
+// Path utilities
+string path = Path.Combine("data", "2024", "log.txt");
+string name = Path.GetFileNameWithoutExtension(path);`
+  },
+  {
+    category: 'Useful Daily Tools', difficulty: 'Intermediate',
+    question: 'What are generics in C# and how do you write generic methods with constraints?',
+    answer: 'Generics write type-safe reusable code parameterized by a type — no casting, no boxing overhead. Generic methods infer type from arguments. Constraints (`where T : class`, `where T : IComparable<T>`, `where T : new()`) restrict valid types and unlock type-specific operations.',
+    tip: `// Generic class
+public class Repository<T> where T : class {
+    private readonly List<T> _items = new();
+    public void Add(T item) => _items.Add(item);
+    public T?   Find(Func<T, bool> pred) => _items.FirstOrDefault(pred);
+}
+
+// Generic method — type inferred from arguments
+public T Max<T>(T a, T b) where T : IComparable<T>
+    => a.CompareTo(b) >= 0 ? a : b;
+
+Max(3, 7);               // 7
+Max("apple", "banana");  // "banana"
+
+// Multiple constraints
+public void Process<T>(T item)
+    where T : class, IDisposable, new()
 {
-    private readonly IUserRepository _repo;
-    private readonly IEmailService   _email;
+    using var obj = new T();  // T must have parameterless ctor
+}
 
-    public UserService(IUserRepository repo, IEmailService email)
-    {
-        _repo  = repo;
-        _email = email;
+var userRepo = new Repository<User>();
+userRepo.Add(new User { Name = "Alice" });
+var alice = userRepo.Find(u => u.Name == "Alice");`
+  },
+  {
+    category: 'Useful Daily Tools', difficulty: 'Intermediate',
+    question: 'What are delegates in C#? What are Func<>, Action<>, and Predicate<>?',
+    answer: 'A delegate is a type-safe function pointer holding one or more methods with a matching signature. `Func<T, TResult>` — has return value. `Action<T>` — void return. `Predicate<T>` — returns bool. Lambdas (`=>`) create delegate instances. Delegates power LINQ, callbacks, and the strategy pattern.',
+    tip: `// Func — has return value (last type = return)
+Func<int, int, int>  add    = (a, b) => a + b;
+Func<string, bool>   isLong = s => s.Length > 5;
+add(3, 4);       // 7
+
+// Action — void return
+Action<string> log   = Console.WriteLine;
+Action         greet = () => Console.WriteLine("Hello!");
+
+// Predicate — returns bool (used by List.Find)
+Predicate<int>  isEven = n => n % 2 == 0;
+var list = new List<int> { 1, 2, 3, 4, 5 };
+int  first = list.Find(isEven);           // 2
+List<int> evens = list.FindAll(isEven);   // [2,4]
+
+// Higher-order function
+public List<T> Filter<T>(List<T> items, Func<T, bool> pred)
+    => items.Where(pred).ToList();
+
+var adults = Filter(people, p => p.Age >= 18);
+
+// Multicast — chain multiple methods
+Action notify = SendEmail;
+notify += SendSMS;
+notify();   // both called`
+  },
+  {
+    category: 'Useful Daily Tools', difficulty: 'Intermediate',
+    question: 'How do events work in C# — publisher/subscriber pattern?',
+    answer: 'An `event` wraps a multicast delegate with restricted access — only the declaring class can invoke it; external code can only `+=`/`-=`. `EventHandler<TEventArgs>` is the standard type. Always invoke with `?.Invoke(...)` for null safety. Events implement the Observer pattern.',
+    tip: `// Publisher
+public class OrderService {
+    public event EventHandler<string>? OrderPlaced;
+
+    public void PlaceOrder(string orderId) {
+        // business logic...
+        OrderPlaced?.Invoke(this, orderId);  // null-safe raise
+    }
+}
+
+// Subscribers
+var svc = new OrderService();
+
+svc.OrderPlaced += (sender, id) =>
+    Console.WriteLine("Email for: " + id);
+
+svc.OrderPlaced += OnOrderPlaced;
+svc.OrderPlaced -= OnOrderPlaced;   // unsubscribe
+
+svc.PlaceOrder("ORD-001");
+
+void OnOrderPlaced(object? sender, string id)
+    => Console.WriteLine("SMS for: " + id);
+
+// Custom EventArgs
+public class OrderEventArgs : EventArgs {
+    public string OrderId { get; init; } = "";
+    public decimal Total  { get; init; }
+}
+
+public event EventHandler<OrderEventArgs>? OrderPlaced;`
+  },
+  {
+    category: 'Useful Daily Tools', difficulty: 'Intermediate',
+    question: 'What are attributes in C# and how do you create custom ones?',
+    answer: 'Attributes add declarative metadata to types/methods/properties — readable at runtime via reflection. Built-in: `[Obsolete]`, `[Serializable]`, ASP.NET `[Required]`/`[HttpGet]`/`[Authorize]`. Custom attributes inherit from `Attribute`. `AttributeTargets` restricts where they apply.',
+    tip: `// Built-in
+[Obsolete("Use NewMethod() instead.")]
+public void OldMethod() { }
+
+// Custom attribute
+[AttributeUsage(AttributeTargets.Method | AttributeTargets.Class)]
+public class AuthorAttribute : Attribute {
+    public string Name { get; }
+    public int    Year { get; }
+    public AuthorAttribute(string name, int year) {
+        Name = name; Year = year;
+    }
+}
+
+[Author("Alice", 2024)]
+public class UserService { }
+
+// Read at runtime
+var attr = typeof(UserService).GetCustomAttribute<AuthorAttribute>();
+Console.WriteLine(attr?.Name);  // Alice
+
+// Common framework attributes
+// ASP.NET Core: [ApiController] [Route] [HttpGet] [Authorize] [FromBody]
+// EF Core:      [Key] [Required] [MaxLength(100)] [NotMapped]
+// xUnit:        [Fact] [Theory] [InlineData]`
+  },
+  {
+    category: 'Useful Daily Tools', difficulty: 'Intermediate',
+    question: 'How do you unit test C# code? (NUnit, xUnit, MSTest)',
+    answer: 'Three main frameworks: **xUnit** (modern default), **NUnit** (rich assertions), **MSTest** (Microsoft built-in). All follow Arrange-Act-Assert (AAA). Use `Moq` or `NSubstitute` for mocking. Run with `dotnet test`. Design classes with constructor injection so dependencies can be mocked.',
+    tip: `// xUnit
+using Xunit;
+
+public class CalculatorTests {
+    [Fact]
+    public void Add_Returns_Sum() {
+        var calc = new Calculator();        // Arrange
+        int result = calc.Add(2, 3);        // Act
+        Assert.Equal(5, result);            // Assert
     }
 
-    public async Task RegisterAsync(string email)
-    {
-        var user = await _repo.CreateAsync(email);
-        await _email.SendWelcomeAsync(user);
+    // Data-driven test
+    [Theory]
+    [InlineData(2, 3, 5)]
+    [InlineData(-1, 1, 0)]
+    public void Add_Various(int a, int b, int expected)
+        => Assert.Equal(expected, new Calculator().Add(a, b));
+}
+
+// Mocking with Moq
+var mockRepo = new Mock<IUserRepository>();
+mockRepo.Setup(r => r.GetById(1))
+        .ReturnsAsync(new User { Id = 1, Name = "Alice" });
+
+var service = new UserService(mockRepo.Object);
+var user    = await service.GetUserAsync(1);
+Assert.Equal("Alice", user.Name);
+
+// dotnet test --filter "Category=Unit"`
+  },
+
+  /* ── DSA in C# ── */
+  {
+    category: 'DSA in C#', difficulty: 'Intermediate',
+    question: 'How do arrays and strings work in C# — key operations and patterns?',
+    answer: 'Arrays are fixed-size, zero-indexed. `Array.Sort()`, `Array.Reverse()`, `Array.IndexOf()`. Strings are immutable — each operation creates a new string. Use `StringBuilder` for heavy concatenation (O(n) vs O(n²)). `Span<T>` / `ReadOnlySpan<char>` enable zero-copy slicing with no heap allocation.',
+    tip: `// Array
+int[] arr = { 5, 3, 1, 4, 2 };
+Array.Sort(arr);                     // [1,2,3,4,5] in-place
+Array.Reverse(arr);                  // [5,4,3,2,1]
+int idx = Array.IndexOf(arr, 3);
+
+// 2D array
+int[,] matrix = new int[3, 3];
+matrix[0, 0] = 1;
+
+// String — immutable
+string s = "Hello, World!";
+s.Split(", ")               // ["Hello","World!"]
+s.Contains("World")         // true
+s.Replace("World", "C#")    // "Hello, C#!"
+s.Substring(7, 5)           // "World"
+string.Join("-", new[]{"a","b","c"}) // "a-b-c"
+
+// StringBuilder — O(n) concat
+var sb = new StringBuilder();
+for (int i = 0; i < 1000; i++) sb.Append(i);
+string result = sb.ToString();
+
+// Span<char> — zero-copy slice, no allocation
+ReadOnlySpan<char> span = s.AsSpan(7, 5);  // "World"`
+  },
+  {
+    category: 'DSA in C#', difficulty: 'Intermediate',
+    question: 'How do LinkedList, Stack, and Queue work in C#?',
+    answer: '`LinkedList<T>`: doubly linked, O(1) insert/remove at known node, O(n) search. `Stack<T>`: LIFO — `Push`/`Pop`/`Peek`. `Queue<T>`: FIFO — `Enqueue`/`Dequeue`/`Peek`. `PriorityQueue<T,P>` (C# 10+): dequeues by priority (lowest number first).',
+    tip: `// LinkedList<T>
+var ll = new LinkedList<int>();
+ll.AddFirst(1); ll.AddLast(2); ll.AddLast(3);  // [1,2,3]
+ll.Remove(2);                                   // [1,3]
+
+// Stack<T> — LIFO
+var stack = new Stack<int>();
+stack.Push(1); stack.Push(2); stack.Push(3);
+stack.Pop();   // 3
+stack.Peek();  // 2 (no remove)
+
+// Queue<T> — FIFO
+var queue = new Queue<int>();
+queue.Enqueue(1); queue.Enqueue(2); queue.Enqueue(3);
+queue.Dequeue(); // 1
+queue.Peek();    // 2
+
+// PriorityQueue — C# 10+
+var pq = new PriorityQueue<string, int>();
+pq.Enqueue("low",  3);
+pq.Enqueue("high", 1);
+pq.Enqueue("mid",  2);
+pq.Dequeue();  // "high" (priority 1 = highest)`
+  },
+  {
+    category: 'DSA in C#', difficulty: 'Intermediate',
+    question: 'How do trees and graphs work in C#?',
+    answer: 'Trees and graphs are not built into .NET — implement with classes. Binary tree node: `Value`, `Left`, `Right`. Traversals: in-order (L-N-R), pre-order (N-L-R), BFS (Queue-based). Graphs: adjacency list with `Dictionary<T, List<T>>`. BFS for shortest path, DFS with Stack or recursion.',
+    tip: `// Binary Tree
+public class TreeNode<T> {
+    public T Value;
+    public TreeNode<T>? Left, Right;
+    public TreeNode(T val) { Value = val; }
+}
+
+// In-order traversal
+void InOrder(TreeNode<int>? n) {
+    if (n == null) return;
+    InOrder(n.Left);
+    Console.Write(n.Value + " ");
+    InOrder(n.Right);
+}
+
+// BFS — level-by-level
+void BFS(TreeNode<int> root) {
+    var q = new Queue<TreeNode<int>>();
+    q.Enqueue(root);
+    while (q.Count > 0) {
+        var node = q.Dequeue();
+        Console.Write(node.Value + " ");
+        if (node.Left  != null) q.Enqueue(node.Left);
+        if (node.Right != null) q.Enqueue(node.Right);
+    }
+}
+
+// Graph — adjacency list
+var graph = new Dictionary<int, List<int>> {
+    [1] = new() { 2, 3 },
+    [2] = new() { 4 },
+    [3] = new() { 4, 5 },
+};
+
+// DFS with Stack
+void DFS(int start) {
+    var visited = new HashSet<int>();
+    var stack   = new Stack<int>();
+    stack.Push(start);
+    while (stack.Count > 0) {
+        int n = stack.Pop();
+        if (visited.Add(n)) graph[n].ForEach(stack.Push);
     }
 }`
   },
+  {
+    category: 'DSA in C#', difficulty: 'Intermediate',
+    question: 'How do sorting and searching work in C#? (Array.Sort, binary search, LINQ)',
+    answer: '`Array.Sort()` uses introsort — O(n log n). Provide a `Comparison<T>` delegate for custom order. LINQ `.OrderBy()` returns a new sorted sequence (non-mutating, lazy). `Array.BinarySearch()` is O(log n) on a sorted array. For interviews, implement quicksort/binary search yourself; use built-ins in production.',
+    tip: `// Built-in sort — in-place
+int[] arr = { 5, 3, 1, 4, 2 };
+Array.Sort(arr);                             // [1,2,3,4,5]
+Array.Sort(arr, (a, b) => b.CompareTo(a));  // [5,4,3,2,1] desc
+
+// Sort objects
+people.Sort((a, b) => a.Name.CompareTo(b.Name));
+var sorted = people.OrderBy(p => p.Age).ThenBy(p => p.Name); // LINQ
+
+// Binary search — O(log n), array must be sorted
+Array.Sort(arr);
+int idx = Array.BinarySearch(arr, 3); // index of 3
+
+// Manual binary search
+int BinarySearch(int[] a, int target) {
+    int lo = 0, hi = a.Length - 1;
+    while (lo <= hi) {
+        int mid = lo + (hi - lo) / 2;
+        if      (a[mid] == target) return mid;
+        else if (a[mid] <  target) lo = mid + 1;
+        else                       hi = mid - 1;
+    }
+    return -1;
+}
+
+// Quicksort skeleton
+void QuickSort(int[] a, int lo, int hi) {
+    if (lo >= hi) return;
+    int p = Partition(a, lo, hi);
+    QuickSort(a, lo, p - 1);
+    QuickSort(a, p + 1, hi);
+}`
+  },
+  {
+    category: 'DSA in C#', difficulty: 'Advanced',
+    question: 'What are the key DSA interview patterns in C#?',
+    answer: 'Core patterns: **Two Pointers** (sorted arrays). **Sliding Window** (subarrays). **Binary Search on answer**. **BFS for shortest path**. **DFS + backtracking** (permutations). **Dynamic Programming** — memoization with `Dictionary`, tabulation with arrays. **PriorityQueue** for Top-K problems.',
+    tip: `// Two Pointers — pair sum in sorted array
+int[] TwoSum(int[] arr, int target) {
+    int lo = 0, hi = arr.Length - 1;
+    while (lo < hi) {
+        int sum = arr[lo] + arr[hi];
+        if      (sum == target) return new[] { lo, hi };
+        else if (sum <  target) lo++;
+        else                    hi--;
+    }
+    return Array.Empty<int>();
+}
+
+// Sliding Window — max subarray sum of length k
+int MaxSumSubarray(int[] arr, int k) {
+    int win = arr.Take(k).Sum(), max = win;
+    for (int i = k; i < arr.Length; i++) {
+        win += arr[i] - arr[i - k];
+        max  = Math.Max(max, win);
+    }
+    return max;
+}
+
+// Memoization with Dictionary
+var memo = new Dictionary<int, long>();
+long Fib(int n) {
+    if (n <= 1) return n;
+    if (memo.TryGetValue(n, out long v)) return v;
+    return memo[n] = Fib(n-1) + Fib(n-2);
+}
+
+// Top-K with min-heap
+var pq = new PriorityQueue<int, int>();
+foreach (var num in nums) {
+    pq.Enqueue(num, num);
+    if (pq.Count > k) pq.Dequeue();
+}`
+  },
+
+  /* ── Advanced Topics ── */
+  {
+    category: 'Advanced Topics', difficulty: 'Advanced',
+    question: 'How does concurrency work in C#? (Parallel.For, PLINQ, async streams)',
+    answer: '`async`/`await` for I/O-bound (threads not blocked). `Parallel.For`/`ForEach` for CPU-bound work. PLINQ adds `.AsParallel()`. Async streams (`IAsyncEnumerable<T>`) stream data over time. `SemaphoreSlim` throttles concurrency. Thread-safe collections: `ConcurrentDictionary`, `ConcurrentQueue`.',
+    tip: `// Parallel.For — CPU-bound on thread pool
+Parallel.For(0, 1000, i => ProcessItem(i));
+Parallel.ForEach(items,
+    new ParallelOptions { MaxDegreeOfParallelism = 4 },
+    item => Process(item));
+
+// PLINQ
+var results = largeList
+    .AsParallel()
+    .WithDegreeOfParallelism(4)
+    .Where(x => x.IsExpensive)
+    .ToList();
+
+// Async stream
+public async IAsyncEnumerable<int> StreamAsync() {
+    for (int i = 0; i < 10; i++) {
+        await Task.Delay(100);
+        yield return i;
+    }
+}
+await foreach (var n in StreamAsync())
+    Console.WriteLine(n);
+
+// SemaphoreSlim — limit concurrent operations
+var sem = new SemaphoreSlim(5);
+await sem.WaitAsync();
+try   { await DoRequestAsync(); }
+finally { sem.Release(); }
+
+// Thread-safe collections
+var dict = new ConcurrentDictionary<string, int>();
+dict.TryAdd("key", 1);
+dict.AddOrUpdate("key", 1, (k, v) => v + 1);`
+  },
+  {
+    category: 'Advanced Topics', difficulty: 'Advanced',
+    question: 'How does memory management work in C#? (garbage collection, IDisposable, using blocks)',
+    answer: 'The .NET GC uses a generational model: Gen 0 (short-lived, fast), Gen 1, Gen 2 (long-lived, rare). For unmanaged resources implement `IDisposable` and use `using`. Avoid finalizers — they delay collection. Reduce GC pressure with `ArrayPool`, `Span<T>`, `ValueTask`.',
+    tip: `// Generational GC
+// new object → Gen 0 (collected often, fast)
+// survives   → Gen 1 → Gen 2 (collected rarely)
+// Objects > 85KB → LOH (Large Object Heap, rarely compacted)
+
+// IDisposable — correct pattern
+public class Connection : IDisposable {
+    private SqlConnection _conn;
+    private bool _disposed;
+
+    public Connection(string cs) => _conn = new SqlConnection(cs);
+
+    public void Dispose() {
+        if (_disposed) return;
+        _conn.Dispose();
+        _disposed = true;
+        GC.SuppressFinalize(this);
+    }
+}
+
+// using — guaranteed cleanup
+using var conn = new Connection(connectionString);
+
+// Reduce GC pressure
+byte[] buf = ArrayPool<byte>.Shared.Rent(4096);
+try   { Process(buf); }
+finally { ArrayPool<byte>.Shared.Return(buf); }
+
+// WeakReference — cached, GC can collect
+var weak = new WeakReference<BigObject>(new BigObject());
+if (weak.TryGetTarget(out var obj)) obj.Process();`
+  },
+  {
+    category: 'Advanced Topics', difficulty: 'Advanced',
+    question: 'What is reflection in C# and how do you use System.Reflection?',
+    answer: 'Reflection inspects and invokes types, methods, and properties at runtime. `Type` is the entry point. Used by DI containers, serializers, ORMs, and test frameworks. Reflection is powerful but slow — cache `MethodInfo`/`PropertyInfo` in hot paths, or use source generators (C# 10+) for compile-time alternatives.',
+    tip: `// Get Type
+Type t = typeof(Person);
+Type t2 = person.GetType();
+
+// List properties
+foreach (var p in t.GetProperties())
+    Console.WriteLine(p.Name + ": " + p.PropertyType.Name);
+
+// Create instance + invoke method
+var obj    = Activator.CreateInstance(t);
+var method = t.GetMethod("Greet");
+method?.Invoke(obj, new object[] { "World" });
+
+// Set property dynamically
+t.GetProperty("Name")?.SetValue(obj, "Alice");
+
+// Read custom attribute
+var attr = t.GetCustomAttribute<AuthorAttribute>();
+Console.WriteLine(attr?.Name);
+
+// Load assembly dynamically
+var asm    = Assembly.LoadFrom("Plugin.dll");
+var type   = asm.GetType("Plugin.Core")!;
+var plugin = Activator.CreateInstance(type);
+
+// Cache reflection for performance
+private static readonly MethodInfo _process =
+    typeof(MyService).GetMethod("Process")!;`
+  },
+  {
+    category: 'Advanced Topics', difficulty: 'Advanced',
+    question: 'What is unsafe code in C# — pointers, stackalloc, and fixed?',
+    answer: 'Unsafe code bypasses GC and type safety, allowing C-style pointer manipulation. Requires `unsafe` keyword and `<AllowUnsafeBlocks>true</AllowUnsafeBlocks>` in the project. `stackalloc` allocates on the stack (no GC). `fixed` pins a managed object so GC cannot move it. `Span<T>` is the modern safe alternative — prefer it.',
+    tip: `// Enable: <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+
+unsafe {
+    int x   = 42;
+    int* ptr = &x;           // pointer to x
+    Console.WriteLine(*ptr); // dereference: 42
+    *ptr = 100;
+    Console.WriteLine(x);    // 100
+}
+
+// stackalloc — stack allocation, no GC
+unsafe {
+    int* buf = stackalloc int[10];
+    for (int i = 0; i < 10; i++) buf[i] = i * i;
+}
+
+// Span<T> — SAFE alternative (no unsafe keyword needed)
+Span<int> span = stackalloc int[10];
+span.Fill(0);
+span[5] = 99;
+
+// fixed — pin managed array
+byte[] managed = new byte[1024];
+unsafe {
+    fixed (byte* p = managed) {
+        p[0] = 0xFF;  // p stable during this block
+    }
+}
+
+// When to use: P/Invoke, high-perf parsing, interop
+// Prefer: Span<T>, Memory<T>, MemoryMarshal for most cases`
+  },
+  {
+    category: 'Advanced Topics', difficulty: 'Advanced',
+    question: 'How do you optimize C# performance? (Span<T>, ValueTask, ArrayPool, benchmarking)',
+    answer: '`Span<T>` and `Memory<T>` enable zero-copy slicing — no heap allocation. `ValueTask<T>` avoids allocation for async methods that often complete synchronously. `ArrayPool<T>` rents reusable buffers. `BenchmarkDotNet` with `[MemoryDiagnoser]` measures allocations and throughput. Rule: profile first.',
+    tip: `// Span<T> — zero-copy, no allocation
+string s = "Hello, World!";
+ReadOnlySpan<char> span = s.AsSpan(7, 5);  // "World" — no new string
+
+// ArrayPool — reuse buffers
+byte[] buf = ArrayPool<byte>.Shared.Rent(4096);
+try {
+    // use buf
+} finally {
+    ArrayPool<byte>.Shared.Return(buf, clearArray: true);
+}
+
+// ValueTask — sync path has no allocation
+public ValueTask<int> GetCachedAsync(string key) {
+    if (_cache.TryGetValue(key, out int val))
+        return ValueTask.FromResult(val);        // no heap alloc
+    return new ValueTask<int>(FetchAsync(key));  // async path
+}
+
+// BenchmarkDotNet
+[MemoryDiagnoser]
+public class Bench {
+    [Benchmark(Baseline = true)]
+    public string StringConcat() => "a" + "b" + "c";
+
+    [Benchmark]
+    public string UseSpan() {
+        Span<char> buf = stackalloc char[3];
+        buf[0]='a'; buf[1]='b'; buf[2]='c';
+        return new string(buf);
+    }
+}
+
+// Other tips:
+// sealed classes — JIT can devirtualize calls
+// Prefer struct for small value objects
+// Avoid LINQ in tight loops — use for loops`
+  },
+
+  /* ── Ecosystem ── */
+  {
+    category: 'Ecosystem', difficulty: 'Beginner',
+    question: 'How does the .NET runtime work? (CLR, JIT, assemblies, NuGet)',
+    answer: 'C# compiles to **IL** (Intermediate Language). The **CLR** runs IL using **JIT** — compiled to native on first call, then cached. An assembly (.dll/.exe) is the unit of deployment. **NuGet** is the package manager. `dotnet` CLI manages everything.',
+    tip: `// Pipeline:
+// C# source → (Roslyn) → IL (.dll) → (CLR + JIT) → native code
+
+// dotnet CLI
+// dotnet new console -n MyApp
+// dotnet build
+// dotnet run
+// dotnet test
+// dotnet publish -c Release
+
+// NuGet
+// dotnet add package Serilog
+// dotnet add package Newtonsoft.Json
+
+// .csproj
+// <Project Sdk="Microsoft.NET.Sdk">
+//   <PropertyGroup>
+//     <OutputType>Exe</OutputType>
+//     <TargetFramework>net9.0</TargetFramework>
+//     <Nullable>enable</Nullable>
+//     <ImplicitUsings>enable</ImplicitUsings>
+//   </PropertyGroup>
+//   <ItemGroup>
+//     <PackageReference Include="Serilog" Version="4.0.0" />
+//   </ItemGroup>
+// </Project>
+
+// .NET versions
+// .NET 8 (LTS)  .NET 9  .NET 10 (upcoming LTS)
+// .NET Framework (Windows only, legacy)`
+  },
+  {
+    category: 'Ecosystem', difficulty: 'Intermediate',
+    question: 'How do you build web apps in C#? (ASP.NET Core, MVC, Razor Pages, Blazor)',
+    answer: '**Minimal API** (C# 10+): concise routes, great for microservices. **MVC**: controllers handle requests, return views or JSON. **Razor Pages**: page-centric CRUD. **Blazor Server**: C# on server, UI via SignalR. **Blazor WASM**: C# in the browser via WebAssembly.',
+    tip: `// Minimal API
+var app = WebApplication.Create(args);
+app.MapGet("/users/{id:int}", async (int id, IUserService svc)
+    => await svc.GetByIdAsync(id) is { } u ? Results.Ok(u) : Results.NotFound());
+app.Run();
+
+// MVC Controller
+[ApiController, Route("api/[controller]")]
+public class UsersController : ControllerBase {
+    [HttpGet("{id}")]
+    public async Task<ActionResult<UserDto>> Get(int id)
+        => await _svc.GetByIdAsync(id) is { } u ? Ok(u) : NotFound();
+
+    [HttpPost]
+    public async Task<ActionResult<UserDto>> Create(CreateUserRequest req) {
+        var user = await _svc.CreateAsync(req);
+        return CreatedAtAction(nameof(Get), new { id = user.Id }, user);
+    }
+}
+
+// Blazor component
+@page "/counter"
+<h1>Count: @_count</h1>
+<button @onclick="() => _count++">Click</button>
+@code { int _count; }
+
+// Program.cs
+builder.Services.AddControllers();
+builder.Services.AddScoped<IUserService, UserService>();`
+  },
+  {
+    category: 'Ecosystem', difficulty: 'Intermediate',
+    question: 'What are the desktop development options in C#? (WPF, WinForms, .NET MAUI)',
+    answer: '**WinForms**: drag-and-drop UI, Windows only, rapid prototyping. **WPF**: XAML data binding, MVVM pattern, Windows only, rich graphics. **.NET MAUI**: cross-platform (Windows/macOS/iOS/Android) from one codebase, replaces Xamarin.Forms.',
+    tip: `// WPF — MVVM pattern
+public class MainViewModel : INotifyPropertyChanged {
+    private string _name = "";
+    public string UserName {
+        get => _name;
+        set { _name = value; PropertyChanged?.Invoke(this, new(nameof(UserName))); }
+    }
+    public ICommand SaveCommand => new RelayCommand(Save);
+    public event PropertyChangedEventHandler? PropertyChanged;
+    private void Save() { /* ... */ }
+}
+
+// WPF XAML binding
+// <TextBox Text="{Binding UserName}" />
+// <Button Command="{Binding SaveCommand}" Content="Save" />
+
+// .NET MAUI — cross-platform
+// <Label Text="{Binding Greeting}" />
+// <Button Text="Go" Command="{Binding GoCommand}" />
+
+// dotnet new maui -n MyApp
+// Targets: Windows, macOS, iOS, Android
+
+// Choose:
+// WinForms  — quick internal Windows tools / legacy
+// WPF       — rich Windows desktop + MVVM
+// .NET MAUI — cross-platform mobile + desktop`
+  },
+  {
+    category: 'Ecosystem', difficulty: 'Intermediate',
+    question: 'How do you use C# for cloud and mobile? (Azure SDK, microservices, gRPC, .NET MAUI)',
+    answer: '**Mobile**: .NET MAUI (replaces Xamarin — iOS + Android). **Cloud**: Azure SDK for Blob, Service Bus, Cosmos DB. **Microservices**: ASP.NET Core + Docker + Kubernetes. **gRPC**: high-performance binary RPC with Protocol Buffers — ideal for service-to-service.',
+    tip: `// Azure Blob Storage
+using Azure.Storage.Blobs;
+var container = new BlobServiceClient(cs).GetBlobContainerClient("photos");
+await container.UploadBlobAsync("img.jpg", stream);
+
+// gRPC proto
+// service OrderService {
+//   rpc GetOrder (GetOrderRequest) returns (OrderReply);
+// }
+
+// gRPC server
+public class OrderGrpc : OrderService.OrderServiceBase {
+    public override async Task<OrderReply> GetOrder(
+        GetOrderRequest req, ServerCallContext ctx) {
+        var o = await _repo.FindAsync(req.Id);
+        return new OrderReply { Id = o.Id, Total = (double)o.Total };
+    }
+}
+
+// .NET MAUI
+// dotnet new maui -n MyMobile
+// Targets: Android · iOS (requires Xcode on Mac)
+
+// Microservices reference stack:
+// ASP.NET Core Minimal API  — HTTP layer
+// MassTransit + RabbitMQ   — messaging
+// EF Core + PostgreSQL      — data
+// OpenTelemetry + Serilog   — observability
+// Docker + Kubernetes        — orchestration`
+  },
+  {
+    category: 'Ecosystem', difficulty: 'Intermediate',
+    question: 'How do you use C# for game development with Unity?',
+    answer: 'Unity uses C# via `MonoBehaviour`. Key lifecycle: `Awake()` (once, early), `Start()` (before first frame), `Update()` (every frame), `FixedUpdate()` (physics), `OnCollisionEnter()`. Coroutines handle time-based logic. Events, delegates, and ScriptableObjects are core patterns.',
+    tip: `using UnityEngine;
+
+public class PlayerController : MonoBehaviour {
+    public float speed = 5f;
+    private Rigidbody _rb;
+
+    void Awake()  { _rb = GetComponent<Rigidbody>(); }
+
+    void Update() {
+        float h = Input.GetAxis("Horizontal");
+        float v = Input.GetAxis("Vertical");
+        _rb.velocity = new Vector3(h, 0, v) * speed;
+    }
+
+    void OnCollisionEnter(Collision col) {
+        if (col.gameObject.CompareTag("Enemy")) TakeDamage(10);
+    }
+}
+
+// Coroutine — timed logic without blocking Update
+IEnumerator SpawnLoop() {
+    while (true) {
+        Instantiate(enemyPrefab, spawnPoint.position, Quaternion.identity);
+        yield return new WaitForSeconds(3f);
+    }
+}
+void Start() => StartCoroutine(SpawnLoop());
+
+// Key C# concepts for Unity:
+// Events & delegates  — UI callbacks, game events
+// Coroutines          — cutscenes, timed effects
+// Interfaces          — IInteractable, IDamageable
+// ScriptableObjects   — data-driven design`
+  },
+
+  /* ── Interview ── */
+  {
+    category: 'Interview', difficulty: 'Intermediate',
+    question: 'C# Interview — What are the four pillars of OOP?',
+    answer: '**Encapsulation**: hide internal state with access modifiers. **Abstraction**: `interface`/`abstract class` defines contract without exposing implementation. **Inheritance**: `: BaseClass` — single; `sealed` prevents subclassing. **Polymorphism**: `virtual`/`override` — correct method called at runtime based on actual type.',
+    tip: `// Encapsulation
+public class Account {
+    private decimal _balance;
+    public decimal Balance => _balance;
+    public void Deposit(decimal n) { if (n > 0) _balance += n; }
+}
+
+// Polymorphism
+public class Animal  { public virtual  string Sound() => "..."; }
+public class Dog : Animal { public override string Sound() => "Woof"; }
+
+Animal pet = new Dog();
+pet.Sound();  // "Woof" — runtime dispatch
+
+// Abstraction
+public interface IPaymentGateway {
+    Task<bool> ChargeAsync(decimal amount, string card);
+}
+// StripeGateway and PayPalGateway both implement it
+
+// sealed
+public sealed class LoggingService { }
+
+// Real-world analogies:
+// Encapsulation  → TV remote (buttons exposed, internals hidden)
+// Abstraction    → Car pedals (interface exposed, engine hidden)
+// Inheritance    → Manager is-a Employee
+// Polymorphism   → Draw() works differently per Shape`
+  },
+  {
+    category: 'Interview', difficulty: 'Intermediate',
+    question: 'C# Interview — Explain LINQ and its most important methods.',
+    answer: 'LINQ queries any `IEnumerable<T>`. Queries are **lazy** — `ToList()`/`ToArray()` materializes. Key methods: `Where`, `Select`, `OrderBy`/`ThenBy`, `GroupBy`, `Join`, `FirstOrDefault`, `Any`/`All`, `Count`/`Sum`/`Max`. Same syntax works on in-memory collections AND translates to SQL via EF Core.',
+    tip: `var orders = new List<Order> { /* ... */ };
+
+// Filter + sort + paginate + project
+var page = orders
+    .Where(o => o.Status == "paid")
+    .OrderByDescending(o => o.Total)
+    .Skip(20).Take(10)
+    .Select(o => new { o.Id, o.Total })
+    .ToList();                  // executes query here
+
+// Aggregates
+decimal revenue = orders.Sum(o => o.Total);
+bool hasLarge   = orders.Any(o => o.Total > 1000);
+bool allPaid    = orders.All(o => o.Status == "paid");
+
+// GroupBy
+var byStatus = orders
+    .GroupBy(o => o.Status)
+    .Select(g => new { Status = g.Key, Count = g.Count() });
+
+// Safe single item
+var order = orders.FirstOrDefault(o => o.Id == 42);
+
+// Interview points:
+// 1. Lazy — ToList() triggers execution
+// 2. Method == query syntax (same IL)
+// 3. EF Core translates LINQ to SQL
+// 4. Avoid ToList() inside loops — N+1 problem`
+  },
+  {
+    category: 'Interview', difficulty: 'Intermediate',
+    question: 'C# Interview — Explain async/await and the Task-based model.',
+    answer: '`async` + `Task<T>` for non-blocking code. `await` suspends method, releases thread. Pitfalls: `.Result`/`.Wait()` block and can deadlock; `async void` hides exceptions; forgetting `await` loses errors. Use `Task.WhenAll` for parallelism, `CancellationToken` for cancellation.',
+    tip: `// Pattern — async all the way up
+public async Task<User> GetUserAsync(int id, CancellationToken ct) {
+    var user = await _db.Users.FindAsync(id, ct);
+    return user ?? throw new NotFoundException(id.ToString());
+}
+
+// Parallel tasks
+var t1 = GetUserAsync(1, ct);
+var t2 = GetUserAsync(2, ct);
+await Task.WhenAll(t1, t2);
+
+// Library code — don't capture sync context
+await Task.Delay(100).ConfigureAwait(false);
+
+// ValueTask — no allocation on cached/sync path
+public ValueTask<Config> GetConfigAsync() =>
+    _cached is { } c
+        ? ValueTask.FromResult(c)
+        : new ValueTask<Config>(FetchAsync());
+
+// PITFALLS:
+// async void   — exceptions crash process
+// .Result      — can deadlock in ASP.NET
+// no await     — fire-and-forget, errors lost
+// Missing CancellationToken — can't cancel`
+  },
+  {
+    category: 'Interview', difficulty: 'Intermediate',
+    question: 'C# Interview — Explain delegates and events.',
+    answer: 'A **delegate** is a type-safe function pointer. `Func<T>` (returns value), `Action<T>` (void), `Predicate<T>` (bool). An **event** restricts a delegate: only the declaring class can raise it; subscribers can only `+=`/`-=`. Delegates power LINQ, callbacks, strategy pattern. Events power the Observer pattern.',
+    tip: `// Delegates
+Func<int, int, int>  add   = (a, b) => a + b;
+Action<string>       log   = Console.WriteLine;
+Predicate<int>       isEven = n => n % 2 == 0;
+
+// Higher-order function
+public List<T> Filter<T>(List<T> items, Func<T, bool> pred)
+    => items.Where(pred).ToList();
+
+// Event — Observer pattern
+public class StockMarket {
+    public event EventHandler<decimal>? PriceChanged;
+    public void UpdatePrice(decimal p)
+        => PriceChanged?.Invoke(this, p);
+}
+
+var market = new StockMarket();
+market.PriceChanged += (_, p) => Console.WriteLine("Price: " + p);
+market.UpdatePrice(42.5m);
+
+// Multicast
+Action greet = () => Console.Write("Hello ");
+greet += () => Console.Write("World!");
+greet();  // "Hello World!"
+
+// Points:
+// Event can ONLY be raised by declaring class
+// Func/Action/Predicate are built-in delegate types
+// Closures capture variables — beware loop variable capture`
+  },
+  {
+    category: 'Interview', difficulty: 'Advanced',
+    question: 'C# Interview — Explain memory management and garbage collection.',
+    answer: 'GC is generational: Gen 0 (short-lived, fast), Gen 1, Gen 2 (long-lived, rare). For unmanaged resources implement `IDisposable` and use `using`. Avoid finalizers. Reduce GC pressure: `ArrayPool`, `Span<T>`, `ValueTask`. Objects > 85KB go to LOH (Large Object Heap, rarely compacted).',
+    tip: `// IDisposable pattern
+public class Connection : IDisposable {
+    private SqlConnection _conn;
+    private bool _disposed;
+
+    public Connection(string cs) => _conn = new SqlConnection(cs);
+
+    public void Dispose() {
+        if (_disposed) return;
+        _conn.Dispose();
+        _disposed = true;
+        GC.SuppressFinalize(this);
+    }
+}
+
+using var conn = new Connection(cs); // auto-disposed
+
+// Generational GC
+// Gen 0 — new objects, collected very often
+// Gen 1 — buffer zone
+// Gen 2 — statics, caches, long-lived
+// LOH   — objects > 85KB, rarely collected
+
+// Reduce GC pressure
+byte[] buf = ArrayPool<byte>.Shared.Rent(4096);
+try   { Process(buf); }
+finally { ArrayPool<byte>.Shared.Return(buf); }
+
+// Memory leaks in C#:
+// Event handlers not unsubscribed (+=, never -=)
+// Static collections growing unbounded
+// Unclosed streams / connections`
+  },
+  {
+    category: 'Interview', difficulty: 'Intermediate',
+    question: 'C# Interview — What is the C# ecosystem and when to choose which technology?',
+    answer: 'C# covers the full stack. **Web**: ASP.NET Core. **Desktop**: WPF (Windows), WinForms, .NET MAUI (cross-platform). **Mobile**: .NET MAUI. **Cloud**: Azure SDK, microservices, gRPC. **Games**: Unity. **Data**: EF Core, Dapper. **Testing**: xUnit, NUnit, Moq.',
+    tip: `// Decision tree
+
+// REST API / microservice?
+//   → Minimal API (simple) or MVC (large structured API)
+
+// Web UI?
+//   → Razor Pages (server-rendered CRUD)
+//   → Blazor Server (interactive, real-time)
+//   → Blazor WASM (offline, browser-native)
+
+// Windows desktop?
+//   → WPF (MVVM, data binding, rich UI)
+//   → WinForms (legacy or quick tools)
+
+// Cross-platform desktop + mobile?
+//   → .NET MAUI (Windows + macOS + iOS + Android)
+
+// Game development?
+//   → Unity (C# scripts)
+
+// Cloud?
+//   → Azure SDK, Docker, Kubernetes, gRPC
+
+// Database?
+//   → EF Core (LINQ queries + migrations)
+//   → Dapper (fast, write SQL yourself)
+
+// LEARNING PATHS
+// Backend:  Fundamentals → Core C# → LINQ → Async → ASP.NET Core → EF Core → Azure
+// Games:    Fundamentals → OOP → Events/Delegates → Unity → Performance`
+  },
 ];
+
 
 /* ═══════════════════════════════════════════════════════════
    SQL — 20 cards  |  Basics → Intermediate → Advanced
@@ -13062,9 +14183,14 @@ const CATEGORY_COLORS = {
   'GROUP BY Patterns':   '#0284c7',
   'SQL Patterns':        '#0369a1',
   // C#
-  'C# Basics':    '#8b5cf6',
-  'OOP & Patterns': '#a78bfa',
-  'LINQ & Async': '#7c3aed',
+  'C# Basics':          '#8b5cf6',
+  'OOP & Patterns':     '#a78bfa',
+  'LINQ & Async':       '#7c3aed',
+  'Core C#':            '#a78bfa',
+  'Modern C#':          '#7c3aed',
+  'Useful Daily Tools': '#6d28d9',
+  'DSA in C#':          '#5b21b6',
+  'Advanced Topics':    '#4c1d95',
   // Python
   'Core Python': '#3b82f6',
   'OOP & Design': '#60a5fa',
