@@ -17604,6 +17604,16 @@ LIMIT    3;                                   -- ➐ top 3 only
 ];
 
 /* ═══════════════════════════════════════════════════════════
+   PLACEHOLDER PACKS  (no cards yet)
+═══════════════════════════════════════════════════════════ */
+const HTML_CARDS     = [];
+const CSS_ONLY_CARDS = [];
+const NPM_CARDS      = [];
+const GIT_CARDS      = [];
+const TAILWIND_CARDS = [];
+const REDUX_CARDS    = [];
+
+/* ═══════════════════════════════════════════════════════════
    SUBJECTS
 ═══════════════════════════════════════════════════════════ */
 const SUBJECTS = {
@@ -17619,7 +17629,13 @@ const SUBJECTS = {
   'API':        API_CARDS,
   'Node.js':    NODEJS_CARDS,
   'Express.js': EXPRESS_CARDS,
-  'React & SSR': REACT_CARDS,
+  'Html':           HTML_CARDS,
+  'CSS':            CSS_ONLY_CARDS,
+  'npm':            NPM_CARDS,
+  'Git/Github':     GIT_CARDS,
+  'Tailwind CSS':   TAILWIND_CARDS,
+  'React & SSR':    REACT_CARDS,
+  'Redux':          REDUX_CARDS,
   'CSS & Tailwind': CSS_CARDS,
   'Testing & Containers': DEVOPS_CARDS,
   'Tricked Memory': TRICKED_CARDS,
@@ -17632,7 +17648,7 @@ const SUBJECT_GROUPS = {
   'Cheat Sheet': ['Junior Dev Daily Essentials'],
   'Core':        ['DSA', 'Internet', 'Linux', 'Tricked Memory'],
   'Language':    ['Python', 'C#', 'C++', 'JavaScript'],
-  'Frontend':    ['React & SSR', 'CSS & Tailwind'],
+  'Frontend':    ['Html', 'CSS', 'npm', 'Git/Github', 'Tailwind CSS', 'React & SSR', 'Redux'],
   'Backend':     ['SQL', 'Database', 'API', 'Node.js', 'Express.js', 'Testing & Containers'],
   'DevOps':      [],
 };
@@ -17667,7 +17683,13 @@ const SUBJECT_COLORS = {
   'API':        '#6366f1',
   'Node.js':    '#68a063',
   'Express.js': '#595959',
+  'Html':           '#e34c26',
+  'CSS':            '#264de4',
+  'npm':            '#cb3837',
+  'Git/Github':     '#f05032',
+  'Tailwind CSS':   '#38bdf8',
   'React & SSR':    '#61dafb',
+  'Redux':          '#764abc',
   'CSS & Tailwind': '#e879f9',
   'Testing & Containers': '#14b8a6',
   'Tricked Memory': '#f43f5e',
