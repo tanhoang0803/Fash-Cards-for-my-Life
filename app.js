@@ -17631,8 +17631,8 @@ const SUBJECTS = {
 const SUBJECT_GROUPS = {
   'Cheat Sheet': ['Junior Dev Daily Essentials'],
   'Core':        ['DSA', 'Internet', 'Linux', 'Tricked Memory'],
-  'Language':    ['Python', 'C#', 'C++'],
-  'Frontend':    ['JavaScript', 'React & SSR', 'CSS & Tailwind'],
+  'Language':    ['Python', 'C#', 'C++', 'JavaScript'],
+  'Frontend':    ['React & SSR', 'CSS & Tailwind'],
   'Backend':     ['SQL', 'Database', 'API', 'Node.js', 'Express.js', 'Testing & Containers'],
   'DevOps':      [],
 };
