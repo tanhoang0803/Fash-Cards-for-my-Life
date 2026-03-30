@@ -17629,11 +17629,12 @@ const SUBJECTS = {
    SUBJECT GROUPS  (controls menu bar sections)
 ═══════════════════════════════════════════════════════════ */
 const SUBJECT_GROUPS = {
+  'Cheat Sheet': ['Junior Dev Daily Essentials'],
   'Core':        ['DSA', 'Internet', 'Linux', 'Tricked Memory'],
   'Language':    ['Python', 'C#', 'C++'],
-  'Backend':     ['SQL', 'Database', 'API', 'Node.js', 'Express.js', 'Testing & Containers'],
   'Frontend':    ['JavaScript', 'React & SSR', 'CSS & Tailwind'],
-  'Cheat Sheet': ['Junior Dev Daily Essentials'],
+  'Backend':     ['SQL', 'Database', 'API', 'Node.js', 'Express.js', 'Testing & Containers'],
+  'DevOps':      [],
 };
 
 // Subjects that open a separate page instead of loading flash cards
@@ -17642,11 +17643,12 @@ const LINK_SUBJECTS = {
 };
 
 const GROUP_COLORS = {
+  'Cheat Sheet': '#10b981',
   'Core':        '#f97316',
   'Language':    '#ec4899',
-  'Backend':     '#6366f1',
   'Frontend':    '#61dafb',
-  'Cheat Sheet': '#10b981',
+  'Backend':     '#6366f1',
+  'DevOps':      '#f43f5e',
 };
 
 /* ═══════════════════════════════════════════════════════════
