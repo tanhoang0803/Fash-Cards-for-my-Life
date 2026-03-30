@@ -2238,6 +2238,1575 @@ asyncio.run(main())`
 ];
 
 /* ═══════════════════════════════════════════════════════════
+   C++ — 45 cards across 9 categories
+═══════════════════════════════════════════════════════════ */
+const CPP_CARDS = [
+
+  /* ── Overview ── */
+  {
+    category: 'Overview', difficulty: 'Beginner',
+    question: 'C++ Learning Mindmap — what are the 7 core areas and key learning paths?',
+    answer: '7 core areas: 1) Fundamentals — syntax, types, operators, control flow, functions, scope. 2) Core C++ — OOP, memory/pointers, STL, iterators, templates. 3) Modern C++ (C++11–23) — smart pointers, lambdas, auto, move semantics, concepts. 4) Useful Daily Tools — file I/O, exceptions, multithreading, build systems, debugging. 5) Data Structures & Algorithms. 6) Advanced Topics — concurrency, systems programming, performance, HPC/AI. 7) Ecosystem — game dev (Unreal), embedded, finance, cross-platform.',
+    tip: `C++
+│
+├─ 1. Fundamentals
+│   ├─ Syntax & Types   int · double · char · bool · string
+│   ├─ Operators        + - * / % · == != < > · && || !
+│   ├─ Control Flow     if/else · switch · for · while · do-while
+│   ├─ Functions        return types · parameters · overloading
+│   └─ Scope            local vs global · namespaces
+│
+├─ 2. Core C++
+│   ├─ OOP              class · object · inheritance · polymorphism · encapsulation
+│   ├─ Memory           pointers · references · new/delete · RAII
+│   ├─ STL              vector · list · map · set · stack · queue
+│   ├─ Iterators        begin/end · traversal · algorithms
+│   └─ Templates        generic functions · classes
+│
+├─ 3. Modern C++ (C++11/14/17/20/23)
+│   ├─ Smart Pointers   unique_ptr · shared_ptr · weak_ptr
+│   ├─ Lambdas          [](){ ... } · captures
+│   ├─ auto & decltype  type inference
+│   ├─ Range-based for  for (auto x : container)
+│   ├─ Move Semantics   rvalue refs · std::move
+│   └─ New Features     concepts · coroutines · modules
+│
+├─ 4. Useful Daily Tools
+│   ├─ File I/O         ifstream · ofstream · fstream
+│   ├─ Exceptions       try · catch · throw · std::exception
+│   ├─ Multithreading   thread · mutex · lock_guard · future · async
+│   ├─ Build Systems    GCC · Clang · MSVC · CMake · Make
+│   └─ Debugging        gdb · Valgrind · sanitizers
+│
+├─ 5. Data Structures & Algorithms
+│   ├─ Arrays & Strings
+│   ├─ Linked List · Stack · Queue
+│   ├─ Trees · Graphs
+│   ├─ Sorting          quicksort · mergesort · heapsort
+│   └─ Searching        binary search · hash tables
+│
+├─ 6. Advanced Topics
+│   ├─ Concurrency      async · thread pools · atomics
+│   ├─ Systems Prog.    OS APIs · sockets · embedded
+│   ├─ Performance      profiling · cache optimization · RAII
+│   └─ HPC & AI         OpenMP · MPI · CUDA · OpenCV
+│
+└─ 7. Ecosystem & Applications
+    ├─ Game Dev         Unreal Engine · OpenGL · DirectX
+    ├─ Embedded         Arduino · STM32 · robotics
+    ├─ Finance/Trading  low-latency systems
+    └─ Cross-platform   Qt · Boost · CMake
+
+LEARNING PATHS
+Beginner → Intermediate: Fundamentals → Core C++ → STL → Templates
+Intermediate → Advanced:  Modern C++ → Multithreading → Performance → Systems
+
+Game Dev:     Core C++ → STL → Modern C++ → Graphics APIs → Unreal Engine
+Embedded/IoT: Fundamentals → Memory → STL → Systems → Microcontrollers
+HPC/AI:       Core C++ → Concurrency → Performance → CUDA/OpenMP
+
+INTERVIEW CORE
+Stack vs heap · OOP pillars · STL mastery · Smart pointers
+Move semantics · Concurrency · RAII · Cache optimization`
+  },
+
+  /* ── Fundamentals ── */
+  {
+    category: 'Fundamentals', difficulty: 'Beginner',
+    question: 'What are the basic data types in C++ and how does C++ handle strings?',
+    answer: 'Fundamental types: `int` (32-bit integer), `long`/`long long` (64-bit), `double` (64-bit float), `float` (32-bit float), `char` (single character), `bool` (true/false). `std::string` is the standard string class (use it instead of C-style `char*`). `sizeof()` returns the byte size of any type. In C++11+, use `auto` for type inference. `unsigned` variants only hold non-negative values.',
+    tip: `#include <iostream>
+#include <string>
+using namespace std;
+
+int    age    = 30;
+double price  = 9.99;
+float  tax    = 0.08f;   // 'f' suffix for float literal
+long long big = 9000000000LL;
+char   grade  = 'A';
+bool   active = true;
+string name   = "Alice";
+
+// auto — type inferred by compiler (C++11)
+auto count = 42;           // int
+auto ratio = 3.14;         // double
+auto msg   = string("Hi"); // string
+
+// sizeof — check type sizes
+cout << sizeof(int)    << "\n";  // 4
+cout << sizeof(double) << "\n";  // 8
+cout << sizeof(bool)   << "\n";  // 1
+
+// Unsigned — non-negative only
+unsigned int u = 42;
+size_t len = name.size();   // size_t is unsigned, used for sizes`
+  },
+  {
+    category: 'Fundamentals', difficulty: 'Beginner',
+    question: 'What operators does C++ support?',
+    answer: 'Arithmetic: `+` `-` `*` `/` `%`. Comparison: `==` `!=` `<` `>` `<=` `>=`. Logical: `&&` (AND), `||` (OR), `!` (NOT). Bitwise: `&` `|` `^` `~` `<<` `>>`. Compound assignment: `+=` `-=` `*=` `/=`. Increment/decrement: `++` `--` (prefix vs postfix differ in when the increment happens). Ternary: `condition ? a : b`. C++ also has `->` (member via pointer) and `::` (scope resolution).',
+    tip: `int a = 10, b = 3;
+cout << a % b;      // 1  (remainder)
+cout << a / b;      // 3  (integer division)
+cout << (double)a / b; // 3.333...
+
+// Prefix vs postfix increment
+int x = 5;
+cout << ++x;   // 6  (increment first, then use)
+cout << x++;   // 6  (use first, then increment)
+cout << x;     // 7
+
+// Bitwise
+int flags = 0b1010;
+flags |= 0b0001;    // set bit
+flags &= ~0b0010;   // clear bit
+bool isSet = flags & 0b0001; // test bit
+
+// Ternary
+string label = (a > b) ? "bigger" : "smaller";
+
+// Scope resolution :: and member access ->
+// MyClass::staticMethod();
+// ptr->member;`
+  },
+  {
+    category: 'Fundamentals', difficulty: 'Beginner',
+    question: 'How do control flow statements work in C++? (if/else, switch, loops)',
+    answer: '`if/else if/else` for branching. `switch` for multi-way branching on integer/enum/char — always add `break` or it falls through to the next case. Loops: `for` (classic with index), range-based `for` (C++11, cleanest for containers), `while` (condition first), `do-while` (runs at least once). `break` exits loop, `continue` skips to next iteration.',
+    tip: `int score = 85;
+
+// if / else if / else
+if      (score >= 90) cout << "A\n";
+else if (score >= 80) cout << "B\n";
+else                  cout << "C\n";
+
+// switch — add break or falls through!
+switch (score / 10) {
+    case 10: case 9: cout << "A"; break;
+    case 8:          cout << "B"; break;
+    default:         cout << "C"; break;
+}
+
+// Classic for
+for (int i = 0; i < 5; i++) cout << i << " ";
+
+// Range-based for (C++11) — cleanest for containers
+vector<string> fruits = {"apple", "banana", "cherry"};
+for (const auto& f : fruits) cout << f << "\n";
+
+// while / do-while
+int n = 0;
+while (n < 3) n++;
+do { cout << "runs at least once\n"; } while (false);`
+  },
+  {
+    category: 'Fundamentals', difficulty: 'Beginner',
+    question: 'How do functions work in C++? (return types, parameters, overloading)',
+    answer: 'Functions declare a return type, name, and parameters. `void` means no return. Parameters can be passed by value (copy), by reference (`&` — no copy, can modify), or by const reference (`const&` — no copy, read-only). Function overloading = same name, different parameter signature. Default parameter values must be at the end of the parameter list.',
+    tip: `// Pass by value — copy
+int square(int x) { return x * x; }
+
+// Pass by reference — no copy, modifies original
+void increment(int& x) { x++; }
+
+// Pass by const reference — no copy, read-only (preferred for large objects)
+void print(const string& s) { cout << s << "\n"; }
+
+// Default parameters — must be at the end
+string greet(const string& name, const string& prefix = "Hello") {
+    return prefix + ", " + name + "!";
+}
+greet("Alice");          // "Hello, Alice!"
+greet("Bob", "Hi");      // "Hi, Bob!"
+
+// Overloading — same name, different signature
+int    add(int a, int b)       { return a + b; }
+double add(double a, double b) { return a + b; }
+
+// Inline — hint to compiler to expand in-place
+inline int max2(int a, int b) { return a > b ? a : b; }`
+  },
+  {
+    category: 'Fundamentals', difficulty: 'Beginner',
+    question: 'How do scope and namespaces work in C++?',
+    answer: 'Scope determines where a variable is accessible. Local variables exist only in their `{}` block. Global variables exist for the entire program (avoid when possible). Namespaces group names to prevent collisions — `std::` is the standard library namespace. `using namespace std;` imports all of `std` (convenient but pollutes the global namespace in large projects). Use `::` for scope resolution.',
+    tip: `#include <iostream>
+#include <string>
+
+// Avoid "using namespace std;" in headers — causes name collisions
+// Prefer: use std:: explicitly, or using declarations
+
+using std::cout;   // import only what you need
+using std::string;
+
+// Custom namespace
+namespace MyApp {
+    int version = 1;
+    void log(const string& msg) { cout << "[MyApp] " << msg << "\n"; }
+}
+
+MyApp::log("Hello");
+cout << MyApp::version << "\n";
+
+// Nested namespace (C++17)
+namespace MyApp::Utils {
+    void helper() { cout << "helper\n"; }
+}
+
+// Anonymous namespace — file-local (replaces static in C)
+namespace {
+    int fileLocalVar = 42;
+}
+
+// Variable scope
+int global = 10;        // global scope
+void fn() {
+    int local = 20;     // local scope — dies when fn() returns
+    {
+        int block = 30; // block scope — dies at }
+    }
+    // block is inaccessible here
+}`
+  },
+
+  /* ── Core C++ ── */
+  {
+    category: 'Core C++', difficulty: 'Beginner',
+    question: 'What are the four pillars of OOP in C++ — class, inheritance, polymorphism, encapsulation?',
+    answer: '**Encapsulation**: `private`/`public`/`protected` hide internals. **Inheritance**: `: public Base` extends a class; supports multiple inheritance. **Polymorphism**: `virtual` + `override` — correct method called at runtime via vtable. **Abstraction**: pure virtual functions (`= 0`) define interfaces. `struct` defaults to `public`, `class` defaults to `private`.',
+    tip: `// Encapsulation
+class BankAccount {
+private:
+    double _balance = 0;
+public:
+    void deposit(double n) { if (n > 0) _balance += n; }
+    double balance() const { return _balance; }
+};
+
+// Inheritance + Polymorphism
+class Animal {
+public:
+    virtual string sound() const { return "..."; }
+    virtual ~Animal() {}          // ALWAYS virtual destructor in base!
+};
+class Dog : public Animal {
+public:
+    string sound() const override { return "Woof"; }
+};
+
+// Runtime polymorphism via pointer/reference
+Animal* pet = new Dog();
+cout << pet->sound();  // "Woof"
+delete pet;
+
+// Abstraction — pure virtual = interface
+class Shape {
+public:
+    virtual double area() const = 0;   // must implement
+    virtual ~Shape() {}
+};
+class Circle : public Shape {
+    double r;
+public:
+    Circle(double r) : r(r) {}
+    double area() const override { return 3.14159 * r * r; }
+};`
+  },
+  {
+    category: 'Core C++', difficulty: 'Intermediate',
+    question: 'How does memory management work in C++? (pointers, references, new/delete, RAII)',
+    answer: 'C++ gives full memory control. **Stack**: automatic, fast, limited size — local variables. **Heap**: manual with `new`/`delete` — flexible but must be freed or you leak. A **reference** (`&`) is an alias — no null, no reassignment. A **pointer** (`*`) holds an address — can be null, can be reassigned. **RAII** (Resource Acquisition Is Initialization): tie resource lifetime to object scope so cleanup is automatic.',
+    tip: `// Stack — automatic cleanup
+int x = 42;         // lives until end of scope
+
+// Heap — manual management
+int* p = new int(42);   // allocate
+*p = 100;               // dereference
+delete p;               // free — MUST do this
+p = nullptr;            // avoid dangling pointer
+
+// Array on heap
+int* arr = new int[5]{1,2,3,4,5};
+delete[] arr;           // note: delete[] for arrays
+
+// References — alias, cannot be null
+int a = 10;
+int& ref = a;
+ref = 20;
+cout << a;  // 20
+
+// RAII — resource tied to object lifetime
+class FileHandle {
+    FILE* f;
+public:
+    FileHandle(const char* path) { f = fopen(path, "r"); }
+    ~FileHandle() { if (f) fclose(f); }  // auto cleanup on exit
+};
+{
+    FileHandle fh("data.txt");
+    // use fh...
+}  // destructor called here — file closed automatically`
+  },
+  {
+    category: 'Core C++', difficulty: 'Intermediate',
+    question: 'What is the STL (Standard Template Library) and its key containers?',
+    answer: 'The STL provides generic containers, algorithms, and iterators. Key containers: `vector` (dynamic array, O(1) random access), `list` (doubly linked, O(1) insert/remove), `map` (sorted key-value, O(log n)), `unordered_map` (hash map, O(1) average), `set` (sorted unique values), `stack`, `queue`, `priority_queue`. Use `#include <algorithm>` for `sort`, `find`, `count`, `transform`, etc.',
+    tip: `#include <vector>
+#include <map>
+#include <set>
+#include <algorithm>
+
+// vector — dynamic array
+vector<int> v = {5, 3, 1, 4, 2};
+v.push_back(6);
+v.pop_back();
+v[0] = 10;
+sort(v.begin(), v.end());           // [1,3,4,5,10]
+
+// map — sorted key-value (O(log n))
+map<string, int> scores;
+scores["Alice"] = 95;
+scores["Bob"]   = 87;
+if (scores.count("Alice")) cout << scores["Alice"];
+
+// unordered_map — O(1) average
+unordered_map<string, int> freq;
+freq["hello"]++;
+
+// set — sorted unique values
+set<int> s = {3, 1, 4, 1, 5};   // {1, 3, 4, 5}
+s.insert(2);
+s.count(3);  // 1 if present
+
+// Algorithms
+auto it = find(v.begin(), v.end(), 3);
+int cnt = count(v.begin(), v.end(), 4);
+reverse(v.begin(), v.end());`
+  },
+  {
+    category: 'Core C++', difficulty: 'Intermediate',
+    question: 'How do iterators work in C++?',
+    answer: 'Iterators are generalized pointers that let algorithms work on any container uniformly. Every container exposes `begin()` (first element) and `end()` (one past last). Iterator types: input, output, forward, bidirectional, random-access. `auto` makes iterator code cleaner. Algorithms like `sort`, `find`, `copy`, `transform` all take iterator pairs. Range-based `for` uses iterators internally.',
+    tip: `#include <vector>
+#include <list>
+#include <algorithm>
+
+vector<int> v = {1, 2, 3, 4, 5};
+
+// Classic iterator loop
+for (vector<int>::iterator it = v.begin(); it != v.end(); ++it)
+    cout << *it << " ";
+
+// Modern — auto is cleaner
+for (auto it = v.begin(); it != v.end(); ++it)
+    cout << *it << " ";
+
+// Range-based for — uses iterators internally
+for (auto x : v) cout << x << " ";
+
+// Reverse iterators
+for (auto it = v.rbegin(); it != v.rend(); ++it)
+    cout << *it << " ";   // 5 4 3 2 1
+
+// Algorithms use iterator pairs
+sort(v.begin(), v.end());
+auto pos = find(v.begin(), v.end(), 3);  // returns iterator
+if (pos != v.end()) cout << *pos;
+
+// Transform — apply function to each element
+transform(v.begin(), v.end(), v.begin(), [](int x){ return x * 2; });`
+  },
+  {
+    category: 'Core C++', difficulty: 'Intermediate',
+    question: 'What are templates in C++ and how do you write generic functions and classes?',
+    answer: 'Templates let you write type-safe generic code — the compiler generates a specialization for each type used. `template<typename T>` before a function or class. Template specialization overrides the generic version for a specific type. `auto` return type (C++14) can infer template return types. STL containers are all templates.',
+    tip: `// Generic function
+template<typename T>
+T max_val(T a, T b) { return a > b ? a : b; }
+
+max_val(3, 7);           // int version — returns 7
+max_val(3.14, 2.71);     // double version — returns 3.14
+max_val(string("abc"), string("xyz")); // "xyz"
+
+// Generic class
+template<typename T>
+class Stack {
+    vector<T> data;
+public:
+    void push(T val) { data.push_back(val); }
+    T    pop()  { T v = data.back(); data.pop_back(); return v; }
+    T    top()  const { return data.back(); }
+    bool empty() const { return data.empty(); }
+};
+
+Stack<int>    si;  si.push(1); si.push(2);
+Stack<string> ss;  ss.push("hello");
+
+// Multiple type parameters
+template<typename K, typename V>
+pair<V, K> swap_pair(pair<K, V> p) { return {p.second, p.first}; }
+
+// Template specialization
+template<>
+string max_val<string>(string a, string b) {
+    return a.length() > b.length() ? a : b;  // by length
+}`
+  },
+
+  /* ── Modern C++ ── */
+  {
+    category: 'Modern C++', difficulty: 'Intermediate',
+    question: 'What are smart pointers in C++? (unique_ptr, shared_ptr, weak_ptr)',
+    answer: 'Smart pointers manage heap memory automatically via RAII — no manual `delete`. `unique_ptr`: sole owner, non-copyable, zero overhead. `shared_ptr`: shared ownership via reference count — deleted when count reaches 0. `weak_ptr`: non-owning reference to a `shared_ptr` — avoids circular reference cycles. Use `make_unique` and `make_shared` (safer, more efficient than `new`).',
+    tip: `#include <memory>
+
+// unique_ptr — sole ownership, auto-deleted
+auto p = make_unique<int>(42);
+cout << *p;       // 42
+// delete not needed — p destructor cleans up
+
+// Transfer ownership (cannot copy)
+auto p2 = move(p);  // p is now null
+cout << (p == nullptr);  // true
+
+// shared_ptr — shared ownership
+auto sp1 = make_shared<string>("hello");
+auto sp2 = sp1;         // both own it
+cout << sp1.use_count(); // 2
+sp1.reset();            // sp1 releases — count drops to 1
+// string deleted when sp2 also goes out of scope
+
+// weak_ptr — observe without owning (no ref count increment)
+weak_ptr<string> wp = sp2;
+if (auto locked = wp.lock()) {  // lock() returns shared_ptr or null
+    cout << *locked;            // safe to use
+}
+
+// Use make_unique/make_shared (not new)
+// auto bad  = unique_ptr<int>(new int(5));  // avoid
+auto good = make_unique<int>(5);             // prefer`
+  },
+  {
+    category: 'Modern C++', difficulty: 'Intermediate',
+    question: 'What are lambdas in C++ and how do captures work?',
+    answer: 'A lambda is an anonymous function defined inline. Syntax: `[captures](params) { body }`. Captures bring outer variables into the lambda: `[=]` capture all by value, `[&]` capture all by reference, `[x, &y]` mix. Lambdas are used with STL algorithms, callbacks, and `std::function`. Return type is inferred but can be specified with `-> type`.',
+    tip: `#include <algorithm>
+#include <functional>
+
+// Basic lambda
+auto greet = []() { cout << "Hello!\n"; };
+greet();
+
+// With parameters and return type
+auto add = [](int a, int b) -> int { return a + b; };
+cout << add(3, 4);  // 7
+
+// Capture by value [=]
+int factor = 3;
+auto triple = [factor](int x) { return x * factor; };
+cout << triple(5);  // 15
+
+// Capture by reference [&]
+int total = 0;
+vector<int> nums = {1, 2, 3, 4, 5};
+for_each(nums.begin(), nums.end(), [&total](int x) { total += x; });
+cout << total;  // 15
+
+// Sort with lambda
+sort(nums.begin(), nums.end(), [](int a, int b) { return a > b; });
+
+// std::function — store any callable
+function<int(int, int)> op = [](int a, int b) { return a + b; };
+cout << op(2, 3);  // 5
+
+// Generic lambda (C++14)
+auto print = [](auto x) { cout << x << "\n"; };
+print(42); print("hello");`
+  },
+  {
+    category: 'Modern C++', difficulty: 'Intermediate',
+    question: 'What are auto, decltype, and range-based for in modern C++?',
+    answer: '`auto` deduces the variable type from its initializer at compile time — still strongly typed. Especially useful for complex types (iterators, lambdas). `decltype(expr)` gives the type of an expression without evaluating it — useful in templates. Range-based `for` (C++11) iterates any container cleanly. Always use `const auto&` for read-only iteration to avoid copies.',
+    tip: `// auto — type inferred at compile time
+auto i     = 42;               // int
+auto d     = 3.14;             // double
+auto v     = vector<int>{1,2}; // vector<int>
+
+// auto with iterators — avoids verbose type names
+auto it = myMap.find("key");   // map<string,int>::iterator
+
+// auto function return (C++14)
+auto multiply(int a, int b) { return a * b; }
+
+// decltype — type of an expression
+int x = 5;
+decltype(x) y = 10;            // y is int
+decltype(x + 3.14) z = 1.5;   // z is double
+
+// Template use case
+template<typename A, typename B>
+auto add(A a, B b) -> decltype(a + b) { return a + b; }
+
+// Range-based for — C++11
+vector<int> nums = {1, 2, 3, 4, 5};
+
+for (auto x : nums)        cout << x;  // copy — OK for small types
+for (const auto& x : nums) cout << x;  // ref — preferred for objects
+for (auto& x : nums)       x *= 2;     // modify in-place`
+  },
+  {
+    category: 'Modern C++', difficulty: 'Advanced',
+    question: 'What is move semantics in C++? (rvalue references, std::move)',
+    answer: 'Move semantics (C++11) avoid expensive copies by transferring ownership of resources. An **rvalue reference** (`T&&`) binds to temporaries. The **move constructor** and **move assignment** steal the internals of an rvalue — leaving it in a valid but empty state. `std::move` casts an lvalue to an rvalue, enabling the move. This is critical for performance with containers, strings, and smart pointers.',
+    tip: `// Without move — expensive copy
+vector<int> big(1000000, 1);
+vector<int> copy = big;   // copies 1M elements
+
+// With move — O(1) ownership transfer
+vector<int> moved = std::move(big);  // big is now empty
+cout << big.size();   // 0
+cout << moved.size(); // 1000000
+
+// Move constructor
+class Buffer {
+    int* data;
+    size_t size;
+public:
+    Buffer(size_t n) : data(new int[n]), size(n) {}
+
+    // Move constructor — steal the resource
+    Buffer(Buffer&& other) noexcept
+        : data(other.data), size(other.size) {
+        other.data = nullptr;   // leave source in valid state
+        other.size = 0;
+    }
+    ~Buffer() { delete[] data; }
+};
+
+// Return value optimization (RVO) — compiler already avoids copy
+vector<int> make_vec() {
+    vector<int> v = {1, 2, 3};
+    return v;  // compiler moves or elides copy
+}
+
+// Rule of Five: if you define any of destructor, copy ctor,
+// copy assign, move ctor, move assign — define all five.`
+  },
+  {
+    category: 'Modern C++', difficulty: 'Advanced',
+    question: 'What are the notable new features in C++20/23? (concepts, coroutines, modules)',
+    answer: '**Concepts** (C++20): constrain template types with readable requirements — clearer error messages. **Ranges** (C++20): `std::ranges::sort`, pipe syntax (`|`), lazy range adaptors. **Coroutines** (C++20): `co_await`, `co_yield`, `co_return` — async/generator patterns. **Modules** (C++20): replace header files for faster compile times. **std::format** (C++20): type-safe formatting like Python f-strings.',
+    tip: `// Concepts (C++20) — constrain template types
+#include <concepts>
+
+template<typename T>
+concept Numeric = std::integral<T> || std::floating_point<T>;
+
+template<Numeric T>
+T add(T a, T b) { return a + b; }
+
+// add("a", "b");  // compile error with clear message
+
+// Ranges (C++20) — composable, lazy
+#include <ranges>
+vector<int> v = {5, 3, 1, 4, 2};
+auto result = v | views::filter([](int x){ return x > 2; })
+                | views::transform([](int x){ return x * 2; });
+for (auto x : result) cout << x << " ";  // 10 6 8
+
+// std::format (C++20) — like Python f-strings
+#include <format>
+string msg = format("Hello {}, you are {} years old", "Alice", 30);
+
+// Coroutine generator (simplified)
+// generator<int> range(int n) {
+//     for (int i = 0; i < n; i++) co_yield i;
+// }
+
+// Modules (C++20) — replace #include
+// export module mymodule;
+// export int add(int a, int b) { return a + b; }`
+  },
+  {
+    category: 'Modern C++', difficulty: 'Intermediate',
+    question: 'What other key C++11/14/17 features should every developer know?',
+    answer: '**Initializer lists**: `{1,2,3}` syntax everywhere. **nullptr**: replaces `NULL` (type-safe). **constexpr**: evaluated at compile time. **structured bindings** (C++17): `auto [key, val] = pair`. **std::optional** (C++17): nullable return without pointers. **if/switch with init** (C++17): declare variables inside condition. **std::variant** (C++17): type-safe union.',
+    tip: `// nullptr — type-safe null (replaces NULL/0)
+int* p = nullptr;
+if (p == nullptr) cout << "null\n";
+
+// constexpr — compile-time evaluation
+constexpr int factorial(int n) { return n <= 1 ? 1 : n * factorial(n-1); }
+constexpr int f5 = factorial(5);  // computed at compile time: 120
+
+// Uniform initialization — {} everywhere
+vector<int> v = {1, 2, 3};
+int arr[] = {4, 5, 6};
+
+// Structured bindings (C++17)
+map<string, int> scores = {{"Alice", 95}, {"Bob", 87}};
+for (const auto& [name, score] : scores)
+    cout << name << ": " << score << "\n";
+
+// std::optional (C++17) — maybe-a-value
+#include <optional>
+optional<int> divide(int a, int b) {
+    if (b == 0) return nullopt;
+    return a / b;
+}
+if (auto result = divide(10, 2)) cout << *result;  // 5
+
+// if with initializer (C++17)
+if (auto it = myMap.find("key"); it != myMap.end())
+    cout << it->second;`
+  },
+
+  /* ── Useful Daily Tools ── */
+  {
+    category: 'Daily Tools', difficulty: 'Beginner',
+    question: 'How do you read and write files in C++? (ifstream, ofstream, fstream)',
+    answer: '`ifstream` (input), `ofstream` (output), `fstream` (both). Always check if file opened successfully. `getline()` reads a full line. `>>` reads word-by-word. Always close files (or let RAII do it via destructor). Use `ios::app` to append, `ios::binary` for binary files.',
+    tip: `#include <fstream>
+#include <string>
+
+// Write
+ofstream outFile("output.txt");
+if (!outFile.is_open()) { cerr << "Cannot open\n"; return 1; }
+outFile << "Hello, World!\n";
+outFile << 42 << "\n";
+outFile.close();  // RAII closes automatically on destruction too
+
+// Read — line by line
+ifstream inFile("data.txt");
+string line;
+while (getline(inFile, line)) {
+    cout << line << "\n";
+}
+
+// Read — word by word
+ifstream f2("data.txt");
+string word;
+while (f2 >> word) cout << word << " ";
+
+// fstream — read and write
+fstream fs("data.txt", ios::in | ios::out | ios::app);
+fs << "appended line\n";
+
+// Binary file
+ofstream bin("data.bin", ios::binary);
+int n = 42;
+bin.write(reinterpret_cast<char*>(&n), sizeof(n));
+
+// Check existence
+ifstream check("file.txt");
+bool exists = check.good();`
+  },
+  {
+    category: 'Daily Tools', difficulty: 'Intermediate',
+    question: 'How does exception handling work in C++? (try/catch/throw, std::exception)',
+    answer: 'C++ exceptions: `throw` throws any type (prefer `std::exception` subclasses). `try` wraps risky code. `catch(ExceptionType& e)` handles it — catch by reference. Catch `...` catches anything. `noexcept` marks a function that must not throw. Unlike Java/C#, C++ does not require catching exceptions — uncaught exceptions call `std::terminate()`.',
+    tip: `#include <stdexcept>
+#include <iostream>
+
+// Standard exception hierarchy
+// std::exception
+//   std::runtime_error, std::logic_error
+//   std::out_of_range, std::invalid_argument
+
+try {
+    vector<int> v = {1, 2, 3};
+    cout << v.at(10);           // throws std::out_of_range
+}
+catch (const out_of_range& e) {
+    cout << "Out of range: " << e.what() << "\n";
+}
+catch (const exception& e) {   // catch-all for std exceptions
+    cout << "Error: " << e.what() << "\n";
+}
+catch (...) {                   // catch absolutely everything
+    cout << "Unknown error\n";
+}
+
+// Throw custom exception
+class FileNotFoundException : public runtime_error {
+public:
+    explicit FileNotFoundException(const string& file)
+        : runtime_error("File not found: " + file) {}
+};
+
+void openFile(const string& path) {
+    throw FileNotFoundException(path);
+}
+
+// noexcept — promise not to throw (enables optimizations)
+int square(int x) noexcept { return x * x; }`
+  },
+  {
+    category: 'Daily Tools', difficulty: 'Advanced',
+    question: 'How does multithreading work in C++? (thread, mutex, lock_guard, future, async)',
+    answer: '`std::thread` runs a function on a new thread. `std::mutex` protects shared data — always use `lock_guard` or `unique_lock` (RAII) instead of manual lock/unlock. `std::async` runs work asynchronously and returns a `std::future` for the result. `std::atomic<T>` for lock-free atomic operations on simple types.',
+    tip: `#include <thread>
+#include <mutex>
+#include <future>
+#include <atomic>
+
+// Basic thread
+thread t([]{ cout << "Running on thread\n"; });
+t.join();  // wait for completion (or t.detach() to fire-and-forget)
+
+// Mutex — protect shared data
+mutex mtx;
+int shared = 0;
+auto task = [&]() {
+    lock_guard<mutex> lock(mtx);  // RAII — unlocks on exit
+    shared++;
+};
+thread t1(task), t2(task);
+t1.join(); t2.join();
+cout << shared;  // 2
+
+// async + future — run and retrieve result
+future<int> f = async(launch::async, [](){
+    this_thread::sleep_for(chrono::milliseconds(100));
+    return 42;
+});
+cout << f.get();  // blocks until result ready: 42
+
+// atomic — lock-free for simple types
+atomic<int> counter{0};
+thread t3([&]{ for (int i=0; i<1000; i++) counter++; });
+thread t4([&]{ for (int i=0; i<1000; i++) counter++; });
+t3.join(); t4.join();
+cout << counter;  // always 2000`
+  },
+  {
+    category: 'Daily Tools', difficulty: 'Intermediate',
+    question: 'What build systems does C++ use? (GCC, Clang, MSVC, CMake, Make)',
+    answer: '**Compilers**: GCC (`g++`), Clang (`clang++`), MSVC (`cl`). **Make**: simple build tool using `Makefile`. **CMake**: cross-platform build system generator — creates Makefiles, Visual Studio projects, etc. CMake is the industry standard. **Ninja**: fast build system often paired with CMake. Use `-O2`/`-O3` for optimized release builds, `-g` for debug info.',
+    tip: `// Compile with GCC/Clang
+// g++ -std=c++17 -O2 -Wall -o myapp main.cpp
+// clang++ -std=c++20 -O2 -o myapp main.cpp
+
+// Minimal CMakeLists.txt
+// cmake_minimum_required(VERSION 3.15)
+// project(MyApp)
+// set(CMAKE_CXX_STANDARD 17)
+// add_executable(myapp main.cpp utils.cpp)
+// target_include_directories(myapp PRIVATE include/)
+// target_link_libraries(myapp PRIVATE pthread)
+
+// CMake build workflow
+// mkdir build && cd build
+// cmake ..          # generate build files
+// cmake --build .   # compile
+// ./myapp           # run
+
+// Useful compiler flags
+// -std=c++17    C++ standard
+// -O2 / -O3     optimize (release)
+// -g            debug symbols
+// -Wall -Wextra enable warnings
+// -fsanitize=address  AddressSanitizer (memory errors)
+// -fsanitize=thread   ThreadSanitizer  (data races)
+
+// Makefile (simple)
+// all: main.o utils.o
+//     g++ -o myapp main.o utils.o
+// main.o: main.cpp
+//     g++ -c main.cpp`
+  },
+  {
+    category: 'Daily Tools', difficulty: 'Intermediate',
+    question: 'How do you debug C++ code? (gdb, Valgrind, sanitizers)',
+    answer: '**gdb**: GNU debugger — set breakpoints, inspect variables, step through code. **Valgrind**: detects memory leaks and invalid memory access. **AddressSanitizer** (`-fsanitize=address`): fast memory error detector built into GCC/Clang. **ThreadSanitizer** (`-fsanitize=thread`): detects data races. **UBSanitizer** (`-fsanitize=undefined`): catches undefined behavior.',
+    tip: `// Compile with debug info
+// g++ -g -O0 main.cpp -o myapp
+
+// gdb commands
+// gdb ./myapp          start debugger
+// (gdb) run            run program
+// (gdb) break main     set breakpoint at main
+// (gdb) break 42       set breakpoint at line 42
+// (gdb) next / n       step over
+// (gdb) step / s       step into
+// (gdb) print x        print variable x
+// (gdb) backtrace / bt print call stack
+// (gdb) continue / c   continue to next breakpoint
+// (gdb) quit           exit
+
+// Valgrind — memory leak detection
+// valgrind --leak-check=full ./myapp
+
+// AddressSanitizer — compile-time instrumentation
+// g++ -fsanitize=address -g main.cpp -o myapp
+// ./myapp  (ASAN reports errors with line numbers)
+
+// Common issues ASAN catches:
+// - Use after free (dangling pointer)
+// - Buffer overflow / underflow
+// - Stack overflow
+// - Double free
+
+// Quick print debugging
+#define DEBUG(x) cerr << #x " = " << (x) << "\n"
+DEBUG(myVariable);  // prints: myVariable = 42`
+  },
+
+  /* ── DSA in C++ ── */
+  {
+    category: 'DSA in C++', difficulty: 'Intermediate',
+    question: 'How do arrays and strings work in C++?',
+    answer: 'C-style arrays (`int arr[5]`) are fixed-size, stack-allocated. Prefer `std::array<T,N>` (fixed, safe) or `std::vector<T>` (dynamic). `std::string` is the standard string — rich API, owns its memory. `std::string_view` (C++17) is a non-owning read-only view — use for function parameters to avoid copies. `substr()`, `find()`, `replace()`, `+` operator are key string operations.',
+    tip: `#include <array>
+#include <string>
+#include <string_view>
+
+// std::array — fixed size, stack, safe
+array<int, 5> arr = {5, 3, 1, 4, 2};
+sort(arr.begin(), arr.end());   // [1,2,3,4,5]
+arr.size();                     // 5
+
+// vector — dynamic array (preferred for most cases)
+vector<int> v = {5, 3, 1};
+v.push_back(4);
+sort(v.begin(), v.end());
+
+// string operations
+string s = "Hello, World!";
+s.size();                    // 13
+s.substr(7, 5);              // "World"
+s.find("World");             // 7
+s.replace(7, 5, "C++");      // "Hello, C++!"
+s += " Rocks";               // append
+string upper = s;
+transform(upper.begin(), upper.end(), upper.begin(), ::toupper);
+
+// string_view — non-owning, no copy (C++17)
+void print(string_view sv) { cout << sv << "\n"; }
+print("hello");    // no allocation
+print(s.substr(0, 5));  // still efficient
+
+// Split by delimiter (no built-in, use stringstream)
+#include <sstream>
+stringstream ss("a,b,c");
+string token;
+while (getline(ss, token, ',')) cout << token << "\n";`
+  },
+  {
+    category: 'DSA in C++', difficulty: 'Intermediate',
+    question: 'How do linked list, stack, and queue work in C++?',
+    answer: '`std::list` is a doubly linked list — O(1) insert/remove at any iterator. `std::stack` adapts a container (default `deque`) for LIFO — `push`/`pop`/`top`. `std::queue` for FIFO — `push`/`pop`/`front`. `std::deque` is a double-ended queue with O(1) push/pop at both ends. `std::priority_queue` is a max-heap by default.',
+    tip: `#include <list>
+#include <stack>
+#include <queue>
+
+// std::list — doubly linked
+list<int> l = {1, 3, 5};
+l.push_front(0);   // [0,1,3,5]
+l.push_back(7);    // [0,1,3,5,7]
+auto it = l.begin(); advance(it, 2);
+l.insert(it, 2);   // insert before pos 2: [0,1,2,3,5,7]
+l.remove(5);       // remove all 5s
+
+// std::stack — LIFO (adapts vector or deque)
+stack<int> st;
+st.push(1); st.push(2); st.push(3);
+st.top();    // 3 (no remove)
+st.pop();    // removes 3
+st.size();   // 2
+
+// std::queue — FIFO
+queue<int> q;
+q.push(1); q.push(2); q.push(3);
+q.front();  // 1
+q.pop();    // removes 1
+
+// std::priority_queue — max-heap by default
+priority_queue<int> pq;
+pq.push(3); pq.push(1); pq.push(4);
+pq.top();   // 4 (max)
+pq.pop();
+
+// Min-heap
+priority_queue<int, vector<int>, greater<int>> minPQ;
+minPQ.push(3); minPQ.push(1);
+minPQ.top();   // 1 (min)`
+  },
+  {
+    category: 'DSA in C++', difficulty: 'Intermediate',
+    question: 'How do trees and graphs work in C++?',
+    answer: 'No built-in tree/graph in STL — implement with structs/classes. Binary tree node: struct with `val`, `left`, `right`. Traversals: in-order (L-N-R), pre-order (N-L-R), BFS with `queue`. Graphs: adjacency list with `vector<vector<int>>` or `unordered_map<int, vector<int>>`. BFS uses `queue`, DFS uses recursion or `stack`.',
+    tip: `// Binary Tree
+struct TreeNode {
+    int val;
+    TreeNode* left = nullptr;
+    TreeNode* right = nullptr;
+    TreeNode(int v) : val(v) {}
+};
+
+// In-order traversal (recursive)
+void inOrder(TreeNode* node) {
+    if (!node) return;
+    inOrder(node->left);
+    cout << node->val << " ";
+    inOrder(node->right);
+}
+
+// BFS — level-by-level
+void bfs(TreeNode* root) {
+    queue<TreeNode*> q;
+    q.push(root);
+    while (!q.empty()) {
+        auto node = q.front(); q.pop();
+        cout << node->val << " ";
+        if (node->left)  q.push(node->left);
+        if (node->right) q.push(node->right);
+    }
+}
+
+// Graph — adjacency list
+int n = 5;
+vector<vector<int>> adj(n);
+adj[0].push_back(1);
+adj[0].push_back(2);
+adj[1].push_back(3);
+
+// DFS
+void dfs(int node, vector<bool>& visited) {
+    visited[node] = true;
+    cout << node << " ";
+    for (int nb : adj[node])
+        if (!visited[nb]) dfs(nb, visited);
+}`
+  },
+  {
+    category: 'DSA in C++', difficulty: 'Intermediate',
+    question: 'How do sorting and searching work in C++?',
+    answer: '`std::sort` uses introsort — O(n log n), in-place. Provide a custom comparator lambda. `std::stable_sort` preserves relative order. `std::binary_search` checks membership in a sorted range. `std::lower_bound`/`std::upper_bound` find insertion positions. `std::find` is O(n) linear search. Hash-based lookup is O(1) with `unordered_map`/`unordered_set`.',
+    tip: `#include <algorithm>
+
+vector<int> v = {5, 3, 1, 4, 2};
+
+// std::sort — O(n log n), in-place
+sort(v.begin(), v.end());             // ascending
+sort(v.begin(), v.end(), greater<int>()); // descending
+
+// Custom comparator
+vector<pair<string,int>> people = {{"Alice",30},{"Bob",25}};
+sort(people.begin(), people.end(),
+     [](const auto& a, const auto& b){ return a.second < b.second; });
+
+// Binary search (on sorted range)
+sort(v.begin(), v.end());
+bool found = binary_search(v.begin(), v.end(), 3);  // true
+
+// lower_bound — first position >= value
+auto lb = lower_bound(v.begin(), v.end(), 3);
+cout << (lb - v.begin());  // index
+
+// Manual binary search
+int binarySearch(vector<int>& a, int target) {
+    int lo = 0, hi = (int)a.size() - 1;
+    while (lo <= hi) {
+        int mid = lo + (hi - lo) / 2;
+        if      (a[mid] == target) return mid;
+        else if (a[mid] <  target) lo = mid + 1;
+        else                       hi = mid - 1;
+    }
+    return -1;
+}`
+  },
+  {
+    category: 'DSA in C++', difficulty: 'Advanced',
+    question: 'What are the key DSA interview patterns in C++?',
+    answer: '**Two Pointers** (sorted arrays, palindrome). **Sliding Window** (subarray problems). **BFS** (shortest path). **DFS + backtracking** (permutations, subsets). **Dynamic Programming** — memoization with `unordered_map`, tabulation with `vector`. **Heap** for Top-K problems with `priority_queue`. **Union-Find** (connected components). **Monotonic Stack** (next greater element).',
+    tip: `// Two Pointers — pair sum in sorted array
+vector<int> twoSum(vector<int>& arr, int target) {
+    int lo = 0, hi = (int)arr.size() - 1;
+    while (lo < hi) {
+        int sum = arr[lo] + arr[hi];
+        if      (sum == target) return {lo, hi};
+        else if (sum < target)  lo++;
+        else                    hi--;
+    }
+    return {};
+}
+
+// Sliding Window — max sum subarray length k
+int maxSumSubarray(vector<int>& a, int k) {
+    int win = 0;
+    for (int i = 0; i < k; i++) win += a[i];
+    int maxSum = win;
+    for (int i = k; i < (int)a.size(); i++) {
+        win += a[i] - a[i-k];
+        maxSum = max(maxSum, win);
+    }
+    return maxSum;
+}
+
+// Memoization with unordered_map
+unordered_map<int,long long> memo;
+long long fib(int n) {
+    if (n <= 1) return n;
+    if (memo.count(n)) return memo[n];
+    return memo[n] = fib(n-1) + fib(n-2);
+}
+
+// Top-K with min-heap
+priority_queue<int,vector<int>,greater<int>> minHeap;
+for (int x : nums) {
+    minHeap.push(x);
+    if ((int)minHeap.size() > k) minHeap.pop();
+}`
+  },
+
+  /* ── Advanced Topics ── */
+  {
+    category: 'Advanced C++', difficulty: 'Advanced',
+    question: 'How does concurrency work in C++? (async, thread pools, atomics)',
+    answer: '`std::async` with `launch::async` runs work on a thread pool (implementation-defined). `std::atomic<T>` for lock-free operations on primitive types. `std::condition_variable` for thread signaling. C++20 adds `std::jthread` (joins automatically on destruction) and `std::latch`/`std::barrier` for synchronization. Avoid shared mutable state — prefer message passing or immutable data.',
+    tip: `#include <future>
+#include <atomic>
+#include <condition_variable>
+
+// async — simple parallel work
+auto f1 = async(launch::async, []{ return heavyCompute1(); });
+auto f2 = async(launch::async, []{ return heavyCompute2(); });
+auto r1 = f1.get();
+auto r2 = f2.get();
+
+// atomic — lock-free counter
+atomic<int> count{0};
+thread t1([&]{ for(int i=0;i<1000;i++) count.fetch_add(1); });
+thread t2([&]{ for(int i=0;i<1000;i++) count.fetch_add(1); });
+t1.join(); t2.join();
+cout << count;  // always 2000
+
+// condition_variable — producer/consumer
+mutex mtx;
+condition_variable cv;
+queue<int> workQueue;
+
+// Producer
+{
+    lock_guard<mutex> lock(mtx);
+    workQueue.push(42);
+}
+cv.notify_one();
+
+// Consumer
+{
+    unique_lock<mutex> lock(mtx);
+    cv.wait(lock, []{ return !workQueue.empty(); });
+    int item = workQueue.front(); workQueue.pop();
+}
+
+// std::jthread (C++20) — auto joins on destruction
+// jthread t([]{ doWork(); });  // no t.join() needed`
+  },
+  {
+    category: 'Advanced C++', difficulty: 'Advanced',
+    question: 'How does C++ enable systems programming? (OS APIs, sockets, embedded)',
+    answer: 'C++ can call C POSIX APIs directly — file descriptors, `mmap`, `fork`/`exec`, signals. BSD sockets (`socket`, `bind`, `connect`, `send`, `recv`) for network programming. For cross-platform, use Boost.Asio or ASIO standalone. Embedded: bare-metal C++ with no STL, custom allocators, volatile registers. `extern "C"` links C libraries from C++.',
+    tip: `// POSIX socket (TCP client)
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+
+int sock = socket(AF_INET, SOCK_STREAM, 0);
+sockaddr_in addr{};
+addr.sin_family = AF_INET;
+addr.sin_port   = htons(8080);
+inet_pton(AF_INET, "127.0.0.1", &addr.sin_addr);
+connect(sock, (sockaddr*)&addr, sizeof(addr));
+send(sock, "GET / HTTP/1.0\r\n\r\n", 18, 0);
+close(sock);
+
+// Memory-mapped file
+#include <sys/mman.h>
+#include <fcntl.h>
+int fd = open("data.bin", O_RDONLY);
+size_t size = 1024 * 1024;
+void* mem = mmap(nullptr, size, PROT_READ, MAP_PRIVATE, fd, 0);
+// access mem as array...
+munmap(mem, size); close(fd);
+
+// Volatile register (embedded)
+volatile uint32_t* const GPIO = (uint32_t*)0x40020C00;
+*GPIO |= (1 << 5);  // set pin
+
+// extern "C" — link with C libraries
+extern "C" {
+    int c_function(int x);
+}`
+  },
+  {
+    category: 'Advanced C++', difficulty: 'Advanced',
+    question: 'How do you optimize C++ performance? (profiling, cache optimization, RAII)',
+    answer: 'Profile first — never optimize blind. Use `perf`, `gprof`, `Valgrind --callgrind`, or `Intel VTune`. Cache optimization: access data sequentially (cache lines are 64 bytes), use `std::vector` over `std::list` (cache-friendly). Avoid allocations in hot paths — use memory pools or stack allocation. `inline`, `constexpr`, branch prediction hints, and SIMD for micro-optimizations.',
+    tip: `// Profile first
+// g++ -pg -O2 main.cpp -o myapp && ./myapp && gprof myapp gmon.out
+// perf stat ./myapp
+// valgrind --callgrind ./myapp
+
+// Cache-friendly — sequential access
+// BAD: linked list — random memory access
+// GOOD: vector — contiguous memory
+
+// Avoid false sharing in multithreading — pad to cache line
+struct alignas(64) PaddedCounter { atomic<int> val; };
+
+// Pre-reserve vector capacity to avoid reallocations
+vector<int> v;
+v.reserve(10000);
+for (int i = 0; i < 10000; i++) v.push_back(i);
+
+// Stack allocation instead of heap
+int arr[100];           // stack — fast
+// int* arr = new int[100]; // heap — avoid in hot path
+
+// constexpr — move computation to compile time
+constexpr int lookup[] = {0,1,4,9,16,25};
+
+// Move semantics — avoid copies
+vector<BigObject> process(vector<BigObject> items) {
+    // ... transform items ...
+    return items;   // NRVO/move — no copy
+}
+
+// __builtin_expect — branch prediction hint (GCC/Clang)
+if (__builtin_expect(error_condition, 0))  // rarely true
+    handleError();`
+  },
+  {
+    category: 'Advanced C++', difficulty: 'Advanced',
+    question: 'How is C++ used in HPC and AI? (OpenMP, MPI, CUDA, OpenCV)',
+    answer: '**OpenMP**: shared-memory parallelism with `#pragma omp parallel` — easy CPU multi-threading. **MPI**: message-passing for distributed computing across many machines. **CUDA**: GPU programming — write kernel functions that run on thousands of GPU threads. **OpenCV**: computer vision library. **TensorRT**: NVIDIA\'s deep learning inference engine. C++ dominates HPC and AI inference for its zero-overhead abstractions.',
+    tip: `// OpenMP — shared-memory parallelism
+#include <omp.h>
+// g++ -fopenmp main.cpp -o myapp
+
+#pragma omp parallel for
+for (int i = 0; i < N; i++) {
+    result[i] = heavyCompute(data[i]);
+}
+
+// Reduction
+double sum = 0;
+#pragma omp parallel for reduction(+:sum)
+for (int i = 0; i < N; i++) sum += arr[i];
+
+// CUDA kernel (compiled with nvcc)
+// __global__ void vectorAdd(float* A, float* B, float* C, int n) {
+//     int i = blockDim.x * blockIdx.x + threadIdx.x;
+//     if (i < n) C[i] = A[i] + B[i];
+// }
+// int blocks = (n + 255) / 256;
+// vectorAdd<<<blocks, 256>>>(dA, dB, dC, n);
+
+// OpenCV — computer vision
+// #include <opencv2/opencv.hpp>
+// cv::Mat img = cv::imread("photo.jpg");
+// cv::cvtColor(img, img, cv::COLOR_BGR2GRAY);
+// cv::GaussianBlur(img, img, {5,5}, 0);
+// cv::imshow("result", img);
+
+// MPI (cluster computing)
+// MPI_Init(&argc, &argv);
+// MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+// MPI_Send(&data, count, MPI_INT, dest, tag, MPI_COMM_WORLD);`
+  },
+
+  /* ── Ecosystem ── */
+  {
+    category: 'Ecosystem', difficulty: 'Beginner',
+    question: 'What is the C++ build and toolchain ecosystem? (GCC, Clang, CMake, vcpkg)',
+    answer: '**Compilers**: GCC (`g++`), Clang (`clang++`), MSVC (Windows). **CMake**: cross-platform build system generator — the industry standard. **Ninja**: fast parallel build backend for CMake. **vcpkg**: Microsoft\'s C++ package manager. **Conan**: another popular package manager. **pkg-config**: finds installed libraries on Linux. Compile with `-std=c++17` or `-std=c++20` to enable modern features.',
+    tip: `// Full CMake project structure
+// MyProject/
+//   CMakeLists.txt
+//   src/main.cpp
+//   include/mylib.hpp
+//   tests/test_main.cpp
+
+// CMakeLists.txt
+// cmake_minimum_required(VERSION 3.20)
+// project(MyProject VERSION 1.0 LANGUAGES CXX)
+// set(CMAKE_CXX_STANDARD 20)
+// set(CMAKE_CXX_STANDARD_REQUIRED ON)
+//
+// add_executable(myapp src/main.cpp)
+// target_include_directories(myapp PRIVATE include)
+//
+// # Test
+// enable_testing()
+// add_executable(tests tests/test_main.cpp)
+// add_test(NAME unit_tests COMMAND tests)
+
+// Build commands
+// cmake -B build -DCMAKE_BUILD_TYPE=Release
+// cmake --build build --parallel
+// ctest --test-dir build
+
+// vcpkg — package manager
+// vcpkg install boost nlohmann-json fmt
+// cmake -DCMAKE_TOOLCHAIN_FILE=vcpkg/scripts/buildsystems/vcpkg.cmake ..`
+  },
+  {
+    category: 'Ecosystem', difficulty: 'Intermediate',
+    question: 'How is C++ used in game development? (Unreal Engine, OpenGL, DirectX)',
+    answer: 'Unreal Engine uses C++ for gameplay code alongside Blueprints (visual scripting). **OpenGL**: cross-platform graphics API. **DirectX**: Windows-only Microsoft graphics API. **Vulkan**: modern low-level cross-platform GPU API (highest performance). Key patterns: game loop, entity-component system, event systems. The game engine manages memory, physics, rendering — your C++ code hooks in via classes and interfaces.',
+    tip: `// Unreal Engine — gameplay class
+// UCLASS()
+// class MYGAME_API APlayerCharacter : public ACharacter {
+//     GENERATED_BODY()
+// public:
+//     virtual void BeginPlay() override;
+//     virtual void Tick(float DeltaTime) override;
+//     virtual void SetupPlayerInputComponent(
+//         UInputComponent* Input) override;
+//
+//     UPROPERTY(EditAnywhere, BlueprintReadWrite)
+//     float MoveSpeed = 600.f;
+// };
+
+// Game loop pattern (SDL2 + OpenGL)
+// bool running = true;
+// while (running) {
+//     // Process input
+//     SDL_Event e;
+//     while (SDL_PollEvent(&e))
+//         if (e.type == SDL_QUIT) running = false;
+//
+//     // Update game state
+//     player.update(deltaTime);
+//     physics.simulate(deltaTime);
+//
+//     // Render
+//     glClear(GL_COLOR_BUFFER_BIT);
+//     renderer.draw(scene);
+//     SDL_GL_SwapWindow(window);
+// }
+
+// Key C++ game dev libraries
+// SDL2    — windowing, input, audio
+// SFML    — 2D graphics
+// OpenGL  — 3D graphics
+// Bullet  — physics`
+  },
+  {
+    category: 'Ecosystem', difficulty: 'Intermediate',
+    question: 'How is C++ used in embedded systems? (Arduino, STM32, robotics)',
+    answer: 'Embedded C++ avoids dynamic memory (`new`/`delete`) and STL containers that use the heap. Use `std::array` (fixed size on stack), avoid exceptions (no runtime support). `volatile` for hardware registers. Interrupts via ISR (Interrupt Service Routines). **Arduino** is the simplest entry point. **STM32** with HAL (Hardware Abstraction Layer) for production embedded. **ROS2** uses C++ for robotics.',
+    tip: `// Arduino — simplest embedded C++
+// void setup() {
+//     pinMode(LED_BUILTIN, OUTPUT);
+//     Serial.begin(9600);
+// }
+// void loop() {
+//     digitalWrite(LED_BUILTIN, HIGH);
+//     delay(1000);
+//     digitalWrite(LED_BUILTIN, LOW);
+//     delay(1000);
+// }
+
+// Bare-metal C++ — access hardware registers directly
+volatile uint32_t* const RCC_AHB1ENR = (uint32_t*)0x40023830;
+volatile uint32_t* const GPIOA_MODER = (uint32_t*)0x40020000;
+volatile uint32_t* const GPIOA_ODR   = (uint32_t*)0x40020014;
+
+*RCC_AHB1ENR |= (1 << 0);    // Enable GPIOA clock
+*GPIOA_MODER |= (1 << 10);   // PA5 = output
+*GPIOA_ODR   |= (1 << 5);    // PA5 HIGH
+
+// Embedded best practices:
+// - No dynamic allocation (heap fragmentation)
+// - Use constexpr instead of #define for constants
+// - Keep ISRs short — set flags, handle in main loop
+// - Use RAII for peripheral initialization
+// - Fixed-size types: uint8_t, uint16_t, uint32_t`
+  },
+  {
+    category: 'Ecosystem', difficulty: 'Intermediate',
+    question: 'What cross-platform C++ libraries should every developer know? (Qt, Boost)',
+    answer: '**Qt**: full cross-platform framework — GUI (widgets + QML), networking, threading, databases, signals/slots. Industry standard for desktop apps. **Boost**: collection of high-quality libraries that often become C++ standard features (e.g., `boost::optional` → `std::optional`). **POCO**: networking and app framework. **{fmt}**: fast string formatting. **spdlog**: fast logging. **Catch2**/**Google Test**: unit testing.',
+    tip: `// Qt — signal/slot (event system)
+// class Button : public QObject {
+//     Q_OBJECT
+// public slots:
+//     void onClick() { qDebug() << "Clicked!"; }
+// signals:
+//     void pressed();
+// };
+// connect(btn, &Button::pressed, btn, &Button::onClick);
+
+// Qt Quick File dialog
+// FileDialog {
+//     id: fileDialog
+//     title: "Open File"
+//     onAccepted: processFile(fileDialog.fileUrl)
+// }
+
+// {fmt} — fast formatting (C++20 std::format is based on it)
+// #include <fmt/core.h>
+// fmt::print("Hello, {}! You are {} years old.\n", "Alice", 30);
+
+// spdlog — fast logging
+// #include <spdlog/spdlog.h>
+// spdlog::info("Server started on port {}", 8080);
+// spdlog::warn("Low memory: {} MB left", freeMem);
+
+// Google Test
+// #include <gtest/gtest.h>
+// TEST(MyTest, AddWorks) {
+//     EXPECT_EQ(add(2, 3), 5);
+//     ASSERT_TRUE(add(0, 0) == 0);
+// }
+// int main(int argc, char** argv) {
+//     testing::InitGoogleTest(&argc, argv);
+//     return RUN_ALL_TESTS();
+// }`
+  },
+
+  /* ── Interview ── */
+  {
+    category: 'Interview', difficulty: 'Intermediate',
+    question: 'C++ Interview — Stack vs heap allocation.',
+    answer: '**Stack**: automatic, fast, limited (~1-8 MB), LIFO — local variables, function frames. **Heap**: manual (`new`/`delete`) or smart pointers, large size, flexible — but slower allocation and fragmentation risk. Smart pointers (`unique_ptr`, `shared_ptr`) automate heap cleanup. Use stack by default; heap only when you need: dynamic size, lifetime beyond scope, or large objects.',
+    tip: `// Stack allocation — fast, automatic
+void fn() {
+    int x = 42;           // stack
+    array<int, 100> arr;  // 400 bytes on stack
+}  // x and arr destroyed here automatically
+
+// Heap allocation — manual
+int* p = new int(42);
+// ... use p ...
+delete p;  // MUST free
+
+// Better — smart pointer (RAII)
+{
+    auto p = make_unique<int>(42);
+    cout << *p;
+}  // automatically freed
+
+// Stack overflow risk
+void bad() {
+    int huge[10000000];  // stack overflow!
+}
+
+// When to heap:
+// - Size unknown at compile time: vector, string
+// - Lifetime beyond current scope
+// - Objects > few KB (stack is limited)
+// - Polymorphism (need pointer/reference to base)
+
+// Interview: What is a dangling pointer?
+int* dp;
+{
+    int local = 5;
+    dp = &local;
+}  // local destroyed — dp is now dangling (UB to dereference)`
+  },
+  {
+    category: 'Interview', difficulty: 'Intermediate',
+    question: 'C++ Interview — What are the four pillars of OOP in C++?',
+    answer: '**Encapsulation**: `private`/`public`/`protected` — hide internals. **Abstraction**: pure virtual functions (`= 0`) define an interface. **Inheritance**: `: public Base` — reuse and extend. Multiple inheritance is allowed. **Polymorphism**: `virtual`/`override` + pointer/reference — vtable dispatch at runtime. Always declare a virtual destructor in base classes.',
+    tip: `// Encapsulation
+class Account {
+    double _bal = 0;
+public:
+    void deposit(double n) { if (n>0) _bal += n; }
+    double balance() const { return _bal; }
+};
+
+// Abstraction (pure virtual = interface)
+class IShape {
+public:
+    virtual double area() const = 0;
+    virtual ~IShape() {}
+};
+
+// Inheritance + Polymorphism
+class Animal {
+public:
+    virtual string sound() const { return "..."; }
+    virtual ~Animal() {}  // CRITICAL: virtual destructor
+};
+class Dog : public Animal {
+public:
+    string sound() const override { return "Woof"; }
+};
+
+Animal* a = new Dog();
+cout << a->sound();  // "Woof" — virtual dispatch
+delete a;            // calls Dog::~Dog then Animal::~Animal
+
+// Common interview pitfall:
+// Forgetting virtual destructor causes memory leak
+// when deleting through base pointer`
+  },
+  {
+    category: 'Interview', difficulty: 'Intermediate',
+    question: 'C++ Interview — Explain STL mastery: vector, map, set, and algorithms.',
+    answer: '`vector`: dynamic array, O(1) access, O(n) insert middle. `map`: red-black tree, O(log n) ops, sorted. `unordered_map`: hash map, O(1) average. `set`/`unordered_set`: unique values. `sort`, `find`, `lower_bound`, `transform`, `count_if` are essential algorithms. Know when to use which container based on access patterns.',
+    tip: `// vector — cache-friendly, random access O(1)
+vector<int> v = {3,1,4,1,5};
+sort(v.begin(), v.end());   // [1,1,3,4,5]
+v.erase(unique(v.begin(), v.end()), v.end()); // deduplicate
+
+// map vs unordered_map
+map<string,int>           m;   // sorted, O(log n), ordered iteration
+unordered_map<string,int> um;  // O(1) avg, no order guarantee
+
+// Frequency count
+unordered_map<char,int> freq;
+for (char c : "hello") freq[c]++;
+
+// set operations
+set<int> s1 = {1,2,3,4};
+set<int> s2 = {3,4,5,6};
+vector<int> intersection;
+set_intersection(s1.begin(),s1.end(),s2.begin(),s2.end(),
+                 back_inserter(intersection));  // {3,4}
+
+// Algorithms
+auto it = find_if(v.begin(), v.end(), [](int x){ return x > 3; });
+int cnt = count_if(v.begin(), v.end(), [](int x){ return x%2==0; });
+transform(v.begin(), v.end(), v.begin(), [](int x){ return x*2; });
+
+// Interview: vector push_back amortized O(1)
+// capacity doubles when exceeded — total insertions O(n)`
+  },
+  {
+    category: 'Interview', difficulty: 'Intermediate',
+    question: 'C++ Interview — Explain smart pointers and move semantics.',
+    answer: '`unique_ptr`: sole owner, zero overhead, non-copyable. `shared_ptr`: shared ownership, reference-counted. `weak_ptr`: breaks cycles. Move semantics (C++11): transfers resources instead of copying — `std::move` casts to rvalue. Rule of Five: if you define any of destructor/copy ctor/copy assign/move ctor/move assign — define all five.',
+    tip: `// unique_ptr — sole ownership
+auto p = make_unique<string>("hello");
+cout << *p;
+auto p2 = move(p);   // p is null, p2 owns it
+
+// shared_ptr — reference counted
+auto sp1 = make_shared<int>(42);
+auto sp2 = sp1;           // count = 2
+sp1.reset();              // count = 1
+cout << sp2.use_count();  // 1
+
+// weak_ptr — no ownership, prevents cycles
+weak_ptr<int> wp = sp2;
+if (auto locked = wp.lock())   // nullptr if object freed
+    cout << *locked;
+
+// Move semantics
+vector<int> big(1000000);
+auto moved = std::move(big);   // O(1) — transfers pointer
+cout << big.size();    // 0
+
+// Rule of Five
+class Buffer {
+    int* data;
+public:
+    Buffer(int n) : data(new int[n]) {}
+    ~Buffer()                          { delete[] data; }
+    Buffer(const Buffer& o)            { /* deep copy */ }
+    Buffer& operator=(const Buffer& o) { /* deep copy */ return *this; }
+    Buffer(Buffer&& o) noexcept        { data = o.data; o.data = nullptr; }
+    Buffer& operator=(Buffer&& o) noexcept { /* move assign */ return *this; }
+};
+
+// Interview: when to use each?
+// unique_ptr — default for owned heap objects
+// shared_ptr — shared ownership, caches, shared resources
+// weak_ptr   — break circular references (parent-child trees)`
+  },
+  {
+    category: 'Interview', difficulty: 'Advanced',
+    question: 'C++ Interview — Explain concurrency: threads, mutex, and memory model.',
+    answer: 'Use `std::thread` for parallelism. Protect shared data with `std::mutex` + `lock_guard` (RAII). A **data race** (two threads access same memory, at least one writes, no synchronization) is undefined behavior. `std::atomic<T>` for lock-free simple ops. The C++ memory model defines ordering guarantees — `memory_order_seq_cst` is the default (safest). Use `async`/`future` for task-based concurrency.',
+    tip: `// Data race — undefined behavior!
+int counter = 0;
+thread t1([&]{ for(int i=0;i<1000;i++) counter++; });  // RACE!
+thread t2([&]{ for(int i=0;i<1000;i++) counter++; });
+t1.join(); t2.join();
+// counter may be < 2000
+
+// Fix 1: mutex + lock_guard
+mutex mtx;
+int safe = 0;
+auto task = [&]() {
+    for (int i=0; i<1000; i++) {
+        lock_guard<mutex> lock(mtx);
+        safe++;
+    }
+};
+
+// Fix 2: atomic — lock-free
+atomic<int> atomicCounter{0};
+auto atomicTask = [&]() {
+    for (int i=0; i<1000; i++) atomicCounter++;
+};
+
+// RAII locking — unique_lock for more control
+unique_lock<mutex> lock(mtx);
+lock.unlock();    // can unlock early
+lock.lock();      // re-lock
+
+// Deadlock prevention — always lock in same order
+// Use std::lock() to lock multiple mutexes safely
+lock(mtx1, mtx2);
+lock_guard<mutex> lg1(mtx1, adopt_lock);
+lock_guard<mutex> lg2(mtx2, adopt_lock);`
+  },
+  {
+    category: 'Interview', difficulty: 'Advanced',
+    question: 'C++ Interview — Explain RAII and performance optimization.',
+    answer: '**RAII** (Resource Acquisition Is Initialization): acquire resources in constructor, release in destructor. Guarantees cleanup even on exceptions. Smart pointers, `lock_guard`, `fstream` all use RAII. Performance: avoid copies (use `const&`, move semantics), use cache-friendly data structures (`vector` over `list`), pre-allocate with `reserve()`, minimize heap allocations in hot paths.',
+    tip: `// RAII — resource tied to object lifetime
+class DatabaseConnection {
+    Connection* conn;
+public:
+    DatabaseConnection(const string& url) {
+        conn = db_connect(url);   // acquire
+    }
+    ~DatabaseConnection() {
+        db_disconnect(conn);       // release — guaranteed
+    }
+    // Non-copyable (or implement deep copy)
+    DatabaseConnection(const DatabaseConnection&) = delete;
+    DatabaseConnection& operator=(const DatabaseConnection&) = delete;
+};
+
+{
+    DatabaseConnection db("localhost/mydb");
+    db.query("SELECT ...");
+}  // disconnected here — even if exception thrown
+
+// Performance patterns
+vector<int> v;
+v.reserve(10000);          // avoid reallocations
+for (int i=0;i<10000;i++) v.push_back(i);
+
+// Pass large objects by const ref — no copy
+void process(const vector<BigObj>& data) { /* ... */ }
+
+// Return by value — compiler applies NRVO
+vector<int> makeData() {
+    vector<int> v(1000);
+    // ... fill v ...
+    return v;   // moved, not copied
+}
+
+// Avoid unnecessary allocations
+string result;
+result.reserve(100);   // pre-allocate
+result += "hello";
+result += " world";`
+  },
+];
+
+
+/* ═══════════════════════════════════════════════════════════
    C# — 46 cards across 9 categories
 ═══════════════════════════════════════════════════════════ */
 const CSHARP_CARDS = [
@@ -14092,6 +15661,7 @@ const SUBJECTS = {
   'DSA':        DSA_CARDS,
   'Python':     PYTHON_CARDS,
   'C#':         CSHARP_CARDS,
+  'C++':        CPP_CARDS,
   'SQL':        SQL_CARDS,
   'Database':   DATABASE_CARDS,
   'JavaScript': JS_CARDS,
@@ -14110,7 +15680,7 @@ const SUBJECTS = {
 ═══════════════════════════════════════════════════════════ */
 const SUBJECT_GROUPS = {
   'Core':        ['DSA', 'Internet', 'Linux', 'Tricked Memory'],
-  'Language':    ['Python', 'C#'],
+  'Language':    ['Python', 'C#', 'C++'],
   'Backend':     ['SQL', 'Database', 'API', 'Node.js', 'Testing & Containers'],
   'Frontend':    ['JavaScript', 'React & SSR', 'CSS & Tailwind'],
   'Cheat Sheet': ['Junior Dev Daily Essentials'],
@@ -14136,6 +15706,7 @@ const SUBJECT_COLORS = {
   'DSA':        '#f97316',
   'Python':     '#3b82f6',
   'C#':         '#8b5cf6',
+  'C++':        '#00599c',
   'SQL':        '#06b6d4',
   'Database':   '#ec4899',
   'JavaScript': '#f59e0b',
@@ -14187,6 +15758,11 @@ const CATEGORY_COLORS = {
   'OOP & Patterns':     '#a78bfa',
   'LINQ & Async':       '#7c3aed',
   'Core C#':            '#a78bfa',
+  'Core C++':           '#0080cc',
+  'Modern C++':         '#0066aa',
+  'Daily Tools':        '#004c88',
+  'DSA in C++':         '#003366',
+  'Advanced C++':       '#002244',
   'Modern C#':          '#7c3aed',
   'Useful Daily Tools': '#6d28d9',
   'DSA in C#':          '#5b21b6',
