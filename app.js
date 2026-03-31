@@ -18,8 +18,74 @@ const DSA_JAVASCRIPT_CARDS = [
   // 0.2 Overview — 6 Sections Roadmap
   {
     category: 'Overview', difficulty: 'Beginner',
-    question: 'DSA (JavaScript) — What are the 6 main sections and their key topics?',
-    answer: '🔴 1. Fundamentals & Analysis — Big-O/Theta/Omega · Recursion & Iteration · Math Basics (log, pow, modular, bit ops). 🟡 2. Core Data Structures — Linear: Arrays · Strings · Linked Lists · Stacks · Queues; Hashing: Map/Set; Nonlinear: Trees · Heaps · Graphs. 🔵 3. Algorithms — Searching · Sorting (Simple: Bubble/Insertion/Selection · Efficient: Merge/Quick) · DFS/BFS Traversals · Greedy · Backtracking · DP · Divide & Conquer. 🟢 4. Coding Patterns ⭐ — Sliding Window · Two Pointers · Fast & Slow Pointers · Prefix Sum · Recursion + DP. 🟣 5. Advanced Topics — Dijkstra\'s · Kruskal/Prim MST · KMP · Rabin-Karp · Z-algorithm · GCD · Sieve · Modular exponentiation. 🚀 6. Ecosystem — LeetCode · HackerRank · Real-world (B-Trees, Graphs, AI/ML) · Clean Code in interviews.',
+    question: 'DSA (JavaScript) — Full Roadmap: 6 sections, all topics at a glance',
+    answer: '6 sections: 🔴 Fundamentals & Analysis · 🟡 Core Data Structures · 🔵 Algorithms · 🟢 Coding Patterns ⭐ · 🟣 Advanced Topics · 🚀 Ecosystem & Applications',
+    tip: `DSA (JavaScript)
+│
+├─ 🔴 1. Fundamentals & Analysis
+│   ├─ Complexity Analysis
+│   │   └─ Big-O · Big-Theta · Big-Omega · Time vs Space Tradeoffs
+│   ├─ Recursion & Iteration
+│   │   ├─ Base case · Call stack · Lessons (Factorial, Fibonacci in JS)
+│   │   └─ Loop structures (for · while · for...of · forEach)
+│   └─ Math Basics
+│       └─ Math.log · Math.pow · Modular arithmetic · Bit manipulation
+│
+├─ 🟡 2. Core Data Structures (Storage)
+│   ├─ Linear Structures
+│   │   ├─ Arrays: push · pop · map · filter · reduce · slice · splice
+│   │   ├─ Strings: split · includes · substring · charCodeAt
+│   │   ├─ Linked Lists
+│   │   │   ├─ Singly: class Node { val, next }
+│   │   │   └─ Doubly: class Node { val, next, prev }
+│   │   ├─ Stacks: LIFO · push · pop (arr.push/pop)
+│   │   └─ Queues: FIFO · enqueue · dequeue (arr.push/shift)
+│   ├─ Hashing
+│   │   └─ Map vs Object in JS · Set · Hashing logic (index = hash % size)
+│   └─ Nonlinear Structures
+│       ├─ Trees
+│       │   ├─ Binary Trees: class TreeNode { val, left, right }
+│       │   └─ Binary Search Trees (BST): insert · search · delete logic
+│       ├─ Heaps
+│       │   └─ Min-Heap · Max-Heap (parent/child index math)
+│       └─ Graphs
+│           └─ Adjacency List (Map) vs Adjacency Matrix (2D Array)
+│
+├─ 🔵 3. Algorithms (Processing)
+│   ├─ Searching
+│   │   └─ Linear Search · Binary Search (O(log n) template)
+│   ├─ Sorting
+│   │   ├─ Simple: Bubble · Insertion · Selection
+│   │   └─ Efficient: Merge Sort (Divide & Conquer) · Quicksort (Partitioning)
+│   ├─ Traversals (The "Explorer" logic)
+│   │   ├─ Trees: DFS (In/Pre/Post-order) · BFS (Level-order)
+│   │   └─ Graphs: DFS (Recursion/Stack) · BFS (Queue)
+│   ├─ Strategy Patterns
+│   │   ├─ Greedy: Activity selection · Coin change
+│   │   ├─ Backtracking: N-Queens · Permutations · Subsets
+│   │   └─ Dynamic Programming: Memoization · Tabulation · Knapsack · LIS
+│   └─ Divide & Conquer
+│       └─ Logic: Split → Solve → Combine (Merge/Quick sort)
+│
+├─ 🟢 4. Coding Patterns (Problem Solving ⭐)
+│   ├─ Sliding Window: max subarray · substring problems
+│   ├─ Two Pointers: sorted arrays · reverse string · linked list middle
+│   ├─ Fast & Slow Ptrs: Cycle detection (Floyd's) · Find middle
+│   ├─ Prefix Sum: Range sum queries · Subarray sum equals K
+│   └─ Recursion + DP: Optimal substructure · Overlapping subproblems
+│
+├─ 🟣 5. Advanced Topics (System Scale)
+│   ├─ Graph Algorithms
+│   │   └─ Dijkstra's (Shortest path) · Kruskal/Prim (MST)
+│   ├─ String Algorithms
+│   │   └─ KMP · Rabin-Karp · Z-algorithm
+│   └─ Number Theory
+│       └─ GCD · Sieve of Eratosthenes · Modular exponentiation
+│
+└─ 🚀 6. Ecosystem & Applications
+    ├─ Competitive Prog: LeetCode · HackerRank · Technical Interview Skills
+    ├─ Real-world: Databases (B-Trees) · Networking (Graphs) · AI/ML (DP)
+    └─ Clean Code: Naming · Edge cases · Readability in Technical Interviews`,
   },
 
   // ══════════════════════════════════════════════════════════
