@@ -19438,7 +19438,366 @@ $radius: 0.5rem;
 ];
 const NPM_CARDS           = [];
 const GIT_CARDS           = [];
-const TAILWIND_CARDS      = [];
+/* ═══════════════════════════════════════════════════════════
+   TAILWIND CSS — Utility-First CSS Framework
+═══════════════════════════════════════════════════════════ */
+const TAILWIND_CARDS = [
+
+  // ══════════════════════════════════════════════════════════
+  // 0. OVERVIEW
+  // ══════════════════════════════════════════════════════════
+
+  {
+    category: 'Overview', difficulty: 'Beginner',
+    question: 'Tailwind CSS — Full Mind Map, Learning Paths & Interview Core',
+    answer: '6 sections: 1. Fundamentals · 2. Core Concepts · 3. Useful Daily Tools · 4. Advanced Features · 5. Performance & Security · 6. Ecosystem & Applications',
+    tip: `Tailwind CSS
+│
+├─ 1. Fundamentals
+│   ├─ What it is       Utility-first CSS framework · rapid UI development
+│   ├─ Install          npm install tailwindcss · PostCSS setup
+│   ├─ Config File      tailwind.config.js · theme · extend · plugins
+│   ├─ Directives       @tailwind base · @tailwind components · @tailwind utilities
+│   └─ Basic Usage      class="text-center bg-blue-500 p-4"
+│
+├─ 2. Core Concepts
+│   ├─ Utility Classes  text-lg · font-bold · bg-gray-200 · p-4 · m-2
+│   ├─ Responsive       sm: · md: · lg: · xl: · 2xl:
+│   ├─ State Variants   hover: · focus: · active: · disabled:
+│   ├─ Dark Mode        class strategy · media strategy
+│   └─ Customization    extend theme · colors · spacing · typography
+│
+├─ 3. Useful Daily Tools
+│   ├─ Typography       text-sm · leading-relaxed · tracking-wide
+│   ├─ Layout           flex · grid · gap-x-4 · justify-between
+│   ├─ Spacing          p-2 · m-4 · space-x-2 · space-y-4
+│   ├─ Borders          border · border-radius · ring utilities
+│   └─ Effects          shadow-lg · opacity-75 · transition-all · duration-300
+│
+├─ 4. Advanced Features
+│   ├─ Plugins          typography · forms · aspect-ratio · line-clamp
+│   ├─ Arbitrary Values w-[450px] · bg-[#1da1f2]
+│   ├─ JIT Mode         on-demand class generation · instant builds
+│   ├─ Reusable Styles  @apply directive · component extraction
+│   └─ Theming          multiple themes · CSS variables integration
+│
+├─ 5. Performance & Security
+│   ├─ PurgeCSS         remove unused classes · optimize bundle size
+│   ├─ Tree-shaking     automatic removal of unused utilities
+│   ├─ Best Practices   avoid deep nesting · keep config clean
+│   └─ Security         CSP compatibility · safe class names
+│
+└─ 6. Ecosystem & Applications
+    ├─ Frameworks       Next.js · React · Vue · Angular integration
+    ├─ UI Libraries     Headless UI · DaisyUI · Flowbite
+    ├─ Tooling          VS Code extensions · IntelliSense · Prettier plugin
+    ├─ Community        Tailwind UI · templates · starter kits
+    └─ Real-world Use   dashboards · landing pages · e-commerce · SaaS apps
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+LEARNING PATHS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Beginner:     Fundamentals → Install → Config → Basic Usage → Utility Classes
+Intermediate: Responsive design → State variants → Dark mode → Customization
+Advanced:     Plugins → Arbitrary values → JIT mode → @apply directive → Theming
+Integration:  Tailwind + React/Vue/Next.js → UI libraries → Real-world projects
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🎯 INTERVIEW CORE KNOWLEDGE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Utility-first:   rapid prototyping · small reusable classes
+Responsive:      sm:, md:, lg:, xl: breakpoints · mobile-first by default
+Variants:        hover:, focus:, active:, dark mode strategies
+Customization:   tailwind.config.js · extend theme · arbitrary values
+Performance:     PurgeCSS · JIT mode · bundle optimization
+Ecosystem:       Tailwind UI · Headless UI · DaisyUI · framework integrations`,
+  },
+
+  // ══════════════════════════════════════════════════════════
+  // 1. FUNDAMENTALS
+  // ══════════════════════════════════════════════════════════
+
+  {
+    category: 'Fundamentals', difficulty: 'Beginner',
+    question: 'Tailwind CSS Fundamentals — what it is, installation, config file, and directives?',
+    answer: '**Tailwind CSS** is a utility-first CSS framework — instead of pre-built components, it provides low-level utility classes you compose directly in HTML. **No context switching** between HTML and CSS files. **Install**: `npm install -D tailwindcss postcss autoprefixer` → `npx tailwindcss init -p` (creates `tailwind.config.js` + `postcss.config.js`). **Config**: `tailwind.config.js` has `content` (files to scan for classes), `theme.extend` (add/override tokens), `plugins`. **Directives** in your main CSS file: `@tailwind base` (normalize/reset), `@tailwind components` (component classes), `@tailwind utilities` (all utility classes). **JIT (Just-In-Time)**: default in Tailwind v3 — generates only the classes you use, making dev builds instant.',
+    tip: `# Install (v3)
+npm install -D tailwindcss postcss autoprefixer
+npx tailwindcss init -p
+
+# tailwind.config.js
+/** @type {import('tailwindcss').Config} */
+module.exports = {
+  content: [
+    './src/**/*.{html,js,jsx,ts,tsx,vue}',  // scan these files for classes
+  ],
+  theme: {
+    extend: {
+      colors: {
+        brand: { 500: '#6366f1', 600: '#4f46e5' },
+      },
+      fontFamily: {
+        sans: ['Inter', 'system-ui', 'sans-serif'],
+      },
+      spacing: {
+        '18': '4.5rem',
+        '128': '32rem',
+      },
+    },
+  },
+  plugins: [
+    require('@tailwindcss/typography'),
+    require('@tailwindcss/forms'),
+  ],
+  darkMode: 'class', // or 'media'
+};
+
+/* src/index.css — the three directives */
+@tailwind base;        /* Preflight (CSS reset) */
+@tailwind components;  /* @layer components { .btn { @apply ... } } */
+@tailwind utilities;   /* All utility classes (generated on-demand with JIT) */
+
+/* Build command */
+npx tailwindcss -i ./src/index.css -o ./dist/output.css --watch`,
+  },
+
+  // ══════════════════════════════════════════════════════════
+  // 2. CORE CONCEPTS
+  // ══════════════════════════════════════════════════════════
+
+  {
+    category: 'Core Concepts', difficulty: 'Beginner',
+    question: 'Tailwind Core Concepts — utility classes, responsive prefixes, state variants, and dark mode?',
+    answer: '**Utility classes**: single-purpose classes that map directly to CSS — `text-lg` = `font-size: 1.125rem`, `bg-blue-500` = specific blue, `p-4` = `padding: 1rem` (4 × 0.25rem). **Responsive**: Tailwind is **mobile-first** — unprefixed classes apply to all sizes, prefixes add breakpoints: `sm:` (640px), `md:` (768px), `lg:` (1024px), `xl:` (1280px), `2xl:` (1536px). **State variants**: `hover:bg-blue-600`, `focus:ring-2`, `active:scale-95`, `disabled:opacity-50`, `group-hover:`, `peer-focus:`. **Dark mode — class strategy**: add `dark` class to `<html>`, then use `dark:bg-gray-900`. **Dark mode — media strategy**: responds to OS preference automatically via `prefers-color-scheme`.',
+    tip: `<!-- Utility classes -->
+<div class="text-xl font-bold text-gray-900 bg-white rounded-lg shadow-md p-6 m-4">
+  Card
+</div>
+
+<!-- Responsive — mobile-first -->
+<div class="
+  grid grid-cols-1        <!-- mobile: 1 column -->
+  md:grid-cols-2          <!-- tablet: 2 columns -->
+  lg:grid-cols-3          <!-- desktop: 3 columns -->
+  gap-6 p-4
+">...</div>
+
+<!-- State variants -->
+<button class="
+  bg-indigo-500 text-white px-4 py-2 rounded-lg font-semibold
+  hover:bg-indigo-600
+  focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2
+  active:scale-95
+  disabled:opacity-50 disabled:cursor-not-allowed
+  transition-all duration-200
+">
+  Submit
+</button>
+
+<!-- Dark mode (class strategy) -->
+<html class="dark">
+<body class="bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100">
+  <div class="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+    Dark-aware card
+  </div>
+</body>
+
+<!-- Group hover — parent controls child -->
+<div class="group flex items-center gap-3 cursor-pointer">
+  <span class="text-gray-600 group-hover:text-indigo-500 transition-colors">Icon</span>
+  <span class="group-hover:font-semibold">Label</span>
+</div>`,
+  },
+
+  // ══════════════════════════════════════════════════════════
+  // 3. USEFUL DAILY TOOLS
+  // ══════════════════════════════════════════════════════════
+
+  {
+    category: 'Useful Daily Tools', difficulty: 'Beginner',
+    question: 'Tailwind Daily Tools — typography, layout (flex/grid), spacing, borders, and effects?',
+    answer: '**Typography**: `text-{size}` (xs/sm/base/lg/xl/2xl…), `font-{weight}` (thin/light/normal/medium/semibold/bold/extrabold), `leading-{value}` (line-height), `tracking-{value}` (letter-spacing), `text-{color}`, `uppercase/lowercase/capitalize`, `truncate`, `line-clamp-{n}`. **Layout**: `flex`, `grid`, `justify-{start/end/center/between/around/evenly}`, `items-{start/end/center/baseline/stretch}`, `gap-{n}`, `flex-wrap`, `flex-col`. **Spacing**: `p-{n}` (padding all), `px-/py-/pt-/pr-/pb-/pl-` (directional), `m-{n}`, `mx-auto` (center), `space-x-{n}` / `space-y-{n}` (gap between flex/block children). **Borders**: `border`, `border-{color}`, `rounded-{none/sm/md/lg/xl/2xl/full}`, `ring-{n}` (focus outline). **Effects**: `shadow-{sm/md/lg/xl}`, `opacity-{n}`, `transition-{all/colors/opacity}`, `duration-{ms}`, `ease-{linear/in/out}`.',
+    tip: `<!-- Typography -->
+<h1 class="text-4xl font-extrabold tracking-tight text-gray-900">Heading</h1>
+<p class="text-base leading-relaxed text-gray-600">Paragraph text</p>
+<span class="text-sm font-medium uppercase tracking-widest text-indigo-500">Label</span>
+<p class="truncate w-48">Long text that gets cut off...</p>
+<p class="line-clamp-3">Multi-line text clamped to 3 lines max...</p>
+
+<!-- Flex layout -->
+<div class="flex items-center justify-between gap-4 flex-wrap">
+  <div class="flex-1 min-w-0">...</div>
+  <div class="shrink-0">...</div>
+</div>
+
+<!-- Grid layout -->
+<div class="grid grid-cols-12 gap-6">
+  <div class="col-span-8">Main content</div>
+  <div class="col-span-4">Sidebar</div>
+</div>
+
+<!-- Spacing -->
+<div class="p-6 px-8 py-4 mx-auto max-w-2xl">
+  <ul class="space-y-2">       <!-- gap between children -->
+    <li>Item 1</li><li>Item 2</li>
+  </ul>
+</div>
+
+<!-- Borders & Shadows -->
+<div class="border border-gray-200 rounded-xl shadow-lg">Card</div>
+<input class="border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
+
+<!-- Transitions & Effects -->
+<div class="opacity-75 hover:opacity-100 transition-opacity duration-200">Fade</div>
+<button class="transform hover:-translate-y-1 transition-transform duration-150 shadow hover:shadow-lg">
+  Lift on hover
+</button>`,
+  },
+
+  // ══════════════════════════════════════════════════════════
+  // 4. ADVANCED FEATURES
+  // ══════════════════════════════════════════════════════════
+
+  {
+    category: 'Advanced Features', difficulty: 'Intermediate',
+    question: 'Tailwind Advanced Features — arbitrary values, @apply, plugins, and theming with CSS variables?',
+    answer: '**Arbitrary values**: escape the design system with `w-[450px]`, `bg-[#1da1f2]`, `text-[22px]`, `grid-cols-[1fr_2fr_1fr]` — uses JIT. **`@apply` directive**: extract repeated class lists into a semantic CSS class. Use sparingly — overuse defeats utility-first purpose. **Plugins**: `@tailwindcss/typography` (`.prose` for rich text), `@tailwindcss/forms` (styled form elements), `@tailwindcss/aspect-ratio`, `line-clamp`. **Custom plugins**: add new utilities/components via `addUtilities()`/`addComponents()`. **Theming with CSS variables**: define `--color-primary` in `:root`, reference in config with `var(--color-primary)` — enables runtime theme switching without rebuilding. **`theme()` function**: reference config values in CSS — `color: theme(\'colors.indigo.500\')`.',
+    tip: `<!-- Arbitrary values — any CSS value -->
+<div class="w-[450px] h-[200px] bg-[#1da1f2] text-[14px] mt-[7px]">
+  Custom sizing
+</div>
+<!-- Arbitrary with modifiers -->
+<div class="lg:w-[800px] hover:bg-[#custom] dark:text-[#f0f0f0]">...</div>
+
+/* @apply — extract component styles */
+@layer components {
+  .btn {
+    @apply inline-flex items-center px-4 py-2 rounded-lg font-semibold
+           transition-all duration-200 focus:outline-none focus:ring-2;
+  }
+  .btn-primary {
+    @apply btn bg-indigo-500 text-white hover:bg-indigo-600
+           focus:ring-indigo-500 focus:ring-offset-2;
+  }
+  .card {
+    @apply bg-white dark:bg-gray-800 rounded-xl shadow-md p-6
+           border border-gray-100 dark:border-gray-700;
+  }
+}
+
+/* CSS Variables theming */
+:root { --color-primary: 99 102 241; }  /* RGB values for opacity support */
+[data-theme="purple"] { --color-primary: 139 92 246; }
+
+/* tailwind.config.js */
+theme: {
+  extend: {
+    colors: {
+      primary: 'rgb(var(--color-primary) / <alpha-value>)',
+    }
+  }
+}
+/* Usage: bg-primary/50 (50% opacity) */
+
+/* Custom plugin */
+const plugin = require('tailwindcss/plugin');
+plugins: [
+  plugin(({ addUtilities }) => {
+    addUtilities({ '.text-shadow': { 'text-shadow': '2px 2px 4px rgba(0,0,0,0.3)' } });
+  })
+]`,
+  },
+
+  // ══════════════════════════════════════════════════════════
+  // 5. PERFORMANCE & SECURITY
+  // ══════════════════════════════════════════════════════════
+
+  {
+    category: 'Performance & Security', difficulty: 'Intermediate',
+    question: 'Tailwind Performance & Security — PurgeCSS, JIT, bundle optimization, and CSP?',
+    answer: '**PurgeCSS / content scanning**: Tailwind v3 scans all files listed in `content` and generates ONLY the classes found — production build is typically 5–20 KB (vs 3 MB full CSS). **JIT (Just-In-Time)**: default in v3 — classes generated on demand during development, no separate purge step needed. Enables arbitrary values and unlimited variants. **Bundle size**: never ship the full Tailwind CSS — always use `NODE_ENV=production` for minified, purged output. **Best practices**: don\'t construct class names dynamically (`text-${color}-500` won\'t be detected — use full class names in source). **CSP**: Tailwind generates standard CSS, compatible with CSP `style-src \'self\'`. Avoid inline styles that require `\'unsafe-inline\'`. **Safe class names**: Tailwind classes are predictable — no risk of user-controlled class injection.',
+    tip: `# Production build — auto-purges unused classes
+NODE_ENV=production npx tailwindcss -i input.css -o output.css --minify
+
+# tailwind.config.js — content paths (critical for purging)
+module.exports = {
+  content: [
+    './src/**/*.{html,js,jsx,ts,tsx}',
+    './public/index.html',
+    // Include any library that uses Tailwind classes:
+    './node_modules/@headlessui/react/**/*.js',
+  ],
+};
+
+# ❌ Dynamic class construction — WON'T be detected by scanner
+const color = 'red';
+<div class={"text-" + color + "-500"}>Bad</div>
+
+# ✅ Use full class names — always detectable
+const classes = { red: 'text-red-500', blue: 'text-blue-500' };
+<div class={classes[color]}>Good</div>
+
+# Safelist — force-include dynamic classes
+module.exports = {
+  safelist: [
+    'text-red-500', 'text-blue-500', 'text-green-500',
+    { pattern: /bg-(red|blue|green)-(100|200|500)/ },
+  ],
+};
+
+# Bundle size comparison:
+# Full Tailwind CSS v3:  ~3.5 MB (development)
+# After JIT purge:       ~5–20 KB (production) ← massive savings`,
+  },
+
+  // ══════════════════════════════════════════════════════════
+  // 6. ECOSYSTEM & APPLICATIONS
+  // ══════════════════════════════════════════════════════════
+
+  {
+    category: 'Ecosystem', difficulty: 'Beginner',
+    question: 'Tailwind Ecosystem — UI libraries (Headless UI, DaisyUI), framework integrations, tooling, and real-world use?',
+    answer: '**Headless UI**: unstyled, accessible components (Dialog, Listbox, Combobox, Switch) — style with Tailwind. **DaisyUI**: component library built on Tailwind, adds semantic class names (`btn`, `card`, `badge`) with themes. **Flowbite**: Tailwind component library with interactive JS components. **Tailwind UI**: official premium component library (paid). **Framework integrations**: Next.js (built-in support), React (via `className`), Vue (`:class`), Angular, SvelteKit. **VS Code tools**: Tailwind CSS IntelliSense extension (autocomplete, hover preview, linting), Prettier plugin for class sorting. **Real-world**: used by Vercel, GitHub, Linear, Shopify, Laravel — especially popular for SaaS dashboards, landing pages, and design systems.',
+    tip: `// React + Tailwind + Headless UI
+import { Dialog } from '@headlessui/react';
+
+function Modal({ isOpen, onClose }) {
+  return (
+    <Dialog open={isOpen} onClose={onClose} className="relative z-50">
+      <div className="fixed inset-0 bg-black/30" aria-hidden="true" />
+      <div className="fixed inset-0 flex items-center justify-center p-4">
+        <Dialog.Panel className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-6 max-w-md w-full">
+          <Dialog.Title className="text-lg font-bold text-gray-900 dark:text-white">
+            Confirm Action
+          </Dialog.Title>
+          <p className="mt-2 text-sm text-gray-500">Are you sure?</p>
+          <div className="mt-4 flex gap-3 justify-end">
+            <button onClick={onClose}
+              className="px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-lg transition-colors">
+              Cancel
+            </button>
+            <button className="px-4 py-2 text-sm font-medium text-white bg-indigo-500 hover:bg-indigo-600 rounded-lg transition-colors">
+              Confirm
+            </button>
+          </div>
+        </Dialog.Panel>
+      </div>
+    </Dialog>
+  );
+}
+
+<!-- DaisyUI — semantic component classes -->
+<button class="btn btn-primary">Primary</button>
+<div class="card bg-base-100 shadow-xl">
+  <div class="card-body">
+    <h2 class="card-title">Card Title</h2>
+    <p>Content</p>
+  </div>
+</div>
+<span class="badge badge-success">Active</span>`,
+  },
+
+];
 const REDUX_CARDS         = [];
 const POSTGRESQL_CARDS    = [];
 const JWT_CARDS           = [];
