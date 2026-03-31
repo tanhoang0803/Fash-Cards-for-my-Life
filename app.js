@@ -20196,7 +20196,394 @@ function* watchSearch() {
   },
 
 ];
-const POSTGRESQL_CARDS    = [];
+/* ═══════════════════════════════════════════════════════════
+   POSTGRESQL — Open-Source Relational Database
+═══════════════════════════════════════════════════════════ */
+const POSTGRESQL_CARDS = [
+
+  // ══════════════════════════════════════════════════════════
+  // 0. OVERVIEW
+  // ══════════════════════════════════════════════════════════
+
+  {
+    category: 'Overview', difficulty: 'Beginner',
+    question: 'PostgreSQL — Full Mind Map, Learning Paths & Interview Core',
+    answer: '6 sections: 1. Fundamentals · 2. Core Concepts · 3. Useful Daily Tools · 4. Advanced Features · 5. Performance & Security · 6. Ecosystem & Applications',
+    tip: `PostgreSQL
+│
+├─ 1. Fundamentals
+│   ├─ What it is       Open-source relational database · ACID compliant · extensible
+│   ├─ Install          package managers · binaries · Docker images
+│   ├─ Init Database    initdb · createdb · psql
+│   ├─ Basic Commands   CREATE DATABASE · \\c · \\dt · \\d
+│   └─ SQL Basics       SELECT · INSERT · UPDATE · DELETE
+│
+├─ 2. Core Concepts
+│   ├─ Data Types       integer · varchar · text · boolean · date · jsonb
+│   ├─ Tables           CREATE TABLE · constraints · primary/foreign keys
+│   ├─ Indexes          CREATE INDEX · unique · composite · partial
+│   ├─ Joins            INNER · LEFT · RIGHT · FULL
+│   └─ Transactions     BEGIN · COMMIT · ROLLBACK
+│
+├─ 3. Useful Daily Tools
+│   ├─ psql CLI         \\dt · \\d · \\l · \\q
+│   ├─ Extensions       pgcrypto · PostGIS · uuid-ossp
+│   ├─ Roles & Auth     CREATE ROLE · GRANT · REVOKE
+│   ├─ Backup/Restore   pg_dump · pg_restore · psql < file.sql
+│   └─ Monitoring       pg_stat_activity · EXPLAIN · ANALYZE
+│
+├─ 4. Advanced Features
+│   ├─ JSON/JSONB       store/query JSON · operators · indexing
+│   ├─ Window Functions ROW_NUMBER() · RANK() · PARTITION BY
+│   ├─ CTEs             WITH queries · recursive queries
+│   ├─ Partitioning     range · list · hash partitioned tables
+│   └─ Replication      streaming replication · logical replication
+│
+├─ 5. Performance & Security
+│   ├─ Query Tuning     EXPLAIN · ANALYZE · indexes · VACUUM
+│   ├─ Optimization     normalization · denormalization · caching
+│   ├─ Security         roles · SSL · row-level security (RLS)
+│   └─ Integrity        constraints · triggers · foreign keys
+│
+└─ 6. Ecosystem & Applications
+    ├─ ORMs             Sequelize · TypeORM · Prisma · Django ORM
+    ├─ Tools            pgAdmin · DBeaver · DataGrip
+    ├─ Frameworks       Node.js · Spring Boot · Rails integration
+    ├─ Cloud Services   AWS RDS · Azure Database for PostgreSQL · GCP Cloud SQL
+    └─ Real-world Use   web apps · analytics · geospatial (PostGIS) · financial systems
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+LEARNING PATHS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Beginner:     Fundamentals → Install → Init Database → Basic SQL → Tables & Data Types
+Intermediate: Indexes → Joins → Transactions → Roles & Auth → Backup/Restore
+Advanced:     JSON/JSONB → Window Functions → CTEs → Partitioning → Replication
+Integration:  PostgreSQL + ORMs → Frameworks → Cloud services → Real-world applications
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🎯 INTERVIEW CORE KNOWLEDGE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+SQL Basics:      SELECT · INSERT · UPDATE · DELETE · joins
+Indexes:         improve query performance · unique vs composite vs partial
+Transactions:    ACID properties · BEGIN · COMMIT · ROLLBACK
+Advanced Queries:CTEs · window functions · recursive queries
+JSON/JSONB:      flexible schema · operators · GIN indexing
+Performance:     EXPLAIN ANALYZE · VACUUM · query tuning
+Security:        roles · GRANT/REVOKE · row-level security (RLS)
+Replication:     streaming vs logical · high availability
+Ecosystem:       pgAdmin · ORMs (Prisma, TypeORM) · cloud services · PostGIS`,
+  },
+
+  // ══════════════════════════════════════════════════════════
+  // 1. FUNDAMENTALS
+  // ══════════════════════════════════════════════════════════
+
+  {
+    category: 'Fundamentals', difficulty: 'Beginner',
+    question: 'PostgreSQL Fundamentals — what it is, installation, initialising a database, and basic psql commands?',
+    answer: '**PostgreSQL** is an open-source, ACID-compliant object-relational database known for extensibility, standards compliance, and rich feature set (JSON, full-text search, PostGIS). **Install**: `apt install postgresql` (Linux), `brew install postgresql@16` (macOS), or `docker run postgres:16`. **Init**: `initdb -D /var/lib/postgresql/data` (creates cluster), `createdb mydb`, `psql mydb` (interactive shell). **Key psql meta-commands**: `\l` list databases, `\c dbname` connect, `\dt` list tables, `\d tablename` describe table, `\q` quit. **Basic SQL**: `CREATE DATABASE`, `CREATE TABLE`, `SELECT`, `INSERT INTO`, `UPDATE`, `DELETE FROM`, `DROP TABLE`.',
+    tip: `-- Install via Docker (quickest for dev)
+-- docker run --name pg -e POSTGRES_PASSWORD=secret -p 5432:5432 -d postgres:16
+
+-- Connect with psql
+-- psql -h localhost -U postgres -d mydb
+
+-- psql meta-commands
+\\l          -- list databases
+\\c mydb     -- connect to database
+\\dt         -- list tables in current schema
+\\d users    -- describe table structure
+\\di         -- list indexes
+\\du         -- list roles/users
+\\q          -- quit
+
+-- Basic SQL
+CREATE DATABASE shop;
+
+CREATE TABLE users (
+  id         SERIAL PRIMARY KEY,
+  email      VARCHAR(255) UNIQUE NOT NULL,
+  name       TEXT NOT NULL,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+INSERT INTO users (email, name) VALUES ('alice@example.com', 'Alice');
+INSERT INTO users (email, name) VALUES ('bob@example.com',   'Bob');
+
+SELECT * FROM users;
+SELECT id, name FROM users WHERE email LIKE '%@example.com' ORDER BY name;
+
+UPDATE users SET name = 'Alice Smith' WHERE id = 1;
+
+DELETE FROM users WHERE id = 2;
+
+DROP TABLE IF EXISTS users;`,
+  },
+
+  // ══════════════════════════════════════════════════════════
+  // 2. CORE CONCEPTS
+  // ══════════════════════════════════════════════════════════
+
+  {
+    category: 'Core Concepts', difficulty: 'Beginner',
+    question: 'PostgreSQL Core Concepts — data types, table constraints, indexes, joins, and transactions?',
+    answer: '**Data types**: `INTEGER`/`BIGINT`, `VARCHAR(n)`/`TEXT`, `BOOLEAN`, `DATE`/`TIMESTAMPTZ`, `NUMERIC(p,s)`, `UUID`, `JSONB`, `ARRAY`. **Constraints**: `NOT NULL`, `UNIQUE`, `PRIMARY KEY`, `FOREIGN KEY ... REFERENCES`, `CHECK`. **Indexes**: `CREATE INDEX` (B-tree default), `UNIQUE INDEX`, composite `(col1, col2)`, `PARTIAL` (with WHERE clause). Index speeds up reads but slows writes. **Joins**: `INNER JOIN` (only matching rows), `LEFT JOIN` (all left + matching right), `RIGHT JOIN`, `FULL OUTER JOIN`, `CROSS JOIN`. **Transactions**: `BEGIN` starts, `COMMIT` saves, `ROLLBACK` undoes. ACID: Atomicity (all-or-nothing), Consistency (valid state), Isolation (concurrent safety), Durability (survives crash).',
+    tip: `-- Data types
+CREATE TABLE products (
+  id          UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  name        TEXT NOT NULL,
+  price       NUMERIC(10, 2) CHECK (price >= 0),
+  in_stock    BOOLEAN DEFAULT true,
+  tags        TEXT[],
+  metadata    JSONB,
+  created_at  TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Foreign key constraint
+CREATE TABLE orders (
+  id         SERIAL PRIMARY KEY,
+  user_id    INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  total      NUMERIC(10,2),
+  status     VARCHAR(20) DEFAULT 'pending' CHECK (status IN ('pending','paid','shipped'))
+);
+
+-- Indexes
+CREATE INDEX idx_users_email  ON users(email);             -- single column
+CREATE UNIQUE INDEX           ON users(lower(email));       -- expression index
+CREATE INDEX idx_orders_user  ON orders(user_id, status);  -- composite
+CREATE INDEX idx_active_users ON users(created_at) WHERE is_active = true; -- partial
+
+-- Joins
+SELECT u.name, o.total, o.status
+FROM   users u
+INNER  JOIN orders o ON u.id = o.user_id
+WHERE  o.status = 'paid'
+ORDER  BY o.total DESC;
+
+-- LEFT JOIN (show users with or without orders)
+SELECT u.name, COUNT(o.id) AS order_count
+FROM   users u
+LEFT   JOIN orders o ON u.id = o.user_id
+GROUP  BY u.id, u.name;
+
+-- Transactions
+BEGIN;
+  UPDATE accounts SET balance = balance - 500 WHERE id = 1;
+  UPDATE accounts SET balance = balance + 500 WHERE id = 2;
+  -- if anything fails, ROLLBACK; otherwise:
+COMMIT;`,
+  },
+
+  // ══════════════════════════════════════════════════════════
+  // 3. USEFUL DAILY TOOLS
+  // ══════════════════════════════════════════════════════════
+
+  {
+    category: 'Useful Daily Tools', difficulty: 'Beginner',
+    question: 'PostgreSQL Daily Tools — psql CLI, extensions, roles & auth, backup/restore, and monitoring?',
+    answer: '**psql**: interactive CLI — `\copy` for bulk load, `\timing` to measure query time, `\e` to open editor. **Extensions**: `uuid-ossp` (UUID generation), `pgcrypto` (encryption, `crypt()`), `PostGIS` (geospatial), `pg_trgm` (fuzzy search), `unaccent`. Enable with `CREATE EXTENSION`. **Roles & Auth**: `CREATE ROLE` / `CREATE USER` (user = role with LOGIN). `GRANT SELECT ON TABLE` / `REVOKE`. Roles can own schemas and objects. **Backup**: `pg_dump mydb > backup.sql` (text), `pg_dump -Fc mydb > backup.dump` (compressed). Restore: `psql mydb < backup.sql` or `pg_restore -d mydb backup.dump`. **Monitoring**: `pg_stat_activity` (active queries), `pg_stat_user_tables` (table stats), `EXPLAIN ANALYZE` (query plan + actual times).',
+    tip: `-- Enable extensions
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+CREATE EXTENSION IF NOT EXISTS pgcrypto;
+CREATE EXTENSION IF NOT EXISTS pg_trgm; -- fuzzy text search
+
+SELECT uuid_generate_v4();       -- random UUID
+SELECT crypt('password', gen_salt('bf')); -- bcrypt hash
+
+-- Roles & Auth
+CREATE ROLE readonly;
+GRANT CONNECT ON DATABASE mydb TO readonly;
+GRANT USAGE   ON SCHEMA public TO readonly;
+GRANT SELECT  ON ALL TABLES IN SCHEMA public TO readonly;
+
+CREATE USER alice WITH PASSWORD 'secret' IN ROLE readonly;
+
+REVOKE INSERT, UPDATE, DELETE ON products FROM readonly;
+
+-- Row Level Security (RLS)
+ALTER TABLE orders ENABLE ROW LEVEL SECURITY;
+CREATE POLICY user_orders ON orders
+  USING (user_id = current_setting('app.user_id')::int);
+
+-- Backup & Restore
+-- pg_dump -U postgres -Fc mydb > mydb.dump
+-- pg_restore -U postgres -d mydb mydb.dump
+-- pg_dump -U postgres mydb | gzip > mydb.sql.gz
+
+-- Monitoring
+SELECT pid, usename, application_name, state, query
+FROM   pg_stat_activity
+WHERE  state != 'idle';
+
+-- Kill long-running query
+SELECT pg_terminate_backend(pid)
+FROM   pg_stat_activity
+WHERE  state = 'active' AND query_start < NOW() - INTERVAL '5 minutes';
+
+-- psql timing + copy
+\\timing on
+\\copy users FROM '/tmp/users.csv' CSV HEADER;`,
+  },
+
+  // ══════════════════════════════════════════════════════════
+  // 4. ADVANCED FEATURES
+  // ══════════════════════════════════════════════════════════
+
+  {
+    category: 'Advanced Features', difficulty: 'Intermediate',
+    question: 'PostgreSQL Advanced Features — JSONB, window functions, CTEs, partitioning, and replication?',
+    answer: '**JSONB**: stores JSON in binary format — supports indexing with GIN, operators `->` (key), `->>` (text value), `#>` (path), `@>` (contains), `?` (key exists). Partial updates with `jsonb_set()`. **Window functions**: compute over a set of rows related to current row without collapsing them — `ROW_NUMBER()`, `RANK()`, `DENSE_RANK()`, `LAG()`/`LEAD()`, `SUM() OVER (PARTITION BY ...)`. **CTEs**: `WITH name AS (SELECT...)` — improves readability; recursive CTEs for hierarchical data (`WITH RECURSIVE`). **Partitioning**: split a large table by range, list, or hash — queries automatically route to relevant partitions. **Replication**: streaming (physical, real-time copy) for HA; logical (row-level, selective) for cross-version or cross-platform sync.',
+    tip: `-- JSONB operators
+SELECT metadata->>'brand'          AS brand,   -- text value
+       metadata->'specs'->'ram'    AS ram,      -- nested
+       metadata @> '{"color":"red"}'::jsonb     -- contains
+FROM   products
+WHERE  metadata ? 'discount';                  -- key exists
+
+-- GIN index for JSONB (fast @> and ? queries)
+CREATE INDEX idx_products_meta ON products USING GIN (metadata);
+
+-- Update nested JSONB field
+UPDATE products
+SET    metadata = jsonb_set(metadata, '{specs,ram}', '"16GB"')
+WHERE  id = 1;
+
+-- Window Functions
+SELECT
+  name, department, salary,
+  ROW_NUMBER() OVER (PARTITION BY department ORDER BY salary DESC) AS rank,
+  SUM(salary)  OVER (PARTITION BY department)                      AS dept_total,
+  LAG(salary)  OVER (PARTITION BY department ORDER BY salary DESC) AS prev_salary
+FROM employees;
+
+-- CTE — readable multi-step query
+WITH active_users AS (
+  SELECT id, name FROM users WHERE last_login > NOW() - INTERVAL '30 days'
+),
+user_orders AS (
+  SELECT user_id, COUNT(*) AS cnt FROM orders GROUP BY user_id
+)
+SELECT u.name, COALESCE(o.cnt, 0) AS order_count
+FROM   active_users u
+LEFT   JOIN user_orders o ON u.id = o.user_id;
+
+-- Recursive CTE — org chart / tree
+WITH RECURSIVE org AS (
+  SELECT id, name, manager_id, 1 AS level FROM employees WHERE manager_id IS NULL
+  UNION ALL
+  SELECT e.id, e.name, e.manager_id, org.level + 1
+  FROM   employees e JOIN org ON e.manager_id = org.id
+)
+SELECT level, name FROM org ORDER BY level;
+
+-- Table Partitioning (range by date)
+CREATE TABLE events (id BIGSERIAL, created_at DATE, data TEXT)
+  PARTITION BY RANGE (created_at);
+CREATE TABLE events_2024 PARTITION OF events FOR VALUES FROM ('2024-01-01') TO ('2025-01-01');
+CREATE TABLE events_2025 PARTITION OF events FOR VALUES FROM ('2025-01-01') TO ('2026-01-01');`,
+  },
+
+  // ══════════════════════════════════════════════════════════
+  // 5. PERFORMANCE & SECURITY
+  // ══════════════════════════════════════════════════════════
+
+  {
+    category: 'Performance & Security', difficulty: 'Intermediate',
+    question: 'PostgreSQL Performance & Security — EXPLAIN ANALYZE, VACUUM, RLS, and query tuning?',
+    answer: '**EXPLAIN ANALYZE**: shows the actual query plan + real execution times — look for `Seq Scan` on large tables (needs index), high `rows` estimates vs actual, nested loops on large datasets. **VACUUM**: reclaims storage from dead tuples (PostgreSQL MVCC leaves old row versions). `AUTOVACUUM` runs automatically but manual `VACUUM ANALYZE` helps after bulk loads. **Query tuning**: add indexes for WHERE/JOIN columns, avoid `SELECT *`, use `LIMIT`, avoid functions on indexed columns in WHERE (`WHERE lower(email)` needs expression index). **Row-Level Security (RLS)**: policies restrict which rows a role can see/modify — ideal for multi-tenant apps. **SSL**: enforce with `ssl = on` in `postgresql.conf`, `hostssl` entries in `pg_hba.conf`. **pg_hba.conf**: controls client authentication — method `scram-sha-256` is most secure.',
+    tip: `-- EXPLAIN ANALYZE — read the query plan
+EXPLAIN ANALYZE
+SELECT u.name, o.total
+FROM   users u JOIN orders o ON u.id = o.user_id
+WHERE  o.status = 'paid';
+-- Look for:
+--   Seq Scan on large tables  → add index
+--   Nested Loop (large rows)  → consider hash join hint or index
+--   Actual rows vs estimated  → if far off, run ANALYZE to update stats
+
+-- Force index usage (rarely needed — trust the planner)
+SET enable_seqscan = off;
+
+-- VACUUM & ANALYZE
+VACUUM ANALYZE users;          -- reclaim dead tuples + update stats
+VACUUM FULL users;             -- rewrite table (locks table — use with care)
+
+-- Check table bloat
+SELECT relname, n_dead_tup, n_live_tup
+FROM   pg_stat_user_tables
+ORDER  BY n_dead_tup DESC;
+
+-- Row-Level Security — multi-tenant example
+ALTER TABLE projects ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY tenant_isolation ON projects
+  USING (tenant_id = current_setting('app.tenant_id')::int);
+
+-- App sets tenant before queries:
+-- SET app.tenant_id = '42';
+-- SELECT * FROM projects; -- only returns tenant 42's rows
+
+-- Connection pooling (PgBouncer)
+-- postgresql.conf key settings:
+-- max_connections = 200
+-- shared_buffers = 256MB          (25% of RAM)
+-- effective_cache_size = 768MB    (75% of RAM)
+-- work_mem = 4MB                  (per sort/hash operation)
+-- maintenance_work_mem = 64MB     (VACUUM, CREATE INDEX)`,
+  },
+
+  // ══════════════════════════════════════════════════════════
+  // 6. ECOSYSTEM & APPLICATIONS
+  // ══════════════════════════════════════════════════════════
+
+  {
+    category: 'Ecosystem', difficulty: 'Beginner',
+    question: 'PostgreSQL Ecosystem — ORMs (Prisma, TypeORM), GUI tools, cloud services, and real-world use cases?',
+    answer: '**ORMs**: Prisma (type-safe, auto-generated client, migrations), TypeORM (decorators, entity-based), Sequelize (mature, promise-based), Django ORM (Python), ActiveRecord (Ruby). **GUI tools**: pgAdmin (web-based, official), DBeaver (universal, free), DataGrip (JetBrains, paid), TablePlus (macOS/Windows). **Cloud services**: AWS RDS for PostgreSQL, AWS Aurora PostgreSQL (serverless), Azure Database for PostgreSQL (flexible server), Google Cloud SQL, Supabase (Postgres + REST/realtime), Neon (serverless Postgres). **Real-world use cases**: web apps (user/session data), analytics (window functions + partitioning), geospatial apps (PostGIS), financial systems (ACID, numeric precision), time-series (TimescaleDB extension). **Connection pooling**: PgBouncer (transaction-mode pooling) or built-in pool in ORMs.',
+    tip: `// Prisma — type-safe ORM
+// schema.prisma
+model User {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  name      String
+  orders    Order[]
+  createdAt DateTime @default(now())
+}
+model Order {
+  id     Int    @id @default(autoincrement())
+  total  Float
+  userId Int
+  user   User   @relation(fields: [userId], references: [id])
+}
+
+// npx prisma migrate dev --name init
+// npx prisma generate
+
+import { PrismaClient } from '@prisma/client';
+const prisma = new PrismaClient();
+
+const users = await prisma.user.findMany({
+  where:   { orders: { some: { total: { gt: 100 } } } },
+  include: { orders: true },
+  orderBy: { createdAt: 'desc' },
+});
+
+// TypeORM — decorator-based
+@Entity()
+export class User {
+  @PrimaryGeneratedColumn() id: number;
+  @Column({ unique: true })  email: string;
+  @OneToMany(() => Order, order => order.user) orders: Order[];
+}
+const users = await userRepo.find({ relations: ['orders'] });
+
+// Supabase — Postgres as a service
+import { createClient } from '@supabase/supabase-js';
+const supabase = createClient(URL, ANON_KEY);
+const { data } = await supabase.from('users').select('*').eq('active', true);`,
+  },
+
+];
 const JWT_CARDS           = [];
 const REDIS_CARDS         = [];
 const CICD_CARDS          = [];
