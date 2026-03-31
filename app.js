@@ -1,7 +1,919 @@
 /* ═══════════════════════════════════════════════════════════
-   DSA — Data Structures & Algorithms  (14 cards)
+   DSA_JavaScript — Data Structures & Algorithms (JavaScript)
 ═══════════════════════════════════════════════════════════ */
-const DSA_CARDS = [
+const DSA_JAVASCRIPT_CARDS = [
+
+  // ══════════════════════════════════════════════════════════
+  // 0. OVERVIEW
+  // ══════════════════════════════════════════════════════════
+
+  // 0.1 Mind Map Image
+  {
+    category: 'Overview', difficulty: 'Beginner',
+    question: 'DSA (JavaScript) — Full Mind Map',
+    answer: 'DSA in JavaScript covers 6 areas: 🔴 Fundamentals (Big-O, Recursion, Math) · 🟡 Core Data Structures (Linear: Arrays / Strings / Linked Lists / Stacks / Queues · Hashing: Map & Set · Nonlinear: Trees / Heaps / Graphs) · 🔵 Algorithms (Searching, Sorting, DFS/BFS Traversals, Greedy, Backtracking, DP, Divide & Conquer) · 🟢 Coding Patterns ⭐ (Sliding Window, Two Pointers, Fast & Slow, Prefix Sum, Recursion + DP) · 🟣 Advanced Topics (Graph Algorithms, String Algorithms, Number Theory) · 🚀 Ecosystem (LeetCode / HackerRank, Real-world Applications, Clean Code).',
+    image: 'images/DSA.png',
+  },
+
+  // 0.2 Overview — 6 Sections Roadmap
+  {
+    category: 'Overview', difficulty: 'Beginner',
+    question: 'DSA (JavaScript) — What are the 6 main sections and their key topics?',
+    answer: '🔴 1. Fundamentals & Analysis — Big-O/Theta/Omega · Recursion & Iteration · Math Basics (log, pow, modular, bit ops). 🟡 2. Core Data Structures — Linear: Arrays · Strings · Linked Lists · Stacks · Queues; Hashing: Map/Set; Nonlinear: Trees · Heaps · Graphs. 🔵 3. Algorithms — Searching · Sorting (Simple: Bubble/Insertion/Selection · Efficient: Merge/Quick) · DFS/BFS Traversals · Greedy · Backtracking · DP · Divide & Conquer. 🟢 4. Coding Patterns ⭐ — Sliding Window · Two Pointers · Fast & Slow Pointers · Prefix Sum · Recursion + DP. 🟣 5. Advanced Topics — Dijkstra\'s · Kruskal/Prim MST · KMP · Rabin-Karp · Z-algorithm · GCD · Sieve · Modular exponentiation. 🚀 6. Ecosystem — LeetCode · HackerRank · Real-world (B-Trees, Graphs, AI/ML) · Clean Code in interviews.',
+  },
+
+  // ══════════════════════════════════════════════════════════
+  // SECTION 1: FUNDAMENTALS & ANALYSIS
+  // ══════════════════════════════════════════════════════════
+
+  // F.1 Complexity Analysis
+  {
+    category: 'Fundamentals', difficulty: 'Beginner',
+    question: 'F.1 Complexity Analysis — Big-O vs Big-Theta vs Big-Omega, complexity classes, and Time vs Space tradeoffs?',
+    answer: '**Big-O (O)** — worst-case upper bound (most commonly used). **Big-Omega (Ω)** — best-case lower bound. **Big-Theta (Θ)** — tight bound when upper and lower are equal. **Common classes (fast → slow)**: O(1) constant · O(log n) logarithmic · O(n) linear · O(n log n) linearithmic · O(n²) quadratic · O(2ⁿ) exponential · O(n!) factorial. **Rules**: drop constants (O(3n) = O(n)); drop non-dominants (O(n² + n) = O(n²)); sequences add, loops multiply. **Time vs Space tradeoff**: memoization trades O(n) space for O(n) time savings. **Space complexity** counts: variables + call stack + data structures allocated.',
+    tip: `// Complexity cheat-sheet
+// O(1)       hash lookup, array[i], push/pop
+// O(log n)   binary search, balanced BST
+// O(n)       linear scan, single loop
+// O(n log n) merge sort, heap sort, JS Array.sort()
+// O(n^2)     nested loops, bubble/insertion sort worst
+// O(2^n)     recursive branching (Fibonacci naive, power set)
+// O(n!)      permutations (all orderings of n items)
+
+// Calculating:
+function example(arr) {
+  const map = new Map();          // O(n) space
+  for (const x of arr) {         // O(n)
+    if (map.has(x)) return true; // O(1) lookup
+    map.set(x, true);
+  }
+  return false;
+}  // Time: O(n)  Space: O(n)
+
+// Nested loops — multiply:
+for (let i = 0; i < n; i++)
+  for (let j = i; j < n; j++) {} // O(n^2) even though j starts at i
+
+// Sequences — add (drop the smaller):
+// O(n) + O(n log n) = O(n log n)`,
+  },
+
+  // F.2 Math Basics for DSA
+  {
+    category: 'Fundamentals', difficulty: 'Intermediate',
+    question: 'F.2 Math Basics for DSA — Math.log, Math.pow, modular arithmetic, and bit manipulation in JS?',
+    answer: '**Math.log2(n)** — tree height ≈ log₂(n); binary search halves n each step. **2**k** — powers of 2 appear everywhere: perfect binary tree with h levels has 2^h - 1 nodes. **Modular arithmetic**: keeps numbers bounded — `index = hash % size`; `(a + b) % m = ((a%m)+(b%m))%m`. **Bit manipulation** (all O(1)): `n & 1` check odd; `n >> 1` floor-divide by 2; `n << 1` multiply by 2; `n & (n-1)` clears lowest set bit (count set bits, check power of 2); `a ^ a = 0` (XOR cancels — find single/missing number). GCD via Euclidean: `gcd(a, b) = gcd(b, a % b)` recursively until b=0.',
+    tip: `// Math
+Math.log2(8)    // 3
+Math.log2(n)    // height of BST with n nodes ~ log2(n)
+2 ** k          // 2^k (ES2016+)
+Math.ceil(n/2)  // used for mid-point
+Math.floor((l + r) / 2)  // safe mid-point
+
+// Modular arithmetic
+const MOD = 1e9 + 7;
+result = ((a % MOD) + (b % MOD)) % MOD;
+
+// Bit manipulation
+n & 1           // 1 = odd, 0 = even
+n >> 1          // Math.floor(n / 2)
+n << 1          // n * 2
+n & (n - 1)     // removes lowest set bit
+a ^ b           // XOR: bits that differ
+arr.reduce((acc, x) => acc ^ x, 0) // find the single number
+
+// Check power of 2
+function isPow2(n) { return n > 0 && (n & (n - 1)) === 0; }
+
+// Count set bits (Hamming weight)
+function countBits(n) {
+  let c = 0;
+  while (n) { n &= n - 1; c++; }
+  return c;
+}
+
+// GCD (Euclidean)
+function gcd(a, b) { return b === 0 ? a : gcd(b, a % b); }
+function lcm(a, b) { return a / gcd(a, b) * b; }`,
+  },
+
+  // ══════════════════════════════════════════════════════════
+  // SECTION 2: CORE DATA STRUCTURES (new additions)
+  // ══════════════════════════════════════════════════════════
+
+  // DS.1 Singly Linked List
+  {
+    category: 'Linked Lists', difficulty: 'Beginner',
+    question: 'DS.1 Singly Linked List — structure, JS implementation, core operations, vs arrays?',
+    answer: '**Singly Linked List**: each node holds `val` and a `next` pointer; last node\'s `next` is `null`. **No random access** — traversal is always O(n). **Insert/Delete at head**: O(1) — just update pointers. **Insert/Delete at tail**: O(n) (must traverse), O(1) with tail pointer. **vs Arrays**: LL has O(1) insert/delete at a known node (no shifting), but O(n) search; arrays have O(1) random access by index. **Common problems**: Reverse LL, Find Middle (fast/slow), Merge Two Sorted Lists, Detect Cycle, Remove Nth from End.',
+    tip: `// Node definition
+class ListNode {
+  constructor(val = 0, next = null) {
+    this.val = val; this.next = next;
+  }
+}
+
+// Build: 1 -> 2 -> 3
+const head = new ListNode(1, new ListNode(2, new ListNode(3)));
+
+// Traverse — O(n)
+let curr = head;
+while (curr) { console.log(curr.val); curr = curr.next; }
+
+// Reverse — O(n) time, O(1) space
+function reverse(head) {
+  let prev = null, curr = head;
+  while (curr) {
+    const next = curr.next;
+    curr.next  = prev;
+    prev       = curr;
+    curr       = next;
+  }
+  return prev; // new head
+}
+
+// Find middle (fast/slow)
+function middleNode(head) {
+  let slow = head, fast = head;
+  while (fast && fast.next) {
+    slow = slow.next;
+    fast = fast.next.next;
+  }
+  return slow;
+}
+
+// Merge two sorted lists
+function mergeTwoLists(l1, l2) {
+  const dummy = new ListNode();
+  let cur = dummy;
+  while (l1 && l2) {
+    if (l1.val <= l2.val) { cur.next = l1; l1 = l1.next; }
+    else                  { cur.next = l2; l2 = l2.next; }
+    cur = cur.next;
+  }
+  cur.next = l1 || l2;
+  return dummy.next;
+}`,
+  },
+
+  // DS.2 Doubly Linked List
+  {
+    category: 'Linked Lists', difficulty: 'Intermediate',
+    question: 'DS.2 Doubly Linked List — structure, advantages over singly, and LRU Cache implementation?',
+    answer: '**Doubly Linked List**: each node has `val`, `next`, and `prev` pointers. **O(1) delete** given a node reference (no need to find the previous node). **Bidirectional traversal** — forward and backward. **vs Singly LL**: extra space per node (one more pointer); enables O(1) deletion at tail and LRU Cache. **LRU Cache** uses DLL + HashMap: the map provides O(1) lookup by key; the DLL maintains access order (most-recent at head, least-recent at tail). Both `get` and `put` are O(1). **Real-world**: browser history (back/forward), undo/redo, OS memory managers.',
+    tip: `// Doubly LL Node
+class DListNode {
+  constructor(key = 0, val = 0) {
+    this.key = key; this.val = val;
+    this.prev = null; this.next = null;
+  }
+}
+
+// LRU Cache — O(1) get and put
+class LRUCache {
+  constructor(capacity) {
+    this.cap  = capacity;
+    this.map  = new Map();
+    this.head = new DListNode(); // dummy head (most recent side)
+    this.tail = new DListNode(); // dummy tail (least recent side)
+    this.head.next = this.tail;
+    this.tail.prev = this.head;
+  }
+  _remove(node) {
+    node.prev.next = node.next;
+    node.next.prev = node.prev;
+  }
+  _insertFront(node) {
+    node.next = this.head.next;
+    node.prev = this.head;
+    this.head.next.prev = node;
+    this.head.next = node;
+  }
+  get(key) {
+    if (!this.map.has(key)) return -1;
+    const node = this.map.get(key);
+    this._remove(node); this._insertFront(node);
+    return node.val;
+  }
+  put(key, val) {
+    if (this.map.has(key)) this._remove(this.map.get(key));
+    const node = new DListNode(key, val);
+    this._insertFront(node); this.map.set(key, node);
+    if (this.map.size > this.cap) {
+      const lru = this.tail.prev;
+      this._remove(lru); this.map.delete(lru.key);
+    }
+  }
+}`,
+  },
+
+  // DS.3 Stacks
+  {
+    category: 'Stacks & Queues', difficulty: 'Beginner',
+    question: 'DS.3 Stacks — LIFO principle, JS implementation, and monotonic stack pattern?',
+    answer: '**Stack**: Last-In-First-Out (LIFO). The last element pushed is the first popped. **JS implementation**: use an array — `push()` adds to top, `pop()` removes from top, both O(1). **peek**: `arr[arr.length - 1]` — O(1), no removal. **isEmpty**: `arr.length === 0`. **When to use**: undo/redo, function call simulation, expression evaluation, DFS iterative, balanced brackets. **Monotonic Stack**: maintain elements in sorted (ascending or descending) order by popping before pushing — O(n) total. Used for: Next Greater Element, Largest Rectangle in Histogram, Daily Temperatures.',
+    tip: `// Stack using array
+const stack = [];
+stack.push(1);               // [1]
+stack.push(2);               // [1, 2]
+const top = stack.pop();     // top=2, stack=[1]
+const peek = stack[stack.length - 1]; // 1, no removal
+
+// Valid Parentheses — O(n)
+function isValid(s) {
+  const stack = [], map = { ')':'(', ']':'[', '}':'{' };
+  for (const c of s) {
+    if ('([{'.includes(c)) stack.push(c);
+    else if (stack.pop() !== map[c]) return false;
+  }
+  return stack.length === 0;
+}
+
+// Monotonic Stack — Next Greater Element
+function nextGreaterElement(nums) {
+  const res = new Array(nums.length).fill(-1);
+  const stack = []; // stores indices
+  for (let i = 0; i < nums.length; i++) {
+    while (stack.length && nums[i] > nums[stack[stack.length - 1]]) {
+      res[stack.pop()] = nums[i];
+    }
+    stack.push(i);
+  }
+  return res;
+}
+// [2,1,2,4,3] -> [4,2,4,-1,-1]
+
+// Daily Temperatures
+function dailyTemperatures(temps) {
+  const res = new Array(temps.length).fill(0);
+  const stack = [];
+  for (let i = 0; i < temps.length; i++) {
+    while (stack.length && temps[i] > temps[stack[stack.length - 1]]) {
+      const idx = stack.pop();
+      res[idx] = i - idx;
+    }
+    stack.push(i);
+  }
+  return res;
+}`,
+  },
+
+  // DS.4 Queues
+  {
+    category: 'Stacks & Queues', difficulty: 'Beginner',
+    question: 'DS.4 Queues — FIFO principle, JS implementations, and monotonic deque for sliding window max?',
+    answer: '**Queue**: First-In-First-Out (FIFO). First enqueued is first dequeued. **JS array**: `push()` = enqueue (back), `shift()` = dequeue (front). `shift()` is O(n) — acceptable in interviews; real systems use a linked-list or circular buffer for O(1). **O(1) Queue with two stacks**: use inbox + outbox stacks, transfer when outbox empty. **BFS always uses a queue** — guarantees shortest path on unweighted graphs. **Monotonic Deque**: maintain window elements in sorted order; elements outside window are removed from front, smaller elements removed from back — O(n) for sliding window maximum.',
+    tip: `// Queue with array
+const q = [];
+q.push('a');   // enqueue
+q.push('b');
+q.shift();     // dequeue -> 'a'
+
+// O(1) Queue with two stacks
+class MyQueue {
+  constructor() { this.inbox = []; this.outbox = []; }
+  enqueue(val) { this.inbox.push(val); }
+  _transfer() {
+    if (!this.outbox.length)
+      while (this.inbox.length) this.outbox.push(this.inbox.pop());
+  }
+  dequeue() { this._transfer(); return this.outbox.pop(); }
+  peek()    { this._transfer(); return this.outbox[this.outbox.length - 1]; }
+  isEmpty() { return !this.inbox.length && !this.outbox.length; }
+}
+
+// Sliding Window Maximum — Monotonic Deque — O(n)
+function maxSlidingWindow(nums, k) {
+  const dq = [], res = [];       // dq stores indices
+  for (let i = 0; i < nums.length; i++) {
+    // Remove out-of-window indices from front
+    if (dq.length && dq[0] < i - k + 1) dq.shift();
+    // Remove smaller elements from back
+    while (dq.length && nums[dq[dq.length - 1]] < nums[i]) dq.pop();
+    dq.push(i);
+    if (i >= k - 1) res.push(nums[dq[0]]); // front is max
+  }
+  return res;
+}`,
+  },
+
+  // DS.5 Heaps
+  {
+    category: 'Heaps', difficulty: 'Intermediate',
+    question: 'DS.5 Heaps — Min/Max-Heap, parent/child index math, and Top-K patterns in JS?',
+    answer: '**Heap** is a complete binary tree stored as an array. **Min-Heap**: parent ≤ children — root is always the minimum. **Max-Heap**: parent ≥ children — root is always the maximum. **Index math** (0-indexed): parent of i = `Math.floor((i-1)/2)`; left child = `2i+1`; right child = `2i+2`. **Insert**: add to end, bubble-up (sift-up) — O(log n). **Extract-min/max**: swap root with last, remove last, bubble-down (sift-down) — O(log n). **Build heap from array**: O(n) bottom-up heapify. **JS has no built-in heap** — implement manually. **Top-K Largest**: maintain a Min-Heap of size K; if heap size > K, pop the smallest — remaining K elements are the largest.',
+    tip: `// Min-Heap implementation
+class MinHeap {
+  constructor() { this.h = []; }
+  size() { return this.h.length; }
+  peek() { return this.h[0]; }
+  push(val) { this.h.push(val); this._up(this.h.length - 1); }
+  pop() {
+    const min = this.h[0], last = this.h.pop();
+    if (this.h.length) { this.h[0] = last; this._down(0); }
+    return min;
+  }
+  _up(i) {
+    while (i > 0) {
+      const p = Math.floor((i - 1) / 2);
+      if (this.h[p] <= this.h[i]) break;
+      [this.h[p], this.h[i]] = [this.h[i], this.h[p]]; i = p;
+    }
+  }
+  _down(i) {
+    const n = this.h.length;
+    while (true) {
+      let min = i, l = 2*i+1, r = 2*i+2;
+      if (l < n && this.h[l] < this.h[min]) min = l;
+      if (r < n && this.h[r] < this.h[min]) min = r;
+      if (min === i) break;
+      [this.h[min], this.h[i]] = [this.h[i], this.h[min]]; i = min;
+    }
+  }
+}
+
+// Top-K Largest elements — O(n log k)
+function topKLargest(nums, k) {
+  const heap = new MinHeap();
+  for (const n of nums) {
+    heap.push(n);
+    if (heap.size() > k) heap.pop(); // evict smallest
+  }
+  return heap.h; // k largest elements
+}
+
+// Kth Largest Element
+function findKthLargest(nums, k) {
+  const h = new MinHeap();
+  for (const n of nums) { h.push(n); if (h.size() > k) h.pop(); }
+  return h.peek();
+}`,
+  },
+
+  // ══════════════════════════════════════════════════════════
+  // SECTION 3: ALGORITHMS (new additions)
+  // ══════════════════════════════════════════════════════════
+
+  // A.1 Sorting — Simple
+  {
+    category: 'Sorting', difficulty: 'Beginner',
+    question: 'A.1 Simple Sorting — Bubble, Insertion, and Selection Sort: how they work and complexity?',
+    answer: '**Bubble Sort**: repeatedly swap adjacent elements if out of order — largest bubbles to end each pass. O(n²) time, O(1) space. **Insertion Sort**: build sorted portion left-to-right — take each element, shift sorted elements right until correct position found, insert. O(n²) worst, **O(n) best** (nearly sorted). Stable. Most practical of the three. **Selection Sort**: find minimum in unsorted portion, swap to front. O(n²) time, O(1) space. Not stable. **When to use**: Insertion Sort for small or nearly-sorted arrays — used inside Timsort (JS built-in) for runs under 64 elements.',
+    tip: `// Bubble Sort — O(n^2)
+function bubbleSort(arr) {
+  const n = arr.length;
+  for (let i = 0; i < n - 1; i++)
+    for (let j = 0; j < n - i - 1; j++)
+      if (arr[j] > arr[j+1]) [arr[j], arr[j+1]] = [arr[j+1], arr[j]];
+  return arr;
+}
+
+// Insertion Sort — O(n^2) worst, O(n) best
+function insertionSort(arr) {
+  for (let i = 1; i < arr.length; i++) {
+    const key = arr[i];
+    let j = i - 1;
+    while (j >= 0 && arr[j] > key) { arr[j+1] = arr[j]; j--; }
+    arr[j+1] = key;
+  }
+  return arr;
+}
+
+// Selection Sort — O(n^2), not stable
+function selectionSort(arr) {
+  for (let i = 0; i < arr.length - 1; i++) {
+    let minIdx = i;
+    for (let j = i + 1; j < arr.length; j++)
+      if (arr[j] < arr[minIdx]) minIdx = j;
+    if (minIdx !== i) [arr[i], arr[minIdx]] = [arr[minIdx], arr[i]];
+  }
+  return arr;
+}`,
+  },
+
+  // A.2 Sorting — Efficient
+  {
+    category: 'Sorting', difficulty: 'Intermediate',
+    question: 'A.2 Efficient Sorting — Merge Sort (Divide & Conquer) and Quicksort (Partitioning)?',
+    answer: '**Merge Sort**: Divide array in half → recursively sort each half → merge the two sorted halves. O(n log n) — always. Stable. O(n) extra space. **Quicksort**: pick a pivot → partition so elements < pivot go left and > pivot go right → recursively sort each side. O(n log n) average, O(n²) worst (bad pivot). In-place, O(log n) stack. **Quicksort vs Merge Sort**: Quicksort is cache-friendly and faster in practice but unstable and has O(n²) worst case; Merge Sort is stable and guaranteed O(n log n). **JS `Array.sort()`** uses Timsort (Merge + Insertion hybrid) — O(n log n) guaranteed, stable.',
+    tip: `// Merge Sort — O(n log n), O(n) space, stable
+function mergeSort(arr) {
+  if (arr.length <= 1) return arr;
+  const mid = Math.floor(arr.length / 2);
+  return merge(mergeSort(arr.slice(0, mid)), mergeSort(arr.slice(mid)));
+}
+function merge(left, right) {
+  const res = [];
+  let i = 0, j = 0;
+  while (i < left.length && j < right.length)
+    res.push(left[i] <= right[j] ? left[i++] : right[j++]);
+  return res.concat(left.slice(i), right.slice(j));
+}
+
+// Quicksort — O(n log n) avg, O(n^2) worst, in-place
+function quickSort(arr, lo = 0, hi = arr.length - 1) {
+  if (lo < hi) {
+    const p = partition(arr, lo, hi);
+    quickSort(arr, lo, p - 1);
+    quickSort(arr, p + 1, hi);
+  }
+  return arr;
+}
+function partition(arr, lo, hi) {
+  const pivot = arr[hi];
+  let i = lo;
+  for (let j = lo; j < hi; j++) {
+    if (arr[j] < pivot) { [arr[i], arr[j]] = [arr[j], arr[i]]; i++; }
+  }
+  [arr[i], arr[hi]] = [arr[hi], arr[i]];
+  return i;
+}
+
+// JS built-in (Timsort, stable, O(n log n))
+arr.sort((a, b) => a - b); // ascending
+arr.sort((a, b) => b - a); // descending`,
+  },
+
+  // A.3 Graph BFS
+  {
+    category: 'Graph', difficulty: 'Intermediate',
+    question: '7.2 Graph BFS — queue-based traversal, shortest path on unweighted graphs, and key problems?',
+    answer: '**Graph BFS** uses a queue to visit nodes level by level from the source — guaranteed to find the shortest path (fewest edges) in an unweighted graph. Algorithm: enqueue source + mark visited → loop: dequeue node, process, enqueue all unvisited neighbours. **Time**: O(V + E). **Space**: O(V). **Key advantage over DFS**: BFS finds shortest path; DFS does not. **Problems**: Shortest Path in Unweighted Graph, Word Ladder, Rotting Oranges, 01 Matrix (multi-source BFS), Bipartite Check (2-coloring), Minimum Knight Moves, Clone Graph.',
+    tip: `// Graph BFS — shortest distances from source
+function bfs(graph, start) {
+  // graph: Map<node, neighbor[]>
+  const visited = new Set([start]);
+  const queue   = [start];
+  const dist    = new Map([[start, 0]]);
+
+  while (queue.length) {
+    const node = queue.shift();
+    for (const neighbor of (graph.get(node) || [])) {
+      if (!visited.has(neighbor)) {
+        visited.add(neighbor);
+        dist.set(neighbor, dist.get(node) + 1);
+        queue.push(neighbor);
+      }
+    }
+  }
+  return dist;
+}
+
+// Rotting Oranges — multi-source BFS
+function orangesRotting(grid) {
+  const rows = grid.length, cols = grid[0].length;
+  const queue = [];
+  let fresh = 0;
+  for (let r = 0; r < rows; r++)
+    for (let c = 0; c < cols; c++) {
+      if (grid[r][c] === 2) queue.push([r, c, 0]); // rotten + time
+      if (grid[r][c] === 1) fresh++;
+    }
+  const dirs = [[1,0],[-1,0],[0,1],[0,-1]];
+  let time = 0;
+  while (queue.length) {
+    const [r, c, t] = queue.shift();
+    for (const [dr, dc] of dirs) {
+      const nr = r+dr, nc = c+dc;
+      if (nr>=0 && nr<rows && nc>=0 && nc<cols && grid[nr][nc]===1) {
+        grid[nr][nc] = 2; fresh--; time = t+1;
+        queue.push([nr, nc, t+1]);
+      }
+    }
+  }
+  return fresh === 0 ? time : -1;
+}`,
+  },
+
+  // A.4 Greedy
+  {
+    category: 'Strategy Patterns', difficulty: 'Intermediate',
+    question: 'A.4 Greedy Algorithms — when does greedy work, activity selection, Jump Game, and why greedy fails for coin change?',
+    answer: '**Greedy** makes the locally optimal choice at each step hoping to reach the global optimum. Works when the problem has **Greedy Choice Property** (a local optimal choice leads to a global optimum) AND **Optimal Substructure**. **Key insight**: greedy is faster than DP but only applies to specific problems. **Works for**: Activity Selection (max non-overlapping intervals — sort by end time), Jump Game, Assign Cookies, Gas Station, Huffman Coding, Dijkstra\'s/Prim\'s MST. **Fails for**: Coin Change with arbitrary denominations (e.g., coins [1,3,4], target 6: greedy picks 4+1+1=3 coins, DP finds 3+3=2 coins). **Proof technique**: exchange argument — show you can\'t do better by swapping the greedy choice.',
+    tip: `// Activity Selection — max non-overlapping intervals
+// Sort by end time — greedy: always pick the earliest-ending
+function activitySelection(intervals) {
+  intervals.sort((a, b) => a[1] - b[1]);
+  let count = 1, end = intervals[0][1];
+  for (let i = 1; i < intervals.length; i++) {
+    if (intervals[i][0] >= end) { count++; end = intervals[i][1]; }
+  }
+  return count;
+}
+
+// Jump Game I — can you reach the end?
+function canJump(nums) {
+  let maxReach = 0;
+  for (let i = 0; i < nums.length; i++) {
+    if (i > maxReach) return false;
+    maxReach = Math.max(maxReach, i + nums[i]);
+  }
+  return true;
+}
+
+// Jump Game II — minimum jumps
+function jump(nums) {
+  let jumps = 0, curEnd = 0, farthest = 0;
+  for (let i = 0; i < nums.length - 1; i++) {
+    farthest = Math.max(farthest, i + nums[i]);
+    if (i === curEnd) { jumps++; curEnd = farthest; }
+  }
+  return jumps;
+}
+
+// Greedy fails for coins [1,3,4], target=6:
+// Greedy: 4+1+1 = 3 coins  ← WRONG
+// DP:     3+3   = 2 coins  ← CORRECT`,
+  },
+
+  // A.5 Backtracking
+  {
+    category: 'Strategy Patterns', difficulty: 'Advanced',
+    question: 'A.5 Backtracking — template, permutations, subsets, and combination sum?',
+    answer: '**Backtracking** is a DFS-based exhaustive search that explores all choices and **undoes (backtracks)** choices that lead to invalid states. Template: `choose → explore → unchoose`. **Complexity**: O(n!) or O(2ⁿ) — exhaustive, but pruning cuts branches early. **vs plain DFS**: backtracking always undoes the choice after returning from recursion; DFS does not. **Classic problems**: Permutations, Subsets (power set), Combination Sum, N-Queens (one queen per row/col/diagonal), Sudoku Solver, Word Search, Palindrome Partitioning. **Key pruning**: sort + break early when candidates exceed target.',
+    tip: `// Template
+function backtrack(state, choices) {
+  if (isSolution(state)) { record(state); return; }
+  for (const choice of choices) {
+    if (!isValid(state, choice)) continue; // prune
+    state.push(choice);                    // choose
+    backtrack(state, nextChoices(choice)); // explore
+    state.pop();                           // unchoose
+  }
+}
+
+// Permutations — O(n! * n)
+function permute(nums) {
+  const res = [];
+  function bt(curr, rem) {
+    if (!rem.length) { res.push([...curr]); return; }
+    for (let i = 0; i < rem.length; i++) {
+      curr.push(rem[i]);
+      bt(curr, [...rem.slice(0,i), ...rem.slice(i+1)]);
+      curr.pop();
+    }
+  }
+  bt([], nums); return res;
+}
+
+// Subsets (Power Set) — O(2^n)
+function subsets(nums) {
+  const res = [];
+  function bt(start, curr) {
+    res.push([...curr]);
+    for (let i = start; i < nums.length; i++) {
+      curr.push(nums[i]); bt(i + 1, curr); curr.pop();
+    }
+  }
+  bt(0, []); return res;
+}
+
+// Combination Sum (elements reusable)
+function combinationSum(candidates, target) {
+  const res = [];
+  candidates.sort((a, b) => a - b);
+  function bt(start, curr, remain) {
+    if (remain === 0) { res.push([...curr]); return; }
+    for (let i = start; i < candidates.length; i++) {
+      if (candidates[i] > remain) break; // prune
+      curr.push(candidates[i]);
+      bt(i, curr, remain - candidates[i]); // i not i+1: reuse allowed
+      curr.pop();
+    }
+  }
+  bt(0, [], target); return res;
+}`,
+  },
+
+  // A.6 Divide & Conquer
+  {
+    category: 'Strategy Patterns', difficulty: 'Intermediate',
+    question: 'A.6 Divide & Conquer — 3-step pattern, relation to DP, and classic examples?',
+    answer: '**Divide & Conquer**: 1. **Divide** — split the problem into smaller independent subproblems (usually halves). 2. **Conquer** — solve each subproblem recursively (base case when trivially small). 3. **Combine** — merge the solutions. **vs Dynamic Programming**: D&C subproblems are **independent** — no overlap, no caching needed. DP subproblems **overlap** — cache results to avoid recomputation. **Time analysis** via Master Theorem: T(n) = aT(n/b) + f(n). **Classic examples**: Merge Sort (split → sort halves → merge), Quicksort (partition → sort sides), Binary Search (split → search ONE half), Maximum Subarray D&C (O(n log n) — Kadane\'s O(n) is simpler), Closest Pair of Points.',
+    tip: `// D&C pattern: Split — Solve recursively — Combine
+// Merge Sort is the canonical example
+
+// Binary Search — D&C (search ONE half)
+function binarySearch(arr, target) {
+  let lo = 0, hi = arr.length - 1;
+  while (lo <= hi) {
+    const mid = lo + Math.floor((hi - lo) / 2);
+    if (arr[mid] === target) return mid;
+    else if (arr[mid] < target) lo = mid + 1;
+    else hi = mid - 1;
+  }
+  return -1;
+}
+
+// Maximum Subarray — D&C approach O(n log n)
+function maxSubarrayDC(arr, lo = 0, hi = arr.length - 1) {
+  if (lo === hi) return arr[lo];
+  const mid = Math.floor((lo + hi) / 2);
+  const leftMax  = maxSubarrayDC(arr, lo, mid);
+  const rightMax = maxSubarrayDC(arr, mid + 1, hi);
+  // Cross: must span mid and mid+1
+  let lSum = -Infinity, sum = 0;
+  for (let i = mid; i >= lo; i--) { sum += arr[i]; lSum = Math.max(lSum, sum); }
+  let rSum = -Infinity; sum = 0;
+  for (let i = mid + 1; i <= hi; i++) { sum += arr[i]; rSum = Math.max(rSum, sum); }
+  return Math.max(leftMax, rightMax, lSum + rSum);
+}
+// Note: Kadane's O(n) is simpler — D&C is a teaching example
+// Kadane's: dp[i] = Math.max(arr[i], dp[i-1] + arr[i])`,
+  },
+
+  // ══════════════════════════════════════════════════════════
+  // SECTION 4: CODING PATTERNS (new addition)
+  // ══════════════════════════════════════════════════════════
+
+  // P.1 Fast & Slow Pointers (Floyd's Cycle Detection)
+  {
+    category: 'Patterns', difficulty: 'Intermediate',
+    question: 'P.1 Fast & Slow Pointers — Floyd\'s Cycle Detection, find cycle start, middle node, and Nth from end?',
+    answer: '**Fast & Slow (Floyd\'s Tortoise and Hare)**: two pointers at different speeds — slow moves +1, fast moves +2. **Cycle detection**: if there\'s a cycle, fast will eventually lap slow and they meet inside the cycle. If fast reaches `null`, no cycle. **Find cycle start (phase 2)**: after meeting, reset slow to head — advance both one step at a time — they meet exactly at cycle start (mathematical property). **Find middle**: when fast reaches end, slow is at the middle. **Nth from end**: advance fast N steps ahead, then advance both — when fast hits null, slow is at Nth from end. All: O(n) time, O(1) space.',
+    tip: `// Cycle Detection — O(n) time, O(1) space
+function hasCycle(head) {
+  let slow = head, fast = head;
+  while (fast && fast.next) {
+    slow = slow.next; fast = fast.next.next;
+    if (slow === fast) return true;
+  }
+  return false;
+}
+
+// Find Cycle Start (Floyd's Phase 2)
+function detectCycle(head) {
+  let slow = head, fast = head;
+  while (fast && fast.next) {
+    slow = slow.next; fast = fast.next.next;
+    if (slow === fast) {
+      slow = head; // reset slow to head
+      while (slow !== fast) { slow = slow.next; fast = fast.next; }
+      return slow; // cycle start node
+    }
+  }
+  return null;
+}
+
+// Find Middle of Linked List
+function middleNode(head) {
+  let slow = head, fast = head;
+  while (fast && fast.next) { slow = slow.next; fast = fast.next.next; }
+  return slow; // middle (second middle for even length)
+}
+
+// Remove Nth Node From End — one pass O(n)
+function removeNthFromEnd(head, n) {
+  const dummy = new ListNode(0, head);
+  let fast = dummy, slow = dummy;
+  for (let i = 0; i <= n; i++) fast = fast.next; // n+1 steps ahead
+  while (fast) { slow = slow.next; fast = fast.next; }
+  slow.next = slow.next.next; // skip the target
+  return dummy.next;
+}`,
+  },
+
+  // ══════════════════════════════════════════════════════════
+  // SECTION 5: ADVANCED TOPICS
+  // ══════════════════════════════════════════════════════════
+
+  // ADV.1 Dijkstra's Algorithm
+  {
+    category: 'Advanced Topics', difficulty: 'Advanced',
+    question: 'ADV.1 Dijkstra\'s Algorithm — shortest path with non-negative weights, min-heap implementation?',
+    answer: '**Dijkstra\'s** finds the shortest path from a source to all other nodes in a graph with **non-negative edge weights**. Algorithm: init dist[src]=0, dist[others]=Infinity → use min-heap (priority queue) ordered by dist → greedily extract node with smallest known dist → relax all edges (if dist[u]+w < dist[v], update and enqueue v) → repeat until heap empty. **Time**: O((V+E) log V) with binary heap. **Space**: O(V+E). **Fails** on negative weights — use Bellman-Ford. **Real-world**: GPS navigation, network routing (OSPF), game pathfinding (A* adds a heuristic).',
+    tip: `// Dijkstra's — O((V+E) log V)
+function dijkstra(graph, src) {
+  // graph: Map<node, [[neighbor, weight], ...]>
+  const dist = new Map();
+  for (const node of graph.keys()) dist.set(node, Infinity);
+  dist.set(src, 0);
+
+  // Min-heap: [cost, node] — use MinHeap class from Heaps card
+  const heap = [[0, src]]; // [dist, node]
+
+  while (heap.length) {
+    heap.sort((a, b) => a[0] - b[0]); // simplified (use real MinHeap in prod)
+    const [d, u] = heap.shift();
+    if (d > dist.get(u)) continue;    // stale entry — skip
+
+    for (const [v, w] of (graph.get(u) || [])) {
+      const newDist = dist.get(u) + w;
+      if (newDist < dist.get(v)) {
+        dist.set(v, newDist);
+        heap.push([newDist, v]);
+      }
+    }
+  }
+  return dist; // Map<node, shortestDistance>
+}
+
+// Build weighted undirected graph from edge list
+// edges = [[u, v, weight], ...]
+function buildWeightedGraph(n, edges) {
+  const g = new Map();
+  for (let i = 0; i < n; i++) g.set(i, []);
+  for (const [u, v, w] of edges) {
+    g.get(u).push([v, w]);
+    g.get(v).push([u, w]);
+  }
+  return g;
+}
+
+// Network Delay Time (LeetCode 743)
+// Find max of all shortest paths from source k`,
+  },
+
+  // ADV.2 Minimum Spanning Tree
+  {
+    category: 'Advanced Topics', difficulty: 'Advanced',
+    question: 'ADV.2 Minimum Spanning Tree — Kruskal\'s (Union-Find) vs Prim\'s (greedy heap), when to use each?',
+    answer: '**MST** connects all V vertices with exactly V-1 edges and minimum total weight. **Kruskal\'s**: sort all edges by weight → greedily add the cheapest edge that does NOT form a cycle (detect with Union-Find) → stop at V-1 edges. O(E log E). Best for **sparse** graphs. **Prim\'s**: start from any vertex → greedily add the cheapest edge connecting the growing MST to a new vertex (min-heap). O(E log V). Best for **dense** graphs. **Union-Find (DSU)**: `find(x)` returns root (with path compression), `union(a,b)` merges sets (by rank). Nearly O(1) amortised per op. **Use MST for**: network cable design, clustering, approximation for TSP.',
+    tip: `// Union-Find — path compression + union by rank
+class UnionFind {
+  constructor(n) {
+    this.parent = Array.from({length: n}, (_, i) => i);
+    this.rank   = new Array(n).fill(0);
+  }
+  find(x) {
+    if (this.parent[x] !== x)
+      this.parent[x] = this.find(this.parent[x]); // path compression
+    return this.parent[x];
+  }
+  union(a, b) {
+    const ra = this.find(a), rb = this.find(b);
+    if (ra === rb) return false; // already connected = cycle!
+    if (this.rank[ra] < this.rank[rb]) this.parent[ra] = rb;
+    else if (this.rank[ra] > this.rank[rb]) this.parent[rb] = ra;
+    else { this.parent[rb] = ra; this.rank[ra]++; }
+    return true;
+  }
+}
+
+// Kruskal's MST — O(E log E)
+function kruskalMST(n, edges) {
+  edges.sort((a, b) => a[2] - b[2]); // sort by weight
+  const uf = new UnionFind(n);
+  let totalWeight = 0, edgeCount = 0;
+  for (const [u, v, w] of edges) {
+    if (uf.union(u, v)) {
+      totalWeight += w;
+      edgeCount++;
+      if (edgeCount === n - 1) break; // MST complete
+    }
+  }
+  return edgeCount === n - 1 ? totalWeight : -1; // -1 if not connected
+}
+
+// Number of Connected Components (Union-Find)
+function countComponents(n, edges) {
+  const uf = new UnionFind(n);
+  let components = n;
+  for (const [u, v] of edges)
+    if (uf.union(u, v)) components--;
+  return components;
+}`,
+  },
+
+  // ADV.3 String Algorithms
+  {
+    category: 'Advanced Topics', difficulty: 'Advanced',
+    question: 'ADV.3 String Search Algorithms — KMP, Rabin-Karp, and Z-algorithm: when and how to use?',
+    answer: '**KMP (Knuth-Morris-Pratt)**: precompute a **failure function** (LPS array — Longest Proper Prefix which is also Suffix). On mismatch, jump using LPS instead of restarting from 0. O(n+m) time, O(m) space. **Rabin-Karp**: use **rolling hash** — compute hash of current window, compare with pattern hash. O(n+m) average, O(nm) worst (collisions). Best for multi-pattern search. **Z-algorithm**: Z[i] = length of longest substring starting at i that matches a prefix of the string. O(n+m). Concatenate `pattern + "$" + text`, find positions where Z[i] = pattern.length. **All three** are O(n+m) vs O(nm) for naive brute-force.',
+    tip: `// KMP — O(n + m)
+function kmpSearch(text, pattern) {
+  const lps = buildLPS(pattern);
+  const result = [];
+  let j = 0; // pattern index
+  for (let i = 0; i < text.length; i++) {
+    while (j > 0 && text[i] !== pattern[j]) j = lps[j - 1]; // jump
+    if (text[i] === pattern[j]) j++;
+    if (j === pattern.length) {
+      result.push(i - j + 1); // match found at index
+      j = lps[j - 1];
+    }
+  }
+  return result;
+}
+
+// LPS (failure function) — O(m)
+function buildLPS(pat) {
+  const lps = new Array(pat.length).fill(0);
+  let len = 0, i = 1;
+  while (i < pat.length) {
+    if (pat[i] === pat[len]) { lps[i++] = ++len; }
+    else if (len)            { len = lps[len - 1]; }
+    else                     { lps[i++] = 0; }
+  }
+  return lps;
+}
+// kmpSearch("aabaabaabaab", "aab") -> [0, 3, 6, 9]
+
+// Rabin-Karp — rolling hash O(n + m) avg
+function rabinKarp(text, pattern) {
+  const BASE = 31, MOD = 1e9 + 7;
+  const m = pattern.length, n = text.length;
+  if (m > n) return [];
+  let ph = 0, wh = 0, power = 1;
+  for (let i = 0; i < m; i++) {
+    ph = (ph * BASE + pattern.charCodeAt(i)) % MOD;
+    wh = (wh * BASE + text.charCodeAt(i)) % MOD;
+    if (i < m - 1) power = power * BASE % MOD;
+  }
+  const res = [];
+  for (let i = 0; i <= n - m; i++) {
+    if (wh === ph && text.slice(i, i+m) === pattern) res.push(i);
+    if (i < n - m)
+      wh = ((wh - text.charCodeAt(i) * power) * BASE + text.charCodeAt(i+m)) % MOD;
+    if (wh < 0) wh += MOD;
+  }
+  return res;
+}`,
+  },
+
+  // ADV.4 Number Theory
+  {
+    category: 'Advanced Topics', difficulty: 'Advanced',
+    question: 'ADV.4 Number Theory for DSA — GCD (Euclidean), Sieve of Eratosthenes, and modular exponentiation?',
+    answer: '**GCD (Euclidean)**: `gcd(a, b) = gcd(b, a%b)` until b=0. O(log min(a,b)). **LCM**: `a*b / gcd(a,b)`. **Sieve of Eratosthenes**: find all primes ≤ n in O(n log log n) — mark all multiples of each prime starting from p². **Modular Exponentiation**: compute `a^b % m` in O(log b) via repeated squaring — `a^8 = ((a²)²)²`. Essential for large exponents. **Prime factorisation**: trial division up to √n — O(√n). **Applications**: cryptography (RSA uses modular exp), hashing (mod prime size), combinatorics (nCr % p via Fermat\'s little theorem), fraction simplification (GCD).',
+    tip: `// GCD — O(log min(a,b))
+function gcd(a, b) { return b === 0 ? a : gcd(b, a % b); }
+function lcm(a, b) { return a / gcd(a, b) * b; }
+
+// Check prime — O(sqrt(n))
+function isPrime(n) {
+  if (n < 2) return false;
+  for (let i = 2; i * i <= n; i++) if (n % i === 0) return false;
+  return true;
+}
+
+// Sieve of Eratosthenes — O(n log log n)
+function sieve(n) {
+  const p = new Array(n + 1).fill(true);
+  p[0] = p[1] = false;
+  for (let i = 2; i * i <= n; i++)
+    if (p[i]) for (let j = i*i; j <= n; j += i) p[j] = false;
+  return p.reduce((primes, val, i) => (val ? [...primes, i] : primes), []);
+}
+// sieve(20) -> [2, 3, 5, 7, 11, 13, 17, 19]
+
+// Modular Exponentiation — O(log b)
+function modPow(base, exp, mod) {
+  let result = 1n;
+  base = BigInt(base) % BigInt(mod);
+  exp  = BigInt(exp);
+  mod  = BigInt(mod);
+  while (exp > 0n) {
+    if (exp & 1n) result = result * base % mod;
+    base = base * base % mod;
+    exp >>= 1n;
+  }
+  return Number(result);
+}
+// modPow(2, 10, 1000) -> 24  (1024 % 1000)
+
+// Euler's totient: count integers 1..n coprime with n
+// Fermat's little theorem: a^(p-1) % p = 1 (p is prime)
+// -> Modular inverse: a^(p-2) % p`,
+  },
+
+  // ══════════════════════════════════════════════════════════
+  // SECTION 6: ECOSYSTEM & APPLICATIONS
+  // ══════════════════════════════════════════════════════════
+
+  // ECO.1 Competitive Programming & Real-World
+  {
+    category: 'Ecosystem', difficulty: 'Beginner',
+    question: 'ECO.1 DSA Ecosystem — LeetCode strategy, real-world applications, and clean code in technical interviews?',
+    answer: '**Competitive Programming**: LeetCode — pattern-based (NeetCode Blind 75 roadmap); HackerRank — foundational algorithms; Codeforces — competitive speed. Focus on recognising patterns, not memorising solutions. **Real-world applications**: Databases (B-Trees for indexes, hashing for lookups) · Networking (Dijkstra\'s for routing, graphs for topology) · AI/ML (DP for reinforcement learning, graphs for neural nets) · Compression (Huffman = Greedy + Trees) · OS (priority queues for CPU scheduling, stacks for function calls). **Clean Code in interviews**: name variables clearly; handle edge cases first; state time/space complexity; talk through your approach before coding; validate with examples after coding.',
+    tip: `// Interview Problem-Solving Framework
+
+// 1. CLARIFY — ask about constraints and edge cases
+//    "What if the array is empty? Can values be negative?"
+
+// 2. THINK ALOUD — state your approach
+//    "I'll use a sliding window since we need a contiguous subarray"
+
+// 3. BRUTE FORCE FIRST — mention it, then optimise
+//    "Naive O(n^2): check all pairs. Let me use a hash map for O(n)..."
+
+// 4. RECOGNISE THE PATTERN
+//    Sorted array / two values   -> Binary Search / Two Pointers
+//    Subarray / substring        -> Sliding Window / Prefix Sum
+//    Tree / Graph                -> DFS (recursion) / BFS (queue)
+//    Optimal choices             -> DP / Greedy
+//    Linked list cycle / middle  -> Fast & Slow Pointers
+//    Frequency / duplicates      -> Hash Map / Set
+
+// 5. CODE — clean, handle edges, modular helper functions
+
+// 6. TEST — trace through example, then edge cases:
+//    empty input, single element, all same, negative numbers
+
+// After coding, always state:
+// "This is O(n) time — single pass using hash map"
+// "Space is O(n) — map stores at most n entries"`,
+  },
 
   // ══════════════════════════════════════════════════════════
   // 1. ARRAYS
@@ -17765,7 +18677,7 @@ const ARCHITECTURE_CARDS  = [];
    SUBJECTS
 ═══════════════════════════════════════════════════════════ */
 const SUBJECTS = {
-  'DSA':        DSA_CARDS,
+  'DSA_JavaScript': DSA_JAVASCRIPT_CARDS,
   'Python':     PYTHON_CARDS,
   'C#':         CSHARP_CARDS,
   'C++':        CPP_CARDS,
@@ -17800,7 +18712,7 @@ const SUBJECTS = {
 ═══════════════════════════════════════════════════════════ */
 const SUBJECT_GROUPS = {
   'Cheat Sheet': ['Junior Dev Daily Essentials'],
-  'Core':        ['DSA', 'Internet', 'Linux', 'Tricked Memory'],
+  'Core':        ['DSA_JavaScript', 'Internet', 'Linux', 'Tricked Memory'],
   'Language':    ['Python', 'C#', 'C++', 'JavaScript'],
   'Frontend':    ['Html', 'CSS', 'npm', 'Git/Github', 'Tailwind CSS', 'React & SSR', 'Redux'],
   'Backend':     ['Node.js', 'Express.js', 'SQL', 'Database', 'PostgreSQL', 'API', 'JWT authentication', 'Redis', 'Testing & Containers', 'CI/CD', 'AI-assist', 'Third-party generation', 'Architecture'],
@@ -17825,7 +18737,7 @@ const GROUP_COLORS = {
    CONFIG
 ═══════════════════════════════════════════════════════════ */
 const SUBJECT_COLORS = {
-  'DSA':        '#f97316',
+  'DSA_JavaScript': '#f97316',
   'Python':     '#3b82f6',
   'C#':         '#8b5cf6',
   'C++':        '#00599c',
@@ -17856,6 +18768,16 @@ const SUBJECT_COLORS = {
 };
 
 const CATEGORY_COLORS = {
+  // DSA_JavaScript — overview & new sections
+  'Overview':          '#94a3b8',
+  'Fundamentals':      '#ef4444',
+  'Linked Lists':      '#f59e0b',
+  'Stacks & Queues':   '#fb923c',
+  'Heaps':             '#84cc16',
+  'Sorting':           '#3b82f6',
+  'Strategy Patterns': '#8b5cf6',
+  'Advanced Topics':   '#7c3aed',
+  'Ecosystem':         '#f43f5e',
   // DSA — new topic-based categories
   'Arrays':              '#f97316',
   'Strings':             '#10b981',
@@ -17973,7 +18895,7 @@ const DIFFICULTY_CONFIG = {
    STATE
 ═══════════════════════════════════════════════════════════ */
 const state = {
-  activeSubject: 'DSA',
+  activeSubject: 'DSA_JavaScript',
   activeFilter:  'All',
   currentIndex:  0,
   isFlipped:     false,
@@ -17985,6 +18907,7 @@ const state = {
    DOM REFS
 ═══════════════════════════════════════════════════════════ */
 const cardEl         = document.getElementById('card');
+const cardImageEl    = document.getElementById('cardImage');
 const questionText   = document.getElementById('questionText');
 const answerText     = document.getElementById('answerText');
 const tipBlock       = document.getElementById('tipBlock');
@@ -18149,7 +19072,16 @@ function render() {
   const id   = cardId(card);
 
   // Text
-  questionText.innerHTML = formatText(card.question);
+  // Image card support
+  if (card.image) {
+    cardImageEl.src           = card.image;
+    cardImageEl.style.display = 'block';
+    questionText.style.display = 'none';
+  } else {
+    cardImageEl.style.display  = 'none';
+    questionText.style.display = '';
+    questionText.innerHTML     = formatText(card.question);
+  }
   answerText.innerHTML   = formatText(card.answer);
 
   // Code tip block
