@@ -13,7 +13,7 @@ A multi-subject developer flash card web app built with vanilla HTML, CSS, and J
 ### Core
 | Subject | Cards | Categories |
 |---|---|---|
-| **DSA** | 38 | Arrays, Strings, HashMap, Searching, Recursion, Trees, Graph, Dynamic Programming, Patterns |
+| **DSA_JavaScript** | 59+ | Overview, Fundamentals, Linked Lists, Stacks & Queues, Heaps, Sorting, Strategy Patterns, Advanced Topics, Ecosystem, Arrays, Strings, HashMap, Searching, Recursion, Trees, Graph, Dynamic Programming, Patterns |
 | **Internet** | 20 | How Internet Works, HTTP & Web, DNS & Domains, Browsers |
 | **Linux** | 25 | Linux Basics, Files & Permissions, Processes & System, Networking & SSH, Shell Scripting |
 | **Tricked Memory** | 3+ | SQL (FJ WGH SOL — execution order mnemonic) |
@@ -36,7 +36,33 @@ A multi-subject developer flash card web app built with vanilla HTML, CSS, and J
 | **React & SSR** | 31 | Overview, Fundamentals, Lifecycle, Hooks, Data Flow, Performance, Ecosystem, Advanced, Interview |
 | **CSS & Tailwind** | 20 | CSS Fundamentals, CSS Layouts, Tailwind CSS |
 
-**Total: 450+ cards**
+**Total: 470+ cards**
+
+---
+
+### DSA_JavaScript — Detailed Breakdown
+
+| Section | Category | Cards | Topics |
+|---|---|---|---|
+| Overview | **Overview** | 2 | Mind map image (images/DSA.png) · 6-section roadmap |
+| Fundamentals | **Fundamentals** | 2 | Complexity Analysis (Big-O/Theta/Omega) · Math Basics (log, pow, modular, bit ops) |
+| Core DS | **Linked Lists** | 2 | Singly LL (reverse, middle, merge) · Doubly LL + LRU Cache |
+| Core DS | **Stacks & Queues** | 2 | Stack + Monotonic Stack · Queue + Monotonic Deque |
+| Core DS | **Heaps** | 1 | Min-Heap implementation · Top-K patterns |
+| Algorithms | **Sorting** | 2 | Simple (Bubble/Insertion/Selection) · Efficient (Merge/Quick) |
+| Algorithms | **Strategy Patterns** | 3 | Greedy · Backtracking · Divide & Conquer |
+| Algorithms | **Graph** | 2 | DFS · BFS (shortest path, Rotting Oranges) |
+| Patterns | **Patterns** | 1 | Fast & Slow Pointers (Floyd's Cycle Detection) |
+| Advanced | **Advanced Topics** | 4 | Dijkstra's · Kruskal/Prim MST + Union-Find · KMP + Rabin-Karp · Number Theory |
+| Ecosystem | **Ecosystem** | 1 | LeetCode strategy · Real-world apps · Interview framework |
+| Legacy | Arrays, Strings, HashMap, Searching, Recursion, Trees, Dynamic Programming | 38 | Original DSA cards |
+
+#### DSA Learning Path
+```
+Fundamentals → Core DS (Arrays/Strings/LL/Stack/Queue/Heap) → Searching & Sorting
+→ Tree/Graph Traversals → Coding Patterns (Sliding Window, Two Pointers, Fast&Slow, Prefix Sum)
+→ Strategy Patterns (Greedy/Backtracking/DP) → Advanced Topics
+```
 
 ---
 
@@ -88,6 +114,7 @@ Backend Developer:    Fundamentals → ES6 → Async → Node.js → API → Dat
 - Multi-subject navigation grouped into **Core / Backend / Frontend** bars
 - Category filter bar — drill into specific topics within a subject
 - 3D card flip animation (CSS `transform-style: preserve-3d`)
+- **Image cards** — mind map / overview cards display a full image on the front face
 - **"Got it"** button — track known cards, persists across shuffle
 - Progress bar and **"X of Y"** indicator
 - Shuffle deck (Fisher-Yates algorithm)
@@ -113,6 +140,8 @@ Flash_cards/
 ├── index.html              # App shell and markup
 ├── style.css               # Dark theme, 3D flip animation
 ├── app.js                  # All card data, state management, DOM logic
+├── images/                 # Mind map and overview images
+│   └── DSA.png
 ├── README.md
 ├── CLAUDE.md               # Dev instructions for Claude
 └── .github/

@@ -29,7 +29,7 @@ Flash Cards Page
 │   └── Progress Indicator ("X of Y")
 │
 ├── Subject Menu (nav#subjectMenu) — 3 grouped bars
-│   ├── [CORE]     DSA · Internet · Linux
+│   ├── [CORE]     DSA_JavaScript · Internet · Linux
 │   ├── [BACKEND]  Python · C# · SQL · Database · API · Node.js · Testing & Containers
 │   └── [FRONTEND] JavaScript · React & SSR · CSS & Tailwind
 │
@@ -42,7 +42,8 @@ Flash Cards Page
         │   ├── Category + Difficulty badges
         │   ├── "Got it" button
         │   ├── Face label "Question"
-        │   ├── Question text  (#questionText)
+        │   ├── Image         (#cardImage — shown instead of question when card.image set)
+        │   ├── Question text (#questionText — hidden when card.image is set)
         │   └── Nav buttons   (Prev | Show Answer | Next)
         │
         └── .card-back
@@ -65,7 +66,7 @@ Flash Cards Page
 ### Core
 | Subject | Cards | Categories |
 |---|---|---|
-| DSA | 38 | Arrays, Strings, HashMap, Searching, Recursion, Trees, Graph, Dynamic Programming, Patterns |
+| DSA_JavaScript | 59+ | Overview, Fundamentals, Linked Lists, Stacks & Queues, Heaps, Sorting, Strategy Patterns, Advanced Topics, Ecosystem, Arrays, Strings, HashMap, Searching, Recursion, Trees, Graph, Dynamic Programming, Patterns |
 | Internet | 20 | How Internet Works, HTTP & Web, DNS & Domains, Browsers |
 | Linux | 25 | Linux Basics, Files & Permissions, Processes & System, Networking & SSH, Shell Scripting |
 | Tricked Memory | 3+ | SQL (FJ WGH SOL — execution order mnemonic) |
@@ -88,7 +89,24 @@ Flash Cards Page
 | React & SSR | 31 | Overview, Fundamentals, Lifecycle, Hooks, Data Flow, Performance, Ecosystem, Advanced, Interview |
 | CSS & Tailwind | 20 | CSS Fundamentals, CSS Layouts, Tailwind CSS |
 
-**Total: 450+ cards**
+**Total: 470+ cards**
+
+### DSA_JavaScript — Detailed Breakdown
+
+| Section | Category | Cards | Topics |
+|---|---|---|---|
+| Overview | **Overview** | 2 | Mind map image (images/DSA.png) · 6-section roadmap |
+| Fundamentals | **Fundamentals** | 2 | Complexity Analysis (Big-O/Theta/Omega) · Math Basics (log, pow, modular, bit ops) |
+| Core DS | **Linked Lists** | 2 | Singly LL · Doubly LL + LRU Cache |
+| Core DS | **Stacks & Queues** | 2 | Stack + Monotonic Stack · Queue + Monotonic Deque |
+| Core DS | **Heaps** | 1 | MinHeap implementation · Top-K patterns |
+| Algorithms | **Sorting** | 2 | Simple (Bubble/Insertion/Selection) · Efficient (Merge/Quick) |
+| Algorithms | **Strategy Patterns** | 3 | Greedy · Backtracking · Divide & Conquer |
+| Algorithms | **Graph** | 2 | DFS · BFS (shortest path, Rotting Oranges) |
+| Patterns | **Patterns** | 1 | Fast & Slow Pointers (Floyd's Cycle Detection) |
+| Advanced | **Advanced Topics** | 4 | Dijkstra's · Kruskal/Prim MST + Union-Find · KMP + Rabin-Karp · Number Theory |
+| Ecosystem | **Ecosystem** | 1 | LeetCode strategy · Real-world apps · Interview framework |
+| Legacy | Arrays, Strings, HashMap, Searching, Recursion, Trees, Dynamic Programming, Patterns | 38 | Original DSA cards |
 
 ### JavaScript — Detailed Breakdown
 
@@ -140,9 +158,10 @@ Each card object:
 {
   category:   'Category Name',          // string — used for filter bar
   difficulty: 'Beginner',               // 'Beginner' | 'Intermediate' | 'Advanced'
-  question:   'What is ...?',           // shown on card front
+  question:   'What is ...?',           // shown on card front (hidden when image set)
   answer:     'Answer text...',         // shown on card back
   tip:        `optional code block`,    // shown in tip-block on back (optional)
+  image:      'images/foo.png',         // optional — shows image on front, hides question
 }
 ```
 
@@ -153,7 +172,7 @@ const SUBJECTS = { 'SubjectName': SUBJECT_CARDS, ... };
 
 // Subject menu grouped into labeled bars
 const SUBJECT_GROUPS = {
-  'Core':     ['DSA', 'Internet', 'Linux', 'Tricked Memory'],
+  'Core':     ['DSA_JavaScript', 'Internet', 'Linux', 'Tricked Memory'],
   'Backend':  ['Python', 'C#', 'SQL', 'Database', 'API', 'Node.js', 'Testing & Containers'],
   'Frontend': ['JavaScript', 'React & SSR', 'CSS & Tailwind'],
 };
@@ -181,7 +200,7 @@ const DIFFICULTY_CONFIG = {
 ### State
 ```js
 const state = {
-  activeSubject: 'DSA',      // currently selected subject
+  activeSubject: 'DSA_JavaScript', // currently selected subject
   activeFilter:  'All',      // currently selected category filter
   currentIndex:  0,          // index into state.deck[]
   isFlipped:     false,      // front or back face showing
@@ -256,6 +275,8 @@ Flash_cards/
 ├── index.html
 ├── style.css
 ├── app.js
+├── images/
+│   └── DSA.png          # Mind map image for DSA_JavaScript overview card
 ├── README.md
 ├── CLAUDE.md
 └── .github/
