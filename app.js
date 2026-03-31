@@ -85,7 +85,27 @@ const DSA_JAVASCRIPT_CARDS = [
 └─ 🚀 6. Ecosystem & Applications
     ├─ Competitive Prog: LeetCode · HackerRank · Technical Interview Skills
     ├─ Real-world: Databases (B-Trees) · Networking (Graphs) · AI/ML (DP)
-    └─ Clean Code: Naming · Edge cases · Readability in Technical Interviews`,
+    └─ Clean Code: Naming · Edge cases · Readability in Technical Interviews
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+LEARNING PATHS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Beginner:     Fundamentals → Arrays & Strings → Linked Lists → Stacks & Queues → Hash Maps
+Intermediate: Trees → BST → Heaps → Graphs → Searching & Sorting
+Advanced:     Dynamic Programming → Backtracking → Greedy → Divide & Conquer
+              → String Algorithms → Graph Algorithms
+Integration:  Practice problems → Competitive programming → Real-world applications
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🎯 INTERVIEW CORE KNOWLEDGE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Complexity:        Big-O notation · time vs space tradeoffs
+Recursion:         base case · call stack · converting recursion <-> iteration
+Data Structures:   arrays · linked lists · stacks · queues · hash maps · trees · graphs
+Algorithms:        binary search · merge sort · quicksort · BFS/DFS · DP (knapsack, LIS)
+Patterns:          sliding window · two pointers · fast/slow pointers · prefix sum · backtracking
+Advanced Topics:   Dijkstra · Kruskal · Prim · KMP · Rabin-Karp · sieve of Eratosthenes
+Applications:      databases (B-trees) · networking (graphs) · AI/ML (DP) · optimization`,
   },
 
   // ══════════════════════════════════════════════════════════
