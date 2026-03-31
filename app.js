@@ -19089,7 +19089,353 @@ Integration:      how HTML works with CSS & JS · DOM structure`,
   },
 
 ];
-const CSS_ONLY_CARDS      = [];
+/* ═══════════════════════════════════════════════════════════
+   CSS — Cascading Style Sheets
+═══════════════════════════════════════════════════════════ */
+const CSS_ONLY_CARDS = [
+
+  // ══════════════════════════════════════════════════════════
+  // 0. OVERVIEW
+  // ══════════════════════════════════════════════════════════
+
+  {
+    category: 'Overview', difficulty: 'Beginner',
+    question: 'CSS — Full Mind Map, Learning Paths & Interview Core',
+    answer: '6 sections: 1. Fundamentals · 2. Core Concepts · 3. Useful Daily Tools · 4. Advanced Features · 5. Performance & Security · 6. Ecosystem & Applications',
+    tip: `CSS
+│
+├─ 1. Fundamentals
+│   ├─ What it is       Cascading Style Sheets · styling web pages
+│   ├─ Syntax           selector { property: value; }
+│   ├─ Selectors        element · class · id · universal · group
+│   ├─ Colors           named · hex · rgb() · hsl()
+│   └─ Units            px · em · rem · % · vh/vw
+│
+├─ 2. Core Concepts
+│   ├─ Box Model        content · padding · border · margin
+│   ├─ Display          block · inline · inline-block · none
+│   ├─ Positioning      static · relative · absolute · fixed · sticky
+│   ├─ Flexbox          display:flex · justify-content · align-items · flex-wrap
+│   └─ Grid             display:grid · grid-template-rows/columns · gap
+│
+├─ 3. Useful Daily Tools
+│   ├─ Typography       font-family · font-size · line-height · text-align
+│   ├─ Backgrounds      background-color · background-image · gradients
+│   ├─ Borders          border-style · border-radius · box-shadow
+│   ├─ Transitions      transition-property · transition-duration
+│   └─ Animations       @keyframes · animation-name · animation-duration
+│
+├─ 4. Advanced Features
+│   ├─ Pseudo-classes   :hover · :focus · :nth-child()
+│   ├─ Pseudo-elements  ::before · ::after · ::first-line
+│   ├─ Variables        --primary-color · var(--primary-color)
+│   ├─ Media Queries    @media (max-width:600px){...}
+│   └─ Responsive       fluid layouts · mobile-first design
+│
+├─ 5. Performance & Security
+│   ├─ Optimization     minimize CSS · critical CSS · avoid !important
+│   ├─ Specificity      inline > id > class > element
+│   ├─ Maintainability  modular CSS · naming conventions (BEM)
+│   └─ Security         sanitize user styles · CSP for style-src
+│
+└─ 6. Ecosystem & Applications
+    ├─ Preprocessors    Sass · Less · Stylus
+    ├─ Frameworks       Bootstrap · Tailwind · Bulma · Foundation
+    ├─ Tools            PostCSS · Autoprefixer · CSS Modules
+    ├─ Editors          VS Code · Sublime · WebStorm
+    └─ Real-world Use   responsive sites · web apps · UI components
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+LEARNING PATHS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Beginner:     Fundamentals → Selectors → Colors → Units → Box Model
+Intermediate: Display → Positioning → Flexbox → Grid → Typography
+Advanced:     Pseudo-classes → Pseudo-elements → Variables → Media Queries → Responsive Design
+Integration:  CSS + HTML → Preprocessors → Frameworks → UI libraries
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🎯 INTERVIEW CORE KNOWLEDGE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Box Model:        content, padding, border, margin — critical for layout questions
+Positioning:      relative vs absolute vs fixed vs sticky
+Flexbox & Grid:   modern layout systems · justify-content · align-items · grid-template
+Specificity:      inline > id > class > element · how conflicts are resolved
+Responsive:       media queries · mobile-first · fluid units (em, rem, %)
+CSS Variables:    reusable values · theming · maintainability
+Frameworks:       Bootstrap, Tailwind, etc. · pros/cons in interviews`,
+  },
+
+  // ══════════════════════════════════════════════════════════
+  // 1. FUNDAMENTALS
+  // ══════════════════════════════════════════════════════════
+
+  {
+    category: 'Fundamentals', difficulty: 'Beginner',
+    question: 'CSS Fundamentals — syntax, selectors, colors, and units?',
+    answer: '**CSS (Cascading Style Sheets)** controls how HTML elements look. **Syntax**: `selector { property: value; }`. **Selectors**: element (`p`), class (`.card`), id (`#header`), universal (`*`), group (`h1, h2`), descendant (`div p`), child (`ul > li`), attribute (`[type="text"]`). **Specificity order** (low → high): element (0,0,1) → class/pseudo-class (0,1,0) → id (1,0,0) → inline style. **Colors**: named (`red`), hex (`#f97316`), `rgb(249, 115, 22)`, `rgba(...)` with alpha, `hsl(27, 95%, 53%)`. **Units**: `px` (absolute), `em` (relative to parent font-size), `rem` (relative to root font-size), `%` (relative to parent), `vh/vw` (viewport height/width). Use `rem` for font-size, `px` for borders, `%`/`vh` for layouts.',
+    tip: `/* Syntax */
+selector { property: value; }
+
+/* Selectors */
+p          { color: #333; }          /* element */
+.card      { padding: 1rem; }        /* class */
+#header    { background: #000; }     /* id */
+*          { box-sizing: border-box; }/* universal */
+h1, h2     { font-weight: bold; }    /* group */
+ul > li    { list-style: none; }     /* direct child */
+a:hover    { color: orange; }        /* pseudo-class */
+[required] { border-color: red; }   /* attribute */
+
+/* Colors */
+color: red;               /* named */
+color: #f97316;           /* hex */
+color: rgb(249, 115, 22); /* rgb */
+color: rgba(0,0,0, 0.5);  /* rgba — 50% transparent */
+color: hsl(27, 95%, 53%); /* hue, saturation, lightness */
+
+/* Units */
+font-size: 16px;     /* absolute pixels */
+font-size: 1rem;     /* 1x root font-size (usually 16px) */
+font-size: 1.2em;    /* 1.2x parent font-size */
+width: 80%;          /* 80% of parent width */
+height: 100vh;       /* full viewport height */
+gap: 1.5rem;         /* spacing: rem is best for spacing */
+
+/* Linking CSS */
+<link rel="stylesheet" href="style.css">  /* external (preferred) */`,
+  },
+
+  // ══════════════════════════════════════════════════════════
+  // 2. CORE CONCEPTS
+  // ══════════════════════════════════════════════════════════
+
+  {
+    category: 'Core Concepts', difficulty: 'Beginner',
+    question: 'CSS Core Concepts — Box Model, display, positioning, Flexbox, and Grid?',
+    answer: '**Box Model**: every element is a box — from inside out: `content` → `padding` (inner space) → `border` → `margin` (outer space). `box-sizing: border-box` makes width include padding+border. **Display**: `block` (full width, new line), `inline` (text flow, no width/height), `inline-block` (inline + accepts width/height), `none` (hidden). **Positioning**: `static` (default flow), `relative` (offset from own position), `absolute` (removed from flow, relative to nearest non-static ancestor), `fixed` (relative to viewport), `sticky` (relative until scroll threshold). **Flexbox**: one-dimensional — `display:flex` → `justify-content` (main axis), `align-items` (cross axis), `flex-wrap`, `gap`. **Grid**: two-dimensional — `display:grid` → `grid-template-columns/rows`, `gap`, `grid-column/row` span.',
+    tip: `/* Box Model */
+* { box-sizing: border-box; } /* include padding+border in width — always add this */
+
+.box {
+  width: 300px; height: 100px;
+  padding: 16px;          /* inner space (top right bottom left) */
+  border: 2px solid #333;
+  margin: 24px auto;      /* outer space, auto = center horizontally */
+}
+
+/* Display */
+display: block;        /* <div>, <p>, <h1> default */
+display: inline;       /* <span>, <a> default */
+display: inline-block; /* behaves inline but accepts width/height */
+display: none;         /* hides + removes from layout (vs visibility:hidden) */
+
+/* Positioning */
+position: relative;  top: 10px; left: 20px;  /* offset from original spot */
+position: absolute;  top: 0; right: 0;        /* relative to nearest positioned ancestor */
+position: fixed;     bottom: 20px; right: 20px; /* stays on screen while scrolling */
+position: sticky;    top: 0;                  /* sticks when it reaches top while scrolling */
+
+/* Flexbox — 1D layout */
+.container { display: flex; justify-content: space-between; align-items: center; gap: 1rem; flex-wrap: wrap; }
+.item      { flex: 1; }  /* grow equally */
+
+/* Grid — 2D layout */
+.grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
+.wide { grid-column: span 2; }  /* span 2 columns */`,
+  },
+
+  // ══════════════════════════════════════════════════════════
+  // 3. USEFUL DAILY TOOLS
+  // ══════════════════════════════════════════════════════════
+
+  {
+    category: 'Useful Daily Tools', difficulty: 'Beginner',
+    question: 'CSS Daily Tools — typography, backgrounds, borders, transitions, and animations?',
+    answer: '**Typography**: `font-family` (use system stack or Google Fonts), `font-size`, `font-weight` (100–900), `line-height` (1.5–1.75 for readability), `text-align`, `text-transform`, `letter-spacing`. **Backgrounds**: `background-color`, `background-image: url(...)`, `background-size: cover/contain`, `background-position`, linear/radial gradients. **Borders**: `border: 1px solid #333`, `border-radius` (corners), `box-shadow` (multiple layers supported). **Transitions**: smoothly animate CSS property changes — `transition: property duration timing-function delay`. **Animations**: `@keyframes` defines the steps, `animation` applies it — properties: `name`, `duration`, `timing-function`, `delay`, `iteration-count`, `direction`.',
+    tip: `/* Typography */
+body {
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 16px; line-height: 1.6;
+}
+h1 { font-size: 2.5rem; font-weight: 700; letter-spacing: -0.02em; }
+p  { text-align: left; text-transform: none; color: #334155; }
+
+/* Backgrounds */
+.hero {
+  background-color: #0f172a;
+  background-image: linear-gradient(135deg, #6366f1, #8b5cf6);
+  background-size: cover;
+  background-position: center;
+}
+/* Radial gradient */
+background: radial-gradient(circle at top, #1e293b, #0f172a);
+
+/* Borders & Shadows */
+.card {
+  border: 1px solid #e2e8f0;
+  border-radius: 0.75rem;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1), 0 1px 3px rgba(0,0,0,0.06);
+}
+
+/* Transitions — smooth state changes */
+.btn {
+  background: #6366f1;
+  transition: background 0.2s ease, transform 0.15s ease;
+}
+.btn:hover { background: #4f46e5; transform: translateY(-2px); }
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.modal { animation: fadeIn 0.3s ease forwards; }
+/* spin loader */
+@keyframes spin { to { transform: rotate(360deg); } }
+.spinner { animation: spin 1s linear infinite; }`,
+  },
+
+  // ══════════════════════════════════════════════════════════
+  // 4. ADVANCED FEATURES
+  // ══════════════════════════════════════════════════════════
+
+  {
+    category: 'Advanced Features', difficulty: 'Intermediate',
+    question: 'CSS Advanced Features — pseudo-classes, pseudo-elements, custom properties (variables), media queries, and responsive design?',
+    answer: '**Pseudo-classes** target elements in a specific state: `:hover`, `:focus`, `:active`, `:visited`, `:nth-child(n)`, `:first-child`, `:last-child`, `:not()`, `:checked`, `:disabled`. **Pseudo-elements** style a part of an element: `::before`, `::after` (must have `content`), `::first-line`, `::first-letter`, `::placeholder`, `::selection`. **CSS Custom Properties (variables)**: `--name: value` on `:root`, used with `var(--name)`. Support fallback: `var(--color, #333)`. Enable theming (dark/light mode). **Media queries**: `@media (max-width: 768px) { ... }` — adapt layout to screen size. Combine: `@media (min-width: 600px) and (max-width: 1200px)`. **Mobile-first** uses `min-width` breakpoints (start small, scale up).',
+    tip: `/* Pseudo-classes */
+a:hover    { color: #6366f1; }
+input:focus { outline: 2px solid #6366f1; outline-offset: 2px; }
+li:nth-child(odd)  { background: #f8fafc; }
+li:nth-child(2n+1) { background: #f8fafc; } /* same: odd */
+p:not(.special)    { color: #64748b; }
+input:checked + label { font-weight: bold; }
+
+/* Pseudo-elements */
+.card::before {
+  content: '';         /* required — even if empty */
+  display: block;
+  width: 4px; height: 100%;
+  background: #6366f1;
+  position: absolute; left: 0; top: 0;
+}
+p::first-line { font-weight: bold; }
+::selection   { background: #6366f1; color: white; }
+
+/* CSS Variables */
+:root {
+  --primary:   #6366f1;
+  --radius:    0.5rem;
+  --shadow:    0 4px 6px rgba(0,0,0,0.1);
+}
+.btn { background: var(--primary); border-radius: var(--radius); }
+/* Dark mode via class toggle */
+[data-theme="dark"] { --primary: #818cf8; --bg: #0f172a; }
+
+/* Media Queries — mobile-first (min-width) */
+/* Base styles: mobile */
+.grid { grid-template-columns: 1fr; }
+
+@media (min-width: 768px) {   /* tablet */
+  .grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (min-width: 1200px) {  /* desktop */
+  .grid { grid-template-columns: repeat(3, 1fr); }
+}`,
+  },
+
+  // ══════════════════════════════════════════════════════════
+  // 5. PERFORMANCE & SECURITY
+  // ══════════════════════════════════════════════════════════
+
+  {
+    category: 'Performance & Security', difficulty: 'Intermediate',
+    question: 'CSS Performance & Security — specificity, avoiding !important, critical CSS, BEM, and CSP?',
+    answer: '**Specificity** (highest wins): inline style (1,0,0,0) > `#id` (0,1,0,0) > `.class`/`:pseudo-class`/`[attr]` (0,0,1,0) > element/`::pseudo-element` (0,0,0,1). Equal specificity: **last rule wins** (cascade). **Avoid `!important`** — breaks the cascade, makes debugging painful; use higher specificity instead. **Critical CSS**: inline the minimum CSS needed for above-the-fold content to eliminate render-blocking. **Optimization**: remove unused CSS (PurgeCSS), minify, use `will-change` sparingly, prefer CSS transitions over JS animation. **BEM naming**: `.block__element--modifier` — flat, readable, avoids specificity wars. **CSP for styles**: `Content-Security-Policy: style-src \'self\' \'nonce-abc123\'` — prevents injected styles.',
+    tip: `/* Specificity examples */
+p           { color: black; }   /* 0,0,0,1 */
+.text       { color: blue; }    /* 0,0,1,0 — wins over p */
+#main .text { color: green; }   /* 0,1,1,0 — wins over .text */
+/* inline style="color:red"     1,0,0,0 — highest */
+
+/* Avoid !important — prefer higher specificity */
+/* ❌ */ .btn { color: red !important; }
+/* ✅ */ #app .btn { color: red; }  /* increase specificity instead */
+
+/* BEM — Block, Element, Modifier */
+.card {}               /* block */
+.card__title {}        /* element (double underscore) */
+.card__title--large {} /* modifier (double dash) */
+.btn {}
+.btn--primary {}
+.btn--disabled {}
+
+/* Critical CSS — inline above-the-fold styles */
+<style>
+  /* Only what's needed for first paint */
+  body { margin: 0; font-family: system-ui; }
+  .hero { height: 100vh; display: flex; align-items: center; }
+</style>
+<link rel="stylesheet" href="style.css" media="print" onload="this.media='all'">
+
+/* CSS will-change — hint browser for compositing */
+.animated { will-change: transform; }  /* use sparingly: creates new layer */
+
+/* Unused CSS removal with PurgeCSS (in build step) */
+/* purgecss { content: ['./src/**/*.html', './src/**/*.js'] } */`,
+  },
+
+  // ══════════════════════════════════════════════════════════
+  // 6. ECOSYSTEM & APPLICATIONS
+  // ══════════════════════════════════════════════════════════
+
+  {
+    category: 'Ecosystem', difficulty: 'Beginner',
+    question: 'CSS Ecosystem — preprocessors (Sass), frameworks (Tailwind/Bootstrap), PostCSS, and real-world usage?',
+    answer: '**Preprocessors**: Sass (most popular) adds variables, nesting, mixins, partials, functions — compiles to CSS. Less and Stylus are alternatives. **Frameworks**: Bootstrap — component-based, utility classes, grid system; Tailwind CSS — utility-first, no pre-built components, highly customisable; Bulma — flexbox-based, no JS. **PostCSS**: transforms CSS with plugins — Autoprefixer (adds vendor prefixes), cssnano (minify), PurgeCSS (remove unused). **CSS Modules**: scopes class names locally to component, avoids collisions — used in React/Vue. **CSS-in-JS**: Styled Components, Emotion — write CSS in JS, scoped per component. **Choice guide**: quick prototypes → Bootstrap; custom design systems → Tailwind; large-scale apps → CSS Modules or CSS-in-JS.',
+    tip: `/* Sass (SCSS) — superset of CSS */
+// Variables
+$primary: #6366f1;
+$radius: 0.5rem;
+
+// Nesting
+.card {
+  padding: 1rem;
+  &:hover { box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+  &__title { font-size: 1.25rem; font-weight: 700; }
+  &--featured { border: 2px solid $primary; }
+}
+
+// Mixin
+@mixin flex-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.hero { @include flex-center; height: 100vh; }
+
+// Partial files: _variables.scss, _mixins.scss, _components.scss
+// Import: @use 'variables'; @use 'mixins';
+
+/* Tailwind CSS — utility-first */
+// <div class="flex items-center justify-between gap-4 p-6 rounded-xl bg-indigo-500 text-white">
+// No custom CSS needed — compose utilities in HTML
+
+/* CSS Modules (React) */
+// Button.module.css
+.button { background: #6366f1; border-radius: 0.5rem; }
+// Button.jsx
+// import styles from './Button.module.css';
+// <button className={styles.button}>Click</button>
+// Compiles to: <button class="Button_button__abc12">
+
+/* PostCSS Autoprefixer — input */
+.container { display: grid; }
+/* Output (auto-prefixed) */
+.container { display: -ms-grid; display: grid; }`,
+  },
+
+];
 const NPM_CARDS           = [];
 const GIT_CARDS           = [];
 const TAILWIND_CARDS      = [];
