@@ -18745,7 +18745,350 @@ LIMIT    3;                                   -- ➐ top 3 only
 /* ═══════════════════════════════════════════════════════════
    PLACEHOLDER PACKS  (no cards yet)
 ═══════════════════════════════════════════════════════════ */
-const HTML_CARDS          = [];
+/* ═══════════════════════════════════════════════════════════
+   HTML — HyperText Markup Language
+═══════════════════════════════════════════════════════════ */
+const HTML_CARDS = [
+
+  // ══════════════════════════════════════════════════════════
+  // 0. OVERVIEW
+  // ══════════════════════════════════════════════════════════
+
+  {
+    category: 'Overview', difficulty: 'Beginner',
+    question: 'HTML — Full Mind Map, Learning Paths & Interview Core',
+    answer: '6 sections: 1. Fundamentals · 2. Core Concepts · 3. Useful Daily Tools · 4. Advanced Features · 5. Performance & Security · 6. Ecosystem & Applications',
+    tip: `HTML
+│
+├─ 1. Fundamentals
+│   ├─ What it is       HyperText Markup Language · structure of web pages
+│   ├─ Anatomy          <!DOCTYPE html> · <html> · <head> · <body>
+│   ├─ Tags & Elements  block vs inline · semantic vs non-semantic
+│   ├─ Attributes       id · class · href · src · alt · title · style
+│   └─ Nesting Rules    valid structure · parent-child hierarchy
+│
+├─ 2. Core Concepts
+│   ├─ Text Content     <h1>-<h6> · <p> · <span> · <br> · <hr>
+│   ├─ Lists            <ul> · <ol> · <li> · <dl> · <dt> · <dd>
+│   ├─ Links & Media    <a href=""> · <img src=""> · <video> · <audio>
+│   ├─ Tables           <table> · <thead> · <tbody> · <tr> · <td> · <th>
+│   ├─ Forms            <form> · <input> · <textarea> · <select> · <button>
+│   └─ Semantic Tags    <header> · <nav> · <main> · <section> · <article> · <footer>
+│
+├─ 3. Useful Daily Tools
+│   ├─ Meta Tags        <meta charset="UTF-8"> · viewport · description · keywords
+│   ├─ Favicons         <link rel="icon" href="favicon.ico">
+│   ├─ Embeds           <iframe> · <embed> · <object>
+│   ├─ Accessibility    alt text · ARIA roles · tabindex
+│   └─ SEO Basics       semantic tags · heading hierarchy · structured data
+│
+├─ 4. Advanced Features
+│   ├─ HTML5 APIs       Geolocation · Drag & Drop · Web Storage · Canvas
+│   ├─ Responsive       viewport meta · picture/srcset for images
+│   ├─ Performance      lazy loading · defer/async scripts
+│   ├─ Forms Advanced   input types (email, date, range) · validation attributes
+│   └─ Multimedia       <source> · <track> · captions · autoplay
+│
+├─ 5. Performance & Security
+│   ├─ Validation       W3C Validator · Lighthouse audits
+│   ├─ Optimization     minimal DOM · semantic structure · accessibility checks
+│   ├─ Security         sandboxed iframes · rel="noopener" · CSP basics
+│   └─ Integrity        crossorigin · SRI (Subresource Integrity)
+│
+└─ 6. Ecosystem & Applications
+    ├─ HTML + CSS       styling · responsive layouts · animations
+    ├─ HTML + JS        DOM manipulation · event handling
+    ├─ Frameworks       React · Vue · Angular (HTML templates)
+    ├─ Editors          VS Code · Sublime · WebStorm
+    └─ Real-world Use   websites · web apps · emails · documentation
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+LEARNING PATHS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Beginner:     Fundamentals → Tags & Elements → Attributes → Text & Lists → Links & Media
+Intermediate: Forms → Tables → Semantic HTML → Accessibility → SEO Basics
+Advanced:     HTML5 APIs → Responsive → Performance → Security → Multimedia
+Integration:  HTML + CSS → HTML + JS → Frameworks → Full-stack applications
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🎯 INTERVIEW CORE KNOWLEDGE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Semantic HTML:    improves accessibility & SEO · <article> vs <div>
+Forms & Inputs:   <input type="text"> · validation · form submission
+Accessibility:    alt text · ARIA roles · keyboard navigation
+HTML5 Features:   <canvas> · <video> · localStorage · sessionStorage
+SEO & Structure:  heading order · meta tags · semantic layout
+Integration:      how HTML works with CSS & JS · DOM structure`,
+  },
+
+  // ══════════════════════════════════════════════════════════
+  // 1. FUNDAMENTALS
+  // ══════════════════════════════════════════════════════════
+
+  {
+    category: 'Fundamentals', difficulty: 'Beginner',
+    question: 'HTML Fundamentals — anatomy of an HTML document, tags vs elements, block vs inline, and nesting rules?',
+    answer: '**HTML (HyperText Markup Language)** defines the structure and meaning of web content. **Document anatomy**: `<!DOCTYPE html>` (tells browser it\'s HTML5) → `<html>` (root) → `<head>` (metadata: title, charset, links) → `<body>` (visible content). **Tags vs Elements**: a tag is `<p>`; an element is the full thing `<p>content</p>`. **Block elements** take full width, start on a new line: `<div>`, `<p>`, `<h1>`, `<section>`. **Inline elements** flow within text: `<span>`, `<a>`, `<strong>`, `<img>`. **Attributes** add extra info: `id` (unique), `class` (grouping), `href`, `src`, `alt`, `style`. **Nesting rules**: always close tags in reverse order; block elements cannot be inside inline elements.',
+    tip: `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Page Title</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Block elements -->
+  <h1>Main Heading</h1>
+  <p>A paragraph with <strong>bold</strong> and <em>italic</em> text.</p>
+  <div class="container">
+    <span id="highlight">Inline span</span> inside a block div.
+  </div>
+
+  <!-- Attributes -->
+  <a href="https://example.com" target="_blank" rel="noopener">Link</a>
+  <img src="photo.jpg" alt="Description of image" width="400">
+
+  <!-- ✅ Correct nesting -->
+  <p><strong>Bold inside paragraph</strong></p>
+
+  <!-- ❌ Wrong: block inside inline -->
+  <!-- <span><div>bad</div></span> -->
+
+  <script src="app.js" defer></script>
+</body>
+</html>`,
+  },
+
+  // ══════════════════════════════════════════════════════════
+  // 2. CORE CONCEPTS
+  // ══════════════════════════════════════════════════════════
+
+  {
+    category: 'Core Concepts', difficulty: 'Beginner',
+    question: 'HTML Core Concepts — text, lists, links & media, tables, forms, and semantic tags?',
+    answer: '**Text**: `<h1>`–`<h6>` headings (h1 = most important, one per page for SEO), `<p>` paragraph, `<span>` inline container, `<br>` line break, `<hr>` horizontal rule. **Lists**: `<ul>` unordered, `<ol>` ordered, `<li>` item; `<dl>/<dt>/<dd>` definition list. **Links & Media**: `<a href="">` link (`target="_blank" rel="noopener"` for external), `<img src="" alt="">` (alt required for accessibility), `<video controls>`, `<audio controls>`. **Tables**: `<table>` → `<thead>/<tbody>/<tfoot>` → `<tr>` (row) → `<th>` (header cell) / `<td>` (data cell). **Forms**: `<form action="" method="POST">` → `<input>`, `<textarea>`, `<select>`, `<button type="submit">`. **Semantic tags**: `<header>`, `<nav>`, `<main>`, `<section>`, `<article>`, `<aside>`, `<footer>` — use these instead of generic `<div>` to improve SEO and accessibility.',
+    tip: `<!-- Lists -->
+<ul><li>Item A</li><li>Item B</li></ul>
+<ol><li>First</li><li>Second</li></ol>
+<dl><dt>Term</dt><dd>Definition</dd></dl>
+
+<!-- Links & Media -->
+<a href="/about">Internal link</a>
+<a href="https://example.com" target="_blank" rel="noopener noreferrer">External</a>
+<img src="hero.jpg" alt="Hero image showing the product" loading="lazy">
+<video src="demo.mp4" controls width="600"></video>
+
+<!-- Table -->
+<table>
+  <thead><tr><th>Name</th><th>Age</th></tr></thead>
+  <tbody><tr><td>Alice</td><td>30</td></tr></tbody>
+</table>
+
+<!-- Form -->
+<form action="/submit" method="POST">
+  <label for="email">Email:</label>
+  <input type="email" id="email" name="email" required>
+  <textarea name="msg" rows="4" placeholder="Message..."></textarea>
+  <select name="role">
+    <option value="dev">Developer</option>
+    <option value="design">Designer</option>
+  </select>
+  <button type="submit">Send</button>
+</form>
+
+<!-- Semantic layout -->
+<header><nav>...</nav></header>
+<main>
+  <section><article>...</article></section>
+  <aside>Sidebar</aside>
+</main>
+<footer>...</footer>`,
+  },
+
+  // ══════════════════════════════════════════════════════════
+  // 3. USEFUL DAILY TOOLS
+  // ══════════════════════════════════════════════════════════
+
+  {
+    category: 'Useful Daily Tools', difficulty: 'Beginner',
+    question: 'HTML Daily Tools — meta tags, favicons, embeds, accessibility (ARIA), and SEO basics?',
+    answer: '**Meta tags**: `<meta charset="UTF-8">` (character encoding), `<meta name="viewport" content="width=device-width, initial-scale=1">` (responsive), `<meta name="description" content="...">` (SEO snippet), `<meta name="keywords">` (less important today). **Favicons**: `<link rel="icon" href="favicon.ico">` — browsers display in tab. **Embeds**: `<iframe src="">` (embed another page/map/video), `sandbox` attribute for security. **Accessibility**: `alt` on images, `<label for="">` linked to inputs, `aria-label`, `aria-describedby`, `role` attributes, `tabindex` for keyboard nav. **SEO basics**: use one `<h1>` per page, descriptive heading hierarchy, semantic tags over divs, descriptive `alt` text, fast load time (Core Web Vitals).',
+    tip: `<!-- Meta tags in <head> -->
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Learn HTML with interactive flash cards">
+<meta name="author" content="TanQHoang">
+<!-- Open Graph (social sharing) -->
+<meta property="og:title" content="Dev Flash Cards">
+<meta property="og:image" content="preview.png">
+
+<!-- Favicon -->
+<link rel="icon" type="image/png" href="/favicon.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+
+<!-- Iframe embed (YouTube, Google Maps) -->
+<iframe
+  src="https://www.youtube.com/embed/VIDEO_ID"
+  title="Video title"
+  width="560" height="315"
+  loading="lazy"
+  sandbox="allow-scripts allow-same-origin"
+></iframe>
+
+<!-- Accessibility -->
+<img src="logo.svg" alt="Company logo">          <!-- always add alt -->
+<img src="decoration.png" alt="">                 <!-- empty alt = decorative -->
+<button aria-label="Close dialog">X</button>
+<nav aria-label="Main navigation">...</nav>
+<input id="name" type="text">
+<label for="name">Your name</label>              <!-- linked label -->
+
+<!-- ARIA roles when semantic tags not possible -->
+<div role="alert">Error: invalid email</div>
+<div role="navigation" aria-label="Breadcrumb">...</div>`,
+  },
+
+  // ══════════════════════════════════════════════════════════
+  // 4. ADVANCED FEATURES
+  // ══════════════════════════════════════════════════════════
+
+  {
+    category: 'Advanced Features', difficulty: 'Intermediate',
+    question: 'HTML Advanced Features — HTML5 APIs, responsive images, lazy loading, advanced form inputs, and multimedia?',
+    answer: '**HTML5 APIs**: `Geolocation` — `navigator.geolocation.getCurrentPosition()`; `Drag & Drop` — `draggable`, `ondragstart/ondrop`; `Web Storage` — `localStorage` (persistent) / `sessionStorage` (tab-scoped); `Canvas` — `<canvas>` + JS 2D/WebGL drawing. **Responsive images**: `<picture>` + `<source media="...">` for art direction; `srcset` + `sizes` on `<img>` for resolution switching. **Performance**: `loading="lazy"` on images/iframes; `<script defer>` (runs after HTML parsed), `async` (runs as soon as downloaded). **Advanced form inputs**: `type="email"`, `type="date"`, `type="range"`, `type="color"`, `required`, `pattern`, `minlength`, `maxlength`. **Multimedia**: `<video>` / `<audio>` with `<source>` for multiple formats, `<track kind="subtitles">` for captions.',
+    tip: `<!-- Responsive images -->
+<picture>
+  <source media="(max-width: 600px)" srcset="small.jpg">
+  <source media="(max-width: 1200px)" srcset="medium.jpg">
+  <img src="large.jpg" alt="Hero image" loading="lazy">
+</picture>
+<!-- Or simple srcset: -->
+<img src="photo.jpg"
+     srcset="photo-400.jpg 400w, photo-800.jpg 800w"
+     sizes="(max-width: 600px) 400px, 800px"
+     alt="Photo">
+
+<!-- Scripts: defer vs async -->
+<script src="app.js" defer></script>   <!-- after HTML parse, in order -->
+<script src="analytics.js" async></script> <!-- ASAP, no order guarantee -->
+
+<!-- Advanced form inputs -->
+<input type="email" required placeholder="you@example.com">
+<input type="date" min="2024-01-01" max="2026-12-31">
+<input type="range" min="0" max="100" value="50" step="5">
+<input type="color" value="#f97316">
+<input type="text" pattern="[A-Za-z]{3,}" title="3+ letters only">
+
+<!-- Video with fallback formats + captions -->
+<video controls width="600" poster="thumbnail.jpg">
+  <source src="video.webm" type="video/webm">
+  <source src="video.mp4"  type="video/mp4">
+  <track src="subs.vtt" kind="subtitles" srclang="en" label="English" default>
+  Your browser does not support video.
+</video>
+
+<!-- localStorage -->
+<script>
+  localStorage.setItem('theme', 'dark');
+  const theme = localStorage.getItem('theme'); // 'dark'
+</script>`,
+  },
+
+  // ══════════════════════════════════════════════════════════
+  // 5. PERFORMANCE & SECURITY
+  // ══════════════════════════════════════════════════════════
+
+  {
+    category: 'Performance & Security', difficulty: 'Intermediate',
+    question: 'HTML Performance & Security — validation, DOM optimization, sandboxed iframes, rel="noopener", and SRI?',
+    answer: '**Validation**: W3C Validator (`validator.w3.org`) catches broken nesting, missing attributes, deprecated tags. Lighthouse audits accessibility, performance, SEO. **DOM optimization**: minimal DOM depth speeds up rendering; avoid unnecessary wrapper divs; use semantic tags (helps both layout and screen readers). **Security — iframes**: `sandbox` attribute restricts scripts/forms/popups — `sandbox="allow-scripts allow-same-origin"` for controlled embeds. **Security — links**: `rel="noopener noreferrer"` on `target="_blank"` links prevents the opened page from accessing `window.opener` (tabnapping attack). **CSP** (Content Security Policy): HTTP header or `<meta http-equiv="Content-Security-Policy">` restricts which scripts/styles can load. **SRI** (Subresource Integrity): `integrity="sha384-..."` on `<link>`/`<script>` ensures the CDN file hasn\'t been tampered with.',
+    tip: `<!-- rel="noopener" — prevent tabnapping -->
+<a href="https://external.com" target="_blank" rel="noopener noreferrer">
+  Safe external link
+</a>
+
+<!-- Sandboxed iframe — restrict permissions -->
+<iframe
+  src="https://example.com"
+  sandbox="allow-scripts allow-same-origin"
+  title="Embedded content"
+></iframe>
+
+<!-- SRI — verify CDN file integrity -->
+<link
+  rel="stylesheet"
+  href="https://cdn.example.com/style.css"
+  integrity="sha384-oqVuAfXRKap7fdgcCY5uykM6+R9GqQ8K/uxy9rx7HNQlGYl1kPzQho1wx4JwY8wC"
+  crossorigin="anonymous"
+>
+<script
+  src="https://cdn.example.com/lib.js"
+  integrity="sha384-abc123..."
+  crossorigin="anonymous"
+></script>
+
+<!-- CSP via meta tag (prefer HTTP header in production) -->
+<meta http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self' https://cdn.example.com">
+
+<!-- Performance: lazy load images & iframes -->
+<img src="below-fold.jpg" alt="..." loading="lazy">
+<iframe src="map.html" loading="lazy" title="Map"></iframe>
+
+<!-- crossorigin for CORS-enabled resources -->
+<img src="https://api.example.com/avatar.png" crossorigin="anonymous" alt="Avatar">`,
+  },
+
+  // ══════════════════════════════════════════════════════════
+  // 6. ECOSYSTEM & APPLICATIONS
+  // ══════════════════════════════════════════════════════════
+
+  {
+    category: 'Ecosystem', difficulty: 'Beginner',
+    question: 'HTML Ecosystem — how HTML works with CSS & JS, frameworks, editors, and real-world applications?',
+    answer: '**HTML + CSS**: HTML provides structure, CSS provides styling. External stylesheet via `<link rel="stylesheet">` or inline via `style=""`. CSS selects elements by tag, class (`.`), id (`#`), attribute. **HTML + JS**: JS accesses HTML through the **DOM** (`document.getElementById`, `querySelector`). JS can create, modify, and delete elements dynamically. Events (`click`, `submit`, `keydown`) are attached via `addEventListener`. **Frameworks**: React/Vue/Angular generate and manage HTML via templates and virtual DOM — you write components, frameworks output HTML. **Editors**: VS Code (Emmet for HTML shortcuts), WebStorm, Sublime Text. **Real-world**: every website, web app, email newsletter (inline styles only), and documentation site is built on HTML.',
+    tip: `<!-- HTML + CSS connection -->
+<link rel="stylesheet" href="style.css">     <!-- external -->
+<style>h1 { color: orange; }</style>         <!-- embedded -->
+<p style="color: red;">Inline style</p>      <!-- inline (avoid) -->
+
+<!-- HTML + JS connection -->
+<button id="myBtn">Click me</button>
+<script>
+  // Access HTML elements
+  const btn = document.getElementById('myBtn');
+  btn.addEventListener('click', () => {
+    btn.textContent = 'Clicked!';
+    btn.style.background = 'green';
+  });
+
+  // Create and insert elements
+  const p = document.createElement('p');
+  p.textContent = 'Dynamically added paragraph';
+  document.body.appendChild(p);
+</script>
+
+<!-- Emmet shortcuts in VS Code -->
+// Type: div.container>ul>li*3>a[href="#"]
+// Expands to:
+// <div class="container">
+//   <ul>
+//     <li><a href="#">...</a></li>
+//     <li><a href="#">...</a></li>
+//     <li><a href="#">...</a></li>
+//   </ul>
+// </div>
+
+<!-- React JSX (compiles to HTML) -->
+// function App() {
+//   return <h1 className="title">Hello</h1>;
+// }
+// → <h1 class="title">Hello</h1>`,
+  },
+
+];
 const CSS_ONLY_CARDS      = [];
 const NPM_CARDS           = [];
 const GIT_CARDS           = [];
@@ -18854,6 +19197,9 @@ const SUBJECT_COLORS = {
 };
 
 const CATEGORY_COLORS = {
+  // HTML
+  'Advanced Features':      '#f59e0b',
+  'Performance & Security': '#0ea5e9',
   // DSA_JavaScript — overview & new sections
   'Overview':          '#94a3b8',
   'Fundamentals':      '#ef4444',
