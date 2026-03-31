@@ -19798,7 +19798,404 @@ function Modal({ isOpen, onClose }) {
   },
 
 ];
-const REDUX_CARDS         = [];
+/* ═══════════════════════════════════════════════════════════
+   REDUX — Predictable State Container
+═══════════════════════════════════════════════════════════ */
+const REDUX_CARDS = [
+
+  // ══════════════════════════════════════════════════════════
+  // 0. OVERVIEW
+  // ══════════════════════════════════════════════════════════
+
+  {
+    category: 'Overview', difficulty: 'Beginner',
+    question: 'Redux — Full Mind Map, Learning Paths & Interview Core',
+    answer: '6 sections: 1. Fundamentals · 2. Core Concepts · 3. Useful Daily Tools · 4. Advanced Features · 5. Performance & Security · 6. Ecosystem & Applications',
+    tip: `Redux
+│
+├─ 1. Fundamentals
+│   ├─ What it is       Predictable state container for JavaScript apps
+│   ├─ Principles       Single source of truth · State is read-only · Changes via pure functions
+│   ├─ Store            createStore() · holds state tree
+│   ├─ Actions          plain JS objects · { type: 'INCREMENT', payload: ... }
+│   └─ Reducers         pure functions · (state, action) => newState
+│
+├─ 2. Core Concepts
+│   ├─ Dispatch         store.dispatch(action)
+│   ├─ Selectors        store.getState() · reselect for memoization
+│   ├─ Middleware       intercept actions · redux-thunk · redux-saga
+│   ├─ DevTools         Redux DevTools extension · time-travel debugging
+│   └─ Immutability     spread operator · immer library
+│
+├─ 3. Useful Daily Tools
+│   ├─ Redux Toolkit    configureStore · createSlice · createAsyncThunk
+│   ├─ Async Logic      thunks · sagas · observables
+│   ├─ Integration      react-redux · Provider · useSelector · useDispatch
+│   ├─ Testing          reducer tests · action creators · mock store
+│   └─ Debugging        logging middleware · DevTools
+│
+├─ 4. Advanced Features
+│   ├─ Normalized State flatten nested data · entity adapter
+│   ├─ Code Splitting   dynamic reducers · lazy loading
+│   ├─ Rehydration      redux-persist · localStorage/sessionStorage
+│   ├─ Performance      memoized selectors · batching updates
+│   └─ Complex Flows    sagas for side effects · cancellation
+│
+├─ 5. Performance & Security
+│   ├─ Optimization     avoid unnecessary re-renders · selector memoization
+│   ├─ Maintainability  modular slices · clear action types
+│   ├─ Debugging Tools  Redux DevTools · logging middleware
+│   └─ Alternatives     MobX · Zustand · Recoil · Jotai
+│
+└─ 6. Ecosystem & Applications
+    ├─ Libraries        Redux Toolkit · React-Redux · Reselect · Immer
+    ├─ Frameworks       MERN stack · Next.js with Redux
+    ├─ Real-world Use   dashboards · e-commerce carts · authentication flows
+    └─ DevOps           state persistence · debugging in CI/CD
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+LEARNING PATHS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Beginner:     Fundamentals → Store → Actions → Reducers → Dispatch
+Intermediate: Middleware → Selectors → DevTools → Immutability
+Advanced:     Redux Toolkit → Async Logic → Normalized State → Code Splitting → Rehydration
+Integration:  React-Redux → Provider → useSelector/useDispatch → Full-stack apps
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🎯 INTERVIEW CORE KNOWLEDGE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Principles:    single source of truth · state is immutable · reducers are pure functions
+Actions:       plain objects with type & payload · describe what happened
+Reducers:      pure functions · compute new state · no side effects
+Middleware:    extend Redux with async logic (thunk, saga)
+Redux Toolkit: modern concise Redux · createSlice · createAsyncThunk
+Integration:   Provider, useSelector, useDispatch hooks
+Performance:   memoized selectors · normalized state · batching updates
+Alternatives:  MobX · Zustand · Recoil · Jotai · when to use Redux vs others`,
+  },
+
+  // ══════════════════════════════════════════════════════════
+  // 1. FUNDAMENTALS
+  // ══════════════════════════════════════════════════════════
+
+  {
+    category: 'Fundamentals', difficulty: 'Beginner',
+    question: 'Redux Fundamentals — three principles, Store, Actions, and Reducers?',
+    answer: '**Redux** is a predictable state container — the entire app state lives in one place, changes are traceable and reproducible. **Three principles**: 1. **Single source of truth** — one store holds all state. 2. **State is read-only** — you never mutate state directly; dispatch an action to request a change. 3. **Changes via pure functions** — reducers take `(state, action)` and return a new state, no side effects. **Store**: holds the state tree. Created with `createStore(reducer)` (legacy) or `configureStore()` (Redux Toolkit). **Actions**: plain JS objects with a required `type` field and optional `payload`. **Reducers**: pure functions `(state = initialState, action) => newState` — handle each action type with a `switch`.',
+    tip: `// Actions — plain objects
+const increment = () => ({ type: 'counter/increment' });
+const addTodo   = (text) => ({ type: 'todos/add', payload: { id: Date.now(), text } });
+
+// Reducer — pure function, no mutations
+const initialState = { count: 0 };
+
+function counterReducer(state = initialState, action) {
+  switch (action.type) {
+    case 'counter/increment':
+      return { ...state, count: state.count + 1 };  // new object
+    case 'counter/decrement':
+      return { ...state, count: state.count - 1 };
+    case 'counter/reset':
+      return initialState;
+    default:
+      return state;  // always return state for unknown actions
+  }
+}
+
+// Store (legacy)
+import { createStore } from 'redux';
+const store = createStore(counterReducer);
+
+// Core API
+store.getState();          // { count: 0 }
+store.dispatch(increment()); // triggers reducer
+store.subscribe(() => {    // called after every dispatch
+  console.log(store.getState());
+});
+
+// Combine multiple reducers
+import { combineReducers } from 'redux';
+const rootReducer = combineReducers({
+  counter: counterReducer,
+  todos: todosReducer,
+});`,
+  },
+
+  // ══════════════════════════════════════════════════════════
+  // 2. CORE CONCEPTS
+  // ══════════════════════════════════════════════════════════
+
+  {
+    category: 'Core Concepts', difficulty: 'Intermediate',
+    question: 'Redux Core Concepts — dispatch, selectors (Reselect), middleware (Thunk), DevTools, and immutability?',
+    answer: '**Dispatch**: `store.dispatch(action)` — the only way to trigger a state change. **Selectors**: functions that extract specific data from state — `state => state.counter.value`. **Reselect**: creates memoized selectors with `createSelector` — recomputes only when inputs change, prevents unnecessary re-renders. **Middleware**: sits between dispatch and reducer — intercepts actions for async logic, logging, crash reporting. `redux-thunk` lets action creators return functions (for async); `redux-saga` uses generators for complex async flows. **DevTools**: Redux DevTools browser extension enables time-travel debugging — step forward/back through every dispatched action. **Immutability**: reducers must NOT mutate state — use spread (`{...state, key: value}`), `Object.assign`, or Immer (writes mutable-style code but produces immutable updates).',
+    tip: `// Middleware — redux-thunk (async action creator)
+const fetchUser = (id) => async (dispatch, getState) => {
+  dispatch({ type: 'users/fetchStart' });
+  try {
+    const user = await api.getUser(id);
+    dispatch({ type: 'users/fetchSuccess', payload: user });
+  } catch (err) {
+    dispatch({ type: 'users/fetchError', payload: err.message });
+  }
+};
+store.dispatch(fetchUser(1));  // dispatch a thunk
+
+// Custom middleware
+const loggerMiddleware = store => next => action => {
+  console.log('dispatching', action);
+  const result = next(action);  // pass to next middleware/reducer
+  console.log('next state', store.getState());
+  return result;
+};
+
+// Apply middleware (legacy)
+import { createStore, applyMiddleware } from 'redux';
+import thunk from 'redux-thunk';
+const store = createStore(rootReducer, applyMiddleware(thunk, loggerMiddleware));
+
+// Reselect — memoized selectors
+import { createSelector } from 'reselect';
+const selectTodos      = state => state.todos.items;
+const selectFilter     = state => state.todos.filter;
+const selectFilteredTodos = createSelector(
+  [selectTodos, selectFilter],
+  (todos, filter) => todos.filter(t => filter === 'all' || t.status === filter)
+  // Only recomputes when todos or filter actually changes
+);
+
+// Immer — mutable-style updates in reducer
+import produce from 'immer';
+const reducer = produce((draft, action) => {
+  if (action.type === 'todos/add') draft.push(action.payload); // direct mutation OK!
+}, []);`,
+  },
+
+  // ══════════════════════════════════════════════════════════
+  // 3. USEFUL DAILY TOOLS
+  // ══════════════════════════════════════════════════════════
+
+  {
+    category: 'Useful Daily Tools', difficulty: 'Beginner',
+    question: 'Redux Toolkit — configureStore, createSlice, createAsyncThunk, and React-Redux hooks?',
+    answer: '**Redux Toolkit (RTK)** is the official, recommended way to write Redux — eliminates boilerplate. **`configureStore`**: wraps `createStore` + sets up DevTools, `redux-thunk`, and Immer automatically. **`createSlice`**: generates action creators and action types from reducer logic in one call. Uses Immer internally so you can write "mutating" logic safely. **`createAsyncThunk`**: handles the async lifecycle (pending/fulfilled/rejected) with generated action types. **React-Redux hooks**: `useSelector(selector)` reads from store (re-renders on change), `useDispatch()` returns the dispatch function. **`Provider`**: wraps the app to make the store available via React context. These three (`configureStore` + `createSlice` + hooks) cover 90% of real-world Redux usage.',
+    tip: `// store.js — configureStore
+import { configureStore } from '@reduxjs/toolkit';
+import counterReducer from './counterSlice';
+import todosReducer   from './todosSlice';
+
+export const store = configureStore({
+  reducer: { counter: counterReducer, todos: todosReducer },
+  // DevTools auto-enabled in dev, Thunk middleware included
+});
+
+// counterSlice.js — createSlice
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+
+export const fetchCount = createAsyncThunk('counter/fetchCount', async (amount) => {
+  const response = await fetch('/api/count');
+  return response.json(); // becomes action.payload in fulfilled
+});
+
+const counterSlice = createSlice({
+  name: 'counter',
+  initialState: { value: 0, status: 'idle' },
+  reducers: {
+    increment: state => { state.value += 1; },   // Immer: direct mutation OK!
+    decrement: state => { state.value -= 1; },
+    incrementByAmount: (state, action) => { state.value += action.payload; },
+  },
+  extraReducers: builder => {
+    builder
+      .addCase(fetchCount.pending,   state => { state.status = 'loading'; })
+      .addCase(fetchCount.fulfilled, (state, action) => {
+        state.status = 'idle'; state.value = action.payload;
+      });
+  },
+});
+
+export const { increment, decrement, incrementByAmount } = counterSlice.actions;
+export default counterSlice.reducer;
+
+// App.jsx — Provider + hooks
+import { Provider } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
+
+function Counter() {
+  const count    = useSelector(state => state.counter.value);
+  const dispatch = useDispatch();
+  return (
+    <div>
+      <span>{count}</span>
+      <button onClick={() => dispatch(increment())}>+</button>
+      <button onClick={() => dispatch(decrement())}>-</button>
+    </div>
+  );
+}
+
+export default function App() {
+  return <Provider store={store}><Counter /></Provider>;
+}`,
+  },
+
+  // ══════════════════════════════════════════════════════════
+  // 4. ADVANCED FEATURES
+  // ══════════════════════════════════════════════════════════
+
+  {
+    category: 'Advanced Features', difficulty: 'Advanced',
+    question: 'Redux Advanced — normalized state (EntityAdapter), redux-persist, code splitting, and RTK Query?',
+    answer: '**Normalized state**: flatten nested data into a `{ids: [], entities: {}}` shape — avoid duplication, O(1) lookups. RTK\'s `createEntityAdapter` generates CRUD reducers + selectors automatically. **redux-persist**: automatically saves and rehydrates Redux state to/from `localStorage` or `sessionStorage`. Wrap store with `persistStore`, use `PersistGate` in React. **Code splitting**: inject reducers dynamically with `store.replaceReducer` — load only the reducers needed for the current route. **RTK Query**: built-in data fetching/caching solution in Redux Toolkit — auto-generates hooks, handles loading/error states, caching, invalidation, and refetching. Replaces thunks for server state. **Batching**: RTK uses `unstable_batchedUpdates` automatically so multiple dispatches don\'t cause multiple re-renders.',
+    tip: `// Normalized state with createEntityAdapter
+import { createSlice, createEntityAdapter } from '@reduxjs/toolkit';
+
+const todosAdapter = createEntityAdapter({
+  sortComparer: (a, b) => a.createdAt - b.createdAt,
+});
+
+const todosSlice = createSlice({
+  name: 'todos',
+  initialState: todosAdapter.getInitialState({ status: 'idle' }),
+  reducers: {
+    addTodo:    todosAdapter.addOne,       // auto-generated CRUD
+    updateTodo: todosAdapter.updateOne,
+    removeTodo: todosAdapter.removeOne,
+    setAll:     todosAdapter.setAll,
+  },
+});
+// Selectors (auto-generated):
+export const { selectAll, selectById, selectIds } = todosAdapter.getSelectors(
+  state => state.todos
+);
+
+// RTK Query — data fetching & caching
+import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+
+export const api = createApi({
+  reducerPath: 'api',
+  baseQuery: fetchBaseQuery({ baseUrl: '/api' }),
+  tagTypes: ['Post'],
+  endpoints: builder => ({
+    getPosts: builder.query({
+      query: () => '/posts',
+      providesTags: ['Post'],
+    }),
+    addPost: builder.mutation({
+      query: body => ({ url: '/posts', method: 'POST', body }),
+      invalidatesTags: ['Post'], // auto-refetch getPosts after mutation
+    }),
+  }),
+});
+export const { useGetPostsQuery, useAddPostMutation } = api;
+// Usage: const { data, isLoading, error } = useGetPostsQuery();
+
+// redux-persist setup
+import { persistStore, persistReducer } from 'redux-persist';
+import storage from 'redux-persist/lib/storage';
+const persistConfig = { key: 'root', storage, whitelist: ['auth'] };
+const store = configureStore({ reducer: persistReducer(persistConfig, rootReducer) });`,
+  },
+
+  // ══════════════════════════════════════════════════════════
+  // 5. PERFORMANCE & SECURITY
+  // ══════════════════════════════════════════════════════════
+
+  {
+    category: 'Performance & Security', difficulty: 'Intermediate',
+    question: 'Redux Performance & Security — selector memoization, avoiding re-renders, and when to use Redux vs alternatives?',
+    answer: '**Selector memoization**: `useSelector` re-renders the component whenever the selected value changes (reference equality). Use `createSelector` (Reselect) for derived data — only recomputes when inputs change. **Avoid expensive selectors inline** — define selectors outside components. **Structural sharing**: RTK/Immer only creates new references for changed nodes — unchanged parts of state keep the same reference, preventing unnecessary re-renders. **When NOT to use Redux**: local UI state (modals, form input), server cache (use RTK Query or React Query instead), simple apps (Context API is enough). **Alternatives**: Zustand (simple, minimal boilerplate), Recoil/Jotai (atomic state), MobX (observable-based, implicit reactivity). **Security**: never store sensitive data (tokens, passwords) in Redux state unless necessary — state is accessible via DevTools; use `httpOnly` cookies for auth tokens instead.',
+    tip: `// ❌ Expensive computation in useSelector — runs every render
+const total = useSelector(state =>
+  state.cart.items.reduce((sum, item) => sum + item.price * item.qty, 0)
+);
+
+// ✅ Memoized selector — recomputes only when cart.items changes
+const selectCartTotal = createSelector(
+  state => state.cart.items,
+  items => items.reduce((sum, item) => sum + item.price * item.qty, 0)
+);
+const total = useSelector(selectCartTotal);
+
+// ✅ Equality function for object selectors
+import { shallowEqual } from 'react-redux';
+const { name, email } = useSelector(
+  state => ({ name: state.user.name, email: state.user.email }),
+  shallowEqual  // prevent re-render if name & email unchanged
+);
+
+// When to choose what:
+// Redux:   complex shared state · many components · time-travel debugging needed
+// Zustand: simple global state · minimal boilerplate · no Provider needed
+// Context: small apps · infrequent updates · theme/locale/auth
+// RTK Query / React Query: server data (fetching, caching, sync)
+// Recoil/Jotai: fine-grained atomic state · React concurrent features
+
+// Zustand comparison
+import { create } from 'zustand';
+const useStore = create(set => ({
+  count: 0,
+  increment: () => set(state => ({ count: state.count + 1 })),
+}));
+// No Provider, no boilerplate — just use the hook
+const { count, increment } = useStore();`,
+  },
+
+  // ══════════════════════════════════════════════════════════
+  // 6. ECOSYSTEM & APPLICATIONS
+  // ══════════════════════════════════════════════════════════
+
+  {
+    category: 'Ecosystem', difficulty: 'Beginner',
+    question: 'Redux Ecosystem — Redux Toolkit, RTK Query, Immer, Reselect, and real-world patterns?',
+    answer: '**Core libraries**: `@reduxjs/toolkit` (RTK — the standard), `react-redux` (React bindings), `reselect` (memoized selectors, now built into RTK), `immer` (immutable updates, now built into RTK). **RTK Query**: replaces `redux-thunk` + manual fetch logic for server state — handles caching, loading states, polling, optimistic updates, and cache invalidation automatically. **redux-persist**: state persistence across page refreshes. **redux-saga**: generator-based side effect management — useful for complex async flows (cancellation, debouncing, race conditions). **Testing**: test reducers as pure functions (`expect(reducer(state, action)).toEqual(newState)`), use `configureStore` for integration tests. **Real-world patterns**: feature-based folder structure (`features/counter/counterSlice.js`), one slice per domain, RTK Query for API calls.',
+    tip: `// Feature-based folder structure (recommended)
+// src/
+//   app/
+//     store.js
+//   features/
+//     auth/
+//       authSlice.js
+//       authAPI.js
+//     cart/
+//       cartSlice.js
+//       CartComponent.jsx
+//     todos/
+//       todosSlice.js
+
+// Testing a reducer (pure function — easy to test)
+import counterReducer, { increment, decrement } from './counterSlice';
+
+describe('counter reducer', () => {
+  it('should handle increment', () => {
+    expect(counterReducer({ value: 0 }, increment())).toEqual({ value: 1 });
+  });
+  it('should handle decrement', () => {
+    expect(counterReducer({ value: 5 }, decrement())).toEqual({ value: 4 });
+  });
+});
+
+// RTK Query — replaces manual thunk + loading state boilerplate
+// Before RTK Query (verbose):
+// dispatch(fetchStart()) → fetch → dispatch(fetchSuccess(data)) or dispatch(fetchError(err))
+// After RTK Query:
+const { data: posts, isLoading, isError } = useGetPostsQuery();
+if (isLoading) return <Spinner />;
+if (isError)   return <ErrorMessage />;
+return posts.map(post => <PostCard key={post.id} {...post} />);
+
+// redux-saga for complex async (cancellation, debounce)
+import { takeLatest, call, put, delay } from 'redux-saga/effects';
+function* searchSaga(action) {
+  yield delay(300);                        // debounce 300ms
+  const results = yield call(api.search, action.payload);
+  yield put(searchSuccess(results));
+}
+function* watchSearch() {
+  yield takeLatest('search/query', searchSaga); // cancel previous if new one fires
+}`,
+  },
+
+];
 const POSTGRESQL_CARDS    = [];
 const JWT_CARDS           = [];
 const REDIS_CARDS         = [];
