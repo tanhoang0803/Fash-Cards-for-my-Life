@@ -23,6 +23,8 @@
     --linux-dim: #ff6b4a22;
     --nest: #e0234e;
     --nest-dim: #e0234e22;
+    --ts: #3178c6;
+    --ts-dim: #3178c622;
     --text: #e2e8f0;
     --muted: #8892a4;
     --code: #c9d1e0;
@@ -84,6 +86,7 @@
   .pill-sql { background: var(--sql-dim); color: var(--sql); border: 1px solid #00c89644; }
   .pill-linux { background: var(--linux-dim); color: var(--linux); border: 1px solid #ff6b4a44; }
   .pill-nest  { background: var(--nest-dim);  color: var(--nest);  border: 1px solid #e0234e44; }
+  .pill-ts    { background: var(--ts-dim);    color: var(--ts);    border: 1px solid #3178c644; }
 
   /* ── GRID ── */
   .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
@@ -119,6 +122,7 @@
   .card.sql-card { border-top: 2px solid var(--sql); }
   .card.linux-card { border-top: 2px solid var(--linux); }
   .card.nest-card  { border-top: 2px solid var(--nest); }
+  .card.ts-card    { border-top: 2px solid var(--ts); }
 
   .card h3 {
     font-size: 13px;
@@ -132,6 +136,7 @@
   .card h3.sql { color: var(--sql); }
   .card h3.linux { color: var(--linux); }
   .card h3.nest  { color: var(--nest); }
+  .card h3.ts    { color: var(--ts); }
 
   .card h4 {
     font-size: 12px;
@@ -238,6 +243,8 @@
   .big-label.linux .num { background: var(--linux); color: #000; }
   .big-label.nest { color: var(--nest); }
   .big-label.nest .num { background: var(--nest); color: #fff; }
+  .big-label.ts { color: var(--ts); }
+  .big-label.ts .num { background: var(--ts); color: #fff; }
 
   /* ── SPAN HELPERS ── */
   .row { display: flex; gap: 12px; margin: 5px 0; }
@@ -266,13 +273,14 @@
 <!-- HEADER -->
 <div class="header">
   <h1>Junior Developer — Daily Essentials</h1>
-  <p>JAVASCRIPT · REACT + REDUX · SQL · LINUX · NESTJS — QUICK REFERENCE</p>
+  <p>JAVASCRIPT · REACT + REDUX · SQL · LINUX · NESTJS · TYPESCRIPT — QUICK REFERENCE</p>
   <div class="pills">
     <span class="pill pill-js">JS ES6+</span>
     <span class="pill pill-react">React + Redux</span>
     <span class="pill pill-sql">SQL / PostgreSQL</span>
     <span class="pill pill-linux">Linux CLI</span>
     <span class="pill pill-nest">NestJS</span>
+    <span class="pill pill-ts">TypeScript</span>
   </div>
 </div>
 
@@ -1404,9 +1412,240 @@
   </div>
 </div>
 
+<!-- ══════════════════════════════════════════
+     TYPESCRIPT
+══════════════════════════════════════════ -->
+<hr class="divider">
+<div class="big-label ts"><span class="num">6</span> TypeScript</div>
+
+<!-- Type system compass banner -->
+<div style="margin-bottom:14px; padding:10px 14px; border-radius:8px; border:1px solid #3178c633; background:#3178c60d;">
+  <div style="font-size:11px; font-weight:700; letter-spacing:2px; text-transform:uppercase; font-family:'JetBrains Mono',monospace; color:var(--ts); margin-bottom:8px;">Type Safety Compass — Interview Gold</div>
+  <div style="font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--muted); display:flex; flex-wrap:wrap; gap:4px; align-items:center;">
+    <span style="background:var(--ts-dim); color:var(--ts); padding:2px 8px; border-radius:4px; font-weight:600;">any</span>
+    <span style="font-size:10px; color:#6b7280;">opt-out → avoid</span>
+    <span style="margin:0 6px; color:#374151;">|</span>
+    <span style="background:#ef444422; color:#ef4444; padding:2px 8px; border-radius:4px;">unknown</span>
+    <span style="font-size:10px; color:#6b7280;">safe, must narrow</span>
+    <span style="margin:0 6px; color:#374151;">|</span>
+    <span style="background:#10b98122; color:#10b981; padding:2px 8px; border-radius:4px;">never</span>
+    <span style="font-size:10px; color:#6b7280;">impossible / exhaustive</span>
+    <span style="margin:0 6px; color:#374151;">|</span>
+    <span style="background:#8b5cf622; color:#8b5cf6; padding:2px 8px; border-radius:4px;">type</span>
+    <span style="font-size:10px; color:#6b7280;">unions · aliases</span>
+    <span style="margin:0 6px; color:#374151;">|</span>
+    <span style="background:#14b8a622; color:#14b8a6; padding:2px 8px; border-radius:4px;">interface</span>
+    <span style="font-size:10px; color:#6b7280;">declaration merging</span>
+    <span style="margin:0 6px; color:#374151;">|</span>
+    <span style="background:#f59e0b22; color:#f59e0b; padding:2px 8px; border-radius:4px;">generic &lt;T&gt;</span>
+    <span style="font-size:10px; color:#6b7280;">reusable + safe</span>
+    <span style="margin:0 6px; color:#374151;">|</span>
+    <span style="background:#f9731622; color:#f97316; padding:2px 8px; border-radius:4px;">strict: true</span>
+    <span style="font-size:10px; color:#6b7280;">always enable</span>
+  </div>
+</div>
+
+<div class="grid-3">
+  <!-- Type System Fundamentals -->
+  <div class="card ts-card">
+    <h3 class="ts">Type System Fundamentals</h3>
+    <h4>Primitives &amp; Special Types</h4>
+    <table class="ref-table">
+      <tr><td>string · number · boolean</td><td>Core primitives</td></tr>
+      <tr><td>null · undefined · bigint</td><td>Other primitives</td></tr>
+      <tr><td>any</td><td>Opt-out — avoid, use unknown</td></tr>
+      <tr><td>unknown</td><td>Safe any — narrow before use</td></tr>
+      <tr><td>never</td><td>Impossible type · exhaustive checks</td></tr>
+      <tr><td>void</td><td>Function returns undefined</td></tr>
+    </table>
+    <h4>as const &amp; satisfies</h4>
+<pre><span class="cm">// as const — freeze to literal type</span>
+<span class="k">const</span> ROLES = [<span class="s">'admin'</span>, <span class="s">'user'</span>] <span class="k">as const</span>;
+<span class="k">type</span> <span class="f">Role</span> = <span class="k">typeof</span> ROLES[<span class="k">number</span>];
+<span class="cm">// 'admin' | 'user'</span>
+
+<span class="cm">// satisfies — validate without widening</span>
+<span class="k">const</span> cfg = { port: <span class="f">3000</span> } <span class="k">satisfies</span> Config;
+cfg.port; <span class="cm">// type: 3000 (not number)</span></pre>
+    <h4>Strict Mode — tsconfig.json</h4>
+<pre>{
+  <span class="s">"compilerOptions"</span>: {
+    <span class="s">"strict"</span>: <span class="k">true</span>,        <span class="cm">// all safety flags</span>
+    <span class="s">"target"</span>: <span class="s">"ES2022"</span>,
+    <span class="s">"module"</span>: <span class="s">"NodeNext"</span>,
+    <span class="s">"moduleResolution"</span>: <span class="s">"NodeNext"</span>
+  }
+}</pre>
+  </div>
+
+  <!-- Utility Types -->
+  <div class="card ts-card">
+    <h3 class="ts">Utility Types — Must Know</h3>
+    <h4>Structural</h4>
+    <table class="ref-table">
+      <tr><td>Partial&lt;T&gt;</td><td>All properties optional</td></tr>
+      <tr><td>Required&lt;T&gt;</td><td>All properties required</td></tr>
+      <tr><td>Readonly&lt;T&gt;</td><td>All properties readonly</td></tr>
+      <tr><td>NonNullable&lt;T&gt;</td><td>Remove null &amp; undefined</td></tr>
+    </table>
+    <h4>Extraction</h4>
+    <table class="ref-table">
+      <tr><td>Pick&lt;T, K&gt;</td><td>Keep listed keys</td></tr>
+      <tr><td>Omit&lt;T, K&gt;</td><td>Remove listed keys</td></tr>
+      <tr><td>Record&lt;K, V&gt;</td><td>Map from keys to values</td></tr>
+      <tr><td>Exclude&lt;T, U&gt;</td><td>Remove union members</td></tr>
+      <tr><td>Extract&lt;T, U&gt;</td><td>Keep matching members</td></tr>
+    </table>
+    <h4>Function &amp; Async</h4>
+    <table class="ref-table">
+      <tr><td>ReturnType&lt;F&gt;</td><td>Function return type</td></tr>
+      <tr><td>Parameters&lt;F&gt;</td><td>Params as tuple</td></tr>
+      <tr><td>Awaited&lt;T&gt;</td><td>Unwrap Promise (recursive)</td></tr>
+    </table>
+<pre><span class="k">type</span> <span class="f">User</span> = { id: <span class="k">number</span>; name: <span class="k">string</span>; pw: <span class="k">string</span> };
+<span class="k">type</span> <span class="f">PublicUser</span>  = <span class="f">Omit</span>&lt;User, <span class="s">'pw'</span>&gt;;
+<span class="k">type</span> <span class="f">UpdateUser</span>  = <span class="f">Partial</span>&lt;<span class="f">Pick</span>&lt;User, <span class="s">'name'</span>&gt;&gt;;
+<span class="k">type</span> <span class="f">UserMap</span>     = <span class="f">Record</span>&lt;<span class="k">number</span>, User&gt;;</pre>
+  </div>
+
+  <!-- Generics & Type Narrowing -->
+  <div class="card ts-card">
+    <h3 class="ts">Generics &amp; Type Narrowing</h3>
+    <h4>Generic Functions</h4>
+<pre><span class="cm">// Constraint — T must have .length</span>
+<span class="k">function</span> <span class="f">first</span>&lt;T <span class="k">extends</span> { length: <span class="k">number</span> }&gt;(arr: T) {
+  <span class="k">return</span> arr.length;
+}
+
+<span class="cm">// Type-safe property getter</span>
+<span class="k">function</span> <span class="f">get</span>&lt;T, K <span class="k">extends</span> <span class="k">keyof</span> T&gt;(obj: T, key: K): T[K] {
+  <span class="k">return</span> obj[key];
+}</pre>
+    <h4>Type Narrowing</h4>
+<pre><span class="cm">// typeof — primitives</span>
+<span class="k">if</span> (<span class="k">typeof</span> val === <span class="s">'string'</span>) val.toUpperCase();
+
+<span class="cm">// instanceof — classes</span>
+<span class="k">if</span> (err <span class="k">instanceof</span> Error) err.message;
+
+<span class="cm">// in — duck typing</span>
+<span class="k">if</span> (<span class="s">'swim'</span> <span class="k">in</span> animal) animal.swim();
+
+<span class="cm">// Type predicate — custom guard</span>
+<span class="k">function</span> <span class="f">isString</span>(v: <span class="k">unknown</span>): v <span class="k">is</span> <span class="k">string</span> {
+  <span class="k">return typeof</span> v === <span class="s">'string'</span>;
+}</pre>
+    <h4>keyof &amp; typeof</h4>
+<pre><span class="k">type</span> <span class="f">Keys</span> = <span class="k">keyof</span> User;           <span class="cm">// 'id' | 'name' | 'pw'</span>
+<span class="k">type</span> <span class="f">Cfg</span>  = <span class="k">typeof</span> config;         <span class="cm">// infer from value</span>
+<span class="k">type</span> <span class="f">Emails</span> = User[<span class="s">'email'</span>];      <span class="cm">// lookup type</span></pre>
+  </div>
+</div>
+
+<div class="grid-3">
+  <!-- Interfaces & Classes -->
+  <div class="card ts-card">
+    <h3 class="ts">Interfaces &amp; Classes</h3>
+    <h4>type vs interface</h4>
+    <table class="ref-table">
+      <tr><td>interface</td><td>Declaration merging · extends · implements</td></tr>
+      <tr><td>type</td><td>Unions · intersections · primitives · tuples</td></tr>
+    </table>
+<pre><span class="cm">// interface — extendable, mergeable</span>
+<span class="k">interface</span> <span class="f">Animal</span> { name: <span class="k">string</span> }
+<span class="k">interface</span> <span class="f">Dog</span> <span class="k">extends</span> Animal { breed: <span class="k">string</span> }
+
+<span class="cm">// type — unions (interface cannot)</span>
+<span class="k">type</span> <span class="f">Status</span> = <span class="s">'active'</span> | <span class="s">'inactive'</span>;
+<span class="k">type</span> <span class="f">Admin</span>  = User &amp; { permissions: <span class="k">string</span>[] };</pre>
+    <h4>Class Access Modifiers</h4>
+<pre><span class="k">class</span> <span class="f">User</span> {
+  <span class="k">constructor</span>(
+    <span class="k">public  readonly</span> id: <span class="k">number</span>,
+    <span class="k">private</span> name: <span class="k">string</span>,
+    <span class="k">protected</span> email: <span class="k">string</span>,
+  ) {}
+}
+<span class="cm">// public — accessible anywhere</span>
+<span class="cm">// private — class only (TS; use # for runtime)</span>
+<span class="cm">// protected — class + subclasses</span>
+<span class="cm">// readonly — set only in constructor</span></pre>
+    <h4>enum vs as const (prefer as const)</h4>
+<pre><span class="cm">// as const — recommended, no runtime overhead</span>
+<span class="k">const</span> STATUS = { Active: <span class="s">'ACTIVE'</span>, Off: <span class="s">'OFF'</span> } <span class="k">as const</span>;
+<span class="k">type</span> <span class="f">Status</span> = <span class="k">typeof</span> STATUS[<span class="k">keyof typeof</span> STATUS];</pre>
+  </div>
+
+  <!-- Real-world Patterns -->
+  <div class="card ts-card">
+    <h3 class="ts">Real-world Patterns</h3>
+    <h4>Discriminated Unions</h4>
+<pre><span class="k">type</span> <span class="f">State</span> =
+  | { kind: <span class="s">'loading'</span> }
+  | { kind: <span class="s">'ok'</span>;    data: <span class="k">string</span>[] }
+  | { kind: <span class="s">'error'</span>; msg: <span class="k">string</span> };
+
+<span class="k">switch</span> (state.kind) {
+  <span class="k">case</span> <span class="s">'ok'</span>:    <span class="k">return</span> state.data;
+  <span class="k">case</span> <span class="s">'error'</span>: <span class="k">throw</span> state.msg;
+  <span class="k">default</span>:      <span class="f">assertNever</span>(state); <span class="cm">// safe</span>
+}</pre>
+    <h4>Zod — Runtime + Compile-time</h4>
+<pre><span class="k">import</span> { z } <span class="k">from</span> <span class="s">'zod'</span>;
+<span class="k">const</span> Schema = z.object({
+  id:    z.<span class="f">number</span>().<span class="f">positive</span>(),
+  email: z.<span class="f">string</span>().<span class="f">email</span>(),
+});
+<span class="k">type</span> <span class="f">User</span> = z.<span class="f">infer</span>&lt;<span class="k">typeof</span> Schema&gt;; <span class="cm">// no duplication</span>
+
+<span class="k">const</span> result = Schema.<span class="f">safeParse</span>(data);
+<span class="k">if</span> (result.success) result.data.email; <span class="cm">// typed</span></pre>
+    <h4>Branded Types</h4>
+<pre><span class="k">type</span> <span class="f">Brand</span>&lt;T, B&gt; = T &amp; { <span class="k">readonly</span> __brand: B };
+<span class="k">type</span> <span class="f">UserId</span>    = <span class="f">Brand</span>&lt;<span class="k">number</span>, <span class="s">'UserId'</span>&gt;;
+<span class="k">type</span> <span class="f">ProductId</span> = <span class="f">Brand</span>&lt;<span class="k">number</span>, <span class="s">'ProductId'</span>&gt;;
+<span class="cm">// getUser(productId) → ERROR! nominal safety</span></pre>
+  </div>
+
+  <!-- Advanced Types & Async -->
+  <div class="card ts-card">
+    <h3 class="ts">Advanced Types &amp; Async</h3>
+    <h4>Mapped &amp; Conditional Types</h4>
+<pre><span class="cm">// Mapped — transform all keys</span>
+<span class="k">type</span> <span class="f">Nullable</span>&lt;T&gt; = { [K <span class="k">in keyof</span> T]: T[K] | <span class="k">null</span> };
+
+<span class="cm">// Conditional — ternary at type level</span>
+<span class="k">type</span> <span class="f">IsStr</span>&lt;T&gt; = T <span class="k">extends</span> <span class="k">string</span> ? <span class="s">'yes'</span> : <span class="s">'no'</span>;
+
+<span class="cm">// infer — extract inner type</span>
+<span class="k">type</span> <span class="f">Unwrap</span>&lt;T&gt; = T <span class="k">extends</span> Promise&lt;<span class="k">infer</span> R&gt; ? R : T;
+<span class="k">type</span> <span class="f">Deep</span>&lt;T&gt; = { [K <span class="k">in keyof</span> T]: T[K] <span class="k">extends</span> <span class="k">object</span>
+  ? <span class="f">Deep</span>&lt;T[K]&gt; : T[K] };  <span class="cm">// recursive</span></pre>
+    <h4>Async / Promise Typing</h4>
+<pre><span class="k">async function</span> <span class="f">fetchUser</span>(id: <span class="k">number</span>): Promise&lt;User&gt; {
+  <span class="k">const</span> res = <span class="k">await</span> <span class="f">fetch</span>(<span class="s">'/users/'</span> + id);
+  <span class="k">return</span> res.<span class="f">json</span>() <span class="k">as</span> Promise&lt;User&gt;;
+}
+
+<span class="cm">// Error handling — catch e: unknown</span>
+<span class="k">try</span> { <span class="k">await</span> <span class="f">fetchUser</span>(<span class="f">1</span>); }
+<span class="k">catch</span> (e: <span class="k">unknown</span>) {
+  <span class="k">if</span> (e <span class="k">instanceof</span> Error) e.message;
+}</pre>
+    <h4>Build Tools</h4>
+    <table class="ref-table">
+      <tr><td>tsc --noEmit</td><td>Type check only (CI gate)</td></tr>
+      <tr><td>tsx / ts-node</td><td>Run .ts directly (dev)</td></tr>
+      <tr><td>SWC / esbuild</td><td>10x faster build (no type check)</td></tr>
+      <tr><td>tsup</td><td>Library bundler — CJS + ESM + .d.ts</td></tr>
+      <tr><td>Node 22+ --experimental-strip-types</td><td>No build step</td></tr>
+    </table>
+  </div>
+</div>
+
 <!-- Footer -->
 <div style="text-align:center; color: var(--comment); font-family:'JetBrains Mono',monospace; font-size:12px; margin-top:20px; padding-top:16px; border-top:1px solid var(--border);">
-  Junior Developer Daily Essentials · JavaScript · React + Redux · SQL · Linux · NestJS · 2026
+  Junior Developer Daily Essentials · JavaScript · React + Redux · SQL · Linux · NestJS · TypeScript · 2026
 </div>
 
 </body>

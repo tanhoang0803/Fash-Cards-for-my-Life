@@ -20919,6 +20919,1440 @@ const app = await NestFactory.create<NestFastifyApplication>(
 ];
 
 /* ═══════════════════════════════════════════════════════════
+   TYPESCRIPT — Typed Superset of JavaScript
+═══════════════════════════════════════════════════════════ */
+const TYPESCRIPT_CARDS = [
+
+  // ══════════════════════════════════════════════════════════
+  // 0. OVERVIEW
+  // ══════════════════════════════════════════════════════════
+
+  {
+    category: 'Overview', difficulty: 'Beginner',
+    question: 'TypeScript — Full Mind Map, Learning Paths & Interview Core',
+    answer: '9 sections: 1. Type System Fundamentals · 2. Advanced Type System · 3. Generics · 4. Interfaces & OOP · 5. Functions & Async · 6. Real-world Patterns · 7. Modules & tsconfig · 8. Tooling & Ecosystem · 9. Best Practices & Future',
+    tip: `TypeScript — Interview Mindmap
+│
+├─ 1. Type System Fundamentals
+│   ├─ Primitives        string · number · boolean · null · undefined · bigint
+│   ├─ Special types     any (avoid) · unknown (safe) · never · void
+│   ├─ Inference         as const · satisfies · explicit annotations
+│   ├─ Composition       A | B (union) · A & B (intersection) · literals
+│   └─ Strict mode       noImplicitAny · strictNullChecks · strict: true
+│
+├─ 2. Advanced Type System
+│   ├─ Narrowing         typeof · instanceof · in · is (type predicate)
+│   ├─ Mapped types      { [K in keyof T]: T[K] }
+│   ├─ Conditional types T extends U ? X : Y · infer keyword
+│   ├─ Template literals '\${string}Id' · deep readonly · path types
+│   └─ Lookup types      keyof T · T[K] · typeof x
+│
+├─ 3. Generics
+│   ├─ Functions         <T>(arg: T): T
+│   ├─ Constraints       T extends SomeType
+│   ├─ Utility types     Partial · Pick · Omit · Record · ReturnType
+│   └─ Branded types     UserId vs ProductId (nominal safety)
+│
+├─ 4. Interfaces & OOP
+│   ├─ type vs interface  declaration merging · union · extends vs &
+│   ├─ Access modifiers  public · private · protected · readonly · abstract
+│   ├─ Decorators        @Class · @Method · @Param · reflect-metadata
+│   └─ Enums             enum · const enum · as const (prefer as const)
+│
+├─ 5. Functions & Async
+│   ├─ Overloading       multiple signatures + implementation
+│   ├─ this typing       this: Type parameter
+│   ├─ Promise typing    Promise<T> · async/await · Awaited<T>
+│   └─ Error handling    catch (e: unknown) — since TS 4.0
+│
+├─ 6. Real-world Patterns
+│   ├─ DTOs              Pick/Omit derivation · shared types
+│   ├─ Zod validation    z.infer<typeof schema> · parse vs safeParse
+│   ├─ Discriminated unions  kind/type discriminant · exhaustive switch
+│   └─ Env typing        process.env · Zod env schema
+│
+├─ 7. Modules & tsconfig
+│   ├─ Key options       strict · target · moduleResolution · paths
+│   ├─ ESM vs CJS        import/export · require · NodeNext interop
+│   └─ Declaration files .d.ts · @types/* · DefinitelyTyped
+│
+├─ 8. Tooling & Ecosystem
+│   ├─ Build tools       tsc · ts-node · SWC · esbuild · tsup
+│   ├─ Linting           @typescript-eslint · Prettier
+│   ├─ Testing           Vitest · Jest + ts-jest · typed mocks
+│   └─ Monorepos         project references · Turborepo · Nx
+│
+└─ 9. Best Practices & Future
+    ├─ Production        avoid any · domain-driven types · type-safe APIs
+    ├─ TS 6.0            strict: true default · isolatedDeclarations
+    └─ TS 7.0            Go rewrite · 10x faster · native Node.js strip
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+LEARNING PATHS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Beginner:     Primitives → Inference → Strict Mode → Interfaces → Classes
+Intermediate: Union/Intersection → Generics → Utility Types → Narrowing
+Advanced:     Mapped/Conditional Types → Decorators → Branded Types → Zod
+Full-stack:   TS Fundamentals → DTOs → Zod → NestJS → Monorepo
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+INTERVIEW CORE KNOWLEDGE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+any vs unknown vs never: any = opt-out · unknown = safe any · never = impossible
+type vs interface:       both describe shapes · interface = declaration merging
+Structural typing:       TS checks shape, not name — duck typing at compile time
+Utility types:           Partial · Pick · Omit · Record · ReturnType · Awaited
+Generics:                reusable type-safe code · constraints with extends
+Discriminated unions:    type-safe branching · exhaustive checks with never
+Decorators:              power NestJS DI · @Module · @Injectable · reflect-metadata
+Strict mode:             essential for safety · noImplicitAny + strictNullChecks`,
+  },
+
+  // ══════════════════════════════════════════════════════════
+  // 1. TYPE SYSTEM FUNDAMENTALS
+  // ══════════════════════════════════════════════════════════
+
+  {
+    category: 'Type Fundamentals', difficulty: 'Beginner',
+    question: 'TypeScript primitive & special types — string, number, any, unknown, never, void — when to use each?',
+    answer: '**Primitives**: `string`, `number`, `boolean`, `null`, `undefined`, `bigint`, `symbol`. **Collections**: `T[]` or `Array<T>` · tuples `[string, number]`. **Special**: `any` = opt-out of type checking (avoid — use `unknown` instead) · `unknown` = safe any — must narrow with typeof/instanceof before use · `never` = type of impossible values (exhaustive checks, functions that throw and never return) · `void` = function explicitly returns undefined. **Assertion**: `value as Type`. **Non-null**: `value!` (tells TS value is not null/undefined). **Key rule**: prefer `unknown` over `any` in APIs/catch blocks.',
+    tip: `// Primitives
+let name: string = 'Alice';
+let age: number = 30;
+let active: boolean = true;
+let big: bigint = 9007199254740991n;
+
+// Arrays & tuples
+let tags: string[] = ['ts', 'js'];
+let pair: [string, number] = ['Alice', 30];
+
+// Special types
+let a: any = 'anything goes';     // avoid — skips type checking
+let u: unknown = fetchData();     // safe — must narrow before use
+if (typeof u === 'string') u.toUpperCase(); // OK after narrowing
+
+// never — function that never returns
+function fail(msg: string): never {
+  throw new Error(msg);
+}
+
+// void — function returns undefined
+function log(msg: string): void {
+  console.log(msg);
+}
+
+// null / undefined — with strictNullChecks ON (default)
+let maybe: string | null = null;
+let value = maybe ?? 'default';   // nullish coalescing
+
+// Type assertion
+const canvas = document.getElementById('c') as HTMLCanvasElement;`,
+  },
+
+  {
+    category: 'Type Fundamentals', difficulty: 'Beginner',
+    question: 'TypeScript type inference, `as const`, and `satisfies` — how do they differ?',
+    answer: '**Inference**: TS automatically infers type from value — `let x = 5` gives `number`. **`as const`**: widens to narrowest literal — `{ role: "admin" } as const` gives `{ readonly role: "admin" }` instead of `{ role: string }`. Useful for const lookup objects, union literal sources. **`satisfies`** (TS 4.9): validates the value matches a type while keeping the narrower inferred type — `const cfg = { port: 3000 } satisfies Partial<Config>` keeps `port: 3000` (not `port: number`). The key difference: `as Config` widens type and loses narrowness; `satisfies Config` checks type but preserves narrow. **Explicit annotations**: needed for function parameters, complex return types, and public API contracts.',
+    tip: `// Inference
+let x = 42;          // inferred: number
+let arr = [1, 2, 3]; // inferred: number[]
+const PI = 3.14;     // inferred: 3.14 (literal, not number)
+
+// as const — freeze to narrowest literal type
+const ROLES = ['admin', 'user', 'guest'] as const;
+// type: readonly ['admin', 'user', 'guest']
+type Role = typeof ROLES[number]; // 'admin' | 'user' | 'guest'
+
+const STATUS = { active: 1, inactive: 0 } as const;
+// type: { readonly active: 1; readonly inactive: 0 }
+
+// satisfies — validate without widening
+type Config = { port: number; host: string };
+const cfg = {
+  port: 3000,
+  host: 'localhost',
+} satisfies Config;
+cfg.port;            // type: 3000 (narrow!) not number
+
+// vs type assertion — loses narrowness
+const cfg2 = {
+  port: 3000,
+} as Config;
+cfg2.port;           // type: number (widened)
+
+// Explicit annotation — use for function params
+function greet(name: string): string {
+  return 'Hello, ' + name;
+}`,
+  },
+
+  {
+    category: 'Type Fundamentals', difficulty: 'Intermediate',
+    question: 'TypeScript union `A | B`, intersection `A & B`, literal types, and discriminated unions — explain all.',
+    answer: '**Union `A | B`**: value can be type A *or* B — `string | number`. **Intersection `A & B`**: value must satisfy *both* A *and* B — useful for mixins/extending. **Literal types**: exact string/number — `"success" | "error"`, `1 | 2 | 3`. **Discriminated unions**: union of object types each with a literal discriminant field (`kind`, `type`, `tag`) — TypeScript narrows automatically in switch/if. Essential for modeling state machines and API responses safely. **Optional properties**: `{ name?: string }` = `{ name: string | undefined }`. **Nullish**: `T | null | undefined`.',
+    tip: `// Union — value is one of several types
+type StringOrNum = string | number;
+function format(val: StringOrNum) {
+  if (typeof val === 'string') return val.toUpperCase(); // narrowed
+  return val.toFixed(2);
+}
+
+// Intersection — combine multiple types
+type Named = { name: string };
+type Aged  = { age: number };
+type Person = Named & Aged; // { name: string; age: number }
+
+// Literal types — exact values
+type Direction = 'north' | 'south' | 'east' | 'west';
+type DiceRoll  = 1 | 2 | 3 | 4 | 5 | 6;
+
+// Discriminated union — add a literal 'kind'/'type' field
+type Circle = { kind: 'circle'; radius: number };
+type Square = { kind: 'square'; side: number };
+type Shape  = Circle | Square;
+
+function area(shape: Shape): number {
+  switch (shape.kind) {
+    case 'circle': return Math.PI * shape.radius ** 2;
+    case 'square': return shape.side ** 2;
+    // TS error if a case is missed — exhaustive check
+  }
+}
+
+// Modeling API responses safely
+type ApiResult<T> =
+  | { status: 'ok';    data: T }
+  | { status: 'error'; message: string };`,
+  },
+
+  {
+    category: 'Type Fundamentals', difficulty: 'Beginner',
+    question: 'TypeScript strict mode — what does `strict: true` enable and why is it essential?',
+    answer: '`strict: true` in `tsconfig.json` enables a bundle of safety flags — all should be ON. Key flags: **`noImplicitAny`** — error when TS would infer `any` implicitly · **`strictNullChecks`** — `null`/`undefined` are not assignable to other types (biggest safety win) · **`strictFunctionTypes`** — contravariant function parameter checking · **`strictBindCallApply`** — typed bind/call/apply · **`strictPropertyInitialization`** — class properties must be initialized · **`noImplicitThis`** — error on `this` with type `any` · **`useUnknownInCatchVariables`** — catch `(e: unknown)` instead of `any`. **TS 6.0 (2025)**: `strict: true` is the new default. Always enable it from day one — retrofitting later is painful.',
+    tip: `// tsconfig.json — always start with this
+{
+  "compilerOptions": {
+    "strict": true,          // enables all strict flags
+    "target": "ES2022",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "outDir": "./dist",
+    "rootDir": "./src"
+  }
+}
+
+// strictNullChecks — most impactful flag
+// Without it:
+let name: string = null;  // allowed — dangerous!
+
+// With strictNullChecks: true
+let name: string = null;  // ERROR
+let safeName: string | null = null; // OK — explicit
+
+// noImplicitAny — no silent any
+function process(data) {   // ERROR: param implicitly has 'any' type
+  return data.length;
+}
+function process(data: string) { // OK — explicit
+  return data.length;
+}
+
+// useUnknownInCatchVariables
+try {
+  risky();
+} catch (e: unknown) {     // TS 4.4+ with strict: true
+  if (e instanceof Error) console.log(e.message);
+}`,
+  },
+
+  // ══════════════════════════════════════════════════════════
+  // 2. ADVANCED TYPE SYSTEM
+  // ══════════════════════════════════════════════════════════
+
+  {
+    category: 'Advanced Types', difficulty: 'Intermediate',
+    question: 'TypeScript type narrowing — `typeof`, `instanceof`, `in` operator, type predicates (`is`), and control flow analysis?',
+    answer: '**Control flow analysis**: TS tracks what type a value *must* be after each check — it "narrows" the type automatically. **`typeof`**: narrows primitives — `"string" | "number" | "boolean" | "undefined" | "function" | "object"`. **`instanceof`**: narrows class instances. **`in` operator**: checks if property exists on object — narrows to types that have that property. **Type predicate (`is`)**: custom guard function — `function isString(val: unknown): val is string` — TS trusts your return value to narrow. **Truthiness narrowing**: `if (value)` removes `null | undefined | 0 | ""`. **`never` in exhaustive checks**: after all union arms handled, remaining type is `never`.',
+    tip: `// typeof narrowing — primitives
+function pad(val: string | number) {
+  if (typeof val === 'string') return val.padStart(10); // string here
+  return val.toFixed(2);                                // number here
+}
+
+// instanceof narrowing — classes
+function logError(err: Error | string) {
+  if (err instanceof Error) console.log(err.message);  // Error here
+  else console.log(err);                               // string here
+}
+
+// in operator — duck typing
+type Fish = { swim: () => void };
+type Bird = { fly:  () => void };
+function move(animal: Fish | Bird) {
+  if ('swim' in animal) animal.swim(); // Fish
+  else                  animal.fly();  // Bird
+}
+
+// Type predicate — custom guard
+function isString(val: unknown): val is string {
+  return typeof val === 'string';
+}
+const input: unknown = getInput();
+if (isString(input)) input.toUpperCase(); // narrowed to string
+
+// Exhaustive check with never
+function assertNever(x: never): never {
+  throw new Error('Unexpected: ' + x);
+}
+function handleShape(shape: Circle | Square) {
+  switch (shape.kind) {
+    case 'circle': return shape.radius;
+    case 'square': return shape.side;
+    default: return assertNever(shape); // TS error if union grows
+  }
+}`,
+  },
+
+  {
+    category: 'Advanced Types', difficulty: 'Advanced',
+    question: 'TypeScript mapped types `{ [K in keyof T]: T[K] }` and conditional types `T extends U ? X : Y` — how do they work?',
+    answer: '**Mapped types**: transform every key of a type — `{ [K in keyof T]: NewType }`. Modifiers: `?` (optional), `-?` (required), `readonly`, `-readonly`. **Conditional types**: ternary at the type level — `T extends U ? X : Y`. **`infer`**: capture a type inside a conditional — `T extends Array<infer Item> ? Item : never` extracts array element type. **`never` filtering**: `T extends never ? ... : ...` distributes over unions — useful to filter union members. Built-in utility types are mostly built from mapped + conditional types: `Partial<T>` = `{ [K in keyof T]?: T[K] }`, `Required<T>` removes `?`, `Readonly<T>` adds `readonly`.',
+    tip: `// Mapped type — transform all keys
+type Partial<T>  = { [K in keyof T]?: T[K] };
+type Required<T> = { [K in keyof T]-?: T[K] };  // -? removes optional
+type Readonly<T> = { readonly [K in keyof T]: T[K] };
+
+// Custom mapped type — make values nullable
+type Nullable<T> = { [K in keyof T]: T[K] | null };
+
+// Conditional type
+type IsString<T> = T extends string ? 'yes' : 'no';
+type A = IsString<string>; // 'yes'
+type B = IsString<number>; // 'no'
+
+// infer — extract a type from within another
+type ReturnType<F> = F extends (...args: any[]) => infer R ? R : never;
+type GetItem<T>    = T extends Array<infer I> ? I : never;
+type StrItem = GetItem<string[]>; // string
+
+// Distributive conditional — distributes over unions
+type NonNullable<T> = T extends null | undefined ? never : T;
+type Clean = NonNullable<string | null | undefined>; // string
+
+// Filter union members
+type OnlyStrings<T> = T extends string ? T : never;
+type Filtered = OnlyStrings<'a' | 1 | 'b' | true>; // 'a' | 'b'`,
+  },
+
+  {
+    category: 'Advanced Types', difficulty: 'Advanced',
+    question: 'TypeScript template literal types and recursive types — practical uses?',
+    answer: '**Template literal types**: combine string literals at type level — `` `${string}Id` ``, `` `get${Capitalize<string>}` ``. Used for event names, CSS property names, REST endpoint patterns, accessor generation. **`Capitalize`, `Uppercase`, `Lowercase`, `Uncapitalize`**: built-in string manipulation types. **Recursive types**: types that reference themselves — useful for `DeepReadonly`, `DeepPartial`, JSON value types, and nested path types. TS has limits on recursion depth but handles most real-world cases. Use lazy evaluation (wrap in object/conditional) to avoid infinite recursion errors.',
+    tip: `// Template literal types
+type EventName = 'click' | 'focus' | 'blur';
+type Handler = 'onClick' | 'onFocus' | 'onBlur';
+type OnEvent<T extends string> = 'on\${Capitalize<T>}';
+type H = OnEvent<EventName>; // 'onClick' | 'onFocus' | 'onBlur'
+
+// REST endpoint pattern
+type Method = 'GET' | 'POST' | 'DELETE';
+type Route  = '/users' | '/posts';
+type Endpoint = '\${Method} \${Route}';
+// 'GET /users' | 'GET /posts' | 'POST /users' | ...
+
+// Getter/setter generation
+type Getters<T> = {
+  [K in keyof T as 'get\${Capitalize<string & K>}']: () => T[K]
+};
+
+// Recursive type — DeepReadonly
+type DeepReadonly<T> = {
+  readonly [K in keyof T]: T[K] extends object ? DeepReadonly<T[K]> : T[K]
+};
+
+// DeepPartial
+type DeepPartial<T> = {
+  [K in keyof T]?: T[K] extends object ? DeepPartial<T[K]> : T[K]
+};
+
+// JSON value type (recursive)
+type JsonValue =
+  | string | number | boolean | null
+  | JsonValue[]
+  | { [key: string]: JsonValue };`,
+  },
+
+  {
+    category: 'Advanced Types', difficulty: 'Intermediate',
+    question: 'TypeScript `keyof`, `typeof`, and lookup types `T[K]` — explain with examples.',
+    answer: '**`keyof T`**: produces union of all property keys of T — `keyof { name: string; age: number }` → `"name" | "age"`. **`typeof x`**: gets TypeScript type of a value — useful for inferring types from runtime objects/functions without writing them twice. **Lookup types `T[K]`**: access property type by key — `User["name"]` gives `string`. Combine with `keyof` for type-safe dynamic access. **`keyof typeof obj`**: keys of a runtime object as a union type. Common pattern: `function get<T, K extends keyof T>(obj: T, key: K): T[K]` — fully type-safe property access.',
+    tip: `// keyof — keys as union
+type User = { id: number; name: string; email: string };
+type UserKeys = keyof User; // 'id' | 'name' | 'email'
+
+// Type-safe property getter
+function getProperty<T, K extends keyof T>(obj: T, key: K): T[K] {
+  return obj[key]; // TS knows return type is T[K]
+}
+const user: User = { id: 1, name: 'Alice', email: 'a@b.com' };
+const name = getProperty(user, 'name'); // type: string
+// getProperty(user, 'role');            // ERROR — 'role' not in User
+
+// typeof — infer type from value
+const config = { port: 3000, host: 'localhost', debug: false };
+type Config = typeof config;
+// { port: number; host: string; debug: boolean }
+
+// keyof typeof — keys of a runtime object
+const COLORS = { red: '#f00', green: '#0f0', blue: '#00f' } as const;
+type ColorName = keyof typeof COLORS; // 'red' | 'green' | 'blue'
+type ColorHex  = typeof COLORS[ColorName]; // '#f00' | '#0f0' | '#00f'
+
+// Lookup type T[K]
+type UserEmail = User['email'];  // string
+type UserIdOrName = User['id' | 'name']; // number | string
+
+// Combine for record transformation
+type ReadonlyUser = { readonly [K in keyof User]: User[K] };`,
+  },
+
+  // ══════════════════════════════════════════════════════════
+  // 3. GENERICS
+  // ══════════════════════════════════════════════════════════
+
+  {
+    category: 'Generics', difficulty: 'Intermediate',
+    question: 'TypeScript generics — generic functions, classes, interfaces, and constraints with `extends`?',
+    answer: '**Generics**: write reusable, type-safe code by parameterizing types with `<T>`. Functions infer `T` from arguments. **Constraints**: `T extends SomeType` restricts what T can be — prevents calling methods on unknown shapes. **Multiple params**: `<T, K extends keyof T>` — common pattern for type-safe property access. **Default type**: `<T = string>` provides a fallback. **Generic interfaces**: describe reusable data shapes. **Generic classes**: containers like `Stack<T>`, `Repository<T>`. **Tip**: keep type params short (T, K, V) and let TS infer them from call-site arguments — explicit `<Type>` annotation rarely needed.',
+    tip: `// Generic function — T inferred from argument
+function identity<T>(val: T): T { return val; }
+const s = identity('hello');  // T = string, returns string
+const n = identity(42);       // T = number, returns number
+
+// Constraint — T must have a .length property
+function first<T extends { length: number }>(arr: T): number {
+  return arr.length;
+}
+
+// Multiple type params
+function getVal<T, K extends keyof T>(obj: T, key: K): T[K] {
+  return obj[key];
+}
+
+// Generic interface
+interface Repository<T> {
+  findById(id: number): Promise<T>;
+  save(entity: T): Promise<T>;
+  delete(id: number): Promise<void>;
+}
+
+// Generic class — Stack<T>
+class Stack<T> {
+  private items: T[] = [];
+  push(item: T): void    { this.items.push(item); }
+  pop(): T | undefined   { return this.items.pop(); }
+  peek(): T | undefined  { return this.items[this.items.length - 1]; }
+}
+
+const stack = new Stack<number>();
+stack.push(1);
+stack.push(2);
+stack.pop(); // type: number | undefined
+
+// Default type param
+type ApiResponse<T = unknown> = { data: T; status: number };`,
+  },
+
+  {
+    category: 'Generics', difficulty: 'Intermediate',
+    question: 'TypeScript utility types — `Partial`, `Required`, `Pick`, `Omit`, `Record`, `Awaited`, `ReturnType`, `Parameters` and more?',
+    answer: '**Structural**: `Partial<T>` (all optional) · `Required<T>` (all required) · `Readonly<T>` (all readonly) · `NonNullable<T>` (removes null/undefined). **Extraction**: `Pick<T, K>` (keep listed keys) · `Omit<T, K>` (remove listed keys) · `Exclude<T, U>` (remove union members) · `Extract<T, U>` (keep union members matching U). **Function**: `ReturnType<F>` (return type) · `Parameters<F>` (params as tuple) · `ConstructorParameters<C>`. **Async**: `Awaited<T>` (unwrap Promise — recursive). **Object**: `Record<K, V>` (map from keys to values). **Tip**: `Omit<User, "password">` for safe DTOs; `Pick<User, "id" | "name">` for projections.',
+    tip: `type User = {
+  id: number;
+  name: string;
+  email: string;
+  password: string;
+  role: 'admin' | 'user';
+};
+
+// Partial — all optional (useful for PATCH DTOs)
+type UpdateUser = Partial<User>;
+
+// Required — all required (reverse of Partial)
+type FullUser = Required<Partial<User>>;
+
+// Pick — keep only listed keys
+type UserProfile = Pick<User, 'id' | 'name' | 'email'>;
+
+// Omit — remove listed keys (safe DTO — no password)
+type PublicUser = Omit<User, 'password'>;
+
+// Record — map type
+type RolePermissions = Record<User['role'], string[]>;
+// { admin: string[]; user: string[] }
+
+// ReturnType — extract return type from function
+async function fetchUser(): Promise<User> { /* ... */ return {} as User; }
+type FetchResult = ReturnType<typeof fetchUser>; // Promise<User>
+
+// Awaited — unwrap Promise (recursive)
+type ResolvedUser = Awaited<Promise<Promise<User>>>; // User
+
+// Parameters — function params as tuple
+function create(name: string, role: 'admin' | 'user'): User { return {} as User; }
+type CreateParams = Parameters<typeof create>; // [string, 'admin' | 'user']
+
+// Exclude / Extract — filter union members
+type T1 = Exclude<'a' | 'b' | 'c', 'a'>;        // 'b' | 'c'
+type T2 = Extract<string | number, string>;       // string
+type T3 = NonNullable<string | null | undefined>; // string`,
+  },
+
+  {
+    category: 'Generics', difficulty: 'Advanced',
+    question: 'TypeScript branded types — what are they and when to use them for nominal type safety?',
+    answer: '**Problem**: TypeScript uses structural typing — two types with the same shape are interchangeable even if semantically different (`UserId` vs `ProductId` are both `number`). This leads to passing the wrong ID to the wrong function with no compile error. **Branded types**: attach a phantom "brand" property to a primitive type so TS distinguishes them. Done by intersecting with `{ readonly __brand: "UserId" }`. **Usage pattern**: define a brand type + a factory/cast function for creating values. **Benefits**: prevents mixing up IDs, email strings, currency amounts, etc. **Note**: the brand has zero runtime cost — the `__brand` property is never actually set; it only exists at the type level.',
+    tip: `// Problem without branded types
+type UserId    = number;
+type ProductId = number;
+
+function getUser(id: UserId): User { /* ... */ return {} as User; }
+
+const productId: ProductId = 42;
+getUser(productId); // No TS error! — but semantically wrong
+
+// Solution: branded types
+type Brand<T, B extends string> = T & { readonly __brand: B };
+
+type UserId    = Brand<number, 'UserId'>;
+type ProductId = Brand<number, 'ProductId'>;
+type Email     = Brand<string, 'Email'>;
+
+// Factory functions (only place to create branded values)
+function toUserId(id: number): UserId       { return id as UserId; }
+function toProductId(id: number): ProductId { return id as ProductId; }
+function toEmail(email: string): Email {
+  if (!email.includes('@')) throw new Error('Invalid email');
+  return email as Email;
+}
+
+function getUser(id: UserId): User { return {} as User; }
+
+const userId    = toUserId(1);
+const productId = toProductId(42);
+
+getUser(userId);    // OK
+getUser(productId); // ERROR: Argument of type 'ProductId' not assignable to 'UserId'
+getUser(42);        // ERROR: number not assignable to UserId`,
+  },
+
+  // ══════════════════════════════════════════════════════════
+  // 4. INTERFACES & OOP
+  // ══════════════════════════════════════════════════════════
+
+  {
+    category: 'OOP & Classes', difficulty: 'Intermediate',
+    question: 'TypeScript `type` alias vs `interface` — key differences and when to use each?',
+    answer: '**Both** describe the shape of an object. **`interface`**: supports declaration merging (open-ended — useful for extending library types) · `extends` for inheritance · can be implemented by classes · better error messages for object shapes. **`type`**: supports union and intersection types · can alias primitives, tuples, functions · no declaration merging · `=` syntax · more flexible. **Rule of thumb**: use `interface` for public API contracts and class definitions; use `type` for unions, mapped types, utility types, and function signatures. TS docs: "prefer interface over type when possible". In practice, the difference is minor — pick one and be consistent.',
+    tip: `// Interface — declaration merging (extend 3rd-party types)
+interface Window {
+  myPlugin: () => void; // merged into existing Window interface
+}
+
+// Interface — extends (inheritance)
+interface Animal { name: string }
+interface Dog extends Animal { breed: string }
+
+// Interface — implemented by class
+interface Serializable {
+  serialize(): string;
+}
+class User implements Serializable {
+  serialize() { return JSON.stringify(this); }
+}
+
+// Type — union (interface cannot do this)
+type StringOrNumber = string | number;
+type Status = 'active' | 'inactive' | 'pending';
+
+// Type — intersection
+type AdminUser = User & { permissions: string[] };
+
+// Type — function signature
+type Handler = (event: Event) => void;
+type AsyncFn<T> = () => Promise<T>;
+
+// Type — tuples
+type Point = [x: number, y: number];
+type RGB   = [number, number, number];
+
+// Practical rule
+interface UserDto { id: number; name: string }  // public contract
+type CreateUserInput = Omit<UserDto, 'id'>;      // utility derivation`,
+  },
+
+  {
+    category: 'OOP & Classes', difficulty: 'Intermediate',
+    question: 'TypeScript class features — access modifiers, `readonly`, `abstract`, parameter properties, `implements`?',
+    answer: '**Access modifiers**: `public` (default), `private` (TS-only — use `#field` for JS runtime private), `protected` (class + subclasses). **`readonly`**: property can only be set in constructor. **Parameter properties**: shorthand — `constructor(private name: string)` declares AND initializes the property. **`abstract`**: abstract class cannot be instantiated directly; abstract methods must be implemented by subclasses. **`implements`**: class must satisfy interface contract — does not inherit implementation. **`static`**: belongs to class, not instances. **Tip**: prefer `#field` (ECMAScript private) over `private` keyword for real runtime encapsulation.',
+    tip: `// Access modifiers + parameter properties
+class User {
+  // Parameter property shorthand (declares + assigns in one)
+  constructor(
+    public  readonly id: number,
+    private name: string,
+    protected email: string,
+  ) {}
+
+  getName(): string { return this.name; }
+}
+
+const user = new User(1, 'Alice', 'a@b.com');
+user.id;     // OK — public readonly
+user.name;   // ERROR — private
+// user.id = 2; ERROR — readonly
+
+// Abstract class — enforces contract on subclasses
+abstract class Shape {
+  abstract area(): number;          // must implement
+  describe(): string {              // shared implementation
+    return 'Area: ' + this.area();
+  }
+}
+class Circle extends Shape {
+  constructor(private radius: number) { super(); }
+  area() { return Math.PI * this.radius ** 2; }
+}
+// new Shape(); // ERROR — cannot instantiate abstract
+
+// implements — class satisfies interface
+interface Loggable { log(msg: string): void }
+class AppLogger implements Loggable {
+  log(msg: string) { console.log('[App]', msg); }
+}
+
+// ECMAScript private (#) — real runtime privacy
+class Counter {
+  #count = 0;
+  increment() { this.#count++; }
+  get value() { return this.#count; }
+}`,
+  },
+
+  {
+    category: 'OOP & Classes', difficulty: 'Advanced',
+    question: 'TypeScript decorators — class, method, property, parameter decorators, and `reflect-metadata` in NestJS?',
+    answer: '**Decorators**: special functions annotated with `@` that augment classes/members at definition time. Require `experimentalDecorators: true` in tsconfig. **Types**: Class decorator (receives constructor) · Method decorator (receives target, name, descriptor) · Property decorator (receives target, name) · Parameter decorator (receives target, name, paramIndex). **`reflect-metadata`**: store/retrieve type metadata at runtime — TypeScript emits type info when `emitDecoratorMetadata: true`. **NestJS**: uses decorators heavily — `@Module`, `@Injectable`, `@Controller`, `@Get`, `@Body`, `@Guard` etc. are all decorators. The DI container reads `reflect-metadata` to know what to inject into constructors.',
+    tip: `// tsconfig.json (required for decorators)
+// "experimentalDecorators": true
+// "emitDecoratorMetadata": true
+
+// Class decorator — adds metadata or modifies class
+function Sealed(constructor: Function) {
+  Object.seal(constructor);
+  Object.seal(constructor.prototype);
+}
+
+@Sealed
+class Config { /* ... */ }
+
+// Method decorator — wrap method (e.g. logging)
+function Log(target: any, key: string, desc: PropertyDescriptor) {
+  const orig = desc.value;
+  desc.value = function (...args: any[]) {
+    console.log('Calling', key, 'with', args);
+    return orig.apply(this, args);
+  };
+}
+
+class UserService {
+  @Log
+  findAll() { return []; }
+}
+
+// NestJS DI — decorators + reflect-metadata at work
+import { Injectable, Controller, Get, Param } from '@nestjs/common';
+
+@Injectable()           // marks class for DI container
+class UsersService {
+  findOne(id: number) { return { id }; }
+}
+
+@Controller('users')    // sets route prefix
+class UsersController {
+  constructor(private readonly svc: UsersService) {} // auto-injected
+
+  @Get(':id')           // maps GET /users/:id
+  findOne(@Param('id') id: string) {
+    return this.svc.findOne(+id);
+  }
+}`,
+  },
+
+  {
+    category: 'OOP & Classes', difficulty: 'Intermediate',
+    question: '`enum` vs `const enum` vs `as const` object in TypeScript — runtime behavior, bundle size, best practice?',
+    answer: '**`enum`**: compiled to a real JS object with reverse mappings — `Status[0] = "Active"`. Adds runtime code. **Numeric enums**: values auto-increment from 0. **String enums**: no reverse mapping, safer. **`const enum`**: inlined at compile time — no runtime object generated, smaller bundle. But breaks with `isolatedModules` (Babel/SWC) and `.d.ts` consumers. **`as const` object (recommended)**: no TS magic — plain object frozen to literal type. Works with all tools, treeshakable, debuggable. **Rule**: prefer `as const` over enums. Only use string `enum` if you need declaration merging or the reverse mapping.',
+    tip: `// Regular enum — generates runtime object
+enum Direction {
+  Up,    // 0
+  Down,  // 1
+  Left,  // 2
+  Right, // 3
+}
+Direction.Up;        // 0
+Direction[0];        // 'Up' — reverse mapping
+
+// String enum — safer, no reverse map
+enum Status {
+  Active   = 'ACTIVE',
+  Inactive = 'INACTIVE',
+}
+
+// const enum — inlined, no runtime object
+const enum HttpStatus {
+  OK      = 200,
+  Created = 201,
+  NotFound = 404,
+}
+// compiled: let code = 200; (not HttpStatus.OK)
+
+// as const — RECOMMENDED approach
+const STATUS = {
+  Active:   'ACTIVE',
+  Inactive: 'INACTIVE',
+} as const;
+
+type Status = typeof STATUS[keyof typeof STATUS];
+// type: 'ACTIVE' | 'INACTIVE'
+
+// Why as const wins:
+// - Works with Babel/SWC (isolatedModules)
+// - No runtime surprise (reverse mapping)
+// - Treeshakable — unused values removed by bundler
+// - Plays well with discriminated unions`,
+  },
+
+  // ══════════════════════════════════════════════════════════
+  // 5. FUNCTIONS & ASYNC
+  // ══════════════════════════════════════════════════════════
+
+  {
+    category: 'Functions & Async', difficulty: 'Intermediate',
+    question: 'TypeScript function overloading, call signatures, and `this: Type` parameter — how do they work?',
+    answer: '**Overloads**: define multiple function signatures before a single implementation — TS picks the right signature based on argument types. The implementation signature is not visible externally. **Call signatures in types**: describe callable objects — `{ (x: number): string; label: string }`. **`this` parameter**: fake first parameter that specifies what `this` must be inside the function — removed at compile time. Prevents calling methods with wrong context. **Rest params**: `...args: string[]`. **Optional params**: `name?: string` (= `string | undefined`). **Tip**: overloads are for when a function genuinely returns different types based on input types, not just optional params.',
+    tip: `// Function overloads — multiple signatures + one implementation
+function format(val: string): string;
+function format(val: number): string;
+function format(val: Date): string;
+function format(val: string | number | Date): string {
+  if (typeof val === 'string') return val.toUpperCase();
+  if (typeof val === 'number') return val.toFixed(2);
+  return val.toISOString();
+}
+
+format('hello');    // overload 1 — returns string
+format(3.14);       // overload 2 — returns string
+format(new Date()); // overload 3 — returns string
+
+// Call signature in type/interface
+interface Formatter {
+  (val: string): string;   // callable
+  locale: string;          // also has properties
+}
+
+// this parameter — prevent wrong context
+interface Button {
+  label: string;
+  click(this: Button): void;  // this must be Button
+}
+const btn: Button = {
+  label: 'Save',
+  click() { console.log(this.label); }, // TS knows this is Button
+};
+const fn = btn.click;
+fn();           // ERROR — 'this' context would be wrong
+
+// Generic overloads
+function first<T>(arr: T[]): T;
+function first<T>(arr: T[], fallback: T): T;
+function first<T>(arr: T[], fallback?: T): T | undefined {
+  return arr.length > 0 ? arr[0] : fallback;
+}`,
+  },
+
+  {
+    category: 'Functions & Async', difficulty: 'Intermediate',
+    question: 'TypeScript async/await and Promise typing — `Promise<T>`, `Awaited<T>`, error handling with `unknown` in catch?',
+    answer: '**`Promise<T>`**: the return type of any `async` function — `async function fetch(): Promise<User>`. **`Awaited<T>`**: recursively unwraps Promise — `Awaited<Promise<Promise<string>>>` = `string`. Useful in utility types. **`async` functions**: always return a Promise — return type annotation is the resolved value type. **Error handling**: with `strict: true`, caught errors are `unknown` not `any` — must narrow before accessing properties. Pattern: `if (e instanceof Error)`. **`Promise.all`**: infers tuple of resolved types — `Promise.all([p1, p2])` gives `[T1, T2]`. **`Promise.allSettled`**: gives `PromiseSettledResult<T>[]`.',
+    tip: `// Typed async function
+async function fetchUser(id: number): Promise<User> {
+  const res = await fetch('/users/' + id);
+  if (!res.ok) throw new Error('Not found');
+  return res.json() as Promise<User>;
+}
+
+// Awaited — unwrap nested Promises
+type UserResult = Awaited<ReturnType<typeof fetchUser>>; // User
+
+// Error handling — e is unknown with strict
+async function safe() {
+  try {
+    const user = await fetchUser(1);
+    console.log(user.name);
+  } catch (e: unknown) {
+    if (e instanceof Error) {
+      console.error(e.message);  // safe — narrowed
+    } else {
+      console.error('Unknown error:', String(e));
+    }
+  }
+}
+
+// Promise.all — infers tuple types
+const [user, posts] = await Promise.all([
+  fetchUser(1),      // Promise<User>
+  fetchPosts(1),     // Promise<Post[]>
+]);
+// user: User, posts: Post[]
+
+// Promise.allSettled — handle partial failures
+const results = await Promise.allSettled([fetchUser(1), fetchUser(2)]);
+results.forEach(result => {
+  if (result.status === 'fulfilled') console.log(result.value);
+  else                               console.error(result.reason);
+});
+
+// Return type inference — no annotation needed
+async function getData() {
+  return { id: 1, name: 'Alice' }; // inferred: Promise<{id: number; name: string}>
+}`,
+  },
+
+  {
+    category: 'Functions & Async', difficulty: 'Advanced',
+    question: 'TypeScript with RxJS `Observable<T>` — typing observables, pipe operators, and use in NestJS?',
+    answer: '**`Observable<T>`**: represents a stream of values of type T over time. Imported from `rxjs`. **`pipe()`**: chains operators — each operator transforms the stream type. **Common operators**: `map<T, R>((val: T) => R)` · `filter(predicate)` · `catchError` · `switchMap` · `tap`. **NestJS**: controllers can return `Observable<T>` directly — NestJS subscribes and sends the last value. Interceptors use `Observable<T>` — `intercept(ctx, next): Observable<any>`. **`firstValueFrom` / `lastValueFrom`**: convert Observable to Promise. **Subjects**: `Subject<T>`, `BehaviorSubject<T>`, `ReplaySubject<T>` — multi-cast observables.',
+    tip: `import { Observable, Subject, from, of } from 'rxjs';
+import { map, filter, catchError, switchMap, tap } from 'rxjs/operators';
+
+// Typed observable
+const numbers$: Observable<number> = of(1, 2, 3, 4, 5);
+
+// Pipe operators — TS infers type through chain
+const doubled$ = numbers$.pipe(
+  filter(n => n % 2 === 0),  // Observable<number>
+  map(n => n * 2),            // Observable<number>
+  map(n => n.toString()),     // Observable<string>
+);
+
+// NestJS — controller returning Observable
+import { Controller, Get } from '@nestjs/common';
+import { Observable } from 'rxjs';
+
+@Controller('events')
+class EventsController {
+  @Get()
+  stream(): Observable<string> {
+    return new Observable(subscriber => {
+      subscriber.next('event 1');
+      subscriber.next('event 2');
+      subscriber.complete();
+    });
+  }
+}
+
+// NestJS interceptor — must return Observable
+import { CallHandler, ExecutionContext, NestInterceptor } from '@nestjs/common';
+class LoggingInterceptor implements NestInterceptor {
+  intercept(ctx: ExecutionContext, next: CallHandler): Observable<any> {
+    console.log('Before...');
+    return next.handle().pipe(
+      tap(() => console.log('After...'))
+    );
+  }
+}
+
+// Convert to Promise when needed
+import { firstValueFrom } from 'rxjs';
+const value = await firstValueFrom(numbers$); // 1`,
+  },
+
+  // ══════════════════════════════════════════════════════════
+  // 6. REAL-WORLD PATTERNS
+  // ══════════════════════════════════════════════════════════
+
+  {
+    category: 'Real-world Patterns', difficulty: 'Intermediate',
+    question: 'TypeScript DTOs and API contracts — how to build type-safe request/response shapes?',
+    answer: '**DTO (Data Transfer Object)**: defines the exact shape of data moving across API boundaries. Best practice: define a base entity type and **derive** DTOs from it using utility types. **`Omit<T, K>`**: remove sensitive fields (password, internal IDs) for response DTOs. **`Pick<T, K>`**: select specific fields for projection. **`Partial<T>`**: for PATCH (partial update) DTOs. **Shared types**: put DTOs in a shared package (monorepo) so backend and frontend share the same type definitions. **NestJS**: combine with `class-validator` decorators and `ValidationPipe` for runtime validation matching compile-time types.',
+    tip: `// Base entity (database model)
+interface UserEntity {
+  id: number;
+  name: string;
+  email: string;
+  passwordHash: string;
+  createdAt: Date;
+  role: 'admin' | 'user';
+}
+
+// Derived DTOs using utility types
+type CreateUserDto = Pick<UserEntity, 'name' | 'email'> & { password: string };
+type UpdateUserDto = Partial<Pick<UserEntity, 'name' | 'email'>>;
+type UserResponseDto = Omit<UserEntity, 'passwordHash'>; // safe to send
+
+// NestJS DTO with class-validator
+import { IsEmail, IsString, MinLength } from 'class-validator';
+
+class CreateUserDto {
+  @IsString()
+  name: string;
+
+  @IsEmail()
+  email: string;
+
+  @IsString()
+  @MinLength(8)
+  password: string;
+}
+
+// Generic API response wrapper
+type ApiResponse<T> = {
+  data: T;
+  meta?: { total: number; page: number };
+  error?: string;
+};
+
+type UserListResponse = ApiResponse<UserResponseDto[]>;
+type UserDetailResponse = ApiResponse<UserResponseDto>;
+
+// Shared types in monorepo (shared-types package)
+// Frontend and backend import from same source
+export type { CreateUserDto, UserResponseDto, ApiResponse };`,
+  },
+
+  {
+    category: 'Real-world Patterns', difficulty: 'Intermediate',
+    question: 'Zod with TypeScript — `z.infer<typeof schema>`, `parse` vs `safeParse`, runtime + compile-time safety?',
+    answer: '**Zod**: schema validation library that generates TypeScript types from schemas — single source of truth for both runtime validation and compile-time types. **`z.infer<typeof schema>`**: extract the TypeScript type from a Zod schema — no duplicating type definitions. **`parse()`**: validates data, throws `ZodError` on failure. **`safeParse()`**: returns `{ success: true, data: T } | { success: false, error: ZodError }` — preferred in production (no try/catch needed). **Why Zod**: TypeScript types are erased at runtime — Zod validates incoming JSON, env vars, form data, API responses at runtime, bridging the gap. Best partner with TypeScript.',
+    tip: `import { z } from 'zod';
+
+// Define schema — single source of truth
+const UserSchema = z.object({
+  id:    z.number().positive(),
+  name:  z.string().min(1).max(100),
+  email: z.string().email(),
+  role:  z.enum(['admin', 'user']),
+  age:   z.number().min(0).max(150).optional(),
+});
+
+// Infer TypeScript type from schema — NO duplication
+type User = z.infer<typeof UserSchema>;
+// { id: number; name: string; email: string; role: 'admin' | 'user'; age?: number }
+
+// parse — throws ZodError on invalid data
+const user = UserSchema.parse(apiData); // user is typed User
+
+// safeParse — preferred (no try/catch)
+const result = UserSchema.safeParse(apiData);
+if (result.success) {
+  console.log(result.data.email); // typed User
+} else {
+  console.error(result.error.issues); // ZodError details
+}
+
+// Environment variables validation — Zod + process.env
+const EnvSchema = z.object({
+  DATABASE_URL: z.string().url(),
+  PORT:         z.coerce.number().default(3000),
+  JWT_SECRET:   z.string().min(32),
+  NODE_ENV:     z.enum(['development', 'production', 'test']),
+});
+
+const env = EnvSchema.parse(process.env); // validated at startup
+type Env = z.infer<typeof EnvSchema>;
+
+// Derived schemas — reuse base
+const CreateUserSchema = UserSchema.omit({ id: true });
+const UpdateUserSchema = UserSchema.partial().omit({ id: true });`,
+  },
+
+  {
+    category: 'Real-world Patterns', difficulty: 'Advanced',
+    question: 'TypeScript discriminated unions and exhaustive `never` checks — the pattern for safe branching?',
+    answer: '**Discriminated union**: a union of object types sharing a common literal field (`kind`, `type`, `status`, `tag`) — TS narrows automatically in switch/if. **Exhaustive check**: after all union arms are handled, the remaining type is `never` — any unhandled case causes a compile error. **Pattern**: `assertNever(x: never): never` — call it in the default branch; if new union member is added without handling, TS errors. **Use cases**: state machines, API result handling, event dispatch, command patterns. **vs if-else**: switch on discriminant is both safe and readable. This is the TypeScript-idiomatic way to do polymorphism without classes.',
+    tip: `// Discriminated union — shared literal 'kind' field
+type Loading  = { kind: 'loading' };
+type Success  = { kind: 'success';  data: string[] };
+type Failure  = { kind: 'failure';  error: string };
+type State    = Loading | Success | Failure;
+
+// Exhaustive switch with assertNever
+function assertNever(x: never): never {
+  throw new Error('Unhandled case: ' + JSON.stringify(x));
+}
+
+function render(state: State): string {
+  switch (state.kind) {
+    case 'loading': return 'Loading...';
+    case 'success': return state.data.join(', '); // data: string[]
+    case 'failure': return 'Error: ' + state.error;
+    default:        return assertNever(state); // TS error if union grows
+  }
+}
+
+// Add a new case — TS immediately errors in assertNever
+// type State = Loading | Success | Failure | Cancelled;
+// Now 'default: assertNever(state)' — ERROR: 'Cancelled' not assignable to 'never'
+
+// Real-world: typed API result
+type ApiResult<T> =
+  | { status: 'ok';    data: T    }
+  | { status: 'error'; message: string; code: number }
+  | { status: 'loading' };
+
+function handleResult<T>(result: ApiResult<T>) {
+  switch (result.status) {
+    case 'ok':      return result.data;        // T
+    case 'error':   throw new Error(result.message);
+    case 'loading': return null;
+    default:        return assertNever(result);
+  }
+}`,
+  },
+
+  {
+    category: 'Real-world Patterns', difficulty: 'Intermediate',
+    question: 'TypeScript environment variable typing — `process.env`, Zod env schema, readonly config objects?',
+    answer: '**Problem**: `process.env` values are all `string | undefined` — no type safety, no validation, missing vars only discovered at runtime. **Solutions**: (1) Zod schema parse `process.env` at startup — throws on missing/invalid vars before app serves any traffic. (2) Augment `NodeJS.ProcessEnv` interface with declaration merging. (3) Create a typed, readonly `config` object centralized in one file — import `config.port` instead of `process.env.PORT` everywhere. **Best practice**: validate env at startup (fail fast), export a strongly-typed readonly config object, never read `process.env` directly in feature code.',
+    tip: `// Option 1: Zod validation (recommended)
+import { z } from 'zod';
+
+const envSchema = z.object({
+  NODE_ENV:     z.enum(['development', 'production', 'test']).default('development'),
+  PORT:         z.coerce.number().default(3000),
+  DATABASE_URL: z.string().url(),
+  JWT_SECRET:   z.string().min(32),
+  REDIS_URL:    z.string().url().optional(),
+});
+
+export const env = Object.freeze(envSchema.parse(process.env));
+// env.PORT is number (not string!) — coerce did the conversion
+// env.DATABASE_URL is string — guaranteed non-undefined
+
+// Option 2: Declaration merging (augment NodeJS.ProcessEnv)
+declare global {
+  namespace NodeJS {
+    interface ProcessEnv {
+      NODE_ENV: 'development' | 'production' | 'test';
+      PORT: string;
+      DATABASE_URL: string;
+    }
+  }
+}
+// Now: process.env.DATABASE_URL is string (not string | undefined)
+
+// Option 3: Typed config module
+const config = {
+  port:   Number(process.env.PORT) || 3000,
+  db: {
+    url:  process.env.DATABASE_URL!,
+    pool: Number(process.env.DB_POOL) || 10,
+  },
+  jwt: {
+    secret:  process.env.JWT_SECRET!,
+    expires: process.env.JWT_EXPIRES || '7d',
+  },
+} as const; // freeze to literal types
+
+export type Config = typeof config;
+export default config;`,
+  },
+
+  // ══════════════════════════════════════════════════════════
+  // 7. MODULES & TSCONFIG
+  // ══════════════════════════════════════════════════════════
+
+  {
+    category: 'Modules & Tooling', difficulty: 'Intermediate',
+    question: 'TypeScript `tsconfig.json` — most important options: `strict`, `target`, `module`, `moduleResolution`, `paths`?',
+    answer: '**`strict: true`**: enable all safety checks. **`target`**: JS version to emit — `ES2022` for Node 18+, `ES2015` for broad browser support. **`module`**: module format emitted — `NodeNext` for Node.js ESM, `CommonJS` for older Node, `ESNext` for bundlers. **`moduleResolution`**: how imports are resolved — `bundler` for Vite/webpack, `NodeNext` for Node.js. **`paths`**: path aliases — `"@/*": ["./src/*"]` maps `@/utils` to `./src/utils`. **`outDir`/`rootDir`**: output and source roots. **`incremental`**: faster rebuilds using `.tsbuildinfo`. **`lib`**: which built-in types to include — `["ES2022", "DOM"]`. **`declaration: true`**: emit `.d.ts` files for libraries.',
+    tip: `// Full recommended tsconfig for Node.js (NestJS/Express)
+{
+  "compilerOptions": {
+    // Correctness
+    "strict": true,
+    "noUncheckedIndexedAccess": true,   // arr[0] is T | undefined
+    "exactOptionalPropertyTypes": true,
+
+    // Emit
+    "target": "ES2022",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "declaration": true,
+
+    // Performance
+    "incremental": true,
+    "tsBuildInfoFile": ".tsbuildinfo",
+    "skipLibCheck": true,
+
+    // Path aliases
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"],
+      "@config/*": ["./src/config/*"],
+      "@modules/*": ["./src/modules/*"]
+    },
+
+    // Decorators (NestJS)
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+
+    // Libraries
+    "lib": ["ES2022"]
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist"]
+}`,
+  },
+
+  {
+    category: 'Modules & Tooling', difficulty: 'Intermediate',
+    question: 'ESM vs CommonJS in TypeScript — `import/export`, `require()`, `NodeNext` module resolution, interop issues?',
+    answer: '**CommonJS (CJS)**: `require()`/`module.exports` — still default for many Node.js packages. **ESM (ECMAScript Modules)**: `import`/`export` — standard, works in browsers + Node.js. **TypeScript**: can emit either format depending on `"module"` option. **`"module": "NodeNext"`** + `"type": "module"` in `package.json`: full ESM — requires `.js` extension in imports (`import "./utils.js"`). **Interop**: CJS `require()` from ESM → use `createRequire()`. ESM `import` from CJS → usually works (default export mapped). **`esModuleInterop: true`** (default): allows `import fs from "fs"` instead of `import * as fs from "fs"`. **Problem pattern**: CJS package with no default export.',
+    tip: `// package.json — declare ESM
+{
+  "type": "module",
+  "main": "./dist/index.js",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
+  }
+}
+
+// tsconfig.json — NodeNext for Node.js ESM
+{
+  "compilerOptions": {
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext"
+  }
+}
+
+// ESM import — must include .js extension (even for .ts source)
+import { util } from './utils.js'; // TS resolves to utils.ts
+
+// Dynamic import — code splitting / lazy load
+const module = await import('./heavy-module.js');
+
+// CJS interop — import CJS module in ESM
+import pkg from 'some-cjs-package';           // works with esModuleInterop
+import { fn } from 'some-cjs-package';         // may not work
+
+// createRequire — use require() inside ESM
+import { createRequire } from 'module';
+const require = createRequire(import.meta.url);
+const data = require('./data.json');
+
+// __dirname / __filename equivalent in ESM
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+const __filename = fileURLToPath(import.meta.url);
+const __dirname  = dirname(__filename);`,
+  },
+
+  {
+    category: 'Modules & Tooling', difficulty: 'Intermediate',
+    question: 'TypeScript `.d.ts` declaration files and `@types/*` packages — how do they work?',
+    answer: '**Declaration files (`.d.ts`)**: contain only TypeScript type information — no runtime code. Tell TS the shape of JavaScript libraries. **`@types/*`**: community-maintained type packages on npm from DefinitelyTyped — `npm install -D @types/node @types/express`. **Bundled types**: modern packages include their own `.d.ts` — check `"types"` field in `package.json`. **Ambient declarations**: `declare module`, `declare global`, `declare const` — tell TS about things that exist in the JS runtime but aren\'t in the code. **Triple-slash directives**: `/// <reference types="..." />` for older setups. **`skipLibCheck: true`**: skip type checking of `.d.ts` files — speeds up compilation.',
+    tip: `// Check if types are bundled:
+// package.json has "types": "./dist/index.d.ts"
+
+// Install community types (not bundled)
+// npm install -D @types/node @types/express @types/lodash
+
+// Custom .d.ts — describe your own JS module
+// mylib.d.ts
+export declare function greet(name: string): string;
+export declare const VERSION: string;
+
+// Ambient module declaration — tell TS about a JS file
+// global.d.ts
+declare module '*.svg' {
+  const content: string;
+  export default content;
+}
+
+declare module '*.json' {
+  const value: any;
+  export default value;
+}
+
+// Augment existing types (declaration merging)
+// global.d.ts
+declare global {
+  interface Window {
+    analytics: { track: (event: string) => void };
+  }
+  namespace Express {
+    interface Request {
+      user?: { id: number; role: string };
+    }
+  }
+}
+
+// Triple-slash reference (legacy — prefer tsconfig "types")
+/// <reference types="node" />
+/// <reference path="./my-types.d.ts" />
+
+// Generate .d.ts from your own code
+// tsconfig: "declaration": true, "declarationDir": "./types"`,
+  },
+
+  {
+    category: 'Modules & Tooling', difficulty: 'Beginner',
+    question: 'TypeScript build tools — `tsc`, `ts-node`, `SWC`, `esbuild`, `tsup` — when to use each?',
+    answer: '**`tsc`**: official TypeScript compiler — does full type checking + emit. Slow for large projects. Use for final build and CI type checks. **`ts-node`**: run `.ts` directly in Node — convenient for dev scripts and CLIs. Slow start (JIT compilation). **`tsx`** (`ts-node` alternative): faster, no type checking, great for scripts. **`SWC`** (Rust): 10-100x faster than `tsc` — used by NestJS CLI, Next.js. Strips types only — separate `tsc --noEmit` for type checking. **`esbuild`** (Go): extremely fast bundler — used by Vite. **`tsup`**: simple library bundler built on esbuild — `tsup src/index.ts --format cjs,esm --dts`. **Node.js 22+**: `--experimental-strip-types` — native TS execution, no build step.',
+    tip: `// tsc — type check only (separate from build)
+tsc --noEmit                    # type check, no output
+tsc --watch                     # watch mode
+
+// ts-node — run TypeScript directly (dev/scripts)
+ts-node src/script.ts
+ts-node --esm src/script.ts     # ESM mode
+
+// tsx — faster alternative to ts-node (no type check)
+npx tsx src/script.ts
+npx tsx watch src/server.ts     # watch mode
+
+// SWC — NestJS uses this by default
+// nest-cli.json
+{
+  "compilerOptions": {
+    "builder": "swc",           // 10x faster builds
+    "typeCheck": false          // run tsc --noEmit separately
+  }
+}
+
+// tsup — build a library in one command
+// package.json
+{
+  "scripts": {
+    "build": "tsup src/index.ts --format cjs,esm --dts --clean",
+    "typecheck": "tsc --noEmit"
+  }
+}
+
+// Recommended CI pipeline
+// 1. tsc --noEmit             (type check — slow but thorough)
+// 2. eslint src               (lint)
+// 3. vitest run               (tests)
+// 4. tsup / swc build         (fast build)
+
+// Node.js 22+ — no build step
+node --experimental-strip-types src/server.ts`,
+  },
+
+  // ══════════════════════════════════════════════════════════
+  // 8. BEST PRACTICES
+  // ══════════════════════════════════════════════════════════
+
+  {
+    category: 'Best Practices', difficulty: 'Beginner',
+    question: 'TypeScript linting — `@typescript-eslint`, Prettier, `no-explicit-any` rule — setup and key rules?',
+    answer: '**`@typescript-eslint`**: ESLint plugin that understands TypeScript — adds TS-aware rules. Key rules: `no-explicit-any` (ban `any`), `no-floating-promises` (await all promises), `no-unsafe-assignment`, `consistent-type-imports`, `prefer-nullish-coalescing`. **Prettier**: opinionated formatter — pair with `eslint-config-prettier` to disable conflicting ESLint style rules. **`typescript-eslint` v7+**: new flat config system. **`no-floating-promises`**: catches `asyncFn()` without `await` — major source of bugs. **`strict: true` in ESLint type-checked rules**: run with `parserOptions.project` to enable type-aware rules (slower but finds more issues).',
+    tip: `// Install
+// npm install -D @typescript-eslint/parser @typescript-eslint/eslint-plugin prettier eslint-config-prettier
+
+// eslint.config.mjs (flat config — ESLint 9+)
+import tsPlugin from '@typescript-eslint/eslint-plugin';
+import tsParser from '@typescript-eslint/parser';
+import prettier from 'eslint-config-prettier';
+
+export default [
+  {
+    files: ['**/*.ts'],
+    languageOptions: {
+      parser: tsParser,
+      parserOptions: { project: './tsconfig.json' },
+    },
+    plugins: { '@typescript-eslint': tsPlugin },
+    rules: {
+      // Basics
+      '@typescript-eslint/no-explicit-any': 'error',
+      '@typescript-eslint/no-unused-vars':  ['error', { argsIgnorePattern: '^_' }],
+
+      // Type-aware (require parserOptions.project)
+      '@typescript-eslint/no-floating-promises':    'error',
+      '@typescript-eslint/no-unsafe-assignment':    'warn',
+      '@typescript-eslint/consistent-type-imports': 'error',
+      '@typescript-eslint/prefer-nullish-coalescing': 'warn',
+      '@typescript-eslint/strict-boolean-expressions': 'warn',
+    },
+  },
+  prettier, // disable style rules that Prettier handles
+];
+
+// .prettierrc
+{
+  "semi": true,
+  "singleQuote": true,
+  "trailingComma": "all",
+  "printWidth": 100,
+  "tabWidth": 2
+}`,
+  },
+
+  {
+    category: 'Best Practices', difficulty: 'Intermediate',
+    question: 'TypeScript testing — Vitest, Jest + `ts-jest`, typed mocks — how to write fully typed tests?',
+    answer: '**Vitest**: fast, ESM-native test runner — uses esbuild under the hood, no extra setup for TypeScript. **Jest + `ts-jest`**: transform `.ts` files for Jest — `preset: "ts-jest"`. **Typed mocks**: `vi.fn()` / `jest.fn()` with generics — `vi.fn<typeof myFunction>()`. **`vi.spyOn`**: type-safe spying on object methods. **`vi.mocked(fn)`**: cast mocked function to `Mock<...>` type. **`@types/jest`** or **`vitest/globals`**: global types for `describe`, `it`, `expect`. **Pattern**: mock at module boundary — mock services in controller tests, mock repositories in service tests. **`createMock<T>()`** from `@golevelup/ts-jest`: auto-mock all interface methods.',
+    tip: `// Vitest setup (no extra config needed for TS)
+// vitest.config.ts
+import { defineConfig } from 'vitest/config';
+export default defineConfig({
+  test: {
+    globals: true,
+    environment: 'node',
+  },
+});
+
+// Typed test with Vitest
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { UserService } from './user.service';
+import { UserRepository } from './user.repository';
+
+// Typed mock — preserves UserRepository interface
+const mockRepo = {
+  findById: vi.fn<typeof UserRepository.prototype.findById>(),
+  save:     vi.fn<typeof UserRepository.prototype.save>(),
+};
+
+describe('UserService', () => {
+  let service: UserService;
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+    service = new UserService(mockRepo as UserRepository);
+  });
+
+  it('returns user by id', async () => {
+    const user = { id: 1, name: 'Alice', email: 'a@b.com' };
+    mockRepo.findById.mockResolvedValue(user);  // typed
+
+    const result = await service.findOne(1);
+
+    expect(result).toEqual(user);
+    expect(mockRepo.findById).toHaveBeenCalledWith(1);
+  });
+
+  it('throws when user not found', async () => {
+    mockRepo.findById.mockResolvedValue(null);
+    await expect(service.findOne(99)).rejects.toThrow('User not found');
+  });
+});`,
+  },
+
+  {
+    category: 'Best Practices', difficulty: 'Advanced',
+    question: 'TypeScript monorepos — project references, `Turborepo`, `Nx`, shared types packages?',
+    answer: '**TypeScript project references**: `"references"` in tsconfig — splits monorepo into sub-projects that build independently. `tsc --build` (or `tsc -b`) builds in dependency order. Each package has its own `tsconfig.json` + `tsconfig.build.json`. **Incremental builds**: only rebuild what changed. **Shared types package**: `packages/types` with interfaces/DTOs used by all apps — backend, frontend, CLI share the same `User`, `ApiResponse` types. **Turborepo**: build orchestration with caching — dramatically speeds up CI. **`pnpm` workspaces**: native package manager support for monorepos. **Key pattern**: `@myapp/types` package — never duplicate type definitions across packages.',
+    tip: `// Monorepo structure
+apps/
+  api/          (NestJS backend)
+  web/          (React frontend)
+packages/
+  types/        (shared TypeScript types)
+  utils/        (shared utilities)
+  config/       (shared tsconfig, eslint config)
+
+// packages/types/src/index.ts
+export interface User { id: number; name: string; email: string }
+export interface ApiResponse<T> { data: T; error?: string }
+export type { CreateUserDto, UpdateUserDto } from './user.dto';
+
+// apps/api/tsconfig.json — project reference
+{
+  "extends": "../../packages/config/tsconfig.base.json",
+  "compilerOptions": { "outDir": "./dist" },
+  "references": [{ "path": "../../packages/types" }]
+}
+
+// apps/web/tsconfig.json — reference shared types
+{
+  "references": [{ "path": "../../packages/types" }]
+}
+
+// turbo.json — parallel builds with caching
+{
+  "pipeline": {
+    "build":   { "dependsOn": ["^build"], "outputs": ["dist/**"] },
+    "typecheck": { "dependsOn": ["^build"] },
+    "test":    { "dependsOn": ["build"] }
+  }
+}
+
+// pnpm-workspace.yaml
+packages:
+  - 'apps/*'
+  - 'packages/*'
+
+// Import in any app
+import type { User, ApiResponse } from '@myapp/types';`,
+  },
+
+  {
+    category: 'Best Practices', difficulty: 'Advanced',
+    question: 'TypeScript production best practices — avoid `any`, domain-driven types, type-safe API layer, TS 6/7 future?',
+    answer: '**Avoid `any`**: use `unknown` for external data, generics for reuse, `never` for exhaustive checks. ESLint `no-explicit-any` catches it. **Domain-driven types**: model the domain precisely — `OrderId`, `UserId`, `Email` as branded types; not just `number` and `string`. **Type-safe API layer**: shared DTOs between backend and frontend (monorepo) — single source of truth. **Parse don\'t validate**: use Zod to parse incoming data into typed values at the boundary. **`satisfies`**: validate config objects without losing narrowness. **TS 6.0 (2025)**: `strict: true` is the new default, `isolatedDeclarations` for faster parallel builds. **TS 7.0 (2026)**: full Go rewrite — 10x faster type checking, lower memory usage, native language server.',
+    tip: `// 1. Never use any — use unknown at boundaries
+function parseResponse(data: unknown): User {
+  return UserSchema.parse(data); // Zod validates + types
+}
+
+// 2. Domain-driven types — model precisely
+type OrderId = Brand<number, 'OrderId'>;
+type Money   = Brand<number, 'Money'>;   // avoid mixing amounts
+
+function processOrder(id: OrderId, amount: Money): void { /* ... */ }
+
+// 3. Type-safe API layer (tRPC pattern concept)
+// Single source of truth — shared router types
+// Frontend knows exact return types without codegen
+
+// 4. satisfies — validate config without losing narrowness
+const routes = {
+  home:    '/',
+  users:   '/users',
+  profile: '/users/:id',
+} satisfies Record<string, string>;
+
+routes.home; // type: '/' (literal) not string
+
+// 5. Avoid type assertions (as) in feature code
+// Bad: const user = data as User;
+// Good: const user = UserSchema.parse(data);
+
+// 6. TS 6.0 defaults (2025)
+// strict: true — now the default
+// isolatedDeclarations — enables faster parallel .d.ts emit
+
+// 7. TS 7.0 / "TypeScript Native" (2026)
+// - Written in Go (from Microsoft)
+// - 10x faster type checking
+// - ~50% lower memory usage
+// - Same type system, same tsconfig
+// - Language server built-in
+// - Node.js 22+ strips types natively (no tsc needed)
+node --experimental-strip-types server.ts`,
+  },
+
+];
+
+/* ═══════════════════════════════════════════════════════════
    SUBJECTS
 ═══════════════════════════════════════════════════════════ */
 const SUBJECTS = {
@@ -20928,6 +22362,7 @@ const SUBJECTS = {
   'C++':        CPP_CARDS,
   'SQL':        SQL_CARDS,
   'Database':   DATABASE_CARDS,
+  'TypeScript': TYPESCRIPT_CARDS,
   'JavaScript': JS_CARDS,
   'Internet':   INTERNET_CARDS,
   'Linux':      LINUX_CARDS,
@@ -20959,7 +22394,7 @@ const SUBJECTS = {
 const SUBJECT_GROUPS = {
   'Cheat Sheet': ['Junior Dev Daily Essentials'],
   'Core':        ['DSA_JavaScript', 'Internet', 'Linux', 'Tricked Memory'],
-  'Language':    ['Python', 'C#', 'C++', 'JavaScript'],
+  'Language':    ['Python', 'C#', 'C++', 'TypeScript', 'JavaScript'],
   'Frontend':    ['Html', 'CSS', 'npm', 'Git/Github', 'Tailwind CSS', 'React & SSR', 'Redux'],
   'Backend':     ['NestJS', 'Node.js', 'Express.js', 'SQL', 'Database', 'PostgreSQL', 'API', 'JWT authentication', 'Redis', 'Testing & Containers', 'CI/CD', 'AI-assist', 'Third-party generation', 'Architecture'],
   'DevOps':      [],
@@ -20989,6 +22424,7 @@ const SUBJECT_COLORS = {
   'C++':        '#00599c',
   'SQL':        '#06b6d4',
   'Database':   '#ec4899',
+  'TypeScript': '#3178c6',
   'JavaScript': '#f59e0b',
   'Internet':   '#10b981',
   'Linux':      '#f97316',
@@ -21015,6 +22451,15 @@ const SUBJECT_COLORS = {
 };
 
 const CATEGORY_COLORS = {
+  // TypeScript
+  'Type Fundamentals':    '#ef4444',
+  'Advanced Types':       '#f59e0b',
+  'Generics':             '#3178c6',
+  'OOP & Classes':        '#14b8a6',
+  'Functions & Async':    '#8b5cf6',
+  'Real-world Patterns':  '#10b981',
+  'Modules & Tooling':    '#f97316',
+  'Best Practices':       '#64748b',
   // HTML
   'Advanced Features':      '#f59e0b',
   'Performance & Security': '#0ea5e9',
