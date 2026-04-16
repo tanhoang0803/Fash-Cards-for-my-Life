@@ -20592,6 +20592,333 @@ const THIRD_PARTY_CARDS   = [];
 const ARCHITECTURE_CARDS  = [];
 
 /* ═══════════════════════════════════════════════════════════
+   NestJS
+═══════════════════════════════════════════════════════════ */
+const NESTJS_CARDS = [
+
+  // ══════════════════════════════════════════════════════════
+  // 0. OVERVIEW
+  // ══════════════════════════════════════════════════════════
+  {
+    category: 'Overview', difficulty: 'Beginner',
+    question: 'NestJS — Full Mind Map, Learning Paths & Interview Core',
+    answer: '9 sections: 1. Fundamentals · 2. Core Building Blocks · 3. Request Pipeline · 4. DTO & Validation · 5. Data Access & Persistence · 6. Auth & Security · 7. Advanced Features · 8. Testing & Tooling · 9. Production & Scaling. **Request Lifecycle**: Request → Middleware → Guard → Interceptor(pre) → Pipe → Controller/Service → Interceptor(post) → Exception Filter → Response.',
+    tip: `NestJS
+│
+├─ 1. Fundamentals
+│   ├─ Philosophy      TypeScript-first · modular · DI container · Express/Fastify
+│   ├─ Decorators      @Module · @Controller · @Injectable · @Get/@Post · reflect-metadata
+│   ├─ Bootstrap       NestFactory.create() · app.listen() · global pipes/guards
+│   └─ v11/v12         SWC default · Vitest · Express v5 · Native ESM (v12)
+│
+├─ 2. Core Building Blocks
+│   ├─ Modules         imports · providers · controllers · exports · dynamic modules
+│   ├─ DI Scopes       Singleton (default) · Request · Transient
+│   ├─ Custom Providers useClass · useValue · useFactory · useExisting
+│   └─ Controllers     @Param · @Query · @Body · @Headers routing
+│
+├─ 3. Request Pipeline (cross-cutting)
+│   ├─ Guard           canActivate() · AuthGuard · RolesGuard · ExecutionContext
+│   ├─ Interceptor     NestInterceptor · Observable/RxJS · logging · response transform
+│   ├─ Pipe            ValidationPipe · ParseIntPipe · whitelist · transform
+│   └─ Exception Filter @Catch() · HttpException · global filter
+│
+├─ 4. DTO & Validation — daily use
+│   ├─ DTO Pattern     @IsEmail · @IsNotEmpty · @IsOptional · @IsEnum
+│   ├─ class-transformer plainToInstance · @Exclude · @Expose · @Type
+│   └─ Global Pipe     whitelist: true · forbidNonWhitelisted · transform: true
+│
+├─ 5. Data Access & Persistence
+│   ├─ ORMs            Prisma (schema-first) · TypeORM (entities) · Mongoose · Drizzle
+│   ├─ Repository      Service → Repository → DB · @InjectRepository
+│   └─ Config          @nestjs/config · Joi/Zod validation · .env files
+│
+├─ 6. Auth & Security
+│   ├─ JWT + Passport  @nestjs/passport · JwtStrategy · access/refresh token
+│   ├─ RBAC            @Roles() decorator · custom guard · SetMetadata
+│   └─ Security        Helmet · ThrottlerModule · bcrypt · CORS
+│
+├─ 7. Advanced Features
+│   ├─ Microservices   TCP · Redis · gRPC + Protobuf · Kafka · RabbitMQ
+│   ├─ GraphQL         @nestjs/graphql · @Resolver · code-first · subscriptions
+│   ├─ WebSockets      @WebSocketGateway · @SubscribeMessage · Socket.io
+│   ├─ Custom Decorators createParamDecorator · @User() · SetMetadata
+│   └─ OpenAPI/Swagger @nestjs/swagger · @ApiProperty · auto-generated docs
+│
+├─ 8. Testing & Tooling
+│   ├─ Unit Tests      @nestjs/testing · TestingModule · mock providers · Vitest/Jest
+│   └─ E2E Tests       Supertest · e2e spec · SWC (fast)
+│
+└─ 9. Production & Scaling
+    ├─ Performance     Fastify adapter · SWC compilation · standalone apps
+    ├─ Deployment      Docker multi-stage · Kubernetes · AWS Lambda · PM2
+    └─ Observability   OpenTelemetry · Pino/Winston · graceful shutdown
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+REQUEST LIFECYCLE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Request → Middleware → Guard → Interceptor(pre) → Pipe
+        → Controller → Service → Interceptor(post) → Exception Filter → Response
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+LEARNING PATHS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Beginner:     Fundamentals → Modules → DI → Controllers → Services → DTOs
+Intermediate: Guards/Pipes/Interceptors → Auth → TypeORM/Prisma → Config
+Advanced:     Microservices → GraphQL → WebSockets → Custom Providers → Testing
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🎯 INTERVIEW CORE KNOWLEDGE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Modular architecture: feature modules, shared modules, dynamic modules
+DI container:         constructor injection, scopes (Singleton/Request/Transient)
+Request lifecycle:    Middleware → Guard → Interceptor(pre) → Pipe → Handler → Interceptor(post) → Filter
+Guard vs Pipe vs Interceptor: auth/roles · validate/transform · wrap handler (AOP)
+JWT auth flow:        Passport strategy · JwtStrategy · validate payload · @UseGuards(AuthGuard)
+Prisma vs TypeORM:    schema-first vs entity decorators · type safety vs flexibility
+DTO validation:       class-validator + ValidationPipe + class-transformer
+Layered architecture: Controller → Service → Repository → Database`,
+  },
+
+  // ══════════════════════════════════════════════════════════
+  // 1. FUNDAMENTALS
+  // ══════════════════════════════════════════════════════════
+  {
+    category: 'Fundamentals', difficulty: 'Beginner',
+    question: 'NestJS Fundamentals — philosophy, decorators, bootstrap, and v11/v12 highlights?',
+    answer: '**NestJS** is a TypeScript-first Node.js framework for building scalable server-side apps. It wraps Express (or Fastify) and adds **Angular-inspired architecture**: modules, providers, DI container. **Decorators** drive everything: `@Module` groups related code, `@Controller` handles routing, `@Injectable` marks a class as a provider, `@Get/@Post` etc. bind HTTP methods. Decorators use `reflect-metadata` to store metadata on classes. **Bootstrap** in `main.ts`: `NestFactory.create(AppModule)` creates the app, then optionally set global pipes/guards/interceptors before `app.listen(3000)`. **v11**: SWC as the default compiler (10× faster), Vitest support, Express v5. **v12** (upcoming): Native ESM.',
+    tip: `// main.ts — bootstrap
+import { NestFactory } from '@nestjs/core';
+import { ValidationPipe } from '@nestjs/common';
+import { AppModule } from './app.module';
+
+async function bootstrap() {
+  const app = await NestFactory.create(AppModule);
+
+  app.useGlobalPipes(new ValidationPipe({
+    whitelist: true,   // strip unknown props
+    transform: true,   // auto-cast to DTO types
+  }));
+  app.enableCors({ origin: process.env.ALLOWED_ORIGINS });
+  app.enableShutdownHooks();
+
+  await app.listen(3000);
+}
+bootstrap();
+
+// Key decorators at a glance
+// @Module({ imports, providers, controllers, exports })
+// @Controller('users')       — route prefix
+// @Injectable()              — DI-able provider
+// @Get() @Post() @Put(':id') @Delete(':id')
+// @Param('id') @Body() @Query() @Headers()`,
+  },
+
+  // ══════════════════════════════════════════════════════════
+  // 2. CORE CONCEPTS
+  // ══════════════════════════════════════════════════════════
+  {
+    category: 'Core Concepts', difficulty: 'Intermediate',
+    question: 'NestJS Core Concepts — Modules, Dependency Injection, and Custom Providers?',
+    answer: '**Modules** are the main organizational unit. Each feature gets its own module with `imports` (other modules), `providers` (services, repos), `controllers`, and `exports` (what other modules can use). **Shared modules** export providers for reuse. **Dynamic modules** are configured at import time via `forRoot()` / `forRootAsync()`. **Dependency Injection**: NestJS maintains a DI container. Providers are injected via constructor. Three scopes — **Singleton** (default, one instance per app), **Request** (new per HTTP request), **Transient** (new per injection). **Custom providers** let you register anything: `useValue` for constants, `useFactory` for async/config-based creation, `useClass` to swap implementations, `useExisting` to alias.',
+    tip: `// Feature module
+@Module({
+  imports:     [TypeOrmModule.forFeature([User])],
+  controllers: [UsersController],
+  providers:   [UsersService],
+  exports:     [UsersService],  // share with other modules
+})
+export class UsersModule {}
+
+// Constructor injection
+@Injectable()
+export class UsersService {
+  constructor(
+    private readonly repo: UsersRepository,
+    private readonly config: ConfigService,
+  ) {}
+}
+
+// Custom providers
+const providers = [
+  { provide: 'CONFIG',   useValue: { port: 3000 } },
+  { provide: Logger,     useClass: WinstonLogger },
+  { provide: 'DB_CONN',
+    useFactory: async (cfg: ConfigService) => createConn(cfg),
+    inject: [ConfigService] },
+  { provide: CacheStore, useExisting: RedisService },
+];`,
+  },
+
+  // ══════════════════════════════════════════════════════════
+  // 3. DAILY TOOLS — Request pipeline + DTO validation
+  // ══════════════════════════════════════════════════════════
+  {
+    category: 'Daily Tools', difficulty: 'Intermediate',
+    question: 'NestJS Daily Tools — request pipeline (Guards, Pipes, Interceptors) and DTO validation?',
+    answer: '**Request pipeline order**: Middleware → Guard → Interceptor(pre) → Pipe → Handler → Interceptor(post) → Exception Filter. **Guards** (`canActivate()`) decide if a request proceeds — used for auth and roles. **Pipes** validate and transform incoming data — `ValidationPipe` uses `class-validator` decorators on DTOs. **Interceptors** wrap the handler with `RxJS Observable` — used for logging, caching, response transformation. **Exception Filters** catch thrown errors and format the HTTP response. **DTOs** with `class-validator`: decorate properties with `@IsString`, `@IsEmail`, `@IsNotEmpty`, `@IsOptional`, `@IsEnum` etc. Global `ValidationPipe` with `whitelist: true` auto-strips unknown properties; `transform: true` auto-casts to DTO types.',
+    tip: `// DTO with class-validator
+import { IsEmail, IsNotEmpty, IsOptional, MinLength } from 'class-validator';
+import { Exclude, Expose } from 'class-transformer';
+
+export class CreateUserDto {
+  @IsNotEmpty() name:     string;
+  @IsEmail()    email:    string;
+  @MinLength(8) password: string;
+  @IsOptional() role?:    string;
+}
+export class UserResponseDto {
+  @Expose()  id:       number;
+  @Expose()  email:    string;
+  @Exclude() password: string;  // never sent
+}
+
+// Guard — authorization
+@Injectable()
+export class AuthGuard implements CanActivate {
+  canActivate(ctx: ExecutionContext): boolean {
+    const req = ctx.switchToHttp().getRequest();
+    return validateToken(req.headers.authorization);
+  }
+}
+
+// Interceptor — AOP pattern (logging)
+@Injectable()
+export class LoggingInterceptor implements NestInterceptor {
+  intercept(ctx: ExecutionContext, next: CallHandler): Observable<any> {
+    const start = Date.now();
+    return next.handle().pipe(
+      tap(() => console.log('Duration:', Date.now() - start, 'ms'))
+    );
+  }
+}`,
+  },
+
+  // ══════════════════════════════════════════════════════════
+  // 4. ADVANCED FEATURES
+  // ══════════════════════════════════════════════════════════
+  {
+    category: 'Advanced Features', difficulty: 'Advanced',
+    question: 'NestJS Advanced Features — Microservices, GraphQL, WebSockets, custom decorators, and Swagger?',
+    answer: '**Microservices**: NestJS supports TCP, Redis pub/sub, gRPC (Protobuf), Kafka, RabbitMQ. Use `ClientsModule.register()` to connect and `@MessagePattern()` to define handlers. **GraphQL**: Use `@nestjs/graphql` code-first — `@Resolver`, `@Query`, `@Mutation`, `@ObjectType`. Supports subscriptions. **WebSockets**: `@WebSocketGateway()` handles real-time connections; `@SubscribeMessage("event")` handles incoming messages. Works with Socket.io or native ws. **Custom decorators**: `createParamDecorator()` creates param extractors (e.g. `@CurrentUser()`). `SetMetadata()` attaches metadata for guards/interceptors to read via `Reflector`. **Swagger**: `@nestjs/swagger` auto-generates OpenAPI docs — `@ApiProperty`, `@ApiTags`, `@ApiOperation`, `@ApiBearerAuth`.',
+    tip: `// Custom parameter decorator
+export const CurrentUser = createParamDecorator(
+  (data: unknown, ctx: ExecutionContext) => {
+    const req = ctx.switchToHttp().getRequest();
+    return req.user;
+  },
+);
+
+// Usage: @Get('me') getMe(@CurrentUser() user: User) {}
+
+// GraphQL resolver — code-first
+@Resolver(() => User)
+export class UsersResolver {
+  @Query(() => [User])
+  users() { return this.usersService.findAll(); }
+
+  @Mutation(() => User)
+  createUser(@Args('input') input: CreateUserInput) {
+    return this.usersService.create(input);
+  }
+}
+
+// WebSocket Gateway
+@WebSocketGateway({ cors: true })
+export class EventsGateway {
+  @WebSocketServer() server: Server;
+
+  @SubscribeMessage('message')
+  handleMessage(@MessageBody() data: string) {
+    this.server.emit('broadcast', data);
+  }
+}`,
+  },
+
+  // ══════════════════════════════════════════════════════════
+  // 5. PERFORMANCE & SECURITY
+  // ══════════════════════════════════════════════════════════
+  {
+    category: 'Performance & Security', difficulty: 'Advanced',
+    question: 'NestJS Performance & Security — JWT auth, RBAC, security hardening, and testing?',
+    answer: '**JWT + Passport**: Install `@nestjs/passport` + `passport-jwt`. Create `JwtStrategy` extending `PassportStrategy(Strategy)` that extracts the Bearer token, verifies it, and returns the user payload. Protect routes with `@UseGuards(AuthGuard("jwt"))`. **RBAC**: Create `@Roles()` via `SetMetadata("roles", roles)` and a `RolesGuard` that uses `Reflector` to read metadata and checks `request.user.roles`. **Security hardening**: Helmet (HTTP security headers), `@nestjs/throttler` (rate limiting), bcrypt (10+ rounds), `app.enableCors()`. **Testing**: `@nestjs/testing` creates a test module with real DI. Mock repo/service dependencies with `useValue`. E2E tests use `Supertest` against a fully bootstrapped app (Jest or Vitest).',
+    tip: `// JWT Strategy
+@Injectable()
+export class JwtStrategy extends PassportStrategy(Strategy) {
+  constructor() {
+    super({
+      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+      secretOrKey:    process.env.JWT_SECRET,
+    });
+  }
+  async validate(payload: { sub: number; email: string }) {
+    return { id: payload.sub, email: payload.email };
+  }
+}
+
+// RBAC — decorator + guard
+export const Roles = (...roles: Role[]) => SetMetadata('roles', roles);
+
+@Injectable()
+export class RolesGuard implements CanActivate {
+  constructor(private reflector: Reflector) {}
+  canActivate(ctx: ExecutionContext): boolean {
+    const required = this.reflector.get<Role[]>('roles', ctx.getHandler());
+    if (!required) return true;
+    const { user } = ctx.switchToHttp().getRequest();
+    return required.some(r => user.roles.includes(r));
+  }
+}
+
+// Unit test
+const module = await Test.createTestingModule({
+  providers: [UsersService,
+    { provide: getRepositoryToken(User), useValue: { find: jest.fn() } }]
+}).compile();`,
+  },
+
+  // ══════════════════════════════════════════════════════════
+  // 6. ECOSYSTEM
+  // ══════════════════════════════════════════════════════════
+  {
+    category: 'Ecosystem', difficulty: 'Advanced',
+    question: 'NestJS Ecosystem — data access (Prisma vs TypeORM), config, production, and observability?',
+    answer: '**Data access**: **Prisma** (schema-first: define models in `schema.prisma`, generates type-safe client, excellent DX) vs **TypeORM** (entity decorators + `@InjectRepository`, Active Record or Data Mapper pattern) vs **Mongoose** (MongoDB, schema validation) vs **Drizzle** (SQL-first, lightweight). **Config**: `@nestjs/config` loads `.env` files; validate with Joi or Zod via `validationSchema`. **Production — Fastify**: Swap the Express adapter for `FastifyAdapter` for ~2× throughput. **SWC**: Replaces `ts-jest` — 10× faster compile. **Docker**: Multi-stage build — compile in `node:alpine` builder stage, copy `dist/` to lean runtime image. **Deployment**: Kubernetes (pod scaling), AWS Lambda, PM2 for bare-metal. **Observability**: OpenTelemetry SDK for traces, Pino/Winston for structured JSON logging, `enableShutdownHooks()` for graceful SIGTERM handling.',
+    tip: `// Prisma service
+@Injectable()
+export class PrismaService extends PrismaClient implements OnModuleInit {
+  async onModuleInit() { await this.$connect(); }
+}
+
+// TypeORM — repository pattern
+@Injectable()
+export class UsersService {
+  constructor(
+    @InjectRepository(User) private repo: Repository<User>,
+  ) {}
+  findAll()            { return this.repo.find(); }
+  findOne(id: number)  { return this.repo.findOneBy({ id }); }
+}
+
+// Config with validation
+ConfigModule.forRoot({
+  isGlobal: true,
+  validationSchema: Joi.object({
+    DATABASE_URL: Joi.string().required(),
+    JWT_SECRET:   Joi.string().min(32).required(),
+    PORT:         Joi.number().default(3000),
+  }),
+})
+
+// Fastify for production performance
+const app = await NestFactory.create<NestFastifyApplication>(
+  AppModule,
+  new FastifyAdapter({ logger: true }),
+);`,
+  },
+];
+
+/* ═══════════════════════════════════════════════════════════
    SUBJECTS
 ═══════════════════════════════════════════════════════════ */
 const SUBJECTS = {
@@ -20605,6 +20932,7 @@ const SUBJECTS = {
   'Internet':   INTERNET_CARDS,
   'Linux':      LINUX_CARDS,
   'API':        API_CARDS,
+  'NestJS':               NESTJS_CARDS,
   'Node.js':              NODEJS_CARDS,
   'Express.js':           EXPRESS_CARDS,
   'PostgreSQL':           POSTGRESQL_CARDS,
@@ -20633,7 +20961,7 @@ const SUBJECT_GROUPS = {
   'Core':        ['DSA_JavaScript', 'Internet', 'Linux', 'Tricked Memory'],
   'Language':    ['Python', 'C#', 'C++', 'JavaScript'],
   'Frontend':    ['Html', 'CSS', 'npm', 'Git/Github', 'Tailwind CSS', 'React & SSR', 'Redux'],
-  'Backend':     ['Node.js', 'Express.js', 'SQL', 'Database', 'PostgreSQL', 'API', 'JWT authentication', 'Redis', 'Testing & Containers', 'CI/CD', 'AI-assist', 'Third-party generation', 'Architecture'],
+  'Backend':     ['NestJS', 'Node.js', 'Express.js', 'SQL', 'Database', 'PostgreSQL', 'API', 'JWT authentication', 'Redis', 'Testing & Containers', 'CI/CD', 'AI-assist', 'Third-party generation', 'Architecture'],
   'DevOps':      [],
 };
 
@@ -20665,6 +20993,7 @@ const SUBJECT_COLORS = {
   'Internet':   '#10b981',
   'Linux':      '#f97316',
   'API':        '#6366f1',
+  'NestJS':     '#e0234e',
   'Node.js':    '#68a063',
   'Express.js': '#595959',
   'Html':           '#e34c26',

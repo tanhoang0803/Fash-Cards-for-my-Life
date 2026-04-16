@@ -21,6 +21,8 @@
     --sql-dim: #00c89622;
     --linux: #ff6b4a;
     --linux-dim: #ff6b4a22;
+    --nest: #e0234e;
+    --nest-dim: #e0234e22;
     --text: #e2e8f0;
     --muted: #8892a4;
     --code: #c9d1e0;
@@ -115,6 +117,7 @@
   .card.react-card { border-top: 2px solid var(--react); }
   .card.sql-card { border-top: 2px solid var(--sql); }
   .card.linux-card { border-top: 2px solid var(--linux); }
+  .card.nest-card  { border-top: 2px solid var(--nest); }
 
   .card h3 {
     font-size: 13px;
@@ -127,6 +130,7 @@
   .card h3.react { color: var(--react); }
   .card h3.sql { color: var(--sql); }
   .card h3.linux { color: var(--linux); }
+  .card h3.nest  { color: var(--nest); }
 
   .card h4 {
     font-size: 12px;
@@ -231,6 +235,8 @@
   .big-label.sql .num { background: var(--sql); color: #000; }
   .big-label.linux { color: var(--linux); }
   .big-label.linux .num { background: var(--linux); color: #000; }
+  .big-label.nest { color: var(--nest); }
+  .big-label.nest .num { background: var(--nest); color: #fff; }
 
   /* ── SPAN HELPERS ── */
   .row { display: flex; gap: 12px; margin: 5px 0; }
@@ -1118,9 +1124,287 @@
   </div>
 </div>
 
+<!-- ══════════════════════════════════════════
+     NESTJS
+══════════════════════════════════════════ -->
+<hr class="divider">
+<div class="big-label nest"><span class="num">5</span> NestJS</div>
+
+<!-- Request lifecycle banner -->
+<div style="margin-bottom:14px; padding:10px 14px; border-radius:8px; border:1px solid #e0234e33; background:#e0234e0d;">
+  <div style="font-size:11px; font-weight:700; letter-spacing:2px; text-transform:uppercase; font-family:'JetBrains Mono',monospace; color:var(--nest); margin-bottom:8px;">Request Lifecycle — Interview Gold</div>
+  <div style="font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--muted); display:flex; flex-wrap:wrap; gap:4px; align-items:center;">
+    <span style="background:var(--nest-dim); color:var(--nest); padding:2px 8px; border-radius:4px; font-weight:600;">Request</span>
+    <span>→</span>
+    <span style="background:#1e2330; color:var(--keyword); padding:2px 8px; border-radius:4px;">Middleware</span>
+    <span>→</span>
+    <span style="background:#1e2330; color:var(--fn); padding:2px 8px; border-radius:4px;">Guard</span>
+    <span>→</span>
+    <span style="background:#1e2330; color:var(--string); padding:2px 8px; border-radius:4px;">Interceptor (pre)</span>
+    <span>→</span>
+    <span style="background:#1e2330; color:var(--code); padding:2px 8px; border-radius:4px;">Pipe</span>
+    <span>→</span>
+    <span style="background:#1e2330; color:var(--js); padding:2px 8px; border-radius:4px;">Controller</span>
+    <span>→</span>
+    <span style="background:#1e2330; color:var(--react); padding:2px 8px; border-radius:4px;">Service</span>
+    <span>→</span>
+    <span style="background:#1e2330; color:var(--string); padding:2px 8px; border-radius:4px;">Interceptor (post)</span>
+    <span>→</span>
+    <span style="background:#1e2330; color:#ef4444; padding:2px 8px; border-radius:4px;">Exception Filter</span>
+    <span>→</span>
+    <span style="background:var(--nest-dim); color:var(--nest); padding:2px 8px; border-radius:4px; font-weight:600;">Response</span>
+  </div>
+</div>
+
+<div class="grid-3">
+  <!-- Architecture & Bootstrap -->
+  <div class="card nest-card">
+    <h3 class="nest">Architecture & Bootstrap</h3>
+    <h4>Philosophy</h4>
+    <table class="ref-table">
+      <tr><td>TypeScript-first</td><td>Built with &amp; for TypeScript</td></tr>
+      <tr><td>Modular</td><td>Feature modules, shared modules</td></tr>
+      <tr><td>DI container</td><td>Inversion of Control built-in</td></tr>
+      <tr><td>Express / Fastify</td><td>Pluggable HTTP adapters</td></tr>
+    </table>
+    <h4>main.ts — bootstrap</h4>
+<pre><span class="k">import</span> <span class="c">{ NestFactory } </span><span class="k">from</span> <span class="s">'@nestjs/core'</span><span class="c">;</span>
+
+<span class="k">async function</span> <span class="f">bootstrap</span><span class="c">() {</span>
+  <span class="k">const</span> <span class="c">app = </span><span class="k">await</span> <span class="c">NestFactory.</span><span class="f">create</span><span class="c">(AppModule);</span>
+  <span class="c">app.</span><span class="f">useGlobalPipes</span><span class="c">(</span><span class="k">new</span> <span class="f">ValidationPipe</span><span class="c">({</span>
+    <span class="c">whitelist: </span><span class="k">true</span><span class="c">, transform: </span><span class="k">true</span>
+  <span class="c">}));</span>
+  <span class="c">app.</span><span class="f">enableCors</span><span class="c">();</span>
+  <span class="c">app.</span><span class="f">enableShutdownHooks</span><span class="c">();</span>
+  <span class="k">await</span> <span class="c">app.</span><span class="f">listen</span><span class="c">(</span><span class="f">3000</span><span class="c">);</span>
+<span class="c">}</span>
+<span class="f">bootstrap</span><span class="c">();</span></pre>
+    <h4>Key Decorators</h4>
+<pre><span class="c">@</span><span class="f">Module</span><span class="c">({ imports, providers, controllers, exports })</span>
+<span class="c">@</span><span class="f">Controller</span><span class="c">(</span><span class="s">'users'</span><span class="c">)    </span><span class="cm">// route prefix</span>
+<span class="c">@</span><span class="f">Injectable</span><span class="c">()           </span><span class="cm">// DI provider</span>
+<span class="c">@</span><span class="f">Get</span><span class="c">() @</span><span class="f">Post</span><span class="c">() @</span><span class="f">Put</span><span class="c">(</span><span class="s">':id'</span><span class="c">) @</span><span class="f">Delete</span><span class="c">(</span><span class="s">':id'</span><span class="c">)</span>
+<span class="c">@</span><span class="f">Param</span><span class="c">(</span><span class="s">'id'</span><span class="c">) @</span><span class="f">Body</span><span class="c">() @</span><span class="f">Query</span><span class="c">() @</span><span class="f">Headers</span><span class="c">()</span></pre>
+  </div>
+
+  <!-- Modules & DI -->
+  <div class="card nest-card">
+    <h3 class="nest">Modules &amp; Dependency Injection</h3>
+    <h4>Module Structure</h4>
+<pre><span class="c">@</span><span class="f">Module</span><span class="c">({</span>
+  <span class="c">imports:     [TypeOrmModule, AuthModule],</span>
+  <span class="c">controllers: [UsersController],</span>
+  <span class="c">providers:   [UsersService],</span>
+  <span class="c">exports:     [UsersService],  </span><span class="cm">// share</span>
+<span class="c">})</span>
+<span class="k">export class</span> <span class="f">UsersModule</span> <span class="c">{}</span></pre>
+    <h4>DI Scopes</h4>
+    <table class="ref-table">
+      <tr><td>Singleton</td><td>One instance per app (default)</td></tr>
+      <tr><td>Request</td><td>New instance per HTTP request</td></tr>
+      <tr><td>Transient</td><td>New instance per injection</td></tr>
+    </table>
+    <h4>Custom Providers</h4>
+<pre><span class="cm">// inject a constant</span>
+<span class="c">{ provide: </span><span class="s">'CFG'</span><span class="c">, useValue: { port: </span><span class="f">3000</span> <span class="c">} }</span>
+
+<span class="cm">// swap class implementation</span>
+<span class="c">{ provide: Logger, useClass: WinstonLogger }</span>
+
+<span class="cm">// async factory with injection</span>
+<span class="c">{ provide: </span><span class="s">'DB'</span><span class="c">,</span>
+  <span class="c">useFactory: </span><span class="k">async</span> <span class="c">(cfg) => createConn(cfg),</span>
+  <span class="c">inject: [ConfigService] }</span></pre>
+  </div>
+
+  <!-- Request Pipeline -->
+  <div class="card nest-card">
+    <h3 class="nest">Request Pipeline</h3>
+    <h4>Guard — authorization</h4>
+<pre><span class="c">@</span><span class="f">Injectable</span><span class="c">()</span>
+<span class="k">export class</span> <span class="f">AuthGuard</span> <span class="k">implements</span> <span class="c">CanActivate {</span>
+  <span class="f">canActivate</span><span class="c">(ctx: ExecutionContext) {</span>
+    <span class="k">const</span> <span class="c">req = ctx.</span><span class="f">switchToHttp</span><span class="c">().</span><span class="f">getRequest</span><span class="c">();</span>
+    <span class="k">return</span> <span class="f">validateToken</span><span class="c">(req.headers.authorization);</span>
+  <span class="c">}</span>
+<span class="c">}</span></pre>
+    <h4>Pipe — validate &amp; transform</h4>
+<pre><span class="c">app.</span><span class="f">useGlobalPipes</span><span class="c">(</span><span class="k">new</span> <span class="f">ValidationPipe</span><span class="c">({</span>
+  <span class="c">whitelist: </span><span class="k">true</span><span class="c">,            </span><span class="cm">// strip extra</span>
+  <span class="c">forbidNonWhitelisted: </span><span class="k">true</span><span class="c">, </span><span class="cm">// throw on extra</span>
+  <span class="c">transform: </span><span class="k">true</span><span class="c">,            </span><span class="cm">// auto-cast</span>
+<span class="c">}));</span></pre>
+    <h4>Exception Filter</h4>
+<pre><span class="c">@</span><span class="f">Catch</span><span class="c">(HttpException)</span>
+<span class="k">export class</span> <span class="f">HttpExFilter</span> <span class="k">implements</span> <span class="c">ExceptionFilter {</span>
+  <span class="f">catch</span><span class="c">(ex: HttpException, host: ArgumentsHost) {</span>
+    <span class="k">const</span> <span class="c">res = host.</span><span class="f">switchToHttp</span><span class="c">().</span><span class="f">getResponse</span><span class="c">();</span>
+    <span class="c">res.</span><span class="f">status</span><span class="c">(ex.</span><span class="f">getStatus</span><span class="c">()).</span><span class="f">json</span><span class="c">({ message: ex.message });</span>
+  <span class="c">}</span>
+<span class="c">}</span></pre>
+  </div>
+</div>
+
+<div class="grid-3">
+  <!-- DTO & Validation -->
+  <div class="card nest-card">
+    <h3 class="nest">DTO &amp; Validation</h3>
+    <h4>DTO with class-validator</h4>
+<pre><span class="k">import</span> <span class="c">{ IsEmail, IsNotEmpty, MinLength,</span>
+<span class="c">  IsOptional } </span><span class="k">from</span> <span class="s">'class-validator'</span><span class="c">;</span>
+
+<span class="k">export class</span> <span class="f">CreateUserDto</span> <span class="c">{</span>
+  <span class="c">@</span><span class="f">IsNotEmpty</span><span class="c">() name:     </span><span class="k">string</span><span class="c">;</span>
+  <span class="c">@</span><span class="f">IsEmail</span><span class="c">()    email:    </span><span class="k">string</span><span class="c">;</span>
+  <span class="c">@</span><span class="f">MinLength</span><span class="c">(</span><span class="f">8</span><span class="c">) password: </span><span class="k">string</span><span class="c">;</span>
+  <span class="c">@</span><span class="f">IsOptional</span><span class="c">() role?:   </span><span class="k">string</span><span class="c">;</span>
+<span class="c">}</span></pre>
+    <h4>class-transformer</h4>
+<pre><span class="k">import</span> <span class="c">{ Exclude, Expose } </span><span class="k">from</span> <span class="s">'class-transformer'</span><span class="c">;</span>
+
+<span class="k">export class</span> <span class="f">UserResponseDto</span> <span class="c">{</span>
+  <span class="c">@</span><span class="f">Expose</span><span class="c">()  id:       </span><span class="k">number</span><span class="c">;</span>
+  <span class="c">@</span><span class="f">Expose</span><span class="c">()  email:    </span><span class="k">string</span><span class="c">;</span>
+  <span class="c">@</span><span class="f">Exclude</span><span class="c">() password: </span><span class="k">string</span><span class="c">; </span><span class="cm">// hidden</span>
+<span class="c">}</span></pre>
+    <h4>Common Validators</h4>
+    <table class="ref-table">
+      <tr><td>@IsString()</td><td>Must be a string</td></tr>
+      <tr><td>@IsNumber()</td><td>Must be a number</td></tr>
+      <tr><td>@IsEnum(Role)</td><td>Must be enum value</td></tr>
+      <tr><td>@IsArray()</td><td>Must be an array</td></tr>
+      <tr><td>@IsUUID()</td><td>Must be valid UUID</td></tr>
+    </table>
+  </div>
+
+  <!-- Auth & Security -->
+  <div class="card nest-card">
+    <h3 class="nest">Auth &amp; Security</h3>
+    <h4>JWT + Passport Strategy</h4>
+<pre><span class="c">@</span><span class="f">Injectable</span><span class="c">()</span>
+<span class="k">export class</span> <span class="f">JwtStrategy</span> <span class="k">extends</span> <span class="f">PassportStrategy</span><span class="c">(Strategy) {</span>
+  <span class="f">constructor</span><span class="c">() {</span>
+    <span class="k">super</span><span class="c">({</span>
+      <span class="c">jwtFromRequest: ExtractJwt.</span><span class="f">fromAuthHeaderAsBearerToken</span><span class="c">(),</span>
+      <span class="c">secretOrKey:    process.env.JWT_SECRET,</span>
+    <span class="c">});</span>
+  <span class="c">}</span>
+  <span class="k">async</span> <span class="f">validate</span><span class="c">(payload) {</span>
+    <span class="k">return</span> <span class="c">{ id: payload.sub, email: payload.email };</span>
+  <span class="c">}</span>
+<span class="c">}</span></pre>
+    <h4>RBAC — Roles Guard</h4>
+<pre><span class="cm">// decorator</span>
+<span class="k">export const</span> <span class="f">Roles</span> <span class="c">= (...r) => </span><span class="f">SetMetadata</span><span class="c">(</span><span class="s">'roles'</span><span class="c">, r);</span>
+
+<span class="cm">// guard reads metadata via Reflector</span>
+<span class="k">const</span> <span class="c">req = </span><span class="k">this</span><span class="c">.reflector.</span><span class="f">get</span><span class="c">(</span><span class="s">'roles'</span><span class="c">, ctx.</span><span class="f">getHandler</span><span class="c">());</span></pre>
+    <h4>Security Best Practices</h4>
+    <table class="ref-table">
+      <tr><td>Helmet</td><td>HTTP security headers</td></tr>
+      <tr><td>ThrottlerModule</td><td>Rate limiting (DDoS)</td></tr>
+      <tr><td>bcrypt</td><td>Password hash ≥10 rounds</td></tr>
+      <tr><td>CORS</td><td>app.enableCors({ origin })</td></tr>
+    </table>
+  </div>
+
+  <!-- Data Access & Testing -->
+  <div class="card nest-card">
+    <h3 class="nest">Data Access &amp; Testing</h3>
+    <h4>ORM Comparison</h4>
+    <table class="ref-table">
+      <tr><td>Prisma</td><td>Schema-first, type-safe client, migrations</td></tr>
+      <tr><td>TypeORM</td><td>Entity decorators, @InjectRepository</td></tr>
+      <tr><td>Mongoose</td><td>MongoDB, schema + model pattern</td></tr>
+      <tr><td>Drizzle</td><td>SQL-first, lightweight, type-safe</td></tr>
+    </table>
+    <h4>Repository Pattern</h4>
+<pre><span class="c">@</span><span class="f">Injectable</span><span class="c">()</span>
+<span class="k">export class</span> <span class="f">UsersService</span> <span class="c">{</span>
+  <span class="f">constructor</span><span class="c">(</span>
+    <span class="c">@</span><span class="f">InjectRepository</span><span class="c">(User)</span>
+    <span class="k">private</span> <span class="c">repo: Repository&lt;User&gt;</span>
+  <span class="c">) {}</span>
+  <span class="f">findAll</span><span class="c">() { </span><span class="k">return</span> <span class="k">this</span><span class="c">.repo.</span><span class="f">find</span><span class="c">(); }</span>
+<span class="c">}</span></pre>
+    <h4>Unit Testing</h4>
+<pre><span class="k">const</span> <span class="c">module = </span><span class="k">await</span> <span class="f">Test</span><span class="c">.</span><span class="f">createTestingModule</span><span class="c">({</span>
+  <span class="c">providers: [UsersService, {</span>
+    <span class="c">provide:  </span><span class="f">getRepositoryToken</span><span class="c">(User),</span>
+    <span class="c">useValue: { find: </span><span class="f">jest</span><span class="c">.</span><span class="f">fn</span><span class="c">() },</span>
+  <span class="c">}]</span>
+<span class="c">}).</span><span class="f">compile</span><span class="c">();</span></pre>
+  </div>
+</div>
+
+<div class="grid-2">
+  <!-- Advanced Features -->
+  <div class="card nest-card">
+    <h3 class="nest">Advanced Features</h3>
+    <h4>Microservices &amp; Transports</h4>
+    <table class="ref-table">
+      <tr><td>TCP</td><td>Simple message passing between services</td></tr>
+      <tr><td>Redis</td><td>Pub/Sub pattern via Redis transport</td></tr>
+      <tr><td>gRPC + Protobuf</td><td>High-performance binary RPC</td></tr>
+      <tr><td>Kafka / RabbitMQ</td><td>Event streaming &amp; message queues</td></tr>
+    </table>
+    <h4>GraphQL — code-first</h4>
+<pre><span class="c">@</span><span class="f">Resolver</span><span class="c">(() => User)</span>
+<span class="k">export class</span> <span class="f">UsersResolver</span> <span class="c">{</span>
+  <span class="c">@</span><span class="f">Query</span><span class="c">(() => [User])</span>
+  <span class="f">users</span><span class="c">() { </span><span class="k">return</span> <span class="k">this</span><span class="c">.svc.</span><span class="f">findAll</span><span class="c">(); }</span>
+
+  <span class="c">@</span><span class="f">Mutation</span><span class="c">(() => User)</span>
+  <span class="f">createUser</span><span class="c">(@</span><span class="f">Args</span><span class="c">(</span><span class="s">'input'</span><span class="c">) i: CreateUserInput) {</span>
+    <span class="k">return</span> <span class="k">this</span><span class="c">.svc.</span><span class="f">create</span><span class="c">(i);</span>
+  <span class="c">}</span>
+<span class="c">}</span></pre>
+    <h4>WebSocket Gateway</h4>
+<pre><span class="c">@</span><span class="f">WebSocketGateway</span><span class="c">({ cors: </span><span class="k">true</span> <span class="c">})</span>
+<span class="k">export class</span> <span class="f">EventsGateway</span> <span class="c">{</span>
+  <span class="c">@</span><span class="f">WebSocketServer</span><span class="c">() server: Server;</span>
+
+  <span class="c">@</span><span class="f">SubscribeMessage</span><span class="c">(</span><span class="s">'message'</span><span class="c">)</span>
+  <span class="f">handle</span><span class="c">(@</span><span class="f">MessageBody</span><span class="c">() data: </span><span class="k">string</span><span class="c">) {</span>
+    <span class="k">this</span><span class="c">.server.</span><span class="f">emit</span><span class="c">(</span><span class="s">'broadcast'</span><span class="c">, data);</span>
+  <span class="c">}</span>
+<span class="c">}</span></pre>
+  </div>
+
+  <!-- Production & Scaling -->
+  <div class="card nest-card">
+    <h3 class="nest">Production &amp; Scaling</h3>
+    <h4>Performance</h4>
+    <table class="ref-table">
+      <tr><td>Fastify adapter</td><td>~2× throughput vs Express</td></tr>
+      <tr><td>SWC compiler</td><td>10× faster than tsc build</td></tr>
+      <tr><td>Standalone app</td><td>createApplicationContext()</td></tr>
+    </table>
+    <h4>Docker Multi-stage</h4>
+<pre><span class="lx-c">FROM</span> node:20-alpine <span class="k">AS</span> builder
+<span class="lx-c">WORKDIR</span> /app
+<span class="lx-c">COPY</span> package*.json ./ &amp;&amp; <span class="lx-c">RUN</span> npm ci
+<span class="lx-c">COPY</span> . . &amp;&amp; <span class="lx-c">RUN</span> npm run build
+
+<span class="lx-c">FROM</span> node:20-alpine
+<span class="lx-c">WORKDIR</span> /app
+<span class="lx-c">COPY</span> --from=builder /app/dist ./dist
+<span class="lx-c">COPY</span> --from=builder /app/node_modules ./node_modules
+<span class="lx-c">CMD</span> ["node", "dist/main"]</pre>
+    <h4>Observability</h4>
+    <table class="ref-table">
+      <tr><td>OpenTelemetry</td><td>Traces, metrics, logs (OTLP)</td></tr>
+      <tr><td>Pino / Winston</td><td>Structured JSON logging</td></tr>
+      <tr><td>enableShutdownHooks()</td><td>SIGTERM → graceful close</td></tr>
+      <tr><td>ConfigModule + Joi/Zod</td><td>Env validation at startup</td></tr>
+    </table>
+  </div>
+</div>
+
 <!-- Footer -->
 <div style="text-align:center; color: var(--comment); font-family:'JetBrains Mono',monospace; font-size:12px; margin-top:20px; padding-top:16px; border-top:1px solid var(--border);">
-  Junior Developer Daily Essentials · JavaScript · React + Redux · SQL · Linux · 2024
+  Junior Developer Daily Essentials · JavaScript · React + Redux · SQL · Linux · NestJS · 2026
 </div>
 
 </body>
