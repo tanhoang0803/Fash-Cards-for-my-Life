@@ -29,6 +29,8 @@
     --dsa-dim: #f9731622;
     --infra: #94a3b8;
     --infra-dim: #94a3b822;
+    --tooling: #0ea5e9;
+    --tooling-dim: #0ea5e922;
     --text: #e2e8f0;
     --muted: #8892a4;
     --code: #c9d1e0;
@@ -93,6 +95,7 @@
   .pill-ts    { background: var(--ts-dim);    color: var(--ts);    border: 1px solid #3178c644; }
   .pill-dsa   { background: var(--dsa-dim);   color: var(--dsa);   border: 1px solid #f9731644; }
   .pill-infra { background: var(--infra-dim); color: var(--infra); border: 1px solid #94a3b844; }
+  .pill-tooling { background: var(--tooling-dim); color: var(--tooling); border: 1px solid #0ea5e944; }
 
   /* ── GRID ── */
   .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
@@ -131,6 +134,7 @@
   .card.ts-card    { border-top: 2px solid var(--ts); }
   .card.dsa-card   { border-top: 2px solid var(--dsa); }
   .card.infra-card { border-top: 2px solid var(--infra); }
+  .card.tooling-card { border-top: 2px solid var(--tooling); }
 
   .card h3 {
     font-size: 13px;
@@ -147,6 +151,7 @@
   .card h3.ts    { color: var(--ts); }
   .card h3.dsa   { color: var(--dsa); }
   .card h3.infra { color: var(--infra); }
+  .card h3.tooling { color: var(--tooling); }
 
   .card h4 {
     font-size: 12px;
@@ -214,6 +219,7 @@
   .tip.sql-tip { border-color: var(--sql); }
   .tip.linux-tip { border-color: var(--linux); }
   .tip.infra-tip { border-color: var(--infra); }
+  .tip.tooling-tip { border-color: var(--tooling); }
 
   /* ── DIVIDER ── */
   .divider {
@@ -260,6 +266,8 @@
   .big-label.dsa .num { background: var(--dsa); color: #fff; }
   .big-label.infra { color: var(--infra); }
   .big-label.infra .num { background: var(--infra); color: #fff; }
+  .big-label.tooling { color: var(--tooling); }
+  .big-label.tooling .num { background: var(--tooling); color: #fff; }
 
   /* ── SPAN HELPERS ── */
   .row { display: flex; gap: 12px; margin: 5px 0; }
@@ -288,7 +296,7 @@
 <!-- HEADER -->
 <div class="header">
   <h1>Junior Developer — Daily Essentials</h1>
-  <p>JAVASCRIPT · REACT + REDUX · SQL · LINUX · NESTJS · TYPESCRIPT · DSA · INFRA ARCH — QUICK REFERENCE</p>
+  <p>JAVASCRIPT · REACT + REDUX · SQL · LINUX · NESTJS · TYPESCRIPT · DSA · INFRA ARCH · FS TOOLING — QUICK REFERENCE</p>
   <div class="pills">
     <span class="pill pill-js">JS ES6+</span>
     <span class="pill pill-react">React + Redux</span>
@@ -298,6 +306,7 @@
     <span class="pill pill-ts">TypeScript</span>
     <span class="pill pill-dsa">DSA</span>
     <span class="pill pill-infra">Infra Arch</span>
+    <span class="pill pill-tooling">FS Tooling</span>
   </div>
 </div>
 
@@ -2792,9 +2801,239 @@ npx shadcn-ui@latest add button dialog
   </div>
 </div>
 
+<hr class="divider">
+
+<!-- ══════════════════════════════════════════
+     FULL-STACK ENTERPRISE TOOLING
+══════════════════════════════════════════ -->
+<div class="big-label tooling"><span class="num">9</span> Full-Stack Enterprise Tooling</div>
+
+<!-- Overview row -->
+<div class="grid-2">
+  <div class="card tooling-card">
+    <h3 class="tooling">SaaS Fast-Moving Stack (2026)</h3>
+    <div class="tip tooling-tip">TypeScript · React · NestJS · 2026 — recommended starting point for new SaaS products</div>
+    <table class="ref-table">
+      <tr><td>Frontend</td><td>Next.js App Router, shadcn/ui + Tailwind, TanStack Query</td></tr>
+      <tr><td>Backend</td><td>NestJS + Prisma, PostgreSQL + pgvector, Redis (BullMQ)</td></tr>
+      <tr><td>Auth</td><td>Clerk — orgs, MFA, social login, Stripe billing built-in</td></tr>
+      <tr><td>Payments</td><td>Stripe — subscriptions, webhooks, Radar fraud, customer portal</td></tr>
+      <tr><td>Email</td><td>Resend + React Email templates (TypeScript SDK, great DX)</td></tr>
+      <tr><td>Analytics</td><td>PostHog (events, flags, session replay) + Sentry (errors)</td></tr>
+      <tr><td>AI / RAG</td><td>Vercel AI SDK + pgvector + LiteLLM gateway</td></tr>
+      <tr><td>Deploy</td><td>Vercel (Next.js) + Railway (NestJS + PostgreSQL + Redis)</td></tr>
+    </table>
+  </div>
+  <div class="card tooling-card">
+    <h3 class="tooling">Enterprise Heavy Stack &amp; Trade-offs</h3>
+    <table class="ref-table">
+      <tr><td>Auth</td><td>Auth0 — SAML/OIDC, MFA, compliance (SOC2/HIPAA), enterprise SSO</td></tr>
+      <tr><td>CMS</td><td>Contentful / Sanity — editorial workflows, localization, governance</td></tr>
+      <tr><td>CRM</td><td>HubSpot / Salesforce — pipelines, email sequences, marketing</td></tr>
+      <tr><td>Infra</td><td>AWS EKS + Terraform + Helm — full K8s control, CloudFront CDN</td></tr>
+      <tr><td>Observability</td><td>OTel + Prometheus + Grafana — full telemetry + alerting stack</td></tr>
+    </table>
+    <h4>Managed vs Self-hosted</h4>
+    <table class="ref-table">
+      <tr><td>Managed (DX)</td><td>Vercel · Clerk · Contentful · Stripe · Resend · Pinecone · PostHog Cloud</td></tr>
+      <tr><td>Self-hosted (control)</td><td>Payload · Strapi · n8n · PostHog OSS · pgvector · Railway · Render</td></tr>
+    </table>
+    <div class="tip tooling-tip">Rule: don't self-host what you can pay $50/mo for at early stage — graduate when bill exceeds $500 or compliance demands it</div>
+  </div>
+</div>
+
+<!-- Row 1: Hosting, DB, Auth, Payments -->
+<div class="grid-4">
+  <div class="card tooling-card">
+    <h3 class="tooling">1. Hosting &amp; CDN</h3>
+    <table class="ref-table">
+      <tr><td>Vercel</td><td>best Next.js — Edge SSR, AI SDK native, zero-config, preview URLs per PR</td></tr>
+      <tr><td>Cloudflare</td><td>best price/perf — Workers, Pages, KV, D1 (SQLite edge), R2 (S3-compat)</td></tr>
+      <tr><td>AWS EKS/ECS</td><td>enterprise — full K8s control, CloudFront CDN, complex 2-4 week setup</td></tr>
+      <tr><td>Railway/Render</td><td>mid-size — fast setup, DB included, auto-deploy from Git, good DX</td></tr>
+    </table>
+    <div class="tip tooling-tip">Never run NestJS on Vercel Functions — cold starts kill DB connection pools and WebSockets</div>
+  </div>
+
+  <div class="card tooling-card">
+    <h3 class="tooling">2. Databases &amp; ORM</h3>
+    <table class="ref-table">
+      <tr><td>PostgreSQL + pgvector</td><td>primary — relational + vector similarity, Row Level Security, no extra DB</td></tr>
+      <tr><td>Prisma</td><td>best DX — schema-first, auto-migrations, great autocomplete, large binary</td></tr>
+      <tr><td>Drizzle</td><td>lightweight — SQL-first TS, edge-compatible, faster runtime, no binary</td></tr>
+      <tr><td>Redis</td><td>caching · rate-limit · sessions · BullMQ jobs · pub/sub · sorted sets</td></tr>
+      <tr><td>File storage</td><td>S3 (raw) · Cloudinary (transform+CDN) · UploadThing (TS-native S3)</td></tr>
+    </table>
+<pre><span class="cm">-- pgvector: nearest neighbor search</span>
+<span class="k">SELECT</span> id, content <span class="k">FROM</span> docs
+<span class="k">ORDER BY</span> embedding <span class="c">&lt;=&gt;</span> <span class="s">'[0.1,...]'</span>::vector
+<span class="k">LIMIT</span> <span class="f">5</span>;</pre>
+  </div>
+
+  <div class="card tooling-card">
+    <h3 class="tooling">3. Auth &amp; Identity</h3>
+    <table class="ref-table">
+      <tr><td>Clerk</td><td>fastest SaaS DX — orgs, MFA, social login, Stripe billing, prebuilt UI components</td></tr>
+      <tr><td>Auth.js</td><td>OSS flexible — 60+ providers, Prisma/Drizzle adapters, self-hosted, no UI</td></tr>
+      <tr><td>Supabase Auth</td><td>Postgres-native JWT + RLS, good if already on Supabase</td></tr>
+      <tr><td>Auth0</td><td>enterprise SSO — SAML/OIDC, compliance, MFA rules, expensive at scale</td></tr>
+    </table>
+<pre><span class="cm">// NestJS Clerk JWT guard</span>
+<span class="k">const</span> payload = <span class="k">await</span>
+  clerkClient.<span class="f">verifyToken</span>(token);
+req.user = payload; <span class="cm">// userId, org</span></pre>
+  </div>
+
+  <div class="card tooling-card">
+    <h3 class="tooling">4. Payments &amp; Billing</h3>
+    <table class="ref-table">
+      <tr><td>Stripe</td><td>industry standard — subscriptions, webhooks, Radar fraud, hosted customer portal</td></tr>
+      <tr><td>Paddle / Lemon Squeezy</td><td>merchant of record — handles global VAT/GST, simpler for indie devs</td></tr>
+    </table>
+    <h4>Stripe Webhook Security</h4>
+<pre><span class="cm">// Raw body required for sig verify!</span>
+<span class="k">const</span> event = stripe.webhooks
+  .<span class="f">constructEvent</span>(req.rawBody, sig, secret);
+<span class="cm">// Store event.id — idempotency key</span>
+<span class="cm">// Outbox pattern: save → process async</span>
+<span class="cm">// Never trust frontend redirect!</span></pre>
+  </div>
+</div>
+
+<!-- Row 2: Communication, CMS, Analytics, CRM -->
+<div class="grid-4">
+  <div class="card tooling-card">
+    <h3 class="tooling">5. Communication</h3>
+    <table class="ref-table">
+      <tr><td>Resend</td><td>modern dev-first — React Email templates, TypeScript SDK, webhooks, great DX</td></tr>
+      <tr><td>SendGrid</td><td>mature — marketing + transactional, high deliverability, complex API design</td></tr>
+      <tr><td>Postmark</td><td>best deliverability for transactional only (auth emails, invoices)</td></tr>
+      <tr><td>Twilio</td><td>SMS, OTP (Verify API), WhatsApp Business, voice calls — one SDK</td></tr>
+      <tr><td>Pusher / Ably</td><td>managed WebSocket — channels, presence (who's online), message history</td></tr>
+    </table>
+<pre><span class="cm">// Resend + React Email (NestJS)</span>
+<span class="k">await</span> resend.emails.<span class="f">send</span>({
+  from: <span class="s">'no-reply@app.com'</span>,
+  to: user.email,
+  react: <span class="f">WelcomeEmail</span>({ name }),
+});</pre>
+  </div>
+
+  <div class="card tooling-card">
+    <h3 class="tooling">6. CMS &amp; Content</h3>
+    <table class="ref-table">
+      <tr><td>Payload CMS</td><td>TypeScript-first OSS — runs inside Next.js, self-hosted Postgres, REST + GraphQL auto-generated</td></tr>
+      <tr><td>Contentful</td><td>enterprise headless — GraphQL+REST, localization, workflow approvals, rich CDN</td></tr>
+      <tr><td>Sanity.io</td><td>real-time collab — GROQ queries, custom Studio UI in React, hosted Content Lake</td></tr>
+      <tr><td>Strapi</td><td>classic OSS — self-hosted, plugin ecosystem, auto-generated admin panel</td></tr>
+    </table>
+    <div class="tip tooling-tip">TS monorepo → Payload · Enterprise editorial team → Contentful · Real-time collab → Sanity · Quick OSS → Strapi</div>
+  </div>
+
+  <div class="card tooling-card">
+    <h3 class="tooling">7. Analytics &amp; Monitoring</h3>
+    <table class="ref-table">
+      <tr><td>PostHog</td><td>OSS — product analytics, session replay, feature flags, A/B testing — self-host or cloud</td></tr>
+      <tr><td>Sentry</td><td>error tracking + performance — stack traces, source maps, slow endpoint detection</td></tr>
+      <tr><td>Mixpanel/Amplitude</td><td>advanced behavioral — funnels, cohorts, retention analysis by segment</td></tr>
+    </table>
+    <div class="tip tooling-tip">Complementary stack: PostHog (product behavior) + Sentry (errors) + OTel/Grafana (infra) — use all three</div>
+<pre><span class="cm">// PostHog feature flag (Next.js)</span>
+posthog.<span class="f">isFeatureEnabled</span>(<span class="s">'new-ui'</span>);
+<span class="cm">// Sentry (NestJS)</span>
+Sentry.<span class="f">init</span>({ dsn, tracesSampleRate: <span class="f">0.1</span> });</pre>
+  </div>
+
+  <div class="card tooling-card">
+    <h3 class="tooling">8. CRM &amp; Automation</h3>
+    <table class="ref-table">
+      <tr><td>HubSpot</td><td>all-in-one CRM — contacts, deals, email sequences, pipelines, free tier (1M contacts)</td></tr>
+      <tr><td>Zapier</td><td>managed no-code — 6000+ app integrations, easy, expensive at volume</td></tr>
+      <tr><td>Make.com</td><td>visual flows — more powerful than Zapier, better value, branching logic</td></tr>
+      <tr><td>n8n</td><td>self-hosted OSS — 400+ integrations, JS/TS code nodes, GDPR-safe, free</td></tr>
+    </table>
+    <div class="tip tooling-tip">Pattern: NestJS webhook → create HubSpot contact on sign-up, trigger n8n onboarding sequence</div>
+  </div>
+</div>
+
+<!-- Row 3: AI/RAG, Forms, DevOps, DX -->
+<div class="grid-4">
+  <div class="card tooling-card">
+    <h3 class="tooling">9. AI &amp; RAG Tools</h3>
+    <table class="ref-table">
+      <tr><td>Vercel AI SDK</td><td>best React/TS — useChat, streamText, tool calling, multi-provider (OpenAI/Anthropic/Gemini)</td></tr>
+      <tr><td>pgvector</td><td>start here — vector search in Postgres, HNSW index, scales to ~5M vectors</td></tr>
+      <tr><td>Pinecone</td><td>managed vector DB — &gt;5M vectors, sub-10ms, metadata filtering, $24+/mo</td></tr>
+      <tr><td>LiteLLM</td><td>unified LLM gateway — single API for all providers, fallbacks, cost tracking</td></tr>
+      <tr><td>LangChain.js</td><td>orchestration — agents, chains, document loaders, LangSmith debugging</td></tr>
+    </table>
+<pre><span class="cm">// Vercel AI SDK — stream + tools</span>
+<span class="k">const</span> result = <span class="f">streamText</span>({
+  model: <span class="f">openai</span>(<span class="s">'gpt-4o'</span>),
+  messages,
+  tools: { <span class="f">searchDB</span>: tool({...}) },
+});
+<span class="k">return</span> result.<span class="f">toDataStreamResponse</span>();</pre>
+  </div>
+
+  <div class="card tooling-card">
+    <h3 class="tooling">10. Forms &amp; Uploads</h3>
+<pre><span class="cm">// React Hook Form + Zod</span>
+<span class="k">const</span> schema = z.<span class="f">object</span>({
+  email: z.<span class="f">string</span>().<span class="f">email</span>(),
+  pw:    z.<span class="f">string</span>().<span class="f">min</span>(<span class="f">8</span>),
+});
+<span class="k">type</span> T = z.<span class="f">infer</span>&lt;<span class="k">typeof</span> schema&gt;;
+<span class="k">const</span> form = <span class="f">useForm</span>&lt;T&gt;({
+  resolver: <span class="f">zodResolver</span>(schema),
+}); <span class="cm">// same schema validates DTO!</span></pre>
+    <table class="ref-table">
+      <tr><td>zodResolver</td><td>bridges RHF + Zod — one schema for form validation + TypeScript type</td></tr>
+      <tr><td>UploadThing</td><td>TS-native S3 uploads — type-safe file routes, useUploadThing hook, Next.js native</td></tr>
+      <tr><td>Zod everywhere</td><td>forms · API input pipe · env vars at startup · external API response parsing</td></tr>
+    </table>
+  </div>
+
+  <div class="card tooling-card">
+    <h3 class="tooling">11. DevOps &amp; CI/CD</h3>
+    <table class="ref-table">
+      <tr><td>GitHub Actions</td><td>CI/CD — lint, test, build, Docker push, deploy triggers, Copilot PR summaries</td></tr>
+      <tr><td>Turborepo + pnpm</td><td>monorepo — parallel builds, remote cache (share across CI), affected-only runs</td></tr>
+      <tr><td>Docker + K8s + Terraform</td><td>multi-stage builds, EKS, Helm charts, Terraform IaC — full enterprise infra</td></tr>
+      <tr><td>Argo CD</td><td>GitOps — declarative desired state in Git, sync loop, one-click rollback</td></tr>
+    </table>
+<pre><span class="cm"># turbo.json — pipeline config</span>
+<span class="s">"build"</span>: { <span class="s">"dependsOn"</span>: [<span class="s">"^build"</span>] }
+
+<span class="cm"># CI: build only changed packages</span>
+pnpm turbo build \
+  --filter=<span class="s">'...[origin/main]'</span></pre>
+  </div>
+
+  <div class="card tooling-card">
+    <h3 class="tooling">12. Developer Experience</h3>
+    <table class="ref-table">
+      <tr><td>shadcn/ui + Tailwind</td><td>copy-paste Radix primitives — own the components, dark mode, fully accessible</td></tr>
+      <tr><td>TanStack Query</td><td>server state — useQuery/useMutation, cache, stale-while-revalidate, optimistic UI</td></tr>
+      <tr><td>Swagger / OpenAPI</td><td>@nestjs/swagger auto-generates docs + client from DTO decorators</td></tr>
+    </table>
+<pre><span class="cm">// TanStack Query + invalidation</span>
+<span class="k">const</span> { data } = <span class="f">useQuery</span>({
+  queryKey: [<span class="s">'users'</span>],
+  queryFn: () =&gt; api.<span class="f">getUsers</span>(),
+  staleTime: <span class="f">60_000</span>,
+});
+<span class="cm">// After mutation:</span>
+queryClient.<span class="f">invalidateQueries</span>(
+  { queryKey: [<span class="s">'users'</span>] }
+);</pre>
+    <div class="tip tooling-tip">npx shadcn-ui@latest add button — copies component into your repo, you own it completely</div>
+  </div>
+</div>
+
 <!-- Footer -->
 <div style="text-align:center; color: var(--comment); font-family:'JetBrains Mono',monospace; font-size:12px; margin-top:20px; padding-top:16px; border-top:1px solid var(--border);">
-  Junior Developer Daily Essentials · JavaScript · React + Redux · SQL · Linux · NestJS · TypeScript · DSA · Enterprise Infra Architecture · 2026
+  Junior Developer Daily Essentials · JavaScript · React + Redux · SQL · Linux · NestJS · TypeScript · DSA · Enterprise Infra Architecture · Full-Stack Enterprise Tooling · 2026
 </div>
 
 </body>

@@ -23518,6 +23518,744 @@ node --experimental-strip-types server.ts`,
 ];
 
 /* ═══════════════════════════════════════════════════════════
+   FULL-STACK ENTERPRISE TOOLING CARDS
+═══════════════════════════════════════════════════════════ */
+const FULLSTACK_TOOLING_CARDS = [
+
+  {
+    category: 'FS Overview',
+    difficulty: 'Beginner',
+    question: 'Full-Stack Enterprise Tooling 2026 — mindmap of all 12 pillars',
+    answer: `The 12 pillars of modern full-stack enterprise tooling (TypeScript · React · NestJS):
+
+┌─ 1. HOSTING & CDN
+│   Vercel (Next.js/Edge) · Cloudflare (price/perf) · AWS EKS (enterprise) · Railway/Render (mid-size)
+│
+├─ 2. DATABASES & ORM
+│   PostgreSQL + pgvector (primary) · Prisma / Drizzle (ORM) · Redis (cache/queue/pub-sub) · S3 / Cloudinary / UploadThing (files)
+│
+├─ 3. AUTH & IDENTITY
+│   Clerk (SaaS DX) · Auth.js / Supabase Auth (OSS) · Auth0 (enterprise SSO/SAML)
+│
+├─ 4. PAYMENTS & BILLING
+│   Stripe (subscriptions, webhooks, Radar fraud) · Paddle / Lemon Squeezy (merchant of record)
+│
+├─ 5. COMMUNICATION & NOTIFICATIONS
+│   Resend (React email) · SendGrid / Postmark (mature) · Twilio (SMS/OTP/WhatsApp) · Pusher / Ably (WebSocket)
+│
+├─ 6. CMS & CONTENT
+│   Payload CMS (TS-first OSS) · Contentful (enterprise) · Sanity (real-time collab) · Strapi (classic OSS)
+│
+├─ 7. ANALYTICS & OBSERVABILITY
+│   PostHog (OSS analytics + feature flags) · Sentry (errors + perf) · Mixpanel / Amplitude (funnels)
+│
+├─ 8. CRM & AUTOMATION
+│   HubSpot (CRM + marketing) · Zapier / Make (managed) · n8n (self-hosted OSS)
+│
+├─ 9. AI & RAG TOOLS
+│   Vercel AI SDK (streaming + tool calling) · pgvector / Pinecone / Weaviate · LiteLLM (gateway) · LangChain.js (orchestration)
+│
+├─ 10. FORMS, VALIDATION & UPLOADS
+│   React Hook Form + Zod (daily standard) · UploadThing (TS-native S3)
+│
+├─ 11. DEVOPS & CI/CD
+│   GitHub Actions · Turborepo + pnpm monorepo · Docker + K8s + Terraform · Argo CD (GitOps)
+│
+└─ 12. DEVELOPER EXPERIENCE & UI
+    shadcn/ui + Tailwind · Zod everywhere · TanStack Query · Swagger / OpenAPI`,
+    tip: `SaaS fast stack:  Next.js · NestJS + Prisma · Clerk + Stripe · Resend + PostHog · pgvector · Vercel + Railway
+Enterprise heavy: Auth0 · Contentful/Sanity · HubSpot/Salesforce · AWS EKS · OTel + Prometheus + Grafana
+
+KEY TRADE-OFF — Managed (speed+DX) vs Self-hosted (control+cost):
+  Managed:     Vercel, Clerk, Contentful, Stripe, Resend, PostHog Cloud, Pinecone
+  Self-hosted: Payload, Strapi, n8n, PostHog OSS, pgvector, Railway/Render`,
+  },
+
+  {
+    category: 'FS Overview',
+    difficulty: 'Intermediate',
+    question: 'SaaS fast-moving stack vs Enterprise heavy stack — when to choose each in 2026?',
+    answer: `**SaaS Fast-Moving Stack** — choose when:
+  - Startup/MVP, small team (<20 devs), speed-to-market priority
+  - DX > operational cost at early stage
+  - Stack: Next.js + NestJS + Prisma + Clerk + Stripe + Resend + PostHog + pgvector + Vercel
+
+**Enterprise Heavy Stack** — choose when:
+  - Large org (100+ engineers), existing vendor contracts, compliance required
+  - HIPAA/SOC2/GDPR mandates specific tools or self-hosting
+  - Stack: Auth0 + Contentful/Sanity + HubSpot/Salesforce + AWS EKS + OTel/Grafana
+
+**5 decision factors:**
+  1. Team size — <10 devs → SaaS fast; 100+ → enterprise heavy
+  2. Compliance — HIPAA/SOC2 → Auth0, self-hosted DB, audit logs
+  3. Budget — early stage → pay per use; scale → negotiate enterprise
+  4. Vendor lock-in tolerance — low → prefer OSS/self-hosted (Payload, n8n, pgvector)
+  5. Time to market — fast → managed everything; complex → custom infra
+
+**Hybrid (most common):** Next.js on Vercel + NestJS on Railway + PostgreSQL managed
+Then graduate: Railway → AWS EKS when monthly bill exceeds $500 or compliance triggers`,
+    tip: `Rule of thumb: never self-host what you can pay $50/mo for at early stage
+  Vercel ($0) + Railway ($5-20) + Clerk ($0) + Stripe (0.3%) = ship in days, not weeks
+  Graduate to EKS when ops cost is justified by scale or security requirements`,
+  },
+
+  {
+    category: 'Hosting & CDN',
+    difficulty: 'Intermediate',
+    question: 'Vercel vs Cloudflare vs AWS vs Railway/Render — hosting choice for NestJS + Next.js apps',
+    answer: `**Vercel** — best for Next.js frontend
+  - Zero-config SSR, Edge functions, AI SDK native integration, preview URLs per PR
+  - Built-in analytics, one-click rollback, serverless and edge runtimes
+  - Limitation: NestJS needs Lambda adapter for Vercel or separate deployment
+  - Cost: generous free tier, pay per bandwidth/function invocations
+
+**Cloudflare Pages + Workers** — best price/performance
+  - Edge-first: runs at 300+ PoPs globally, $0.50 per million requests
+  - Workers KV (key-value store), D1 (SQLite at edge), R2 (S3-compatible, no egress fees)
+  - Best for: global low-latency, cost-sensitive, edge computing workloads
+
+**AWS EKS / ECS** — enterprise full control
+  - K8s on AWS: EKS (managed control plane), ECS (simpler containers)
+  - CloudFront CDN, RDS, ElastiCache, all natively integrated
+  - Complex setup: 2-4 weeks to production-ready vs 1 day on Railway
+  - Best for: compliance, 100+ RPS, existing AWS estate, fine-grained IAM
+
+**Railway / Render** — mid-size sweet spot
+  - Railway: excellent DX, deploy from Git, DB included (Postgres + Redis)
+  - Render: slightly cheaper static sites, similar DX
+  - Best for: side projects → early-stage startups, NestJS + PostgreSQL combo`,
+    tip: `Practical pattern: Next.js on Vercel + NestJS on Railway + Postgres on Railway
+Avoid running NestJS on Vercel Functions — cold starts kill DB connection pools (Prisma, TypeORM) and WebSockets
+Upgrade path: Railway → Render → ECS → EKS as traffic and compliance grow`,
+  },
+
+  {
+    category: 'Databases & ORM',
+    difficulty: 'Intermediate',
+    question: 'PostgreSQL + pgvector — why it is the primary database choice for AI-enabled apps in 2026',
+    answer: `**pgvector** adds vector similarity search to PostgreSQL — eliminating the need for a separate vector DB in most apps.
+
+**What it gives you:**
+  - vector column type (stores embedding arrays e.g. 1536 floats for OpenAI)
+  - Similarity operators: <=> (cosine), <-> (L2/Euclidean), <#> (inner product)
+  - Indexes: HNSW (fast ANN, best recall) or IVFFlat (faster build, less accurate)
+  - Native SQL joins: vector search results + relational data in one query
+  - Row Level Security: same RLS policies work for vector data (multi-tenant RAG!)
+
+**Why it dominates in 2026:**
+  - Zero extra infrastructure, backup, auth, connection pooling
+  - Scales to 1-5M vectors before performance degrades significantly
+  - Neon (serverless Postgres) and Supabase both have pgvector built-in
+
+**When to graduate to Pinecone/Weaviate:**
+  - 5M+ vectors with strict millisecond SLA
+  - Multi-modal embeddings (image + text mixed)
+  - Complex metadata filtering at billion-vector scale
+
+**Setup in NestJS + Prisma:**
+  - Enable extension: CREATE EXTENSION vector
+  - Add vector column in raw migration (Prisma doesn't natively support vector type yet)`,
+    tip: `-- Enable and use pgvector
+CREATE EXTENSION IF NOT EXISTS vector;
+ALTER TABLE documents ADD COLUMN embedding vector(1536);
+CREATE INDEX ON documents USING hnsw (embedding vector_cosine_ops);
+
+-- RAG query: find top-5 similar chunks
+SELECT id, content, embedding <=> query_vec AS distance
+FROM documents
+ORDER BY embedding <=> '[0.1, 0.2, ...]'::vector
+LIMIT 5;`,
+  },
+
+  {
+    category: 'Databases & ORM',
+    difficulty: 'Intermediate',
+    question: 'Prisma vs Drizzle ORM — which to choose for a NestJS app in 2026?',
+    answer: `**Prisma** — popular, excellent developer experience
+  - Schema-first: define schema.prisma → auto-generate migrations + typed client
+  - Outstanding autocomplete, studio GUI, huge ecosystem, best docs in class
+  - Trade-offs: heavier runtime (Rust query engine binary), slower raw query perf
+  - prisma generate required after schema changes
+  - Best for: teams that prioritize DX, quick iteration, team onboarding
+
+**Drizzle** — lightweight, SQL-first TypeScript ORM
+  - Schema defined in TypeScript files (no separate DSL), queries look like SQL
+  - No code generation step, small bundle (<100KB), edge-compatible (no binary)
+  - drizzle-kit for migrations, full SQL flexibility with type safety
+  - Best for: edge deployments, perf-critical apps, teams comfortable with SQL
+
+**Comparison table:**
+  Prisma: large binary | good perf | excellent DX | auto-migrations | partial edge support
+  Drizzle: no binary | faster | good DX | code-based migrations | full edge support
+
+**2026 verdict:**
+  - New NestJS project: Prisma (better DX, faster onboarding)
+  - Cloudflare Workers / edge: Drizzle (edge-compatible)
+  - Performance-critical: Drizzle (direct SQL-like queries)
+  - Both support PostgreSQL, MySQL, SQLite, and most major databases`,
+    tip: `// Prisma schema
+model User {
+  id    Int    @id @default(autoincrement())
+  email String @unique
+  posts Post[]
+}
+
+// Drizzle equivalent (TypeScript)
+export const users = pgTable('users', {
+  id:    serial('id').primaryKey(),
+  email: text('email').notNull().unique(),
+});
+// drizzle query (SQL-like):
+const result = await db.select().from(users).where(eq(users.id, 1));`,
+  },
+
+  {
+    category: 'Databases & ORM',
+    difficulty: 'Intermediate',
+    question: 'Redis multi-purpose layer — all use cases in a NestJS production application',
+    answer: `Redis is far more than a cache — it is a multi-purpose in-memory data layer:
+
+**1. Caching** (most common)
+  - Store DB query results with TTL: SETEX key 300 value
+  - Cache-aside pattern: read cache → miss → read DB → populate cache
+  - Invalidate on mutation: delete cache keys when data changes
+
+**2. Rate Limiting**
+  - Increment counter per user/IP per time window (fixed or sliding)
+  - @nestjs/throttler uses Redis for distributed rate limiting across instances
+
+**3. Session / Refresh Token Storage**
+  - Store JWT refresh tokens server-side — revoke by deleting Redis key
+  - Short-lived sessions: TTL auto-expires; no manual cleanup
+
+**4. Job Queues (BullMQ)**
+  - BullMQ uses Redis as queue backend — workers pull jobs from Redis lists
+  - Dashboard: Bull Board for monitoring job status, retries, delays
+  - Patterns: email sending, image processing, webhook retries
+
+**5. Pub/Sub (Event Bus)**
+  - PUBLISH/SUBSCRIBE for real-time events between microservices
+  - @nestjs/microservices Redis transport for inter-service communication
+
+**6. Sorted Sets (Leaderboards)**
+  - ZADD/ZRANGE: leaderboards, priority queues — O(log N) operations
+
+**7. Distributed Locks**
+  - Prevent race conditions across multiple NestJS instances (Redlock algorithm)`,
+    tip: `// NestJS caching with ioredis
+async getUser(id: string) {
+  const key = 'user:' + id;
+  const cached = await this.redis.get(key);
+  if (cached) return JSON.parse(cached);
+  const user = await this.db.user.findUnique({ where: { id } });
+  await this.redis.setex(key, 300, JSON.stringify(user));
+  return user;
+}
+
+// BullMQ producer
+await this.emailQueue.add('welcome', { userId: user.id }, { delay: 1000 });`,
+  },
+
+  {
+    category: 'Auth & Identity',
+    difficulty: 'Intermediate',
+    question: 'Clerk vs Auth.js vs Auth0 — auth strategy comparison for NestJS + Next.js SaaS apps',
+    answer: `**Clerk** — fastest SaaS DX (recommended for new projects in 2026)
+  - Fully managed: users, organizations, roles, MFA, social login out of the box
+  - Stripe billing integration, organization-level permissions, invite flows
+  - Beautiful prebuilt UI: <SignIn>, <UserProfile>, <OrganizationSwitcher> components
+  - NestJS: verify Clerk JWT via clerkClient.verifyToken(), use as auth guard
+  - Free up to 10K MAU, then $25/mo
+
+**Auth.js (formerly NextAuth)** — OSS, maximum flexibility
+  - Self-hosted in Next.js API routes, 60+ social providers, email magic links
+  - Adapters for Prisma/Drizzle — stores sessions in your own DB
+  - No prebuilt UI, full control over all data and session format
+  - Free (you host), requires email infrastructure for magic links
+
+**Auth0** — enterprise SSO and compliance
+  - SAML, OIDC, enterprise SSO with corporate IdP (Okta, Azure AD)
+  - Compliance features: audit logs, MFA enforcement, custom rules/actions
+  - Universal Login (hosted by Auth0), M2M tokens for service accounts
+  - Best for: enterprise clients demanding SSO; free 7.5K MAU, expensive at scale
+
+**Supabase Auth** — good if already using Supabase stack
+  - JWT + Row Level Security on Postgres — native RLS integration`,
+    tip: `// NestJS + Clerk JWT guard
+@Injectable()
+export class ClerkAuthGuard implements CanActivate {
+  async canActivate(ctx: ExecutionContext) {
+    const req = ctx.switchToHttp().getRequest();
+    const token = req.headers.authorization?.split(' ')[1];
+    const payload = await clerkClient.verifyToken(token);
+    req.user = { userId: payload.sub, orgId: payload.org_id };
+    return !!payload;
+  }
+}`,
+  },
+
+  {
+    category: 'Payments & Billing',
+    difficulty: 'Intermediate',
+    question: 'Stripe integration in NestJS — subscriptions, webhook security, and idempotency patterns',
+    answer: `**Stripe core objects:**
+  - Customer: represents your user in Stripe (stores payment methods, subscription)
+  - Price: amount + billing interval (monthly/yearly) for a product
+  - Subscription: links Customer to a Price, auto-renews, tracks status
+  - PaymentIntent: one-time charge flow with SCA (3D Secure) support
+  - Invoice: auto-generated on subscription renewal, emailed to customer
+
+**Subscription flow:**
+  1. Create Stripe Customer on user sign-up (store stripeCustomerId in DB)
+  2. Create Checkout Session → redirect user to Stripe-hosted payment UI
+  3. Stripe sends webhook: checkout.session.completed, invoice.payment_succeeded
+  4. Update DB subscription status on webhook (NOT on frontend redirect)
+
+**Webhook security (critical):**
+  - Always verify stripe-signature header with STRIPE_WEBHOOK_SECRET
+  - Must use raw body buffer — JSON.parse() breaks signature (bytes must be exact)
+  - Store event.id in DB before processing — check for duplicates (idempotency)
+  - Outbox pattern: save event → queue async processing → mark processed
+
+**Radar fraud:** Stripe's built-in ML fraud detection — no extra setup
+**Customer Portal:** Stripe-hosted subscription management UI (cancellation, upgrade, invoice history)
+
+**Paddle / Lemon Squeezy** — alternative if you need merchant of record:
+  - They handle global VAT/GST collection — you get the net amount
+  - Simpler for indie devs selling globally (no VAT registration in 50+ countries)`,
+    tip: `// NestJS webhook handler (raw body required)
+@Post('webhook')
+async webhook(@Req() req: RawBodyRequest<Request>, @Res() res: Response) {
+  const sig = req.headers['stripe-signature'] as string;
+  const event = this.stripe.webhooks.constructEvent(
+    req.rawBody, sig, process.env.STRIPE_WEBHOOK_SECRET
+  );
+  if (event.type === 'invoice.payment_succeeded') {
+    await this.billing.activate(event.data.object.customer as string);
+  }
+  res.json({ received: true });
+}`,
+  },
+
+  {
+    category: 'Communication',
+    difficulty: 'Beginner',
+    question: 'Resend vs SendGrid vs Postmark vs Twilio vs Pusher — communication tools for NestJS',
+    answer: `**Email — choose one:**
+
+  **Resend** (recommended 2026) — modern dev-first
+  - TypeScript SDK, React Email templates (email as React components)
+  - Simple REST API, webhooks for delivery events, excellent docs
+  - 3K emails/mo free, then $20/mo
+
+  **SendGrid** — mature, marketing + transactional together
+  - High deliverability, IP warming, marketing campaigns alongside transactional
+  - Older API design, more complex, but trusted at massive scale
+
+  **Postmark** — transactional specialist
+  - Industry-best deliverability for transactional (auth emails, receipts, invoices)
+  - Intentionally no marketing features — separate streams for clean deliverability
+
+**SMS / Voice / OTP:**
+  **Twilio Verify API** — standard for OTP + multi-channel
+  - Send OTP via SMS, WhatsApp, email; verify code server-side in one SDK
+  - Voice calls, WhatsApp Business, video (Twilio Programmable Video)
+
+**Realtime / WebSocket:**
+  **Pusher / Ably** — managed WebSocket at scale
+  - Channels: pub/sub rooms, presence (online users list), message history
+  - Alternative to self-hosting Socket.io when you need SLA + ops-free
+  - Use when: chat, live dashboards, collaborative cursors, notifications`,
+    tip: `// Resend + React Email template in NestJS
+import { Resend } from 'resend';
+import { WelcomeEmail } from './emails/WelcomeEmail';
+const resend = new Resend(process.env.RESEND_API_KEY);
+
+await resend.emails.send({
+  from: 'team@yourapp.com',
+  to: user.email,
+  subject: 'Welcome to YourApp',
+  react: WelcomeEmail({ name: user.name, verifyUrl }),
+});`,
+  },
+
+  {
+    category: 'CMS & Content',
+    difficulty: 'Intermediate',
+    question: 'Payload CMS vs Contentful vs Sanity vs Strapi — headless CMS comparison 2026',
+    answer: `**Payload CMS** — TypeScript-first OSS (best for TS teams)
+  - Runs inside Next.js App Router — admin at /admin, API at /api, same deployment
+  - Full TypeScript: schema defined in TS, admin UI + REST + GraphQL auto-generated
+  - Self-hosted on your own PostgreSQL — no separate CMS service
+  - Best for: TS-first monorepos where CMS lives alongside the app
+
+**Contentful** — enterprise headless (managed)
+  - Rich GraphQL + REST API, localization (40+ languages), content workflow approvals
+  - Structured content modeling, publishing approvals, CDN edge delivery
+  - Expensive at scale, external service (data leaves your infra)
+  - Best for: enterprise with large editorial teams and strict governance
+
+**Sanity.io** — real-time collaborative CMS
+  - Hosted 'Content Lake', real-time collaborative editing on same content
+  - GROQ query language (JSON-path-like), custom Studio UI built in React
+  - Best for: marketing sites where editors need Figma-like collaboration
+
+**Strapi** — classic open-source headless CMS
+  - Self-hosted, auto-generated REST/GraphQL API + admin panel from schema
+  - Large plugin ecosystem, handles media uploads
+  - Strapi v5 (2024): better TypeScript support but still less type-safe than Payload
+
+**Quick selection:**
+  TS monorepo → Payload | Enterprise team → Contentful | Real-time editing → Sanity | Quick OSS → Strapi`,
+    tip: `// Payload CMS collection config (TypeScript)
+import { buildConfig } from 'payload/config';
+import { postgresAdapter } from '@payloadcms/db-postgres';
+
+export default buildConfig({
+  collections: [{
+    slug: 'posts',
+    admin: { useAsTitle: 'title' },
+    fields: [
+      { name: 'title', type: 'text', required: true },
+      { name: 'content', type: 'richText' },
+      { name: 'publishedAt', type: 'date' },
+    ],
+  }],
+  db: postgresAdapter({ pool: { connectionString: process.env.DATABASE_URL } }),
+});`,
+  },
+
+  {
+    category: 'Analytics & Observability',
+    difficulty: 'Intermediate',
+    question: 'PostHog vs Sentry vs Mixpanel — analytics and observability stack for production apps',
+    answer: `**PostHog** — open-source product analytics (all-in-one)
+  - Events, funnels, user journeys, session replay, heatmaps — one platform
+  - Feature flags: ship to % of users, specific orgs, user properties
+  - A/B testing: experiment framework with statistical significance
+  - Self-host on Docker (free, data on your infra) or cloud (EU data residency)
+  - Next.js: posthog-js with next-router integration; NestJS: posthog-node
+
+**Sentry** — error tracking + performance monitoring
+  - Captures exceptions with full stack traces, source maps, user context (who hit the error)
+  - Performance tracing: traces request lifecycle, DB query time, slow endpoints
+  - Alerts: PagerDuty/Slack integration on error spike or performance regression
+  - @sentry/nextjs: zero-config for Next.js App Router; @sentry/node for NestJS
+
+**Mixpanel / Amplitude** — advanced behavioral analytics
+  - Funnel analysis: step-by-step conversion (sign up → activate → subscribe → pay)
+  - Cohort retention: % of users returning after day 1, 7, 30
+  - Advanced segmentation, A/B test analysis by cohort
+  - Best for: dedicated data analytics teams, not general devs
+
+**Complementary (not competing) production stack:**
+  PostHog — product behavior and feature management
+  Sentry — errors and performance
+  OpenTelemetry + Grafana — infrastructure and service observability`,
+    tip: `// PostHog in Next.js App Router
+'use client';
+import posthog from 'posthog-js';
+posthog.init(process.env.NEXT_PUBLIC_POSTHOG_KEY!, {
+  api_host: '/ingest',  // proxy to avoid ad blockers
+});
+
+// Feature flag gate
+if (posthog.isFeatureEnabled('new-checkout')) { /* ... */ }
+
+// Sentry NestJS bootstrap
+import * as Sentry from '@sentry/node';
+Sentry.init({ dsn: process.env.SENTRY_DSN, tracesSampleRate: 0.2 });`,
+  },
+
+  {
+    category: 'CRM & Automation',
+    difficulty: 'Beginner',
+    question: 'HubSpot vs Zapier vs Make vs n8n — CRM and workflow automation for enterprise NestJS apps',
+    answer: `**HubSpot** — all-in-one CRM + marketing platform
+  - Contacts, deals/pipelines, email sequences, landing pages, live chat
+  - Free CRM tier: up to 1M contacts, genuine value (not crippled free tier)
+  - API: create/update contacts, log activities, trigger sequences
+  - Pattern: NestJS webhook → HubSpot Contacts API on user sign-up
+  - Best for: B2B SaaS with sales team doing outbound
+
+**Zapier** — managed automation, no-code
+  - 6000+ app integrations via triggers and actions
+  - Easy for non-technical ops/marketing teams
+  - Expensive at volume (multi-step Zaps: $19-49/mo base)
+  - Best for: marketing/ops teams connecting SaaS apps without developer help
+
+**Make.com (formerly Integromat)** — visual flow builder
+  - More powerful than Zapier: branching, iterators, error routes
+  - Better pricing at high volume, complex scenario support
+  - Best for: technical ops teams needing complex conditional automations
+
+**n8n** — self-hosted OSS automation (developer-friendly)
+  - Run on Docker/Railway, full data control, GDPR-compliant (EU data on-prem)
+  - 400+ integrations, JavaScript/TypeScript code nodes for custom logic
+  - Free self-hosted; paid cloud at n8n.cloud
+  - Best for: developers who want automation freedom without SaaS cost + data lock-in`,
+    tip: `// NestJS → HubSpot contact sync on user creation
+async syncToHubSpot(user: User) {
+  const resp = await fetch('https://api.hubapi.com/crm/v3/objects/contacts', {
+    method: 'POST',
+    headers: {
+      Authorization: 'Bearer ' + process.env.HUBSPOT_TOKEN,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ properties: { email: user.email, firstname: user.name } }),
+  });
+  return resp.json();
+}`,
+  },
+
+  {
+    category: 'AI & RAG Tools',
+    difficulty: 'Intermediate',
+    question: 'Vercel AI SDK — streaming, tool calling, RAG, and multi-provider usage in Next.js + NestJS',
+    answer: `**Vercel AI SDK** — best React/TypeScript fit for AI features in 2026
+
+**Frontend hooks:**
+  - useChat: streaming chat UI, manages messages array, handles loading/error states
+  - useCompletion: single text completion with real-time streaming
+  - useObject: stream structured JSON objects (forms, structured data)
+
+**Backend (server-side):**
+  - streamText: stream LLM response, supports tools/function calling mid-stream
+  - generateText: blocking generation (batch jobs, server-side processing)
+  - generateObject: force structured output validated against a Zod schema
+
+**Multi-provider support (same API):**
+  - openai('gpt-4o'), anthropic('claude-opus-4-5'), google('gemini-2.0-flash')
+  - Switch providers by changing one line — no SDK rewrites
+
+**Tool calling (function calling):**
+  - Define tools with Zod parameter schemas
+  - LLM decides when to call a tool, SDK executes, result fed back into conversation
+  - Use for: DB search, web fetch, calculator, API calls
+
+**RAG pattern with pgvector:**
+  1. Embed user query (OpenAI embeddings API)
+  2. Vector search: SELECT ... ORDER BY embedding <=> query_vec LIMIT 5
+  3. Inject top-k chunks into system prompt as context
+  4. Stream answer via streamText with context in messages
+
+**LiteLLM** — use if routing to multiple LLM providers:
+  - Single /v1/chat/completions endpoint → routes to OpenAI/Anthropic/Gemini
+  - Fallback on failure, cost tracking, rate limiting per provider`,
+    tip: `// Next.js route — streaming + tool calling
+import { streamText, tool } from 'ai';
+import { openai } from '@ai-sdk/openai';
+import { z } from 'zod';
+
+export async function POST(req: Request) {
+  const { messages } = await req.json();
+  const result = streamText({
+    model: openai('gpt-4o'),
+    system: 'You are a helpful assistant.',
+    messages,
+    tools: {
+      searchProducts: tool({
+        description: 'Search product catalog by keyword',
+        parameters: z.object({ query: z.string(), limit: z.number().default(5) }),
+        execute: async ({ query, limit }) => db.products.search(query, limit),
+      }),
+    },
+  });
+  return result.toDataStreamResponse();
+}`,
+  },
+
+  {
+    category: 'AI & RAG Tools',
+    difficulty: 'Intermediate',
+    question: 'pgvector vs Pinecone vs Weaviate — vector database selection guide for RAG in 2026',
+    answer: `**pgvector (PostgreSQL extension)** — start here for most projects
+  - Adds vector column + similarity operators to existing Postgres — zero new infrastructure
+  - HNSW index: fast approximate nearest neighbor, excellent recall
+  - Scales comfortably to 1-5M vectors; Neon + Supabase have it built-in
+  - Benefit: SQL joins on vector results + relational data in one query
+  - Row Level Security: same RLS for multi-tenant vector isolation
+
+**Pinecone** — managed vector DB for large scale
+  - Fully managed, auto-scaling, sub-10ms queries at 1B+ vectors
+  - Namespaces for multi-tenant vector isolation
+  - Metadata filtering: filter by attributes alongside vector similarity
+  - Cost: ~$24/mo minimum (pod-based), expensive at high volume
+  - When to choose: >5M vectors with strict latency SLA, complex metadata filtering
+
+**Weaviate** — self-hosted, multi-modal, open-source
+  - GraphQL API, supports text + image + audio vectors in same collection
+  - Can generate embeddings internally (no separate embedding step)
+  - Self-host via Docker/K8s or use Weaviate Cloud
+  - Best for: compliance (keep vectors on-prem), multi-modal AI applications
+
+**Decision guide:**
+  Start with pgvector → migrate to Pinecone at 5M+ vectors
+  Need multi-modal or on-prem → Weaviate
+  Need maximum query speed at scale → Pinecone
+
+**LangChain.js** — works with all three (document loaders, text splitters, vector store abstraction)`,
+    tip: `// RAG pipeline: embed → search → answer
+// 1. Embed query
+const embedding = await openai.embeddings.create({
+  model: 'text-embedding-3-small',
+  input: userQuestion,
+});
+
+// 2. pgvector search
+const chunks = await db.$queryRaw\`
+  SELECT content FROM docs
+  ORDER BY embedding <=> \${JSON.stringify(embedding.data[0].embedding)}::vector
+  LIMIT 5
+\`;
+
+// 3. Build context + stream answer
+const context = chunks.map(c => c.content).join('\n---\n');
+return streamText({ model: openai('gpt-4o'),
+  messages: [{ role: 'user', content: userQuestion + '\n\nContext:\n' + context }] });`,
+  },
+
+  {
+    category: 'Forms & Validation',
+    difficulty: 'Beginner',
+    question: 'React Hook Form + Zod — the standard type-safe form and validation pattern for 2026',
+    answer: `**Why this combo dominates:**
+  - React Hook Form: uncontrolled inputs (refs not state) = minimal re-renders
+  - Zod: runtime validation + TypeScript type inference from same schema
+  - zodResolver: bridge that makes Zod schema validate RHF form submissions
+  - One schema used for: form validation, TypeScript type, and NestJS DTO
+
+**Zod beyond forms — validation everywhere:**
+  - Environment variables: z.object().parse(process.env) at app startup — fail fast on missing vars
+  - API input (NestJS): ZodValidationPipe — validate request body against Zod schema
+  - API response: parse external API responses before trusting them
+  - Shared schema (Turborepo): define in packages/schema → import in both frontend and backend
+
+**UploadThing — TypeScript-native file uploads:**
+  - Runs as Next.js route handler (/api/uploadthing)
+  - Type-safe file routes: define allowed MIME types and max sizes in TypeScript
+  - useUploadThing hook: handles multipart upload, progress, drag-drop UI
+  - Files go to UploadThing's S3-compatible storage, you get back URL
+  - Alternative: raw AWS S3 presigned URLs (skip your server, client uploads directly)
+
+**Zod key patterns:**
+  z.infer<typeof schema> — extract TypeScript type
+  z.parse(data) — throws ZodError on failure
+  z.safeParse(data) — returns { success, data } | { success: false, error }`,
+    tip: `// React Hook Form + Zod — complete pattern
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
+
+const loginSchema = z.object({
+  email:    z.string().email('Invalid email'),
+  password: z.string().min(8, 'Min 8 characters'),
+});
+type LoginForm = z.infer<typeof loginSchema>;
+
+function LoginForm() {
+  const { register, handleSubmit, formState: { errors } } = useForm<LoginForm>({
+    resolver: zodResolver(loginSchema),
+  });
+  const onSubmit = (data: LoginForm) => console.log(data);
+  return <form onSubmit={handleSubmit(onSubmit)}>...</form>;
+}`,
+  },
+
+  {
+    category: 'DevOps & CI/CD',
+    difficulty: 'Intermediate',
+    question: 'Turborepo + pnpm monorepo — setup, benefits, and GitHub Actions CI for NestJS + Next.js',
+    answer: `**Turborepo** — high-performance monorepo build system
+  - Parallel task execution: lint, test, build all packages simultaneously
+  - Task graph: declare dependencies (build only after typecheck passes)
+  - Incremental builds: only rebuild packages whose files changed
+  - Remote cache: share build artifacts across CI runs (Vercel Remote Cache, free)
+  - Affected filter: --filter='...[origin/main]' runs only packages changed in PR
+
+**pnpm workspaces** — efficient package manager
+  - Hard links: single global store, symlinked into node_modules — fast installs, less disk
+  - workspace: protocol: 'schema': 'workspace:*' — cross-package deps without publishing
+  - Strict: packages can only import what they explicitly declare as deps
+
+**Recommended monorepo structure:**
+  apps/web/ (Next.js) · apps/api/ (NestJS)
+  packages/ui/ (shadcn components) · packages/schema/ (Zod DTOs) · packages/config/ (eslint, tsconfig)
+
+**Argo CD — GitOps for Kubernetes:**
+  - Declarative: desired K8s state lives in Git (Helm charts, manifests)
+  - Sync loop: Argo CD watches Git and cluster — auto-applies drift corrections
+  - Blue-green/canary: Argo Rollouts extension adds progressive delivery
+  - Rollback = git revert → Argo CD auto-applies previous manifest
+
+**GitHub Actions CI pattern:**
+  1. pnpm install (with pnpm store cache)
+  2. turbo run lint test build --filter='...[origin/main]'
+  3. Docker build + push to ECR (only api/ changed)
+  4. Trigger Argo CD sync / Vercel preview deploy`,
+    tip: `// turbo.json — pipeline with task graph
+{
+  "pipeline": {
+    "build":     { "dependsOn": ["^build"], "outputs": [".next/**", "dist/**"] },
+    "test":      { "dependsOn": ["^build"] },
+    "lint":      {},
+    "typecheck": {}
+  }
+}
+
+// GitHub Actions — affected-only builds
+- name: Build changed packages
+  run: pnpm turbo run build --filter='...[origin/main]' --cache-dir=.turbo`,
+  },
+
+  {
+    category: 'Dev Experience',
+    difficulty: 'Beginner',
+    question: 'shadcn/ui + TanStack Query + Swagger — the developer experience stack for 2026 Next.js apps',
+    answer: `**shadcn/ui + Tailwind CSS** — modern UI standard
+  - Not a component library you install — you copy components into your project
+  - Built on Radix UI primitives (WAI-ARIA accessible), styled with Tailwind classes
+  - 50+ components: Button, Dialog, Table, Form, Select, Combobox, DataTable, etc.
+  - Theming: CSS variables in globals.css — change colors app-wide in one line
+  - Dark mode: class-based (class="dark" on html tag)
+  - Command: npx shadcn-ui@latest add button — copies component.tsx into your repo
+
+**TanStack Query (React Query)** — server state management
+  - Problem it solves: loading/error/refetch/cache management for server data
+  - useQuery: GET with caching, background refetch, stale-while-revalidate strategy
+  - useMutation: POST/PUT/DELETE with optimistic updates and automatic rollback
+  - Cache invalidation: queryClient.invalidateQueries() triggers refetch after mutation
+  - DevTools: @tanstack/react-query-devtools shows cache state in browser
+  - Eliminates need for Redux for server data — use Zustand for client-only UI state
+
+**Swagger / OpenAPI with NestJS:**
+  - @nestjs/swagger generates full OpenAPI spec from decorators (zero manual docs)
+  - @ApiProperty() on DTOs → types in Swagger UI
+  - @ApiTags(), @ApiBearerAuth() on controllers → organized, secure API docs
+  - openapi-generator: generate TypeScript client from OpenAPI spec — type-safe frontend
+
+**Zod everywhere strategy:**
+  - Forms: zodResolver | API input: ZodValidationPipe | Env: z.parse(process.env) | External API responses: z.safeParse()`,
+    tip: `// TanStack Query — fetch, cache, mutate, invalidate
+const { data, isLoading } = useQuery({
+  queryKey: ['posts', userId],
+  queryFn: () => api.getPosts(userId),
+  staleTime: 60_000,         // 1 min before background refetch
+});
+const mutation = useMutation({
+  mutationFn: (post) => api.createPost(post),
+  onSuccess: () => queryClient.invalidateQueries({ queryKey: ['posts'] }),
+});
+
+// NestJS Swagger DTO
+@ApiProperty({ example: 'john@doe.com' })
+@IsEmail()
+email: string;`,
+  },
+
+];
+
+/* ═══════════════════════════════════════════════════════════
    SUBJECTS
 ═══════════════════════════════════════════════════════════ */
 const SUBJECTS = {
@@ -23542,6 +24280,7 @@ const SUBJECTS = {
   'AI-assist':            AI_ASSIST_CARDS,
   'Third-party generation': THIRD_PARTY_CARDS,
   'Enterprise Infrastructure Architectures': ENTERPRISE_INFRASTRUCTURE_ARCHITECTURES_CARDS,
+  'Full-Stack Enterprise Tooling': FULLSTACK_TOOLING_CARDS,
   'Html':                 HTML_CARDS,
   'CSS':            CSS_ONLY_CARDS,
   'npm':            NPM_CARDS,
@@ -23558,7 +24297,7 @@ const SUBJECTS = {
 ═══════════════════════════════════════════════════════════ */
 const SUBJECT_GROUPS = {
   'Cheat Sheet': ['Junior Dev Daily Essentials'],
-  'Core':        ['DSA_JavaScript', 'Internet', 'Linux', 'Tricked Memory', 'Enterprise Infrastructure Architectures'],
+  'Core':        ['DSA_JavaScript', 'Internet', 'Linux', 'Tricked Memory', 'Enterprise Infrastructure Architectures', 'Full-Stack Enterprise Tooling'],
   'Language':    ['Python', 'C#', 'C++', 'TypeScript', 'JavaScript'],
   'Frontend':    ['Html', 'CSS', 'npm', 'Git/Github', 'Tailwind CSS', 'React & SSR', 'Redux'],
   'Backend':     ['NestJS', 'Node.js', 'Express.js', 'SQL', 'Database', 'PostgreSQL', 'API', 'JWT authentication', 'Redis', 'Testing & Containers', 'CI/CD', 'AI-assist', 'Third-party generation'],
@@ -23612,6 +24351,7 @@ const SUBJECT_COLORS = {
   'AI-assist':            '#10b981',
   'Third-party generation': '#8b5cf6',
   'Enterprise Infrastructure Architectures': '#64748b',
+  'Full-Stack Enterprise Tooling': '#0ea5e9',
   'Tricked Memory': '#f43f5e',
 };
 
@@ -23751,6 +24491,19 @@ const CATEGORY_COLORS = {
   'CI/CD & GitOps':           '#ea580c',
   'Scaling & Multi-tenancy':  '#db2777',
   'Cloud & File Services':    '#0284c7',
+  // Full-Stack Enterprise Tooling
+  'FS Overview':             '#0ea5e9',
+  'Hosting & CDN':           '#ef4444',
+  'Databases & ORM':         '#f59e0b',
+  'Auth & Identity':         '#8b5cf6',
+  'Payments & Billing':      '#10b981',
+  'Communication':           '#6366f1',
+  'CMS & Content':           '#16a34a',
+  'Analytics & Observability': '#f97316',
+  'CRM & Automation':        '#ec4899',
+  'AI & RAG Tools':          '#a855f7',
+  'Forms & Validation':      '#14b8a6',
+  'Dev Experience':          '#38bdf8',
   // Tricked Memory
   'SQL':                '#f43f5e',
 };
