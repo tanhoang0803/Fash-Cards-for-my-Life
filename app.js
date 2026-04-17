@@ -20596,30 +20596,65 @@ const ENTERPRISE_INFRASTRUCTURE_ARCHITECTURES_CARDS = [
   // ══════════════════════════════════════════════════════════
   {
     category: 'Overview', difficulty: 'Beginner',
-    question: 'Enterprise Infrastructure Architectures 2026 — Full Mindmap & Recommended Stack',
-    answer: `9 pillars of modern full-stack enterprise infrastructure:
+    question: 'Enterprise Infrastructure Architectures 2026 — Full Roadmap: 9 pillars at a glance',
+    answer: '9 pillars: 🔴 Core Infrastructure · 🟣 AI Runtime Integration · 🟡 Observability & Security · 🟢 Third-party & SaaS · 🌿 Data Layer · 🔵 Frontend Layer · 🟠 CI/CD & GitOps · 🌸 Scaling & Multi-tenancy · ☁️ Cloud & File Services',
+    tip: `Enterprise Infrastructure Architectures
+│
+├─ 🔴 1. Core Infrastructure
+│   ├─ Monorepo — Turborepo + pnpm workspaces (shared TS types, Zod schemas)
+│   ├─ Docker — multi-stage build · Node 22 LTS · SWC compiler · alpine base
+│   ├─ Kubernetes — AWS EKS · Helm charts · Terraform / AWS CDK (IaC)
+│   └─ Secrets & Config — AWS Secrets Manager · HashiCorp Vault · @nestjs/config + Zod
+│
+├─ 🟣 2. AI Runtime Integration
+│   ├─ Vercel AI SDK — streamText · generateObject · tool() · useChat (React)
+│   ├─ RAG Pipeline — pgvector (vector(1536)) · HNSW index · cosine similarity
+│   ├─ LiteLLM — multi-LLM gateway · fallbacks · cost tracking · no vendor lock-in
+│   ├─ LangChain.js / LangGraph — chains · stateful agents · tool use · multi-step
+│   └─ AI Patterns — chatbots · semantic search · agentic workflows · doc Q&A
+│
+├─ 🟡 3. Observability & Security
+│   ├─ OpenTelemetry — traces · metrics (Prometheus) · logs · Grafana dashboards
+│   ├─ AI Observability — LangSmith · LangFuse · Helicone (cost/call, latency, eval)
+│   ├─ Resilience — circuit breaker (CLOSED/OPEN/HALF-OPEN) · retry + backoff · bulkhead
+│   └─ Security — prompt injection defense · mTLS · WAF · Helmet · ValidationPipe
+│
+├─ 🟢 4. Third-party & SaaS
+│   ├─ Auth — Clerk (recommended) · Auth.js · Auth0 (enterprise) · Supabase Auth
+│   ├─ Payments — Stripe webhooks · signature verify · subscriptions · Stripe Radar
+│   ├─ Email — Resend (recommended) · SendGrid · Postmark · Twilio · Pusher/Ably
+│   ├─ Integration Patterns — Outbox pattern · idempotency · circuit breaker · rate limit
+│   └─ Analytics — PostHog (open-source) · feature flags · session replay · Mixpanel
+│
+├─ 🌿 5. Data Layer
+│   ├─ ORM — Prisma (DX + auto-migrate) vs Drizzle (lightweight + SQL-like)
+│   ├─ pgvector — PostgreSQL extension · HNSW index · RAG backbone
+│   ├─ Redis — cache · sessions · pub/sub · rate limiting · BullMQ queues
+│   └─ Messaging — Kafka (high-throughput) · Redis Streams · AWS SQS/SNS
+│
+├─ 🔵 6. Frontend Layer
+│   ├─ Next.js App Router — React 19 Server Components · Server Actions · TanStack Query
+│   ├─ UI — Tailwind CSS · shadcn/ui (copy-paste) · Radix primitives · cn() helper
+│   └─ Vercel — edge functions · AI streaming · Vercel AI Gateway · preview envs
+│
+├─ 🟠 7. CI/CD & GitOps
+│   ├─ GitHub Actions — pnpm + turbo · Docker build/push · remote cache · OIDC
+│   ├─ Argo CD — declarative deploys · auto-sync · rollback = git revert · multi-env
+│   ├─ Progressive Delivery — blue-green · canary · Unleash / LaunchDarkly flags
+│   └─ AI Dev Tools — GitHub Copilot · Cursor · Claude Code · Codium auto-tests
+│
+├─ 🌸 8. Scaling & Multi-tenancy
+│   ├─ Multi-tenancy — RLS (Row Level Security) · schema-per-tenant · PgBouncer
+│   ├─ AI Scaling — KEDA (scale on queue depth) · GPU nodes · embedding cache (Redis)
+│   └─ Serverless vs K8s — Lambda (spiky/stateless) · EKS (long-running/AI) · hybrid
+│
+└─ ☁️ 9. Cloud & File Services
+    ├─ File Storage — AWS S3 · presigned PUT/GET URLs · @nestjs/multer · Cloudinary
+    ├─ Cloud Choice — AWS EKS (dominant) · Vercel (frontend+AI) · Cloudflare (edge) · GCP
+    └─ API Layer — NestJS + Fastify (2-3× faster) · AWS API Gateway · rate limiting
 
-1. 🔴 Core Infrastructure — Turborepo + pnpm monorepo · Docker multi-stage + Node 22 · Kubernetes + Helm + Terraform (AWS EKS) · Secrets & config (@nestjs/config + Zod + AWS Secrets Manager)
-
-2. 🟣 AI Runtime Integration — Vercel AI SDK (streaming/tools/RAG) · RAG pipeline (pgvector + embeddings) · LiteLLM multi-LLM gateway · LangChain.js / LangGraph agents · AI feature patterns
-
-3. 🟡 Observability & Security — OpenTelemetry (traces/metrics/logs) · AI observability (LangSmith/LangFuse) · Resilience (circuit breaker/retry/graceful shutdown) · Security (prompt injection/mTLS/WAF/OWASP)
-
-4. 🟢 Third-party & SaaS — Auth (Clerk/Auth.js/Auth0) · Payments (Stripe webhooks) · Email (Resend) · Outbox pattern · Analytics (PostHog + feature flags)
-
-5. 🌿 Data Layer — Prisma vs Drizzle · pgvector AI-ready Postgres · Redis (cache/sessions/BullMQ/pub-sub) · Messaging (Kafka/SQS/Redis Streams)
-
-6. 🔵 Frontend Layer — Next.js App Router + React 19 Server Components · Tailwind + shadcn/ui · Vercel edge + AI streaming
-
-7. 🟠 CI/CD & GitOps — GitHub Actions · Argo CD declarative deploys · Progressive delivery (blue-green/canary) · AI-assisted dev (Copilot/Cursor/Claude Code)
-
-8. 🌸 Scaling & Multi-tenancy — RLS + schema-per-tenant · K8s autoscale + KEDA · Serverless vs K8s hybrid
-
-9. ☁️ Cloud & File Services — AWS S3 + presigned URLs · Cloud choice (AWS/Vercel/Cloudflare/GCP) · NestJS + Fastify + API Gateway
-
-Recommended stack 2026: Turborepo+pnpm → Next.js+shadcn → NestJS+Prisma+Zod → PostgreSQL+pgvector+Redis → Vercel AI SDK+LiteLLM → Clerk+Stripe+Resend → Docker+K8s+GitOps
-
-Evolution path: MVP (Docker+Vercel) → Add RAG+Clerk+Stripe → Mature (K8s+GitOps) → Enterprise (multi-LLM+OpenTelemetry)`,
+Evolution: MVP (Docker+Vercel) → Add RAG+Clerk+Stripe → Mature (K8s+GitOps) → Enterprise (multi-LLM+OTel)
+Stack 2026: Turborepo → Next.js+shadcn → NestJS+Prisma+Zod → PostgreSQL+pgvector+Redis → Vercel AI SDK+LiteLLM → Clerk+Stripe+Resend → Docker+K8s+Argo CD`,
   },
 
   // ══════════════════════════════════════════════════════════
