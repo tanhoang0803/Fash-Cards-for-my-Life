@@ -23525,50 +23525,82 @@ const FULLSTACK_TOOLING_CARDS = [
   {
     category: 'FS Overview',
     difficulty: 'Beginner',
-    question: 'Full-Stack Enterprise Tooling 2026 — mindmap of all 12 pillars',
-    answer: `The 12 pillars of modern full-stack enterprise tooling (TypeScript · React · NestJS):
+    question: 'Full-Stack Enterprise Tooling 2026 — Full Roadmap: 12 pillars at a glance',
+    answer: '12 pillars: 🔴 Hosting & CDN · 🟡 Databases & ORM · 🟣 Auth & Identity · 🟢 Payments & Billing · 💜 Communication · 🌿 CMS & Content · 🟠 Analytics & Observability · 🩷 CRM & Automation · 🔵 AI & RAG Tools · ⚪ Forms & Uploads · 🌸 DevOps & CI/CD · ☀️ Developer Experience',
+    tip: `Full-Stack Enterprise Tooling — 2026 (TypeScript · React · NestJS)
+│
+├─ 🔴 1. Hosting & CDN
+│   ├─ Vercel — best Next.js: Edge SSR · AI SDK native · zero config · preview URLs per PR
+│   ├─ Cloudflare — best price/perf: Workers · Pages · KV · D1 (SQLite edge) · R2 (no egress fees)
+│   ├─ AWS EKS/ECS — enterprise: full K8s · CloudFront CDN · complex 2-4 week setup
+│   └─ Railway / Render — mid-size sweet spot: fast setup · DB included · auto-deploy from Git
+│
+├─ 🟡 2. Databases, Storage & ORM
+│   ├─ PostgreSQL + pgvector — primary: relational + vectors + RLS · HNSW index · scales to 5M vecs
+│   ├─ Prisma — best DX: schema-first · auto-migrations · great autocomplete · large binary
+│   ├─ Drizzle — lightweight: SQL-first TS · edge-compatible · no binary · faster runtime
+│   ├─ Redis — multi-purpose: cache · sessions · rate-limit · BullMQ jobs · pub/sub · sorted sets
+│   └─ File Storage — S3 (raw) · Cloudinary (transform+CDN) · UploadThing (TS-native S3)
+│
+├─ 🟣 3. Authentication & Identity
+│   ├─ Clerk — fastest SaaS DX: orgs · MFA · social login · Stripe billing · prebuilt UI
+│   ├─ Auth.js — OSS flexible: 60+ providers · Prisma/Drizzle adapters · self-hosted · no UI
+│   ├─ Supabase Auth — Postgres-native JWT + RLS · good if already on Supabase stack
+│   └─ Auth0 — enterprise SSO: SAML/OIDC · compliance · MFA rules · expensive at scale
+│
+├─ 🟢 4. Payments & Billing
+│   ├─ Stripe — industry standard: subscriptions · webhooks (raw body!) · Radar fraud · portal
+│   └─ Paddle / Lemon Squeezy — merchant of record: handles global VAT/GST · simpler for indie devs
+│
+├─ 💜 5. Communication & Notifications
+│   ├─ Resend — modern dev-first: React Email templates · TypeScript SDK · webhooks · great DX
+│   ├─ SendGrid / Postmark — mature: SendGrid (marketing+transact) · Postmark (best deliverability)
+│   ├─ Twilio — SMS/OTP/WhatsApp/voice: Verify API for multi-channel one-time passwords
+│   └─ Pusher / Ably — managed WebSocket: channels · presence (who's online) · message history
+│
+├─ 🌿 6. CMS & Content Management
+│   ├─ Payload CMS — TS-first OSS: runs in Next.js · self-hosted Postgres · REST + GraphQL auto-gen
+│   ├─ Contentful — enterprise headless: GraphQL+REST · localization · workflow approvals · CDN
+│   ├─ Sanity.io — real-time collab: GROQ queries · custom Studio UI · hosted Content Lake
+│   └─ Strapi — classic OSS: self-hosted · plugin ecosystem · auto admin panel
+│
+├─ 🟠 7. Analytics, Monitoring & Observability
+│   ├─ PostHog — OSS all-in-one: product analytics · session replay · feature flags · A/B tests
+│   ├─ Sentry — errors + perf: stack traces · source maps · slow endpoint detection · alerts
+│   └─ Mixpanel / Amplitude — advanced: funnels · cohort retention · behavioral segmentation
+│
+├─ 🩷 8. CRM, Automation & Business Tools
+│   ├─ HubSpot — all-in-one CRM: contacts · deals · email sequences · pipelines · 1M free contacts
+│   ├─ Zapier — managed no-code: 6000+ integrations · easy for non-devs · expensive at volume
+│   ├─ Make.com — visual flows: more powerful than Zapier · better pricing · conditional logic
+│   └─ n8n — OSS self-hosted: 400+ integrations · JS/TS code nodes · GDPR-safe · free
+│
+├─ 🔵 9. AI & RAG Tools
+│   ├─ Vercel AI SDK — best React/TS: useChat · streamText · tool calling · multi-provider
+│   ├─ pgvector — start here: vector search in Postgres · HNSW index · no extra DB needed
+│   ├─ Pinecone — managed scale: >5M vecs · sub-10ms queries · namespace isolation
+│   ├─ LiteLLM — unified gateway: OpenAI/Anthropic/Gemini/Grok · fallbacks · cost tracking
+│   └─ LangChain.js — orchestration: agents · chains · document loaders · LangSmith debug
+│
+├─ ⚪ 10. Forms, Validation & File Upload
+│   ├─ React Hook Form + Zod — daily standard: zodResolver · shared schema (form + DTO + type)
+│   └─ UploadThing — TS-native S3: type-safe file routes · useUploadThing hook · Next.js native
+│
+├─ 🌸 11. DevOps & CI/CD
+│   ├─ GitHub Actions — CI/CD: lint · test · build · Docker push · deploy triggers · Copilot PRs
+│   ├─ Turborepo + pnpm — monorepo: parallel builds · remote cache · affected-only CI runs
+│   ├─ Docker + K8s + Terraform — infra: multi-stage builds · AWS EKS · Helm charts · IaC
+│   └─ Argo CD — GitOps: declarative state in Git · sync loop · rollback = git revert
+│
+└─ ☀️ 12. Developer Experience & UI
+    ├─ shadcn/ui + Tailwind — copy-paste Radix: 50+ components · dark mode · accessible
+    ├─ TanStack Query — server state: useQuery · useMutation · cache · optimistic UI · devtools
+    ├─ Zod — validation everywhere: forms · API input · env vars · external API responses
+    └─ Swagger / OpenAPI — @nestjs/swagger: auto-docs from decorators · generate TS client
 
-┌─ 1. HOSTING & CDN
-│   Vercel (Next.js/Edge) · Cloudflare (price/perf) · AWS EKS (enterprise) · Railway/Render (mid-size)
-│
-├─ 2. DATABASES & ORM
-│   PostgreSQL + pgvector (primary) · Prisma / Drizzle (ORM) · Redis (cache/queue/pub-sub) · S3 / Cloudinary / UploadThing (files)
-│
-├─ 3. AUTH & IDENTITY
-│   Clerk (SaaS DX) · Auth.js / Supabase Auth (OSS) · Auth0 (enterprise SSO/SAML)
-│
-├─ 4. PAYMENTS & BILLING
-│   Stripe (subscriptions, webhooks, Radar fraud) · Paddle / Lemon Squeezy (merchant of record)
-│
-├─ 5. COMMUNICATION & NOTIFICATIONS
-│   Resend (React email) · SendGrid / Postmark (mature) · Twilio (SMS/OTP/WhatsApp) · Pusher / Ably (WebSocket)
-│
-├─ 6. CMS & CONTENT
-│   Payload CMS (TS-first OSS) · Contentful (enterprise) · Sanity (real-time collab) · Strapi (classic OSS)
-│
-├─ 7. ANALYTICS & OBSERVABILITY
-│   PostHog (OSS analytics + feature flags) · Sentry (errors + perf) · Mixpanel / Amplitude (funnels)
-│
-├─ 8. CRM & AUTOMATION
-│   HubSpot (CRM + marketing) · Zapier / Make (managed) · n8n (self-hosted OSS)
-│
-├─ 9. AI & RAG TOOLS
-│   Vercel AI SDK (streaming + tool calling) · pgvector / Pinecone / Weaviate · LiteLLM (gateway) · LangChain.js (orchestration)
-│
-├─ 10. FORMS, VALIDATION & UPLOADS
-│   React Hook Form + Zod (daily standard) · UploadThing (TS-native S3)
-│
-├─ 11. DEVOPS & CI/CD
-│   GitHub Actions · Turborepo + pnpm monorepo · Docker + K8s + Terraform · Argo CD (GitOps)
-│
-└─ 12. DEVELOPER EXPERIENCE & UI
-    shadcn/ui + Tailwind · Zod everywhere · TanStack Query · Swagger / OpenAPI`,
-    tip: `SaaS fast stack:  Next.js · NestJS + Prisma · Clerk + Stripe · Resend + PostHog · pgvector · Vercel + Railway
-Enterprise heavy: Auth0 · Contentful/Sanity · HubSpot/Salesforce · AWS EKS · OTel + Prometheus + Grafana
-
-KEY TRADE-OFF — Managed (speed+DX) vs Self-hosted (control+cost):
-  Managed:     Vercel, Clerk, Contentful, Stripe, Resend, PostHog Cloud, Pinecone
-  Self-hosted: Payload, Strapi, n8n, PostHog OSS, pgvector, Railway/Render`,
+SaaS fast stack:  Next.js · NestJS+Prisma · Clerk+Stripe · Resend+PostHog · pgvector · Vercel+Railway
+Enterprise heavy: Auth0 · Contentful/Sanity · HubSpot/Salesforce · AWS EKS · OTel+Prometheus+Grafana
+Trade-off: Managed (Vercel, Clerk, Stripe) = speed+DX  vs  Self-hosted (Payload, n8n, pgvector) = control+cost`,
   },
 
   {
