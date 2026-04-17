@@ -10,6 +10,11 @@ A multi-subject developer flash card web app built with vanilla HTML, CSS, and J
 
 ## Subjects & Cards
 
+### Cheat Sheet
+| Subject | Description |
+|---|---|
+| **Junior Dev Daily Essentials** | Interactive cheatsheet — JS, React+Redux, SQL, Linux, NestJS, TypeScript, DSA, Enterprise Infra Architecture |
+
 ### Core
 | Subject | Cards | Categories |
 |---|---|---|
@@ -17,26 +22,74 @@ A multi-subject developer flash card web app built with vanilla HTML, CSS, and J
 | **Internet** | 20 | How Internet Works, HTTP & Web, DNS & Domains, Browsers |
 | **Linux** | 25 | Linux Basics, Files & Permissions, Processes & System, Networking & SSH, Shell Scripting |
 | **Tricked Memory** | 3+ | SQL (FJ WGH SOL — execution order mnemonic) |
+| **Enterprise Infrastructure Architectures** | 38 | Overview, Core Infrastructure, AI Runtime Integration, Observability & Security, Third-party & SaaS, Data Layer, Frontend Layer, CI/CD & GitOps, Scaling & Multi-tenancy, Cloud & File Services |
 
-### Backend 
+### Language
 | Subject | Cards | Categories |
 |---|---|---|
 | **Python** | 22 | Core Python, OOP & Design, Ecosystem |
-| **C#** | 18 | C# Basics, OOP & Patterns, LINQ & Async |
-| **SQL** | 60+ | Core, SQL Basics, DDL, DML, DQL, DCL, IF & CASE, Joins & Aggregation, Advanced SQL, GROUP BY Patterns, SQL Patterns |
-| **Database** | 26+ | Relational DB, NoSQL, DB Design & Perf, PostgreSQL |
-| **API** | 30+ | JSON Basics, REST Fundamentals, REST Design, API in Practice, JWT, OAuth2 |
-| **Node.js** | 25 | Node.js Basics, Modules & npm, Async & Error Handling, HTTP & Express, Performance & Production |
-| **Testing & Containers** | 20 | Testing, Docker, Kubernetes |
+| **C#** | 18+ | C# Basics, Core C#, OOP & Patterns, LINQ & Async, Modern C#, Useful Daily Tools, DSA in C#, Advanced Topics |
+| **C++** | 30+ | Overview, Core C++, Modern C++, Daily Tools, DSA in C++, Advanced C++ |
+| **TypeScript** | 31 | Type Fundamentals, Advanced Types, Generics, OOP & Classes, Functions & Async, Real-world Patterns, Modules & Tooling, Best Practices |
+| **JavaScript** | 80+ | Overview, Fundamentals, Core JavaScript, ES6+, Async JavaScript, DOM & Browser, Data Structures, Advanced, Performance, Testing, Ecosystem, JS Functions, JS Patterns, Interview |
 
 ### Frontend
 | Subject | Cards | Categories |
 |---|---|---|
-| **JavaScript** | 80+ | Overview, Fundamentals, Core JavaScript, ES6+, Async JavaScript, DOM & Browser, Data Structures, Advanced, Performance, Testing, Ecosystem, JS Functions, JS Patterns, Interview |
+| **Html** | 20+ | Overview, Fundamentals, Advanced Features, Performance & Security |
+| **CSS** | 20 | CSS Fundamentals, CSS Layouts, Tailwind CSS |
+| **npm** | 15+ | Overview, Fundamentals, Advanced Features |
+| **Git/Github** | 20+ | Overview, Fundamentals, Advanced Features |
+| **Tailwind CSS** | 15+ | Overview, Fundamentals, Advanced Features |
 | **React & SSR** | 31 | Overview, Fundamentals, Lifecycle, Hooks, Data Flow, Performance, Ecosystem, Advanced, Interview |
-| **CSS & Tailwind** | 20 | CSS Fundamentals, CSS Layouts, Tailwind CSS |
+| **Redux** | 15+ | Overview, Fundamentals, Advanced Features |
 
-**Total: 470+ cards**
+### Backend
+| Subject | Cards | Categories |
+|---|---|---|
+| **NestJS** | 35+ | Overview, Architecture & Bootstrap, Modules & DI, Request Pipeline, Guards & Interceptors, Advanced NestJS |
+| **Node.js** | 25 | Node.js Basics, Async Patterns, HTTP & Express, Data & Storage, Performance & Production |
+| **Express.js** | 15+ | Core Express, Async & Data |
+| **SQL** | 60+ | Core, SQL Basics, DDL, DML, DQL, DCL, IF & CASE, Joins & Aggregation, Advanced SQL, GROUP BY Patterns, SQL Patterns |
+| **Database** | 26+ | Relational DB, NoSQL, DB Design & Perf, PostgreSQL |
+| **PostgreSQL** | 20+ | Overview, Fundamentals, Core Concepts, Daily Tools, Advanced Features, Performance & Security, Ecosystem |
+| **API** | 30+ | JSON Basics, REST Fundamentals, REST Design, API in Practice, JWT, OAuth2 |
+| **JWT authentication** | — | *(in progress)* |
+| **Redis** | — | *(in progress)* |
+| **Testing & Containers** | 20 | Testing, Docker, Kubernetes |
+| **CI/CD** | — | *(in progress)* |
+| **AI-assist** | — | *(in progress)* |
+| **Third-party generation** | — | *(in progress)* |
+
+**Total: 600+ cards**
+
+---
+
+### Enterprise Infrastructure Architectures — Detailed Breakdown
+
+| Category | Cards | Topics |
+|---|---|---|
+| **Overview** | 1 | Full tree mindmap · 9 pillars · recommended stack · evolution path |
+| **Core Infrastructure** | 4 | Turborepo+pnpm monorepo · Docker multi-stage+Node 22 · K8s+Helm+Terraform (EKS) · Secrets & config |
+| **AI Runtime Integration** | 5 | Vercel AI SDK (streamText/tools/useChat) · RAG + pgvector · LiteLLM gateway · LangChain.js/LangGraph · AI feature patterns |
+| **Observability & Security** | 4 | OpenTelemetry full stack · LangSmith/LangFuse AI obs · Resilience (circuit breaker/retry) · Security (prompt injection/mTLS/WAF) |
+| **Third-party & SaaS** | 4 | Auth (Clerk/Auth.js/Auth0) · Stripe webhooks · Outbox pattern · PostHog + feature flags |
+| **Data Layer** | 3 | Prisma vs Drizzle · Redis multi-purpose (BullMQ/pub-sub) · Kafka vs SQS vs Redis Streams |
+| **Frontend Layer** | 3 | Next.js App Router + React 19 Server Components · shadcn/ui + Tailwind · Vercel AI streaming |
+| **CI/CD & GitOps** | 4 | GitHub Actions + Turborepo · Argo CD GitOps · Blue-green/canary delivery · AI dev tools |
+| **Scaling & Multi-tenancy** | 3 | Multi-tenancy + RLS · KEDA + GPU AI scaling · Serverless vs K8s |
+| **Cloud & File Services** | 3 | S3 + presigned URLs · Cloud choice 2026 · NestJS + Fastify + API Gateway |
+
+#### Recommended Enterprise Stack 2026
+```
+Turborepo+pnpm → Next.js+shadcn/ui → NestJS+Prisma+Zod → PostgreSQL+pgvector+Redis
+→ Vercel AI SDK+LiteLLM → Clerk+Stripe+Resend → Docker+K8s+Argo CD
+```
+
+#### Evolution Path
+```
+MVP: Docker + Vercel → Add RAG + Clerk + Stripe → Mature: K8s + GitOps → Enterprise: multi-LLM + OpenTelemetry
+```
 
 ---
 
@@ -111,7 +164,7 @@ Backend Developer:    Fundamentals → ES6 → Async → Node.js → API → Dat
 
 ## Features
 
-- Multi-subject navigation grouped into **Core / Backend / Frontend** bars
+- Multi-subject navigation grouped into **Cheat Sheet / Core / Language / Frontend / Backend / DevOps** bars
 - Category filter bar — drill into specific topics within a subject
 - 3D card flip animation (CSS `transform-style: preserve-3d`)
 - **Image cards** — mind map / overview cards display a full image on the front face
@@ -122,6 +175,7 @@ Backend Developer:    Fundamentals → ES6 → Async → Node.js → API → Dat
 - Keyboard shortcuts: `←` `→` navigate · `Space` flip · `K` mark known
 - Difficulty badges: Beginner / Intermediate / Advanced
 - Code tip blocks with syntax-highlighted snippets on answer cards
+- **Cheatsheet page** (`cheatsheet.html`) — dense printable reference for JS, React, SQL, Linux, NestJS, TypeScript, DSA, and Enterprise Infra Architecture
 
 ---
 
@@ -140,6 +194,7 @@ Flash_cards/
 ├── index.html              # App shell and markup
 ├── style.css               # Dark theme, 3D flip animation
 ├── app.js                  # All card data, state management, DOM logic
+├── cheatsheet.html         # Dense quick-reference cheatsheet page
 ├── images/                 # Mind map and overview images
 │   └── DSA.png
 ├── README.md

@@ -28,10 +28,13 @@ Flash Cards Page
 │   ├── Progress Bar
 │   └── Progress Indicator ("X of Y")
 │
-├── Subject Menu (nav#subjectMenu) — 3 grouped bars
-│   ├── [CORE]     DSA_JavaScript · Internet · Linux
-│   ├── [BACKEND]  Python · C# · SQL · Database · API · Node.js · Testing & Containers
-│   └── [FRONTEND] JavaScript · React & SSR · CSS & Tailwind
+├── Subject Menu (nav#subjectMenu) — 6 grouped bars
+│   ├── [CHEAT SHEET] Junior Dev Daily Essentials
+│   ├── [CORE]        DSA_JavaScript · Internet · Linux · Tricked Memory · Enterprise Infrastructure Architectures
+│   ├── [LANGUAGE]    Python · C# · C++ · TypeScript · JavaScript
+│   ├── [FRONTEND]    Html · CSS · npm · Git/Github · Tailwind CSS · React & SSR · Redux
+│   ├── [BACKEND]     NestJS · Node.js · Express.js · SQL · Database · PostgreSQL · API · JWT authentication · Redis · Testing & Containers · CI/CD · AI-assist · Third-party generation
+│   └── [DEVOPS]      (in progress)
 │
 ├── Category Filter (nav#categoryFilter)
 │   └── "All" + one button per category in the active subject
@@ -63,6 +66,11 @@ Flash Cards Page
 
 ## All Subjects & Card Counts
 
+### Cheat Sheet
+| Subject | Description |
+|---|---|
+| Junior Dev Daily Essentials | Interactive cheatsheet — opens `cheatsheet.html` (JS, React+Redux, SQL, Linux, NestJS, TypeScript, DSA, Enterprise Infra Arch) |
+
 ### Core
 | Subject | Cards | Categories |
 |---|---|---|
@@ -70,26 +78,61 @@ Flash Cards Page
 | Internet | 20 | How Internet Works, HTTP & Web, DNS & Domains, Browsers |
 | Linux | 25 | Linux Basics, Files & Permissions, Processes & System, Networking & SSH, Shell Scripting |
 | Tricked Memory | 3+ | SQL (FJ WGH SOL — execution order mnemonic) |
+| Enterprise Infrastructure Architectures | 38 | Overview, Core Infrastructure, AI Runtime Integration, Observability & Security, Third-party & SaaS, Data Layer, Frontend Layer, CI/CD & GitOps, Scaling & Multi-tenancy, Cloud & File Services |
 
-### Backend
+### Language
 | Subject | Cards | Categories |
 |---|---|---|
 | Python | 22 | Core Python, OOP & Design, Ecosystem |
-| C# | 18 | C# Basics, OOP & Patterns, LINQ & Async |
-| SQL | 60+ | Core, SQL Basics, DDL, DML, DQL, DCL, IF & CASE, Joins & Aggregation, Advanced SQL, GROUP BY Patterns, SQL Patterns |
-| Database | 26+ | Relational DB, NoSQL, DB Design & Perf, PostgreSQL |
-| API | 30+ | JSON Basics, REST Fundamentals, REST Design, API in Practice, JWT, OAuth2 |
-| Node.js | 25 | Node.js Basics, Modules & npm, Async & Error Handling, HTTP & Express, Performance & Production |
-| Testing & Containers | 20 | Testing, Docker, Kubernetes |
+| C# | 18+ | C# Basics, Core C#, OOP & Patterns, LINQ & Async, Modern C#, Useful Daily Tools, DSA in C#, Advanced Topics |
+| C++ | 30+ | Overview, Core C++, Modern C++, Daily Tools, DSA in C++, Advanced C++ |
+| TypeScript | 31 | Type Fundamentals, Advanced Types, Generics, OOP & Classes, Functions & Async, Real-world Patterns, Modules & Tooling, Best Practices |
+| JavaScript | 80+ | Overview, Fundamentals, Core JavaScript, ES6+, Async JavaScript, DOM & Browser, Data Structures, Advanced, Performance, Testing, Ecosystem, JS Functions, JS Patterns, Interview |
 
 ### Frontend
 | Subject | Cards | Categories |
 |---|---|---|
-| JavaScript | 80+ | Overview, Fundamentals, Core JavaScript, ES6+, Async JavaScript, DOM & Browser, Data Structures, Advanced, Performance, Testing, Ecosystem, JS Functions, JS Patterns, Interview |
+| Html | 20+ | Overview, Fundamentals, Advanced Features, Performance & Security |
+| CSS | 20 | CSS Fundamentals, CSS Layouts, Tailwind CSS |
+| npm | 15+ | Overview, Fundamentals, Advanced Features |
+| Git/Github | 20+ | Overview, Fundamentals, Advanced Features |
+| Tailwind CSS | 15+ | Overview, Fundamentals, Advanced Features |
 | React & SSR | 31 | Overview, Fundamentals, Lifecycle, Hooks, Data Flow, Performance, Ecosystem, Advanced, Interview |
-| CSS & Tailwind | 20 | CSS Fundamentals, CSS Layouts, Tailwind CSS |
+| Redux | 15+ | Overview, Fundamentals, Advanced Features |
 
-**Total: 470+ cards**
+### Backend
+| Subject | Cards | Categories |
+|---|---|---|
+| NestJS | 35+ | Overview, Architecture & Bootstrap, Modules & DI, Request Pipeline, Guards & Interceptors, Advanced NestJS |
+| Node.js | 25 | Node.js Basics, Async Patterns, HTTP & Express, Data & Storage, Performance & Production |
+| Express.js | 15+ | Core Express, Async & Data |
+| SQL | 60+ | Core, SQL Basics, DDL, DML, DQL, DCL, IF & CASE, Joins & Aggregation, Advanced SQL, GROUP BY Patterns, SQL Patterns |
+| Database | 26+ | Relational DB, NoSQL, DB Design & Perf, PostgreSQL |
+| PostgreSQL | 20+ | Overview, Fundamentals, Core Concepts, Daily Tools, Advanced Features, Performance & Security, Ecosystem |
+| API | 30+ | JSON Basics, REST Fundamentals, REST Design, API in Practice, JWT, OAuth2 |
+| JWT authentication | — | *(in progress)* |
+| Redis | — | *(in progress)* |
+| Testing & Containers | 20 | Testing, Docker, Kubernetes |
+| CI/CD | — | *(in progress)* |
+| AI-assist | — | *(in progress)* |
+| Third-party generation | — | *(in progress)* |
+
+**Total: 600+ cards**
+
+### Enterprise Infrastructure Architectures — Detailed Breakdown
+
+| Category | Cards | Topics |
+|---|---|---|
+| **Overview** | 1 | Full tree mindmap · 9 pillars · recommended stack · evolution path |
+| **Core Infrastructure** | 4 | Turborepo+pnpm monorepo · Docker multi-stage+Node 22 · K8s+Helm+Terraform · Secrets & config |
+| **AI Runtime Integration** | 5 | Vercel AI SDK · RAG + pgvector · LiteLLM gateway · LangChain.js/LangGraph · AI feature patterns |
+| **Observability & Security** | 4 | OpenTelemetry · LangSmith/LangFuse · Resilience patterns · Security (prompt injection/mTLS/WAF) |
+| **Third-party & SaaS** | 4 | Auth (Clerk/Auth.js/Auth0) · Stripe webhooks · Outbox pattern · PostHog + feature flags |
+| **Data Layer** | 3 | Prisma vs Drizzle · Redis multi-purpose (BullMQ/pub-sub) · Kafka vs SQS vs Redis Streams |
+| **Frontend Layer** | 3 | Next.js App Router + React 19 Server Components · shadcn/ui + Tailwind · Vercel AI streaming |
+| **CI/CD & GitOps** | 4 | GitHub Actions + Turborepo · Argo CD · Blue-green/canary · AI dev tools |
+| **Scaling & Multi-tenancy** | 3 | Multi-tenancy + RLS · KEDA + GPU AI scaling · Serverless vs K8s |
+| **Cloud & File Services** | 3 | S3 + presigned URLs · Cloud choice 2026 · NestJS + Fastify + API Gateway |
 
 ### DSA_JavaScript — Detailed Breakdown
 
@@ -172,16 +215,27 @@ const SUBJECTS = { 'SubjectName': SUBJECT_CARDS, ... };
 
 // Subject menu grouped into labeled bars
 const SUBJECT_GROUPS = {
-  'Core':     ['DSA_JavaScript', 'Internet', 'Linux', 'Tricked Memory'],
-  'Backend':  ['Python', 'C#', 'SQL', 'Database', 'API', 'Node.js', 'Testing & Containers'],
-  'Frontend': ['JavaScript', 'React & SSR', 'CSS & Tailwind'],
+  'Cheat Sheet': ['Junior Dev Daily Essentials'],
+  'Core':        ['DSA_JavaScript', 'Internet', 'Linux', 'Tricked Memory', 'Enterprise Infrastructure Architectures'],
+  'Language':    ['Python', 'C#', 'C++', 'TypeScript', 'JavaScript'],
+  'Frontend':    ['Html', 'CSS', 'npm', 'Git/Github', 'Tailwind CSS', 'React & SSR', 'Redux'],
+  'Backend':     ['NestJS', 'Node.js', 'Express.js', 'SQL', 'Database', 'PostgreSQL', 'API', 'JWT authentication', 'Redis', 'Testing & Containers', 'CI/CD', 'AI-assist', 'Third-party generation'],
+  'DevOps':      [],
+};
+
+// Subjects that open a separate page instead of loading flash cards
+const LINK_SUBJECTS = {
+  'Junior Dev Daily Essentials': 'cheatsheet.html',
 };
 
 // Group label pill colors
 const GROUP_COLORS = {
-  'Core':     '#f97316',
-  'Backend':  '#6366f1',
-  'Frontend': '#61dafb',
+  'Cheat Sheet': '#10b981',
+  'Core':        '#f97316',
+  'Language':    '#ec4899',
+  'Frontend':    '#61dafb',
+  'Backend':     '#6366f1',
+  'DevOps':      '#f43f5e',
 };
 
 // Active subject button background color
@@ -214,7 +268,7 @@ const state = {
 | Function | Purpose |
 |---|---|
 | `cardId(card)` | Returns `"Subject\|originalIndex"` — stable ID even after shuffle |
-| `buildSubjectMenu()` | Renders grouped subject nav (Core/Backend/Frontend bars) |
+| `buildSubjectMenu()` | Renders grouped subject nav (Cheat Sheet/Core/Language/Frontend/Backend/DevOps bars) |
 | `buildFilterBar()` | Clears and rebuilds category filter for active subject |
 | `buildDeck()` | Filters `SUBJECTS[activeSubject]` by `activeFilter` into `state.deck` |
 | `render()` | Updates all DOM elements from current state |
@@ -253,8 +307,19 @@ const state = {
 3. Add `'New Subject': '#color'` to `SUBJECT_COLORS`
 4. Add each category color to `CATEGORY_COLORS`
 5. Add `'New Subject'` to the correct group in `SUBJECT_GROUPS`
-6. Run `node --check app.js` — fix any syntax errors before continuing
-7. `git add app.js && git commit && git push` → CI validates + deploys
+6. If the subject opens a separate page instead of cards, add it to `LINK_SUBJECTS`
+7. Run `node --check app.js` — fix any syntax errors before continuing
+8. `git add app.js && git commit && git push` → CI validates + deploys
+
+## Adding a Cheatsheet Section — Checklist
+
+1. Add CSS variable pair to `:root` in `cheatsheet.html` (e.g. `--foo: #hex; --foo-dim: #hex22;`)
+2. Add `.pill-foo`, `.card.foo-card`, `.big-label.foo`, `.card h3.foo`, `.tip.foo-tip` CSS classes
+3. Add `<span class="pill pill-foo">Label</span>` to the header pills div
+4. Update the `<p>` subtitle in the header
+5. Add `<div class="big-label foo"><span class="num">N</span> Title</div>` before the section HTML
+6. Add section HTML using `grid-2 / grid-3 / grid-4` layouts with `class="card foo-card"`
+7. Update the footer text
 
 ---
 
@@ -275,8 +340,9 @@ Flash_cards/
 ├── index.html
 ├── style.css
 ├── app.js
+├── cheatsheet.html          # Dense quick-reference cheatsheet (linked from menu)
 ├── images/
-│   └── DSA.png          # Mind map image for DSA_JavaScript overview card
+│   └── DSA.png              # Mind map image for DSA_JavaScript overview card
 ├── README.md
 ├── CLAUDE.md
 └── .github/
