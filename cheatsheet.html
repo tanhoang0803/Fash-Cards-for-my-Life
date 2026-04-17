@@ -27,6 +27,8 @@
     --ts-dim: #3178c622;
     --dsa: #f97316;
     --dsa-dim: #f9731622;
+    --infra: #94a3b8;
+    --infra-dim: #94a3b822;
     --text: #e2e8f0;
     --muted: #8892a4;
     --code: #c9d1e0;
@@ -90,6 +92,7 @@
   .pill-nest  { background: var(--nest-dim);  color: var(--nest);  border: 1px solid #e0234e44; }
   .pill-ts    { background: var(--ts-dim);    color: var(--ts);    border: 1px solid #3178c644; }
   .pill-dsa   { background: var(--dsa-dim);   color: var(--dsa);   border: 1px solid #f9731644; }
+  .pill-infra { background: var(--infra-dim); color: var(--infra); border: 1px solid #94a3b844; }
 
   /* ── GRID ── */
   .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
@@ -127,6 +130,7 @@
   .card.nest-card  { border-top: 2px solid var(--nest); }
   .card.ts-card    { border-top: 2px solid var(--ts); }
   .card.dsa-card   { border-top: 2px solid var(--dsa); }
+  .card.infra-card { border-top: 2px solid var(--infra); }
 
   .card h3 {
     font-size: 13px;
@@ -142,6 +146,7 @@
   .card h3.nest  { color: var(--nest); }
   .card h3.ts    { color: var(--ts); }
   .card h3.dsa   { color: var(--dsa); }
+  .card h3.infra { color: var(--infra); }
 
   .card h4 {
     font-size: 12px;
@@ -208,6 +213,7 @@
   .tip.react-tip { border-color: var(--react); }
   .tip.sql-tip { border-color: var(--sql); }
   .tip.linux-tip { border-color: var(--linux); }
+  .tip.infra-tip { border-color: var(--infra); }
 
   /* ── DIVIDER ── */
   .divider {
@@ -252,6 +258,8 @@
   .big-label.ts .num { background: var(--ts); color: #fff; }
   .big-label.dsa { color: var(--dsa); }
   .big-label.dsa .num { background: var(--dsa); color: #fff; }
+  .big-label.infra { color: var(--infra); }
+  .big-label.infra .num { background: var(--infra); color: #fff; }
 
   /* ── SPAN HELPERS ── */
   .row { display: flex; gap: 12px; margin: 5px 0; }
@@ -280,7 +288,7 @@
 <!-- HEADER -->
 <div class="header">
   <h1>Junior Developer — Daily Essentials</h1>
-  <p>JAVASCRIPT · REACT + REDUX · SQL · LINUX · NESTJS · TYPESCRIPT · DSA — QUICK REFERENCE</p>
+  <p>JAVASCRIPT · REACT + REDUX · SQL · LINUX · NESTJS · TYPESCRIPT · DSA · INFRA ARCH — QUICK REFERENCE</p>
   <div class="pills">
     <span class="pill pill-js">JS ES6+</span>
     <span class="pill pill-react">React + Redux</span>
@@ -289,6 +297,7 @@
     <span class="pill pill-nest">NestJS</span>
     <span class="pill pill-ts">TypeScript</span>
     <span class="pill pill-dsa">DSA</span>
+    <span class="pill pill-infra">Infra Arch</span>
   </div>
 </div>
 
@@ -2046,9 +2055,746 @@ str.<span class="f">split</span>(<span class="s">''</span>).<span class="f">reve
   </div>
 </div>
 
+<!-- ══════════════════════════════════════════
+     ENTERPRISE INFRASTRUCTURE ARCHITECTURES
+══════════════════════════════════════════ -->
+<hr class="divider">
+<div class="big-label infra"><span class="num">8</span> Enterprise Infrastructure Architectures</div>
+
+<!-- Evolution path banner -->
+<div style="margin-bottom:14px; padding:10px 14px; border-radius:8px; border:1px solid #94a3b833; background:#94a3b80d;">
+  <div style="font-size:11px; font-weight:700; letter-spacing:2px; text-transform:uppercase; font-family:'JetBrains Mono',monospace; color:var(--infra); margin-bottom:8px;">Evolution Path — Scale with Confidence</div>
+  <div style="font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--muted); display:flex; flex-wrap:wrap; gap:4px; align-items:center;">
+    <span style="background:var(--infra-dim); color:var(--infra); padding:2px 8px; border-radius:4px; font-weight:600;">MVP: Docker + Vercel</span>
+    <span>→</span>
+    <span style="background:#1e2330; color:var(--keyword); padding:2px 8px; border-radius:4px;">Add RAG + Clerk + Stripe</span>
+    <span>→</span>
+    <span style="background:#1e2330; color:var(--fn); padding:2px 8px; border-radius:4px;">Mature: K8s + GitOps</span>
+    <span>→</span>
+    <span style="background:#1e2330; color:var(--string); padding:2px 8px; border-radius:4px;">Enterprise: multi-LLM + OTel</span>
+  </div>
+</div>
+
+<!-- Recommended stack bar -->
+<div style="margin-bottom:16px; padding:10px 14px; border-radius:8px; border:1px solid #94a3b833; background:#94a3b80d;">
+  <div style="font-size:11px; font-weight:700; letter-spacing:2px; text-transform:uppercase; font-family:'JetBrains Mono',monospace; color:var(--infra); margin-bottom:8px;">Best Recommended Enterprise Stack 2026</div>
+  <div style="font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--muted); display:flex; flex-wrap:wrap; gap:6px; align-items:center;">
+    <span style="background:#1e2330; color:var(--code); padding:2px 8px; border-radius:4px;">Turborepo + pnpm</span>
+    <span>→</span>
+    <span style="background:#1e2330; color:var(--keyword); padding:2px 8px; border-radius:4px;">Next.js + shadcn/ui</span>
+    <span>→</span>
+    <span style="background:#1e2330; color:var(--fn); padding:2px 8px; border-radius:4px;">NestJS + Prisma + Zod</span>
+    <span>→</span>
+    <span style="background:#1e2330; color:var(--string); padding:2px 8px; border-radius:4px;">PostgreSQL + pgvector + Redis</span>
+    <span>→</span>
+    <span style="background:#1e2330; color:#c084fc; padding:2px 8px; border-radius:4px;">Vercel AI SDK + LiteLLM</span>
+    <span>→</span>
+    <span style="background:#1e2330; color:#2dd4bf; padding:2px 8px; border-radius:4px;">Clerk + Stripe + Resend</span>
+    <span>→</span>
+    <span style="background:#1e2330; color:#fb923c; padding:2px 8px; border-radius:4px;">Docker + K8s + GitOps</span>
+  </div>
+</div>
+
+<!-- ─── Section 1: Core Infrastructure ─── -->
+<div class="section-title infra" style="background:var(--infra-dim); color:var(--infra);">1 · Core Infrastructure</div>
+<div class="grid-3">
+  <div class="card infra-card">
+    <h3 class="infra">Monorepo — Turborepo + pnpm</h3>
+    <h4>Why monorepo</h4>
+    <table class="ref-table">
+      <tr><td>Turborepo</td><td>build caching — only rebuild changed packages</td></tr>
+      <tr><td>pnpm workspaces</td><td>shared deps, symlinked node_modules</td></tr>
+      <tr><td>packages/shared</td><td>TS types, Zod schemas, utils — imported by all apps</td></tr>
+      <tr><td>turbo.json</td><td>pipeline config — order + caching rules</td></tr>
+    </table>
+    <h4>Structure</h4>
+<pre><span class="f">apps/</span>
+  <span class="s">web/</span>      <span class="cm">← Next.js frontend</span>
+  <span class="s">api/</span>      <span class="cm">← NestJS backend</span>
+<span class="f">packages/</span>
+  <span class="s">shared/</span>   <span class="cm">← types, Zod schemas, utils</span>
+  <span class="s">ui/</span>       <span class="cm">← shadcn component library</span>
+  <span class="s">config/</span>   <span class="cm">← ESLint, tsconfig presets</span></pre>
+    <h4>Key commands</h4>
+<pre><span class="cm"># scaffold</span>
+<span class="f">pnpm</span> create turbo@latest
+
+<span class="cm"># run only affected + deps</span>
+<span class="f">turbo</span> run build <span class="k">--filter</span>=api...
+
+<span class="cm"># add dep to one workspace</span>
+<span class="f">pnpm</span> <span class="k">--filter</span>=api add @nestjs/core</pre>
+  </div>
+
+  <div class="card infra-card">
+    <h3 class="infra">Docker Multi-stage + Node 22</h3>
+    <h4>Why multi-stage</h4>
+    <table class="ref-table">
+      <tr><td>Node 22 LTS</td><td>latest LTS (2024) — V8 11.8, native fetch, WebSocket</td></tr>
+      <tr><td>SWC compiler</td><td>10-70× faster than tsc — used in NestJS + Next.js</td></tr>
+      <tr><td>alpine base</td><td>~5 MB vs ~100 MB debian — smaller final image</td></tr>
+      <tr><td>.dockerignore</td><td>exclude node_modules, .git, dist to speed up build</td></tr>
+    </table>
+    <h4>Production Dockerfile</h4>
+<pre><span class="cm"># ── Stage 1: build ──</span>
+<span class="k">FROM</span> node:<span class="f">22</span>-alpine <span class="k">AS</span> builder
+<span class="k">WORKDIR</span> /app
+<span class="k">COPY</span> package*.json ./
+<span class="k">RUN</span> npm ci
+<span class="k">COPY</span> . .
+<span class="k">RUN</span> npm run build
+
+<span class="cm"># ── Stage 2: run ──</span>
+<span class="k">FROM</span> node:<span class="f">22</span>-alpine <span class="k">AS</span> runner
+<span class="k">WORKDIR</span> /app
+<span class="k">COPY</span> --from=builder /app/dist ./dist
+<span class="k">COPY</span> --from=builder /app/node_modules ./node_modules
+<span class="k">CMD</span> [<span class="s">"node"</span>, <span class="s">"dist/main.js"</span>]</pre>
+  </div>
+
+  <div class="card infra-card">
+    <h3 class="infra">Kubernetes + Helm + Terraform</h3>
+    <h4>AWS EKS deployment flow</h4>
+    <table class="ref-table">
+      <tr><td>EKS</td><td>managed Kubernetes on AWS — control plane handled by AWS</td></tr>
+      <tr><td>Helm</td><td>K8s package manager — chart = versioned deployment template</td></tr>
+      <tr><td>Terraform</td><td>IaC multi-cloud (HCL) — provision VPC, EKS, RDS</td></tr>
+      <tr><td>AWS CDK</td><td>IaC in TypeScript — better DX for TypeScript teams</td></tr>
+    </table>
+    <h4>Deploy with Helm</h4>
+<pre><span class="cm"># install/upgrade release</span>
+helm upgrade <span class="k">--install</span> api ./charts/api \
+  <span class="k">--set</span> image.tag=<span class="f">v1.2.3</span> \
+  <span class="k">--namespace</span> prod \
+  <span class="k">--create-namespace</span></pre>
+    <h4>Secrets &amp; Config</h4>
+    <table class="ref-table">
+      <tr><td>AWS Secrets Manager</td><td>store DB passwords, API keys — auto-rotate</td></tr>
+      <tr><td>HashiCorp Vault</td><td>self-hosted secrets + dynamic credentials</td></tr>
+      <tr><td>@nestjs/config</td><td>typed env with Zod schema validation on startup</td></tr>
+    </table>
+<pre><span class="cm">// validate env at startup with Zod</span>
+<span class="k">ConfigModule</span>.<span class="f">forRoot</span>({
+  <span class="c">validate: (env) =&gt; EnvSchema.</span><span class="f">parse</span><span class="c">(env)</span>
+})</pre>
+  </div>
+</div>
+
+<!-- ─── Section 2: AI Runtime Integration ─── -->
+<div class="section-title infra" style="background:var(--infra-dim); color:var(--infra);">2 · AI Runtime Integration</div>
+<div class="grid-3">
+  <div class="card infra-card">
+    <h3 class="infra">Vercel AI SDK — Streaming &amp; Tools</h3>
+    <h4>Core API</h4>
+    <table class="ref-table">
+      <tr><td>streamText()</td><td>stream LLM response token-by-token to client</td></tr>
+      <tr><td>generateObject()</td><td>structured JSON output with Zod schema validation</td></tr>
+      <tr><td>tool()</td><td>define callable tools — the LLM decides when to call</td></tr>
+      <tr><td>useChat()</td><td>React hook — handles messages, streaming, loading state</td></tr>
+    </table>
+    <h4>NestJS streaming example</h4>
+<pre><span class="k">import</span> <span class="c">{ streamText, tool } </span><span class="k">from</span> <span class="s">'ai'</span><span class="c">;</span>
+<span class="k">import</span> <span class="c">{ openai } </span><span class="k">from</span> <span class="s">'@ai-sdk/openai'</span><span class="c">;</span>
+
+<span class="k">const</span> result = <span class="k">await</span> <span class="f">streamText</span>({
+  model: <span class="f">openai</span>(<span class="s">'gpt-4o'</span>),
+  system: <span class="s">'You are a helpful assistant.'</span>,
+  messages,
+  tools: {
+    search: <span class="f">tool</span>({
+      description: <span class="s">'Search the knowledge base'</span>,
+      parameters: z.<span class="f">object</span>({ query: z.<span class="f">string</span>() }),
+      execute: <span class="k">async</span> ({ query }) =&gt; <span class="k">await</span> <span class="f">vectorSearch</span>(query),
+    }),
+  },
+});
+<span class="k">return</span> result.<span class="f">toDataStreamResponse</span>();</pre>
+  </div>
+
+  <div class="card infra-card">
+    <h3 class="infra">RAG Pipeline — pgvector</h3>
+    <h4>RAG flow</h4>
+    <table class="ref-table">
+      <tr><td>1. Ingest</td><td>chunk docs → embed with OpenAI/Voyage → store in pgvector</td></tr>
+      <tr><td>2. Query</td><td>embed user query → cosine similarity search → top-K chunks</td></tr>
+      <tr><td>3. Generate</td><td>inject chunks into LLM prompt → get grounded answer</td></tr>
+      <tr><td>pgvector</td><td>PostgreSQL extension — vector(1536) column type</td></tr>
+    </table>
+    <h4>pgvector setup</h4>
+<pre><span class="cm">-- enable extension</span>
+<span class="k">CREATE EXTENSION</span> <span class="k">IF NOT EXISTS</span> vector;
+
+<span class="cm">-- store embeddings</span>
+<span class="k">ALTER TABLE</span> docs <span class="k">ADD COLUMN</span>
+  embedding <span class="f">vector</span>(<span class="f">1536</span>);
+
+<span class="cm">-- HNSW index for fast ANN search</span>
+<span class="k">CREATE INDEX</span> ON docs <span class="k">USING</span> hnsw
+  (embedding vector_cosine_ops);
+
+<span class="cm">-- semantic search</span>
+<span class="k">SELECT</span> id, content,
+  <span class="f">1</span> - (embedding &lt;=&gt; <span class="s">'[...]'</span>::vector) <span class="k">AS</span> score
+<span class="k">FROM</span> docs
+<span class="k">ORDER BY</span> score <span class="k">DESC LIMIT</span> <span class="f">5</span>;</pre>
+  </div>
+
+  <div class="card infra-card">
+    <h3 class="infra">LiteLLM — Multi-LLM Gateway</h3>
+    <h4>Why LiteLLM</h4>
+    <table class="ref-table">
+      <tr><td>Unified API</td><td>OpenAI-compatible for all LLMs — swap models in config</td></tr>
+      <tr><td>Fallbacks</td><td>auto-switch to backup model if primary fails or rate-limits</td></tr>
+      <tr><td>Cost tracking</td><td>per-call cost + usage logging per user/team</td></tr>
+      <tr><td>No vendor lock-in</td><td>Claude → GPT-4o → Gemini without code changes</td></tr>
+    </table>
+    <h4>Config + usage</h4>
+<pre><span class="cm"># litellm config.yaml</span>
+model_list:
+  - model_name: <span class="s">gpt-4o</span>
+    litellm_params:
+      model: <span class="s">openai/gpt-4o</span>
+  - model_name: <span class="s">claude-3-5-sonnet</span>
+    litellm_params:
+      model: <span class="s">anthropic/claude-3-5-sonnet-20241022</span>
+
+router_settings:
+  fallbacks:
+    - <span class="s">gpt-4o</span>: [<span class="s">claude-3-5-sonnet</span>]
+  num_retries: <span class="f">3</span></pre>
+    <h4>LangChain.js / LangGraph</h4>
+    <table class="ref-table">
+      <tr><td>LangChain.js</td><td>chains, prompts, memory, tool use — orchestration layer</td></tr>
+      <tr><td>LangGraph</td><td>stateful multi-step agents — nodes + edges + state machine</td></tr>
+    </table>
+  </div>
+</div>
+
+<!-- ─── Section 3: Observability & Security ─── -->
+<div class="section-title infra" style="background:var(--infra-dim); color:var(--infra);">3 · Observability &amp; Security</div>
+<div class="grid-3">
+  <div class="card infra-card">
+    <h3 class="infra">OpenTelemetry Full Stack</h3>
+    <h4>Three pillars</h4>
+    <table class="ref-table">
+      <tr><td>Traces</td><td>request flow across services — spans with start/end/tags</td></tr>
+      <tr><td>Metrics</td><td>Prometheus counters, histograms — visualized in Grafana</td></tr>
+      <tr><td>Logs</td><td>structured JSON — correlate with trace ID</td></tr>
+    </table>
+    <h4>NestJS setup — init before bootstrap</h4>
+<pre><span class="cm">// instrumentation.ts — run BEFORE NestJS</span>
+<span class="k">import</span> <span class="c">{ NodeSDK } </span><span class="k">from</span> <span class="s">'@opentelemetry/sdk-node'</span><span class="c">;</span>
+<span class="k">import</span> <span class="c">{ OTLPTraceExporter } </span><span class="k">from</span>
+  <span class="s">'@opentelemetry/exporter-otlp-http'</span><span class="c">;</span>
+<span class="k">import</span> <span class="c">{ getNodeAutoInstrumentations } </span><span class="k">from</span>
+  <span class="s">'@opentelemetry/auto-instrumentations-node'</span><span class="c">;</span>
+
+<span class="k">const</span> sdk = <span class="k">new</span> <span class="f">NodeSDK</span>({
+  traceExporter: <span class="k">new</span> <span class="f">OTLPTraceExporter</span>({
+    url: <span class="s">'http://otel-collector:4318/v1/traces'</span>,
+  }),
+  instrumentations: [<span class="f">getNodeAutoInstrumentations</span>()],
+});
+sdk.<span class="f">start</span>();</pre>
+    <h4>AI observability</h4>
+    <table class="ref-table">
+      <tr><td>LangSmith</td><td>LangChain-native — prompt tracing, run scores</td></tr>
+      <tr><td>LangFuse</td><td>open-source LLM obs — cost/call, latency, eval</td></tr>
+      <tr><td>Helicone</td><td>proxy-based — zero-code LLM logging</td></tr>
+    </table>
+  </div>
+
+  <div class="card infra-card">
+    <h3 class="infra">Resilience Patterns</h3>
+    <h4>Circuit breaker — states</h4>
+    <table class="ref-table">
+      <tr><td>CLOSED</td><td>normal — requests flow through</td></tr>
+      <tr><td>OPEN</td><td>failure threshold hit — fast-fail immediately</td></tr>
+      <tr><td>HALF_OPEN</td><td>probe: allow one request to test if service recovered</td></tr>
+    </table>
+    <h4>Retry with backoff</h4>
+<pre><span class="k">import</span> <span class="c">{ retry, backoff, handleAll } </span><span class="k">from</span> <span class="s">'cockatiel'</span><span class="c">;</span>
+
+<span class="k">const</span> policy = <span class="f">retry</span>(handleAll, {
+  maxAttempts: <span class="f">3</span>,
+  backoff: backoff.<span class="f">exponential</span>({
+    initialDelay: <span class="f">100</span>,
+    maxDelay: <span class="f">5000</span>,
+  }),
+});</pre>
+    <h4>Graceful shutdown (NestJS)</h4>
+<pre><span class="k">async function</span> <span class="f">bootstrap</span>() {
+  <span class="k">const</span> app = <span class="k">await</span> NestFactory.<span class="f">create</span>(AppModule);
+  app.<span class="f">enableShutdownHooks</span>(); <span class="cm">// listens for SIGTERM</span>
+  <span class="k">await</span> app.<span class="f">listen</span>(<span class="f">3000</span>);
+}
+<span class="cm">// implement OnApplicationShutdown in services</span>
+<span class="k">async</span> <span class="f">onApplicationShutdown</span>(signal: string) {
+  <span class="k">await</span> this.db.<span class="f">disconnect</span>(); <span class="cm">// drain connections</span>
+}</pre>
+  </div>
+
+  <div class="card infra-card">
+    <h3 class="infra">Security — AI + Enterprise</h3>
+    <h4>Prompt injection defense</h4>
+<pre><span class="k">function</span> <span class="f">sanitizePrompt</span>(input: string): string {
+  <span class="k">const</span> banned = <span class="f">/ignore previous|jailbreak|system:/i</span>;
+  <span class="k">if</span> (banned.<span class="f">test</span>(input))
+    <span class="k">throw new</span> <span class="f">ForbiddenException</span>(<span class="s">'Blocked'</span>);
+  <span class="k">return</span> input.<span class="f">slice</span>(<span class="f">0</span>, <span class="f">2000</span>); <span class="cm">// length cap</span>
+}</pre>
+    <h4>Transport &amp; API security</h4>
+    <table class="ref-table">
+      <tr><td>mTLS</td><td>mutual TLS — both client + server present certificates</td></tr>
+      <tr><td>WAF</td><td>AWS WAF / Cloudflare — block OWASP Top 10 at edge</td></tr>
+      <tr><td>API key rotation</td><td>short-lived keys, store in Secrets Manager, never in code</td></tr>
+      <tr><td>CORS + Helmet</td><td>NestJS: app.use(helmet()) + CORS origin whitelist</td></tr>
+    </table>
+    <h4>NestJS security setup</h4>
+<pre><span class="k">import</span> helmet <span class="k">from</span> <span class="s">'helmet'</span><span class="c">;</span>
+app.<span class="f">use</span>(<span class="f">helmet</span>());
+app.<span class="f">enableCors</span>({ origin: [<span class="s">'https://myapp.com'</span>] });
+app.<span class="f">useGlobalPipes</span>(<span class="k">new</span> <span class="f">ValidationPipe</span>({
+  whitelist: <span class="k">true</span>,   <span class="cm">// strip unknown fields</span>
+  forbidNonWhitelisted: <span class="k">true</span>,
+}));</pre>
+  </div>
+</div>
+
+<!-- ─── Section 4: Third-party & SaaS ─── -->
+<div class="section-title infra" style="background:var(--infra-dim); color:var(--infra);">4 · Third-party &amp; SaaS Integrations</div>
+<div class="grid-4">
+  <div class="card infra-card">
+    <h3 class="infra">Auth — Clerk Recommended</h3>
+    <h4>Options</h4>
+    <table class="ref-table">
+      <tr><td>Clerk</td><td>SaaS + orgs + billing — fastest to ship</td></tr>
+      <tr><td>Auth.js</td><td>flexible + self-hosted — any OAuth provider</td></tr>
+      <tr><td>Auth0</td><td>enterprise compliance — SOC2, HIPAA</td></tr>
+      <tr><td>Supabase Auth</td><td>Postgres-native — great with Supabase stack</td></tr>
+    </table>
+    <h4>Clerk in NestJS</h4>
+<pre><span class="k">import</span> <span class="c">{ clerkMiddleware } </span><span class="k">from</span> <span class="s">'@clerk/express'</span><span class="c">;</span>
+app.<span class="f">use</span>(<span class="f">clerkMiddleware</span>());
+
+<span class="c">@</span><span class="f">Get</span><span class="c">(</span><span class="s">'me'</span><span class="c">)</span>
+<span class="f">getMe</span>(<span class="c">@</span><span class="f">Req</span><span class="c">() req) {</span>
+  <span class="k">return</span> req.auth.userId; <span class="cm">// Clerk userId</span>
+<span class="c">}</span></pre>
+  </div>
+
+  <div class="card infra-card">
+    <h3 class="infra">Stripe Webhooks in NestJS</h3>
+    <h4>Critical: verify signature</h4>
+<pre><span class="c">@</span><span class="f">Post</span><span class="c">(</span><span class="s">'webhook'</span><span class="c">)</span>
+<span class="c">@</span><span class="f">HttpCode</span><span class="c">(</span><span class="f">200</span><span class="c">)</span>
+<span class="k">async</span> <span class="f">stripeWebhook</span>(
+  <span class="c">@</span><span class="f">Req</span><span class="c">() req: RawBodyRequest&lt;Request&gt;,</span>
+  <span class="c">@</span><span class="f">Headers</span><span class="c">(</span><span class="s">'stripe-signature'</span><span class="c">) sig: string,</span>
+<span class="c">) {</span>
+  <span class="k">const</span> event = this.stripe.webhooks
+    .<span class="f">constructEvent</span>(req.rawBody, sig,
+      process.env.<span class="f">STRIPE_WEBHOOK_SECRET</span>);
+  <span class="k">switch</span> (event.type) {
+    <span class="k">case</span> <span class="s">'checkout.session.completed'</span>:
+      <span class="k">await</span> this.<span class="f">provisionAccess</span>(event.data);
+      <span class="k">break</span>;
+  }
+<span class="c">}</span></pre>
+    <h4>Key events</h4>
+    <table class="ref-table">
+      <tr><td>checkout.session.completed</td><td>provision access after payment</td></tr>
+      <tr><td>customer.subscription.updated</td><td>sync plan/limits</td></tr>
+      <tr><td>payment_intent.payment_failed</td><td>notify + retry logic</td></tr>
+    </table>
+  </div>
+
+  <div class="card infra-card">
+    <h3 class="infra">Outbox Pattern</h3>
+    <h4>Problem solved</h4>
+    <div class="tip infra-tip">Events lost if app crashes between DB write and message publish. The Outbox pattern atomically stores events in the same DB transaction.</div>
+    <h4>Outbox table</h4>
+<pre><span class="k">CREATE TABLE</span> outbox (
+  id          UUID <span class="k">PRIMARY KEY</span>,
+  event_type  TEXT,
+  payload     JSONB,
+  published_at TIMESTAMPTZ,
+  created_at  TIMESTAMPTZ <span class="k">DEFAULT</span> now()
+);
+
+<span class="cm">-- Atomic: domain change + event in ONE tx</span>
+<span class="k">BEGIN</span>;
+  <span class="k">UPDATE</span> orders <span class="k">SET</span> status=<span class="s">'paid'</span> <span class="k">WHERE</span> id=<span class="f">1</span>;
+  <span class="k">INSERT INTO</span> outbox (event_type, payload)
+    <span class="k">VALUES</span> (<span class="s">'order.paid'</span>, <span class="s">'{"orderId":1}'</span>);
+<span class="k">COMMIT</span>;</pre>
+    <h4>Integration patterns</h4>
+    <table class="ref-table">
+      <tr><td>Webhook verify</td><td>always check signature header</td></tr>
+      <tr><td>Idempotency</td><td>deduplicate by event ID — re-delivery is normal</td></tr>
+      <tr><td>Rate limit</td><td>exponential backoff when 429 from third-party</td></tr>
+    </table>
+  </div>
+
+  <div class="card infra-card">
+    <h3 class="infra">PostHog + Resend</h3>
+    <h4>PostHog analytics</h4>
+    <table class="ref-table">
+      <tr><td>Product analytics</td><td>events, funnels, retention — open-source</td></tr>
+      <tr><td>Feature flags</td><td>gradual rollouts without redeployment</td></tr>
+      <tr><td>Session replay</td><td>watch user interactions</td></tr>
+    </table>
+<pre><span class="k">import</span> posthog <span class="k">from</span> <span class="s">'posthog-js'</span><span class="c">;</span>
+posthog.<span class="f">init</span>(process.env.<span class="f">NEXT_PUBLIC_POSTHOG_KEY</span>);
+<span class="k">if</span> (posthog.<span class="f">isFeatureEnabled</span>(<span class="s">'new-ui'</span>)) {
+  <span class="cm">// show new UI</span>
+}</pre>
+    <h4>Resend — modern email</h4>
+    <table class="ref-table">
+      <tr><td>Resend</td><td>developer-first — React Email templates</td></tr>
+      <tr><td>SendGrid / Postmark</td><td>battle-tested alternatives</td></tr>
+      <tr><td>Twilio</td><td>SMS + WhatsApp</td></tr>
+      <tr><td>Pusher / Ably</td><td>real-time WebSocket events</td></tr>
+    </table>
+<pre><span class="k">import</span> <span class="c">{ Resend } </span><span class="k">from</span> <span class="s">'resend'</span><span class="c">;</span>
+<span class="k">const</span> resend = <span class="k">new</span> <span class="f">Resend</span>(process.env.<span class="f">RESEND_KEY</span>);
+<span class="k">await</span> resend.emails.<span class="f">send</span>({
+  from: <span class="s">'noreply@app.com'</span>,
+  to: user.email,
+  subject: <span class="s">'Welcome!'</span>,
+  react: <span class="f">WelcomeEmail</span>({ name: user.name }),
+});</pre>
+  </div>
+</div>
+
+<!-- ─── Section 5: Data Layer ─── -->
+<div class="section-title infra" style="background:var(--infra-dim); color:var(--infra);">5 · Data Layer — PostgreSQL + Redis + Vectors</div>
+<div class="grid-3">
+  <div class="card infra-card">
+    <h3 class="infra">Prisma vs Drizzle ORM</h3>
+    <h4>Comparison</h4>
+    <table class="ref-table">
+      <tr><td>Prisma</td><td>schema.prisma → auto-migrate → type-safe Prisma Client</td></tr>
+      <tr><td>Drizzle</td><td>TypeScript schema → SQL-like queries → lighter runtime</td></tr>
+      <tr><td>DX winner</td><td>Prisma — autocompletion, relations, Studio UI</td></tr>
+      <tr><td>Perf winner</td><td>Drizzle — no query engine, direct SQL driver</td></tr>
+      <tr><td>pgvector</td><td>both support it (Prisma: unsupported type workaround)</td></tr>
+    </table>
+    <h4>Prisma quick reference</h4>
+<pre><span class="cm">// find with relation</span>
+<span class="k">const</span> user = <span class="k">await</span> prisma.user.<span class="f">findUnique</span>({
+  where: { id },
+  include: { posts: <span class="k">true</span> },
+});
+
+<span class="cm">// transaction</span>
+<span class="k">await</span> prisma.<span class="f">$transaction</span>([
+  prisma.order.<span class="f">create</span>({ data: orderData }),
+  prisma.outbox.<span class="f">create</span>({ data: eventData }),
+]);</pre>
+  </div>
+
+  <div class="card infra-card">
+    <h3 class="infra">Redis — Multi-purpose Cache</h3>
+    <h4>Use cases</h4>
+    <table class="ref-table">
+      <tr><td>Cache</td><td>GET/SET with TTL — avoid repeated DB queries</td></tr>
+      <tr><td>Sessions</td><td>store JWT or session data — fast lookup by token</td></tr>
+      <tr><td>Pub/Sub</td><td>real-time events between microservices</td></tr>
+      <tr><td>Rate limiting</td><td>INCR + EXPIRE per IP/user per minute</td></tr>
+      <tr><td>BullMQ queues</td><td>job queues — email, AI calls, report generation</td></tr>
+    </table>
+    <h4>NestJS cache + BullMQ</h4>
+<pre><span class="cm">// Cache manager</span>
+<span class="c">@</span><span class="f">Inject</span><span class="c">(CACHE_MANAGER) </span><span class="k">private</span> cache: Cache;
+<span class="k">await</span> this.cache.<span class="f">set</span>(<span class="s">'key'</span>, data, <span class="f">3600</span>);
+<span class="k">const</span> cached = <span class="k">await</span> this.cache.<span class="f">get</span>(<span class="s">'key'</span>);
+
+<span class="cm">// BullMQ processor</span>
+<span class="c">@</span><span class="f">Processor</span><span class="c">(</span><span class="s">'emails'</span><span class="c">)</span>
+<span class="k">export class</span> <span class="f">EmailWorker</span> {
+  <span class="c">@</span><span class="f">Process</span><span class="c">()</span>
+  <span class="k">async</span> <span class="f">handle</span>(job: Job) {
+    <span class="k">await</span> this.email.<span class="f">send</span>(job.data);
+  }
+}</pre>
+  </div>
+
+  <div class="card infra-card">
+    <h3 class="infra">Messaging — Kafka vs SQS vs Streams</h3>
+    <h4>When to use each</h4>
+    <table class="ref-table">
+      <tr><td>Kafka</td><td>high-throughput event streaming, consumer groups, replay</td></tr>
+      <tr><td>Redis Streams</td><td>lightweight — same infra as your cache, ordered log</td></tr>
+      <tr><td>AWS SQS</td><td>managed, serverless-friendly, at-least-once delivery</td></tr>
+      <tr><td>AWS SNS</td><td>fan-out pub/sub — one message → many SQS subscribers</td></tr>
+    </table>
+    <h4>NestJS transports</h4>
+<pre><span class="cm">// Kafka microservice</span>
+<span class="k">const</span> app = <span class="k">await</span> NestFactory
+  .<span class="f">createMicroservice</span>(AppModule, {
+    transport: Transport.<span class="f">KAFKA</span>,
+    options: {
+      client: { brokers: [<span class="s">'kafka:9092'</span>] },
+    },
+  });
+
+<span class="cm">// Emit event</span>
+this.client.<span class="f">emit</span>(<span class="s">'order.created'</span>, payload);</pre>
+    <div class="tip infra-tip">Rule: Redis Streams for &lt;10k msg/s · Kafka for high-throughput replay · SQS for serverless/simple queues</div>
+  </div>
+</div>
+
+<!-- ─── Section 6: Frontend Layer ─── -->
+<div class="section-title infra" style="background:var(--infra-dim); color:var(--infra);">6 · Frontend — Next.js + React 19</div>
+<div class="grid-3">
+  <div class="card infra-card">
+    <h3 class="infra">Next.js App Router + React 19</h3>
+    <h4>Server vs Client Components</h4>
+    <table class="ref-table">
+      <tr><td>Server Component</td><td>default — async, zero JS to client, direct DB/API access</td></tr>
+      <tr><td>'use client'</td><td>opt-in for interactive components (useState, events)</td></tr>
+      <tr><td>Server Actions</td><td>async functions — mutations without API route</td></tr>
+      <tr><td>TanStack Query</td><td>client-side cache + background sync + optimistic UI</td></tr>
+    </table>
+    <h4>Pattern: Server + Client split</h4>
+<pre><span class="cm">// Server Component — runs on server</span>
+<span class="k">async function</span> <span class="f">UserList</span>() {
+  <span class="k">const</span> users = <span class="k">await</span> db.user.<span class="f">findMany</span>();
+  <span class="k">return</span> &lt;ul&gt;{users.<span class="f">map</span>(u =&gt; &lt;<span class="f">UserCard</span> user={u}/&gt;)}&lt;/ul&gt;;
+}
+
+<span class="cm">// Client Component — interactive</span>
+<span class="s">'use client'</span>;
+<span class="k">export function</span> <span class="f">LikeButton</span>({ id }: { id: string }) {
+  <span class="k">const</span> [liked, setLiked] = <span class="f">useState</span>(<span class="k">false</span>);
+  <span class="k">return</span> &lt;button onClick={() =&gt; <span class="f">setLiked</span>(<span class="k">true</span>)}&gt;
+    {liked ? <span class="s">'❤️'</span> : <span class="s">'🤍'</span>}
+  &lt;/button&gt;;
+}</pre>
+  </div>
+
+  <div class="card infra-card">
+    <h3 class="infra">UI — Tailwind + shadcn/ui</h3>
+    <h4>Stack</h4>
+    <table class="ref-table">
+      <tr><td>shadcn/ui</td><td>copy-paste components — you own the code, not a dep</td></tr>
+      <tr><td>Radix primitives</td><td>accessible headless base (Dialog, Popover, etc.)</td></tr>
+      <tr><td>Tailwind CSS</td><td>utility-first — no runtime CSS, JIT purging</td></tr>
+      <tr><td>cn() helper</td><td>merge Tailwind classes safely with clsx + twMerge</td></tr>
+    </table>
+    <h4>Setup + usage</h4>
+<pre><span class="cm"># add component (copies to components/ui/)</span>
+npx shadcn-ui@latest add button dialog
+
+<span class="cm">// cn() — safe class merging</span>
+<span class="k">import</span> <span class="c">{ cn } </span><span class="k">from</span> <span class="s">'@/lib/utils'</span><span class="c">;</span>
+<span class="k">export function</span> <span class="f">Button</span>({ className, ...props }) {
+  <span class="k">return</span> &lt;button
+    className={<span class="f">cn</span>(<span class="s">'px-4 py-2 rounded'</span>, className)}
+    {...props}
+  /&gt;;
+}</pre>
+    <h4>Vercel deployment</h4>
+    <table class="ref-table">
+      <tr><td>Edge functions</td><td>run middleware at CDN edge — low latency globally</td></tr>
+      <tr><td>AI streaming</td><td>Vercel AI Gateway — caching + rate limiting for LLMs</td></tr>
+      <tr><td>Preview envs</td><td>auto-deploy every PR branch for QA</td></tr>
+    </table>
+  </div>
+
+  <div class="card infra-card">
+    <h3 class="infra">AI Streaming in Next.js</h3>
+    <h4>useChat hook — Vercel AI SDK</h4>
+<pre><span class="s">'use client'</span>;
+<span class="k">import</span> <span class="c">{ useChat } </span><span class="k">from</span> <span class="s">'ai/react'</span><span class="c">;</span>
+
+<span class="k">export function</span> <span class="f">Chat</span>() {
+  <span class="k">const</span> { messages, input, <span class="f">handleSubmit</span>,
+          <span class="f">handleInputChange</span>, isLoading } = <span class="f">useChat</span>({
+    api: <span class="s">'/api/chat'</span>,
+  });
+
+  <span class="k">return</span> (
+    &lt;div&gt;
+      {messages.<span class="f">map</span>(m =&gt; (
+        &lt;p key={m.id}&gt;{m.role}: {m.content}&lt;/p&gt;
+      ))}
+      &lt;form onSubmit={<span class="f">handleSubmit</span>}&gt;
+        &lt;input value={input} onChange={<span class="f">handleInputChange</span>}/&gt;
+        &lt;button type=<span class="s">'submit'</span> disabled={isLoading}&gt;
+          {isLoading ? <span class="s">'...'</span> : <span class="s">'Send'</span>}
+        &lt;/button&gt;
+      &lt;/form&gt;
+    &lt;/div&gt;
+  );
+}</pre>
+    <h4>API route — streams from NestJS</h4>
+<pre><span class="cm">// app/api/chat/route.ts</span>
+<span class="k">export async function</span> <span class="f">POST</span>(req: Request) {
+  <span class="k">const</span> { messages } = <span class="k">await</span> req.<span class="f">json</span>();
+  <span class="k">const</span> result = <span class="k">await</span> <span class="f">streamText</span>({
+    model: <span class="f">openai</span>(<span class="s">'gpt-4o'</span>), messages,
+  });
+  <span class="k">return</span> result.<span class="f">toDataStreamResponse</span>();
+}</pre>
+  </div>
+</div>
+
+<!-- ─── Section 7: CI/CD & GitOps ─── -->
+<div class="section-title infra" style="background:var(--infra-dim); color:var(--infra);">7 · CI/CD &amp; GitOps Deployment</div>
+<div class="grid-3">
+  <div class="card infra-card">
+    <h3 class="infra">GitHub Actions CI Pipeline</h3>
+    <h4>Monorepo CI with Turborepo</h4>
+<pre><span class="k">name</span>: CI
+<span class="k">on</span>: [push, pull_request]
+
+<span class="k">jobs</span>:
+  <span class="k">ci</span>:
+    <span class="k">runs-on</span>: ubuntu-latest
+    <span class="k">steps</span>:
+      - <span class="k">uses</span>: actions/checkout@v4
+      - <span class="k">uses</span>: pnpm/action-setup@v3
+      - <span class="k">run</span>: pnpm install --frozen-lockfile
+      - <span class="k">run</span>: pnpm turbo lint test build
+      - <span class="k">uses</span>: docker/build-push-action@v5
+        <span class="k">with</span>:
+          push: <span class="k">true</span>
+          tags: ghcr.io/org/api:<span class="f">\${{ github.sha }}</span></pre>
+    <h4>Key optimizations</h4>
+    <table class="ref-table">
+      <tr><td>--filter=api...</td><td>only rebuild changed packages + deps</td></tr>
+      <tr><td>cache: turbo</td><td>remote Turbo cache — skip unchanged builds</td></tr>
+      <tr><td>concurrency</td><td>cancel in-progress runs on new push</td></tr>
+    </table>
+  </div>
+
+  <div class="card infra-card">
+    <h3 class="infra">Argo CD — GitOps for K8s</h3>
+    <h4>GitOps principle</h4>
+    <div class="tip infra-tip">Git repo = single source of truth. Argo CD polls repo and reconciles K8s cluster state. git revert = instant rollback.</div>
+    <h4>Application manifest</h4>
+<pre><span class="k">apiVersion</span>: argoproj.io/v1alpha1
+<span class="k">kind</span>: Application
+<span class="k">spec</span>:
+  <span class="k">source</span>:
+    repoURL: https://github.com/org/infra
+    path: charts/api
+    targetRevision: main
+  <span class="k">destination</span>:
+    namespace: production
+  <span class="k">syncPolicy</span>:
+    automated:
+      prune: <span class="k">true</span>       <span class="cm"># remove deleted resources</span>
+      selfHeal: <span class="k">true</span>    <span class="cm"># fix manual cluster changes</span></pre>
+    <h4>Progressive delivery</h4>
+    <table class="ref-table">
+      <tr><td>Blue-green</td><td>run two identical envs, switch traffic instantly</td></tr>
+      <tr><td>Canary</td><td>route % of traffic to new version, watch metrics</td></tr>
+      <tr><td>Feature flags</td><td>Unleash / LaunchDarkly — decouple deploy from release</td></tr>
+    </table>
+  </div>
+
+  <div class="card infra-card">
+    <h3 class="infra">AI-assisted Dev Workflow</h3>
+    <h4>Tools in 2026</h4>
+    <table class="ref-table">
+      <tr><td>GitHub Copilot</td><td>inline completion + chat — integrated in VS Code/JetBrains</td></tr>
+      <tr><td>Cursor</td><td>AI-native editor — multi-file context, agentic edits</td></tr>
+      <tr><td>Claude Code</td><td>CLI agentic coding — full codebase context, terminal</td></tr>
+      <tr><td>Codium</td><td>auto-generate unit tests from code — CI-ready</td></tr>
+    </table>
+    <h4>AI-powered PR review</h4>
+<pre><span class="cm"># .github/workflows/ai-review.yml</span>
+- <span class="k">uses</span>: coderabbitai/ai-pr-reviewer@v2
+  <span class="k">with</span>:
+    openai_light_model: <span class="s">gpt-4o-mini</span>
+    openai_heavy_model: <span class="s">gpt-4o</span>
+    review_simple_changes: <span class="k">false</span></pre>
+    <h4>Best practices</h4>
+    <table class="ref-table">
+      <tr><td>CLAUDE.md</td><td>project context file — guides Claude Code in repo</td></tr>
+      <tr><td>Review AI output</td><td>always verify generated code — security + correctness</td></tr>
+      <tr><td>Test generation</td><td>Codium / Copilot for boilerplate test scaffolding</td></tr>
+    </table>
+  </div>
+</div>
+
+<!-- ─── Section 8: Scaling & Multi-tenancy ─── -->
+<div class="section-title infra" style="background:var(--infra-dim); color:var(--infra);">8 · Scaling, Multi-tenancy &amp; AI Workloads</div>
+<div class="grid-3">
+  <div class="card infra-card">
+    <h3 class="infra">Multi-tenancy — RLS</h3>
+    <h4>Strategies</h4>
+    <table class="ref-table">
+      <tr><td>Shared schema + tenantId</td><td>simplest — must filter every query</td></tr>
+      <tr><td>Schema-per-tenant</td><td>full isolation — migration complexity</td></tr>
+      <tr><td>DB-per-tenant</td><td>strongest isolation — highest cost</td></tr>
+      <tr><td>RLS (recommended)</td><td>Postgres enforces row filtering automatically</td></tr>
+    </table>
+    <h4>PostgreSQL Row Level Security</h4>
+<pre><span class="k">ALTER TABLE</span> orders <span class="k">ENABLE ROW LEVEL SECURITY</span>;
+
+<span class="k">CREATE POLICY</span> tenant_isolation <span class="k">ON</span> orders
+  <span class="k">USING</span> (tenant_id =
+    <span class="f">current_setting</span>(<span class="s">'app.tenant_id'</span>)::<span class="f">uuid</span>);
+
+<span class="cm">-- Set per request in NestJS middleware</span>
+<span class="k">await</span> prisma.<span class="f">\$executeRaw</span>
+  <span class="s">\`SET app.tenant_id = \${tenantId}\`</span>;</pre>
+  </div>
+
+  <div class="card infra-card">
+    <h3 class="infra">Scaling AI Workloads</h3>
+    <h4>K8s patterns</h4>
+    <table class="ref-table">
+      <tr><td>HPA</td><td>Horizontal Pod Autoscaler — scale on CPU or custom metrics</td></tr>
+      <tr><td>KEDA</td><td>scale on external signals: queue depth, Redis list length</td></tr>
+      <tr><td>GPU nodes</td><td>self-hosted LLMs (Llama, Mistral) on GPU node pool</td></tr>
+      <tr><td>Embedding cache</td><td>Redis TTL — avoid re-embedding same text repeatedly</td></tr>
+    </table>
+    <h4>KEDA — scale on BullMQ</h4>
+<pre><span class="k">apiVersion</span>: keda.sh/v1alpha1
+<span class="k">kind</span>: ScaledObject
+<span class="k">spec</span>:
+  scaleTargetRef: { name: llm-worker }
+  triggers:
+    - type: redis
+      metadata:
+        listName: <span class="s">'bull:llm-queue:wait'</span>
+        listLength: <span class="s">'10'</span>  <span class="cm"># 1 pod per 10 jobs</span></pre>
+  </div>
+
+  <div class="card infra-card">
+    <h3 class="infra">Serverless vs Kubernetes</h3>
+    <h4>Decision guide</h4>
+    <table class="ref-table">
+      <tr><td>Vercel / Netlify</td><td>frontend + edge — zero ops, auto-scale, vendor managed</td></tr>
+      <tr><td>AWS Lambda</td><td>event-driven, low-traffic, stateless — pay per invocation</td></tr>
+      <tr><td>EKS (K8s)</td><td>long-running, stateful, AI workloads — full control</td></tr>
+      <tr><td>Hybrid</td><td>Next.js on Vercel + NestJS on EKS — best of both</td></tr>
+    </table>
+    <h4>NestJS Lambda adapter</h4>
+<pre><span class="k">import</span> <span class="c">{ configure } </span><span class="k">from</span> <span class="s">'@codegenie/serverless-express'</span><span class="c">;</span>
+<span class="k">import</span> <span class="c">{ handler </span><span class="k">as</span><span class="c"> expressHandler } </span><span class="k">from</span> <span class="s">'./app'</span><span class="c">;</span>
+
+<span class="k">export const</span> handler = <span class="f">configure</span>({
+  app: expressHandler,
+});</pre>
+    <h4>File storage</h4>
+    <table class="ref-table">
+      <tr><td>AWS S3</td><td>object storage — images, videos, exports</td></tr>
+      <tr><td>Presigned URLs</td><td>client uploads directly to S3 — skip your server</td></tr>
+      <tr><td>Cloudinary</td><td>image transformation + CDN on-the-fly</td></tr>
+      <tr><td>UploadThing</td><td>S3 abstraction — simple Next.js integration</td></tr>
+    </table>
+  </div>
+</div>
+
 <!-- Footer -->
 <div style="text-align:center; color: var(--comment); font-family:'JetBrains Mono',monospace; font-size:12px; margin-top:20px; padding-top:16px; border-top:1px solid var(--border);">
-  Junior Developer Daily Essentials · JavaScript · React + Redux · SQL · Linux · NestJS · TypeScript · DSA · 2026
+  Junior Developer Daily Essentials · JavaScript · React + Redux · SQL · Linux · NestJS · TypeScript · DSA · Enterprise Infra Architecture · 2026
 </div>
 
 </body>

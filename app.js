@@ -20589,7 +20589,1137 @@ const REDIS_CARDS         = [];
 const CICD_CARDS          = [];
 const AI_ASSIST_CARDS     = [];
 const THIRD_PARTY_CARDS   = [];
-const ARCHITECTURE_CARDS  = [];
+const ENTERPRISE_INFRASTRUCTURE_ARCHITECTURES_CARDS = [
+
+  // ══════════════════════════════════════════════════════════
+  // 0. OVERVIEW
+  // ══════════════════════════════════════════════════════════
+  {
+    category: 'Overview', difficulty: 'Beginner',
+    question: 'Enterprise Infrastructure Architectures 2026 — Full Mindmap & Recommended Stack',
+    answer: `9 pillars of modern full-stack enterprise infrastructure:
+
+1. 🔴 Core Infrastructure — Turborepo + pnpm monorepo · Docker multi-stage + Node 22 · Kubernetes + Helm + Terraform (AWS EKS) · Secrets & config (@nestjs/config + Zod + AWS Secrets Manager)
+
+2. 🟣 AI Runtime Integration — Vercel AI SDK (streaming/tools/RAG) · RAG pipeline (pgvector + embeddings) · LiteLLM multi-LLM gateway · LangChain.js / LangGraph agents · AI feature patterns
+
+3. 🟡 Observability & Security — OpenTelemetry (traces/metrics/logs) · AI observability (LangSmith/LangFuse) · Resilience (circuit breaker/retry/graceful shutdown) · Security (prompt injection/mTLS/WAF/OWASP)
+
+4. 🟢 Third-party & SaaS — Auth (Clerk/Auth.js/Auth0) · Payments (Stripe webhooks) · Email (Resend) · Outbox pattern · Analytics (PostHog + feature flags)
+
+5. 🌿 Data Layer — Prisma vs Drizzle · pgvector AI-ready Postgres · Redis (cache/sessions/BullMQ/pub-sub) · Messaging (Kafka/SQS/Redis Streams)
+
+6. 🔵 Frontend Layer — Next.js App Router + React 19 Server Components · Tailwind + shadcn/ui · Vercel edge + AI streaming
+
+7. 🟠 CI/CD & GitOps — GitHub Actions · Argo CD declarative deploys · Progressive delivery (blue-green/canary) · AI-assisted dev (Copilot/Cursor/Claude Code)
+
+8. 🌸 Scaling & Multi-tenancy — RLS + schema-per-tenant · K8s autoscale + KEDA · Serverless vs K8s hybrid
+
+9. ☁️ Cloud & File Services — AWS S3 + presigned URLs · Cloud choice (AWS/Vercel/Cloudflare/GCP) · NestJS + Fastify + API Gateway
+
+Recommended stack 2026: Turborepo+pnpm → Next.js+shadcn → NestJS+Prisma+Zod → PostgreSQL+pgvector+Redis → Vercel AI SDK+LiteLLM → Clerk+Stripe+Resend → Docker+K8s+GitOps
+
+Evolution path: MVP (Docker+Vercel) → Add RAG+Clerk+Stripe → Mature (K8s+GitOps) → Enterprise (multi-LLM+OpenTelemetry)`,
+  },
+
+  // ══════════════════════════════════════════════════════════
+  // 1. CORE INFRASTRUCTURE
+  // ══════════════════════════════════════════════════════════
+  {
+    category: 'Core Infrastructure', difficulty: 'Intermediate',
+    question: 'What is a Turborepo + pnpm monorepo and why use it for full-stack TypeScript projects?',
+    answer: `A monorepo hosts multiple apps (Next.js, NestJS) and shared packages in one repo with a single lockfile.
+
+Turborepo adds build caching — only rebuilds packages that changed and their dependants. pnpm workspaces link shared packages via symlinks, making imports like 'import { UserDto } from "@repo/shared"' work across apps.
+
+Key benefits:
+• Shared TypeScript types, Zod schemas, utils — one source of truth
+• turbo run build only rebuilds what changed (can skip 90% of CI time)
+• Single PR touches frontend + backend + types atomically
+• pnpm saves disk space via hard-link node_modules`,
+    tip: `apps/
+  web/        ← Next.js frontend
+  api/        ← NestJS backend
+packages/
+  shared/     ← DTOs, Zod schemas, utils
+  ui/         ← shadcn component library
+  config/     ← ESLint, tsconfig presets
+
+# run only affected + their deps
+turbo run build --filter=api...
+
+# add dep to one workspace only
+pnpm --filter=api add @nestjs/core`,
+  },
+  {
+    category: 'Core Infrastructure', difficulty: 'Intermediate',
+    question: 'How do Docker multi-stage builds work for a NestJS production image? What is special about Node 22?',
+    answer: `Multi-stage builds use multiple FROM instructions — early stages compile/build, the final stage contains only the runtime artifact. This keeps images small (~100 MB vs ~1 GB).
+
+Node 22 LTS (released 2024) brings:
+• V8 11.8 — faster JS execution
+• Native fetch + WebSocket APIs (no polyfill needed)
+• Permission model (experimental security sandbox)
+• SWC compiler integration — 10–70× faster TS compilation than tsc
+
+Stage 1 (builder): install all deps + compile TypeScript to dist/
+Stage 2 (runner): copy only dist/ + production node_modules from builder, use node:22-alpine base (~5 MB)`,
+    tip: `FROM node:22-alpine AS builder
+WORKDIR /app
+COPY package*.json ./
+RUN npm ci
+COPY . .
+RUN npm run build        # SWC compiles TS → dist/
+
+FROM node:22-alpine AS runner
+WORKDIR /app
+ENV NODE_ENV=production
+COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/node_modules ./node_modules
+EXPOSE 3000
+CMD ["node", "dist/main.js"]`,
+  },
+  {
+    category: 'Core Infrastructure', difficulty: 'Advanced',
+    question: 'How does Kubernetes + Helm + Terraform work for deploying NestJS on AWS EKS?',
+    answer: `AWS EKS (Elastic Kubernetes Service) is managed Kubernetes — AWS runs the control plane, you manage worker nodes.
+
+Terraform (or AWS CDK) provisions the infrastructure as code: VPC, subnets, EKS cluster, RDS, ElastiCache. Running 'terraform apply' creates or updates real AWS resources.
+
+Helm is the K8s package manager. A chart is a versioned template of K8s manifests (Deployment, Service, Ingress, ConfigMap). 'helm upgrade --install' either creates or upgrades a release — making deploys declarative and repeatable.
+
+Flow: Push code → GitHub Actions builds Docker image → pushes to ECR/GHCR → runs 'helm upgrade --set image.tag=SHA' → K8s rolls out new pods with zero downtime (rolling update strategy).`,
+    tip: `# Terraform EKS module
+module "eks" {
+  source       = "terraform-aws-modules/eks/aws"
+  cluster_name = "prod"
+  node_groups = {
+    workers = { instance_type = "t3.medium", desired_size = 3 }
+  }
+}
+
+# Helm deploy
+helm upgrade --install api ./charts/api \\
+  --set image.tag=v1.2.3 \\
+  --namespace prod \\
+  --create-namespace`,
+  },
+  {
+    category: 'Core Infrastructure', difficulty: 'Intermediate',
+    question: 'How do you manage secrets and environment config in a NestJS + Kubernetes production app?',
+    answer: `Never put secrets in code or Docker images. Use:
+
+1. AWS Secrets Manager — store DB passwords, API keys; supports auto-rotation. Inject as K8s secrets via External Secrets Operator.
+2. HashiCorp Vault — self-hosted secrets + dynamic credentials (short-lived DB passwords per service).
+3. K8s Secrets — base64-encoded, RBAC-protected, mounted as env vars or volume files.
+
+In NestJS use @nestjs/config with a Zod validation schema — the app crashes at startup if required env vars are missing or malformed. This catches misconfigured deployments before they serve traffic.`,
+    tip: `// config.module.ts — validate env at startup
+ConfigModule.forRoot({
+  isGlobal: true,
+  validate: (env) => EnvSchema.parse(env), // Zod
+});
+
+// EnvSchema
+const EnvSchema = z.object({
+  DATABASE_URL: z.string().url(),
+  JWT_SECRET:   z.string().min(32),
+  STRIPE_KEY:   z.string().startsWith('sk_'),
+  PORT:         z.coerce.number().default(3000),
+});`,
+  },
+
+  // ══════════════════════════════════════════════════════════
+  // 2. AI RUNTIME INTEGRATION
+  // ══════════════════════════════════════════════════════════
+  {
+    category: 'AI Runtime Integration', difficulty: 'Intermediate',
+    question: 'What is the Vercel AI SDK and how does it handle streaming, tool calling, and React integration?',
+    answer: `The Vercel AI SDK is a TypeScript library for building AI-powered apps. It works on both server (Node.js, NestJS, Next.js Route Handlers) and client (React hooks).
+
+Core functions:
+• streamText() — streams LLM response token-by-token; returns a DataStreamResponse
+• generateObject() — LLM outputs structured JSON validated against a Zod schema
+• tool() — define callable tools; the LLM decides when/how to call them (function calling)
+• generateText() — non-streaming single response
+
+React hooks (via 'ai/react'):
+• useChat() — manages messages, streaming state, loading, error
+• useCompletion() — for simple text completion inputs
+
+Works with any model provider: OpenAI, Anthropic, Google, Mistral via @ai-sdk/* packages.`,
+    tip: `import { streamText, tool } from 'ai';
+import { openai } from '@ai-sdk/openai';
+import { z } from 'zod';
+
+const result = await streamText({
+  model: openai('gpt-4o'),
+  system: 'You are a helpful assistant.',
+  messages,
+  tools: {
+    search: tool({
+      description: 'Search the knowledge base',
+      parameters: z.object({ query: z.string() }),
+      execute: async ({ query }) => vectorSearch(query),
+    }),
+  },
+  maxSteps: 5, // allow multi-step tool use
+});
+return result.toDataStreamResponse();`,
+  },
+  {
+    category: 'AI Runtime Integration', difficulty: 'Advanced',
+    question: 'How does a RAG (Retrieval-Augmented Generation) pipeline work with pgvector and NestJS?',
+    answer: `RAG grounds LLM answers in your own data by retrieving relevant chunks before generating.
+
+3-step pipeline:
+1. Ingest: chunk documents → embed with OpenAI text-embedding-3-small or Voyage → store vector(1536) in PostgreSQL via pgvector extension
+2. Retrieve: embed user query → find top-K semantically similar chunks using cosine similarity (the '<=> ' operator) with HNSW index
+3. Generate: inject retrieved chunks as context into LLM prompt → LLM answers from your data, not hallucinations
+
+pgvector key facts:
+• Installed as PostgreSQL extension (CREATE EXTENSION vector)
+• vector(1536) column stores float arrays
+• HNSW index (Hierarchical Navigable Small World) — fast approximate nearest neighbor, beats IVFFlat at recall
+• '<=> ' = cosine distance, '<-> ' = L2, '<#> ' = negative inner product`,
+    tip: `-- Setup
+CREATE EXTENSION IF NOT EXISTS vector;
+ALTER TABLE docs ADD COLUMN embedding vector(1536);
+CREATE INDEX ON docs USING hnsw (embedding vector_cosine_ops);
+
+-- Ingest (NestJS)
+const embedding = await openai.embeddings.create({
+  model: 'text-embedding-3-small', input: chunk
+});
+await prisma.$executeRaw\`
+  UPDATE docs SET embedding = \${JSON.stringify(embedding.data[0].embedding)}::vector
+  WHERE id = \${doc.id}\`;
+
+-- Search
+SELECT id, content,
+  1 - (embedding <=> '[...]'::vector) AS score
+FROM docs ORDER BY score DESC LIMIT 5;`,
+  },
+  {
+    category: 'AI Runtime Integration', difficulty: 'Intermediate',
+    question: 'What is LiteLLM and how does it prevent vendor lock-in in a multi-LLM architecture?',
+    answer: `LiteLLM is a unified gateway that exposes an OpenAI-compatible API in front of 100+ LLM providers (Claude, Gemini, Mistral, Grok, etc.).
+
+Benefits:
+• Swap models in config — no code changes needed; 'gpt-4o' in your code can route to Claude
+• Automatic fallbacks — if primary model fails or rate-limits, switch to backup
+• Cost tracking — log per-call cost + usage per user/team/project
+• Rate limiting — enforce per-tenant token budgets
+• Load balancing — distribute load across multiple API keys or regions
+
+Self-hosted via Docker or use LiteLLM Cloud. Runs as a proxy in your K8s cluster.`,
+    tip: `# litellm config.yaml
+model_list:
+  - model_name: gpt-4o
+    litellm_params: { model: openai/gpt-4o }
+  - model_name: claude-3-5-sonnet
+    litellm_params:
+      model: anthropic/claude-3-5-sonnet-20241022
+  - model_name: gemini-pro
+    litellm_params: { model: gemini/gemini-1.5-pro }
+
+router_settings:
+  fallbacks:
+    - gpt-4o: [claude-3-5-sonnet, gemini-pro]
+  num_retries: 3
+  allowed_fails: 2
+
+# Use like OpenAI SDK — just change base URL
+const client = new OpenAI({ baseURL: 'http://litellm:8000' });`,
+  },
+  {
+    category: 'AI Runtime Integration', difficulty: 'Advanced',
+    question: 'What are LangChain.js and LangGraph and when do you use them for AI agents?',
+    answer: `LangChain.js is an orchestration framework for LLM-powered applications — chains of prompts, memory, tools, and retrievers. It abstracts away provider differences and provides building blocks.
+
+LangGraph is a framework for stateful multi-step agent workflows. Agents are modeled as directed graphs where:
+• Nodes = actions (LLM calls, tool calls, conditions)
+• Edges = transitions (can be conditional based on state)
+• State = shared object passed between nodes
+
+Use LangChain.js for: chains, document QA, ReAct agents, memory management.
+Use LangGraph for: complex multi-step agents, human-in-the-loop, branching workflows, persistent state across turns.
+
+Vercel AI SDK's tool() is simpler and preferred for most cases — use LangGraph only when you need stateful multi-agent orchestration.`,
+    tip: `import { StateGraph, END } from '@langchain/langgraph';
+
+const workflow = new StateGraph({ channels: AgentState });
+
+workflow
+  .addNode('agent', callModel)
+  .addNode('tools', runTools)
+  .addEdge('__start__', 'agent')
+  .addConditionalEdges('agent',
+    (state) => state.toolCalls?.length ? 'tools' : END
+  )
+  .addEdge('tools', 'agent');  // loop back
+
+const app = workflow.compile();
+const result = await app.invoke({ messages });`,
+  },
+  {
+    category: 'AI Runtime Integration', difficulty: 'Intermediate',
+    question: 'What are the main AI feature patterns in enterprise apps in 2026?',
+    answer: `4 core AI feature patterns with different architectures:
+
+1. Chatbots — conversational UI, useChat hook, streaming, message history with sliding window context. Simple: streamText with system prompt.
+
+2. Semantic search — embed user query → vector similarity → return ranked results. Replaces keyword search with meaning-based search. Powers 'find similar products', 'search documentation', etc.
+
+3. Agentic workflows — LLM decides which tools to call, in what order, autonomously. Use for: data analysis pipelines, code generation, multi-step form filling, research tasks.
+
+4. Document Q&A — ingest PDFs/docs into vector DB → RAG pipeline → LLM answers questions grounded in your content. Common in enterprise knowledge bases, support bots.
+
+Key rule: choose simplest architecture that works. streamText > LangChain > LangGraph in increasing complexity.`,
+  },
+
+  // ══════════════════════════════════════════════════════════
+  // 3. OBSERVABILITY & SECURITY
+  // ══════════════════════════════════════════════════════════
+  {
+    category: 'Observability & Security', difficulty: 'Intermediate',
+    question: 'How does OpenTelemetry work for a NestJS + AI application? What are the three pillars?',
+    answer: `OpenTelemetry (OTel) is the open standard for observability. Three pillars:
+
+1. Traces — distributed request flow across services. A trace = tree of spans, each span has start/end time, service name, HTTP method, tags. Essential for understanding latency in microservices.
+
+2. Metrics — numeric measurements over time: request rate, error rate, latency percentiles (p95, p99). Exported to Prometheus → visualized in Grafana.
+
+3. Logs — structured JSON logs correlated with trace IDs so you can jump from a trace to its logs.
+
+For AI: add custom spans around LLM calls to track prompt token count, latency, model name, cost. LangSmith and LangFuse are purpose-built on top of OTel concepts for LLM observability.
+
+Key: initialize OTel SDK BEFORE NestJS bootstraps — otherwise auto-instrumentation misses early requests.`,
+    tip: `// instrumentation.ts — import FIRST in main.ts
+import { NodeSDK } from '@opentelemetry/sdk-node';
+import { OTLPTraceExporter } from '@opentelemetry/exporter-otlp-http';
+import { getNodeAutoInstrumentations } from '@opentelemetry/auto-instrumentations-node';
+import { PrometheusExporter } from '@opentelemetry/exporter-prometheus';
+
+const sdk = new NodeSDK({
+  traceExporter: new OTLPTraceExporter({
+    url: 'http://otel-collector:4318/v1/traces',
+  }),
+  metricReader: new PrometheusExporter({ port: 9464 }),
+  instrumentations: [getNodeAutoInstrumentations()],
+});
+sdk.start();`,
+  },
+  {
+    category: 'Observability & Security', difficulty: 'Intermediate',
+    question: 'What are LangSmith and LangFuse and what do they track in LLM applications?',
+    answer: `Both are AI observability platforms that log every LLM interaction:
+
+LangSmith (by LangChain):
+• Natively integrated with LangChain.js — zero-config tracing
+• Captures: prompt, response, tool calls, intermediate steps, latency
+• LLM evaluation — score responses with human feedback or LLM-as-judge
+• Prompt management — version + A/B test prompts
+
+LangFuse (open-source):
+• Self-hostable on your infra (Postgres-backed)
+• Provider-agnostic — works with any LLM or framework
+• Tracks: cost per call, tokens, latency, user sessions
+• Scores + evals pipeline built in
+
+Other options: Helicone (proxy-based, zero code), Portkey (enterprise gateway + obs), Weights & Biases Prompts.
+
+Key metrics to track: cost/day/user, p95 latency, error rate, cache hit rate (LiteLLM), tool call success rate.`,
+  },
+  {
+    category: 'Observability & Security', difficulty: 'Advanced',
+    question: 'What resilience patterns are essential for a production NestJS application?',
+    answer: `4 key resilience patterns:
+
+1. Circuit Breaker — protects against cascading failures. States: CLOSED (normal) → OPEN (fail fast, stop calling broken service) → HALF-OPEN (test if recovered). Use: nestjs-resilience, cockatiel, or opossum.
+
+2. Retry with exponential backoff — retry transient failures with increasing delays (100ms → 200ms → 400ms). Add jitter to avoid thundering herd. Max 3 attempts for most operations.
+
+3. Graceful shutdown — on SIGTERM: stop accepting new requests, drain in-flight requests, close DB connections, flush message queues. NestJS: app.enableShutdownHooks() + implement OnApplicationShutdown.
+
+4. Bulkhead — isolate failures per tenant/feature. Use separate thread pools or connection pools per tenant so one misbehaving tenant can't starve others.
+
+For AI specifically: always define a fallback model (LiteLLM) and a timeout (30s max for LLM calls, stream to client if longer).`,
+    tip: `import { retry, backoff, handleAll, CircuitBreakerPolicy } from 'cockatiel';
+
+const retryPolicy = retry(handleAll, {
+  maxAttempts: 3,
+  backoff: backoff.exponential({ initialDelay: 100, maxDelay: 5000 }),
+});
+
+const cbPolicy = CircuitBreakerPolicy.wrap(retryPolicy, {
+  halfOpenAfter: 30_000,  // 30s before testing
+  breaker: new ConsecutiveBreaker(5), // open after 5 fails
+});
+
+// usage
+const result = await cbPolicy.execute(() => callExternalApi());`,
+  },
+  {
+    category: 'Observability & Security', difficulty: 'Advanced',
+    question: 'What security practices are essential for an enterprise NestJS app with AI features?',
+    answer: `Security layers for AI + enterprise NestJS:
+
+Prompt injection — sanitize user input before passing to LLM. Block patterns like 'ignore previous instructions', 'system:', 'jailbreak'. Apply input length caps. Use a strict system prompt that re-states the LLM's role.
+
+Transport security:
+• mTLS — mutual TLS between internal microservices (both sides present certificates)
+• HTTPS everywhere — enforce with HSTS headers
+• WAF — AWS WAF or Cloudflare rules block OWASP Top 10 at edge before traffic hits your app
+
+API security (NestJS):
+• Helmet — sets 14+ security HTTP headers in one call
+• CORS whitelist — explicit origin allowlist, not '*'
+• ValidationPipe with whitelist:true — strips unknown fields, preventing mass assignment
+• Rate limiting — @nestjs/throttler per IP + per user
+• API key rotation — store in Secrets Manager, never in .env committed to git`,
+    tip: `// main.ts — security setup
+import helmet from 'helmet';
+import { ThrottlerModule } from '@nestjs/throttler';
+
+app.use(helmet());
+app.enableCors({ origin: ['https://myapp.com'] });
+app.useGlobalPipes(new ValidationPipe({
+  whitelist: true,
+  forbidNonWhitelisted: true,
+  transform: true,
+}));
+
+// prompt injection defense
+function sanitizeUserPrompt(input: string): string {
+  const dangerous = /ignore previous|system:|jailbreak|forget your/i;
+  if (dangerous.test(input))
+    throw new ForbiddenException('Invalid input');
+  return input.slice(0, 2000); // hard length cap
+}`,
+  },
+
+  // ══════════════════════════════════════════════════════════
+  // 4. THIRD-PARTY & SaaS
+  // ══════════════════════════════════════════════════════════
+  {
+    category: 'Third-party & SaaS', difficulty: 'Intermediate',
+    question: 'How do Clerk, Auth.js, Auth0, and Supabase Auth compare for a NestJS + Next.js SaaS?',
+    answer: `Auth options in 2026:
+
+Clerk (recommended for SaaS):
+• Handles: sign-up/login, MFA, social OAuth, organizations, API keys, billing-ready user management
+• Next.js + NestJS SDK — clerkMiddleware() in NestJS extracts userId, orgId
+• Fastest to ship: zero boilerplate for login UI
+• Trade-off: SaaS pricing, less flexibility for custom flows
+
+Auth.js (recommended for full control):
+• Open-source, self-hosted, 40+ OAuth providers
+• Any DB adapter — Prisma, Drizzle, etc.
+• Trade-off: more setup, you own the security
+
+Auth0 (enterprise/compliance):
+• SOC2, HIPAA, PCI-ready
+• Enterprise SSO (SAML, LDAP)
+• Trade-off: expensive at scale, vendor lock-in
+
+Supabase Auth (Postgres-native):
+• Built-in for Supabase stack — RLS + auth tightly integrated
+• Trade-off: tied to Supabase`,
+    tip: `// NestJS + Clerk
+import { clerkMiddleware, requireAuth } from '@clerk/express';
+
+app.use(clerkMiddleware());
+
+// Auth guard decorator
+@UseGuards(ClerkAuthGuard)
+@Get('profile')
+getProfile(@Req() req) {
+  const { userId, orgId } = req.auth;
+  return this.usersService.findOne(userId);
+}
+
+// Get full user object
+import { clerkClient } from '@clerk/express';
+const user = await clerkClient.users.getUser(userId);`,
+  },
+  {
+    category: 'Third-party & SaaS', difficulty: 'Intermediate',
+    question: 'How do you integrate Stripe webhooks securely in NestJS?',
+    answer: `Stripe sends webhooks for payment events. Critical: always verify the stripe-signature header using your webhook secret — otherwise anyone can send fake events to your endpoint.
+
+Key implementation notes:
+1. Need raw request body — not JSON-parsed. Use rawBody: true in NestJS bootstrap.
+2. Use stripe.webhooks.constructEvent() which verifies signature and throws on tamper.
+3. Return 200 fast — do heavy work in a queue (BullMQ), Stripe retries on non-200.
+4. Make handlers idempotent — Stripe may send the same event multiple times.
+
+Essential webhook events for SaaS:
+• checkout.session.completed → provision user access/credits
+• customer.subscription.updated → sync plan limits
+• customer.subscription.deleted → revoke access
+• payment_intent.payment_failed → notify user + pause access`,
+    tip: `// main.ts
+app.useBodyParser('json', {
+  verify: (req, _, buf) => { req.rawBody = buf; }
+});
+
+// webhook controller
+@Post('stripe/webhook')
+@HttpCode(200)
+async handleWebhook(
+  @Req() req: RawBodyRequest<Request>,
+  @Headers('stripe-signature') sig: string,
+) {
+  const event = this.stripe.webhooks.constructEvent(
+    req.rawBody, sig, process.env.STRIPE_WEBHOOK_SECRET
+  );
+  // process event.type in BullMQ queue for reliability
+  await this.webhookQueue.add('process', event);
+}`,
+  },
+  {
+    category: 'Third-party & SaaS', difficulty: 'Advanced',
+    question: 'What is the Outbox pattern and why is it needed for reliable event publishing?',
+    answer: `Problem: after writing to the DB you need to publish an event (to Kafka, SQS, etc.). If the app crashes between those two steps, the event is lost. Two-phase commit across DB + message broker is too complex.
+
+Outbox pattern solution:
+1. Write domain change + event to an outbox table in the SAME database transaction (atomic)
+2. A separate poller/CDC process reads unpublished outbox rows and publishes them to the broker
+3. Mark as published after successful delivery
+4. Consumers must be idempotent (deduplication by event ID) since at-least-once delivery is guaranteed
+
+Implementation options:
+• Simple poller: cron job queries outbox every second, publishes, marks done
+• CDC (Change Data Capture): Debezium reads Postgres WAL and streams changes to Kafka — no polling needed, sub-second latency
+
+Transactional inbox is the mirror pattern: consume messages and process them atomically in the same DB transaction.`,
+    tip: `-- Outbox table
+CREATE TABLE outbox_events (
+  id           UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  aggregate_id UUID NOT NULL,
+  event_type   TEXT NOT NULL,
+  payload      JSONB NOT NULL,
+  published_at TIMESTAMPTZ,
+  created_at   TIMESTAMPTZ DEFAULT now()
+);
+
+-- Atomic: domain + event in ONE transaction
+await prisma.$transaction([
+  prisma.order.create({ data: orderData }),
+  prisma.outboxEvent.create({
+    data: { aggregateId: order.id, eventType: 'order.created', payload: orderData }
+  }),
+]);`,
+  },
+  {
+    category: 'Third-party & SaaS', difficulty: 'Beginner',
+    question: 'How does PostHog work for product analytics and feature flags?',
+    answer: `PostHog is an open-source product analytics platform — you can self-host it or use PostHog Cloud.
+
+Core features:
+• Product analytics — track custom events, funnels, retention, user paths
+• Feature flags — gradually roll out features without redeployment; target by user ID, email, org, percentage
+• Session replay — watch user mouse movements and clicks
+• A/B testing — built on top of feature flags
+• Heatmaps — visualize where users click
+
+Feature flags let you decouple deployment from release: ship code to production with a flag off, then enable for 5% → 20% → 100% of users based on metrics.
+
+Integration: 1-line init in Next.js. For NestJS use the posthog-node client to track server-side events.`,
+    tip: `// Next.js (client)
+import posthog from 'posthog-js';
+posthog.init(process.env.NEXT_PUBLIC_POSTHOG_KEY, {
+  api_host: 'https://app.posthog.com',
+});
+
+// Track event
+posthog.capture('checkout_started', { plan: 'pro', amount: 99 });
+
+// Feature flag
+if (posthog.isFeatureEnabled('new-checkout-flow')) {
+  // show new UI
+}
+
+// NestJS (server)
+import { PostHog } from 'posthog-node';
+const posthogServer = new PostHog(process.env.POSTHOG_KEY);
+posthogServer.capture({ distinctId: userId, event: 'purchase_completed' });`,
+  },
+
+  // ══════════════════════════════════════════════════════════
+  // 5. DATA LAYER
+  // ══════════════════════════════════════════════════════════
+  {
+    category: 'Data Layer', difficulty: 'Intermediate',
+    question: 'When should you choose Prisma vs Drizzle ORM for a NestJS + PostgreSQL app?',
+    answer: `Choose based on your priorities:
+
+Prisma — DX-first, for most teams:
+• schema.prisma declarative schema → auto-generates TypeScript types + migration SQL
+• Prisma Studio — GUI to browse/edit data
+• Prisma Client has excellent autocomplete for nested relations
+• Slower at runtime (query engine in a sidecar process)
+• pgvector: use unsupported type workaround or raw SQL
+
+Drizzle — performance-first, SQL-like control:
+• TypeScript schema file → generates types + migrations
+• Lighter runtime — compiles directly to SQL driver calls, no query engine
+• SQL-like syntax — familiar if you know SQL
+• Better pgvector support natively
+• Less DX polish than Prisma
+
+Verdict: Prisma for most SaaS apps. Drizzle for high-performance APIs or when you want SQL control + lighter bundle.`,
+    tip: `// Prisma — DX
+const user = await prisma.user.findUnique({
+  where: { id },
+  include: { posts: { orderBy: { createdAt: 'desc' }, take: 5 } },
+});
+
+// Drizzle — SQL-like control
+const user = await db.select()
+  .from(users)
+  .where(eq(users.id, id))
+  .limit(1);
+
+// Both: transactions
+await prisma.$transaction([
+  prisma.order.create({ data }),
+  prisma.outboxEvent.create({ data: event }),
+]);`,
+  },
+  {
+    category: 'Data Layer', difficulty: 'Intermediate',
+    question: 'How does Redis serve multiple roles in a NestJS enterprise application?',
+    answer: `Redis is a multipurpose in-memory data store — not just a cache. Common use cases in NestJS:
+
+1. Cache — GET/SET key-value with TTL. Avoid repeated DB queries for user profiles, product lists, config.
+
+2. Sessions — store JWT or session objects. Fast O(1) lookup by token. Use redis adapter for @nestjs/passport or express-session.
+
+3. Rate limiting — @nestjs/throttler with Redis store. INCR key per IP per window; EXPIRE sets the window.
+
+4. Pub/Sub — real-time events between microservices or to WebSocket clients. Publisher writes, subscribers receive immediately.
+
+5. BullMQ queues — job queue backed by Redis. Jobs: send emails, process AI requests (async so endpoint returns fast), generate reports, resize images.
+
+Key: Redis is volatile by default. For queues use AOF/RDB persistence. For cache, data loss on restart is acceptable.`,
+    tip: `// NestJS cache (Redis)
+@Module({ imports: [CacheModule.registerAsync({
+  useFactory: () => ({ store: redisStore, host: 'redis', ttl: 3600 }),
+})] })
+
+// Rate limit
+@UseGuards(ThrottlerGuard)
+@Throttle({ default: { limit: 100, ttl: 60000 } })
+
+// BullMQ — add job
+await this.emailQueue.add('welcome', { userId, email }, {
+  delay: 5000, attempts: 3, backoff: { type: 'exponential', delay: 1000 }
+});
+
+// BullMQ — process
+@Processor('emails')
+export class EmailProcessor {
+  @Process('welcome')
+  async handle(job: Job<{ userId: string }>) {
+    await this.emailService.sendWelcome(job.data.userId);
+  }
+}`,
+  },
+  {
+    category: 'Data Layer', difficulty: 'Advanced',
+    question: 'When should you use Kafka, Redis Streams, or AWS SQS/SNS in a NestJS microservices architecture?',
+    answer: `Each solves different problems:
+
+Apache Kafka — for high-throughput event streaming:
+• Consumer groups — multiple services read same topic independently at their own pace
+• Log replay — re-process historical events from the beginning
+• Ordering guarantees — within a partition
+• Use when: audit log, event sourcing, analytics pipeline, >10k msg/s
+
+Redis Streams — lightweight, same infra:
+• Persistent ordered log (unlike pub/sub which loses messages)
+• Consumer groups supported
+• Use when: you already have Redis, <10k msg/s, need simple queuing
+
+AWS SQS — managed, serverless-friendly:
+• At-least-once delivery, dead-letter queues built in
+• Standard (unordered) or FIFO (ordered, deduplication)
+• Use when: AWS stack, serverless/Lambda consumers, simple task queues
+
+AWS SNS — fan-out pub/sub:
+• One message → multiple SQS queues (fan-out pattern)
+• Use for: notifications, broadcasting events to multiple consumers`,
+    tip: `// NestJS Kafka transport
+const app = await NestFactory.createMicroservice(AppModule, {
+  transport: Transport.KAFKA,
+  options: {
+    client: { brokers: ['kafka:9092'] },
+    consumer: { groupId: 'api-consumer-group' },
+  },
+});
+
+// Consume
+@MessagePattern('order.created')
+handleOrder(@Payload() data: OrderCreatedEvent) {
+  return this.processOrder(data);
+}
+
+// Emit
+this.client.emit('order.created', { orderId: 'abc', total: 99 });`,
+  },
+
+  // ══════════════════════════════════════════════════════════
+  // 6. FRONTEND LAYER
+  // ══════════════════════════════════════════════════════════
+  {
+    category: 'Frontend Layer', difficulty: 'Intermediate',
+    question: 'What is the Next.js App Router and how do React 19 Server Components change frontend architecture?',
+    answer: `The App Router (Next.js 13+, stable in 14) uses React Server Components (RSC) by default.
+
+Key shift: components are server-side unless you add 'use client'. Server Components run only on the server — they can directly access databases, read secrets, and ship zero JavaScript to the browser.
+
+Benefits of Server Components:
+• Zero client JS for static/read-only UI — faster FCP/TTI
+• Direct DB access in components (no separate API layer needed for reads)
+• Secrets stay on server — no API keys exposed
+• Streaming — React streams HTML progressively with Suspense
+
+'use client' boundary — adds interactivity (useState, useEffect, event handlers). Rule: push the client boundary as deep as possible (leaf nodes, not layouts).
+
+Server Actions — async functions marked 'use server' that run on the server, called from client components. Replace POST API routes for mutations (forms, etc.).`,
+    tip: `// Server Component (default) — async, direct DB access
+async function UserProfile({ id }: { id: string }) {
+  const user = await prisma.user.findUnique({ where: { id } });
+  return <div>{user?.name}</div>;  // no client JS shipped
+}
+
+// Client Component — interactive
+'use client';
+import { useState } from 'react';
+export function FollowButton({ userId }: { userId: string }) {
+  const [following, setFollowing] = useState(false);
+  return <button onClick={() => setFollowing(f => !f)}>
+    {following ? 'Unfollow' : 'Follow'}
+  </button>;
+}
+
+// Server Action — mutation without API route
+'use server';
+export async function updateProfile(data: FormData) {
+  await prisma.user.update({ where: { id: getUserId() }, data: { name: data.get('name') as string } });
+}`,
+  },
+  {
+    category: 'Frontend Layer', difficulty: 'Beginner',
+    question: 'What is shadcn/ui and how does it differ from a traditional component library?',
+    answer: `shadcn/ui is not an npm package — it is a collection of copy-paste components you own in your codebase.
+
+Traditional library (e.g., Chakra UI, MUI): you install as a dependency, use their API, can't easily modify internals, version upgrades can break your UI.
+
+shadcn/ui approach:
+• CLI copies component source code into your components/ui/ directory
+• You fully own and can modify the code
+• Built on Radix UI (accessible, headless primitives) + Tailwind CSS styling
+• No runtime overhead — just React components with Tailwind classes
+
+Key components: Button, Dialog, Drawer, Select, Table, Form, Calendar, Command (command palette), Combobox.
+
+The cn() utility (clsx + tailwind-merge) safely merges Tailwind classes — prevents conflicting classes from stacking (e.g., p-2 + p-4 resolves to p-4).`,
+    tip: `# Add components to your project
+npx shadcn-ui@latest add button card dialog table form
+
+# components/ui/button.tsx — you own this file
+import { cn } from '@/lib/utils';
+export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+  variant?: 'default' | 'outline' | 'ghost' | 'destructive';
+}
+export function Button({ className, variant = 'default', ...props }: ButtonProps) {
+  return (
+    <button
+      className={cn(buttonVariants({ variant }), className)}
+      {...props}
+    />
+  );
+}`,
+  },
+  {
+    category: 'Frontend Layer', difficulty: 'Intermediate',
+    question: 'How does Vercel handle AI streaming, edge functions, and preview environments?',
+    answer: `Vercel as a platform for AI-heavy Next.js apps:
+
+AI Streaming:
+• Edge runtime supports streaming responses — LLM tokens stream from the edge, not a cold origin
+• Vercel AI Gateway — caches LLM responses, adds rate limiting, observability, without LiteLLM complexity
+• useChat() hook in browser handles streamed responses and renders tokens as they arrive
+
+Edge Functions:
+• Run V8-based JS at CDN edge in 30+ regions — p50 latency <50ms globally
+• Perfect for: auth middleware (check JWT at edge), A/B test routing, geo-based redirects
+• Limitation: no Node.js APIs (no fs, no net) — use fetch, Web APIs only
+
+Preview Environments:
+• Every PR branch auto-deploys to a unique URL (e.g., pr-123.myapp.vercel.app)
+• Shares production DB in dev tier, or uses branching DB (Neon/PlanetScale)
+• QA can test features before merge — no staging environment needed
+
+Vercel + EKS hybrid: Next.js on Vercel (frontend, AI edge), NestJS on EKS (API, AI workloads).`,
+  },
+
+  // ══════════════════════════════════════════════════════════
+  // 7. CI/CD & GITOPS
+  // ══════════════════════════════════════════════════════════
+  {
+    category: 'CI/CD & GitOps', difficulty: 'Intermediate',
+    question: 'How do you build a GitHub Actions CI/CD pipeline for a NestJS + Next.js monorepo?',
+    answer: `Key stages in a monorepo CI pipeline:
+
+1. Install — pnpm install --frozen-lockfile (deterministic)
+2. Lint + type-check — turbo run lint type-check (only changed packages)
+3. Test — turbo run test (unit + integration, only affected)
+4. Build — turbo run build (only changed + deps)
+5. Docker build + push — docker/build-push-action to GHCR or ECR
+6. Deploy — trigger Argo CD sync or helm upgrade
+
+Turborepo remote caching with GitHub Actions:
+• TURBO_TOKEN + TURBO_TEAM env vars enable remote cache on Vercel
+• Build steps that haven't changed are skipped — CI can go from 10min to <2min
+
+Monorepo filter: turbo run test --filter=api... runs only api and its changed local deps.
+
+Security: never put secrets in workflow YAML — use GitHub Secrets (encrypted env vars).`,
+    tip: `name: CI/CD
+on: { push: { branches: [master] }, pull_request: {} }
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v3
+        with: { version: 9 }
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm turbo run lint test build
+        env: { TURBO_TOKEN: \${{ secrets.TURBO_TOKEN }}, TURBO_TEAM: myteam }
+      - uses: docker/login-action@v3
+        with: { registry: ghcr.io, username: \${{ github.actor }}, password: \${{ secrets.GITHUB_TOKEN }} }
+      - uses: docker/build-push-action@v5
+        with: { push: true, tags: "ghcr.io/org/api:\${{ github.sha }}" }`,
+  },
+  {
+    category: 'CI/CD & GitOps', difficulty: 'Advanced',
+    question: 'What is GitOps and how does Argo CD implement it for Kubernetes deployments?',
+    answer: `GitOps is a deployment pattern where your Git repository is the single source of truth for infrastructure and application state. Desired state is declared in Git; automated tooling reconciles the actual cluster state to match.
+
+Argo CD is a Kubernetes-native GitOps controller:
+• Polls your Git repo (or receives webhooks) every 3 minutes (or on push)
+• Compares desired state (Helm charts/kustomize in repo) with actual K8s resources
+• If they differ: either alerts (manual sync) or auto-syncs (automated policy)
+• Provides a web UI showing sync status, health, deployment history
+
+Key benefits:
+• Rollback = git revert — instant, auditable, no special tooling
+• Drift detection — alerts if someone manually kubectl-edits the cluster
+• Multi-env — dev/staging/prod as separate Argo CD Applications pointing to different branches or overlays
+• RBAC — developers can trigger deploys without kubectl access to production`,
+    tip: `# Argo CD Application CRD
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: api-production
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/org/infra-charts
+    targetRevision: main
+    path: charts/api
+    helm:
+      values: |
+        image: { tag: v1.2.3 }
+        replicaCount: 3
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: production
+  syncPolicy:
+    automated: { prune: true, selfHeal: true }
+    syncOptions: [CreateNamespace=true]`,
+  },
+  {
+    category: 'CI/CD & GitOps', difficulty: 'Intermediate',
+    question: 'What are blue-green and canary deployments and when do you use each?',
+    answer: `Both are progressive delivery strategies to reduce risk when shipping new versions:
+
+Blue-Green:
+• Run two identical environments (blue = current, green = new)
+• Deploy new version to green, test it, then flip the load balancer from blue to green instantly
+• Zero downtime, instant rollback (flip back)
+• Downside: doubles infrastructure cost during deployment
+• Best for: monoliths, stateful services, database migrations
+
+Canary:
+• Route a small percentage (e.g., 5%) of real traffic to the new version
+• Watch metrics (error rate, latency) for 10-30 minutes
+• Gradually increase to 25% → 50% → 100% if metrics look good
+• Roll back by routing all traffic back to stable if issues appear
+• Best for: stateless microservices, APIs
+
+Feature Flags (Unleash / LaunchDarkly):
+• Decouple deployment from release — ship code disabled, enable for specific users/groups
+• More granular than traffic splitting — target by user ID, org, plan tier
+• Instant kill switch if issues arise`,
+  },
+  {
+    category: 'CI/CD & GitOps', difficulty: 'Beginner',
+    question: 'How do AI coding tools (Copilot, Cursor, Claude Code) fit into a professional dev workflow?',
+    answer: `AI coding tools in 2026 are integral to professional development, not a shortcut:
+
+GitHub Copilot:
+• Inline completions in VS Code, JetBrains — accepts tab to complete
+• Chat mode — explain code, refactor, write tests
+• Copilot Workspace — agentic PR creation from issues
+
+Cursor:
+• AI-native editor (VS Code fork) — multi-file context, CMD+K inline edit
+• Composer mode — describe a change, it edits multiple files atomically
+• Best for: large refactors, scaffolding new features
+
+Claude Code (this CLI):
+• Full codebase context — can read, edit, run tests, git operations
+• Terminal-based — great for complex multi-step tasks and debugging
+• CLAUDE.md files guide it per-project
+
+Codium:
+• Auto-generates unit tests from your function signatures
+• Integrates into CI — auto-PRs with generated test files
+
+Key rule: always review AI-generated code. AI is strongest for boilerplate, weakest for domain-specific security logic.`,
+  },
+
+  // ══════════════════════════════════════════════════════════
+  // 8. SCALING & MULTI-TENANCY
+  // ══════════════════════════════════════════════════════════
+  {
+    category: 'Scaling & Multi-tenancy', difficulty: 'Advanced',
+    question: 'How do you implement multi-tenancy in a NestJS + PostgreSQL SaaS application?',
+    answer: `3 multi-tenancy strategies:
+
+1. Shared schema + tenantId column (simplest):
+Every table has a tenant_id column. Application filters all queries by tenant. Risk: forget one WHERE clause = data leak.
+
+2. Schema-per-tenant (balanced):
+Each tenant gets their own PostgreSQL schema. Migrations run per-schema. Connection pooler routes by tenant.
+
+3. Database-per-tenant (strongest isolation):
+Separate DB per tenant. Most expensive, most isolated.
+
+Row Level Security (RLS) — recommended for shared schema:
+Postgres enforces tenant filtering at the DB level — even if application code forgets the WHERE clause, RLS blocks the query. Set app.tenant_id session variable in NestJS middleware before every request.
+
+PgBouncer: connection pooler essential at scale — K8s pods × tenants × connections grows fast; PgBouncer multiplexes them.`,
+    tip: `-- Enable RLS
+ALTER TABLE orders ENABLE ROW LEVEL SECURITY;
+ALTER TABLE users ENABLE ROW LEVEL SECURITY;
+
+-- Policy — Postgres enforces this on every query
+CREATE POLICY tenant_isolation ON orders
+  USING (tenant_id = current_setting('app.tenant_id')::uuid);
+
+-- NestJS middleware — set per request
+@Injectable()
+export class TenantMiddleware implements NestMiddleware {
+  async use(req, res, next) {
+    const tenantId = req.headers['x-tenant-id'];
+    await this.prisma.$executeRaw\`SET LOCAL app.tenant_id = \${tenantId}\`;
+    next();
+  }
+}`,
+  },
+  {
+    category: 'Scaling & Multi-tenancy', difficulty: 'Advanced',
+    question: 'How do you scale AI workloads in Kubernetes? What patterns handle GPU nodes and async LLM calls?',
+    answer: `AI workloads have different scaling characteristics than regular API traffic — LLM calls are slow (1-30s), expensive, and CPU/GPU-bound.
+
+Key patterns:
+
+1. Async queues (BullMQ + Redis) — never block HTTP request for LLM calls. Return job ID immediately, client polls or uses WebSocket for result.
+
+2. KEDA (Kubernetes Event-Driven Autoscaler) — scale LLM worker pods based on BullMQ queue depth, not CPU. Spin up workers when queue > 10 jobs, scale to zero when empty.
+
+3. GPU nodes — self-hosted Llama/Mistral on GPU node pool in EKS. Use K8s node selectors to schedule AI pods on GPU nodes. GPU nodes are expensive — scale to zero with KEDA.
+
+4. Embedding cache (Redis) — cache embeddings with TTL. If same text was embedded before, return cached vector — avoids $0.0001 per embedding × millions of docs.
+
+5. LLM response cache (LiteLLM) — cache identical prompts for seconds. Great for shared queries like 'summarize this product' across many users.`,
+    tip: `# KEDA ScaledObject — scale on BullMQ queue
+apiVersion: keda.sh/v1alpha1
+kind: ScaledObject
+metadata:
+  name: llm-worker-scaler
+spec:
+  scaleTargetRef: { name: llm-worker-deployment }
+  minReplicaCount: 0   # scale to zero
+  maxReplicaCount: 20
+  triggers:
+    - type: redis
+      metadata:
+        address: redis:6379
+        listName: bull:llm-queue:wait
+        listLength: '5'  # 1 replica per 5 queued jobs
+
+# GPU node selector
+spec:
+  nodeSelector: { node.kubernetes.io/instance-type: g4dn.xlarge }
+  tolerations: [{ key: gpu, operator: Exists }]`,
+  },
+  {
+    category: 'Scaling & Multi-tenancy', difficulty: 'Intermediate',
+    question: 'How do you decide between Serverless (Lambda/Vercel) and Kubernetes (EKS) for a NestJS app?',
+    answer: `Decision framework:
+
+Use Serverless (AWS Lambda / Vercel Functions) when:
+• Traffic is spiky or unpredictable — pay per invocation, scale to zero
+• Stateless, short-lived handlers (<15min timeout)
+• Team wants zero ops — no K8s knowledge needed
+• Low-traffic startup or background jobs
+• Downside: cold starts (mitigate with provisioned concurrency), 15min max, no persistent connections
+
+Use Kubernetes (EKS) when:
+• Long-running processes (WebSocket servers, queue workers, AI streaming)
+• Stateful workloads (Redis sidecar, file processing)
+• Need fine-grained resource control (GPU nodes, memory limits)
+• Cost optimization at scale — K8s is cheaper than Lambda at high volume
+• Complex networking between microservices
+
+Hybrid (recommended for most SaaS):
+• Next.js frontend on Vercel — zero ops, edge network, preview envs
+• NestJS API on EKS — full control, persistent Redis + DB connections
+• Lambda for event-driven jobs (S3 triggers, scheduled tasks)`,
+    tip: `// NestJS Lambda adapter (for serverless NestJS)
+import { configure } from '@codegenie/serverless-express';
+import { createApp } from './app';
+
+let cachedServer;
+export const handler = async (event, context) => {
+  if (!cachedServer) {
+    const app = await createApp();
+    await app.init();
+    cachedServer = configure({ app: app.getHttpAdapter().getInstance() });
+  }
+  return cachedServer(event, context);
+};
+
+// Keep-warm ping to avoid cold starts
+// Schedule EventBridge rule every 5 minutes → invoke Lambda with ping event`,
+  },
+
+  // ══════════════════════════════════════════════════════════
+  // 9. CLOUD & FILE SERVICES
+  // ══════════════════════════════════════════════════════════
+  {
+    category: 'Cloud & File Services', difficulty: 'Intermediate',
+    question: 'How do you handle file uploads in NestJS with AWS S3 presigned URLs?',
+    answer: `Two upload patterns:
+
+1. Server-side (via NestJS + Multer):
+Client → POST multipart to NestJS → NestJS streams to S3 via AWS SDK.
+Simple but routes all bytes through your server — wastes bandwidth and compute.
+
+2. Presigned URLs (recommended for production):
+Client asks NestJS for a presigned S3 URL → NestJS generates it (never leaves server) → Client uploads directly to S3 — NestJS server never sees the bytes.
+Faster, cheaper, scalable. S3 can handle any file size.
+
+Key S3 concepts:
+• Buckets — containers for objects (files). Region-specific.
+• Presigned PUT URL — time-limited (e.g., 15min) signed URL authorizing client to upload to a specific key
+• Presigned GET URL — signed URL for private files (e.g., user avatars, private docs)
+• ACL — public-read for public assets, private (default) for user files
+• Lifecycle rules — auto-delete temp uploads after 24h`,
+    tip: `import { S3Client, PutObjectCommand, GetObjectCommand } from '@aws-sdk/client-s3';
+import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
+
+const s3 = new S3Client({ region: 'us-east-1' });
+
+// Generate presigned upload URL
+async getUploadUrl(key: string, contentType: string) {
+  const command = new PutObjectCommand({
+    Bucket: process.env.S3_BUCKET,
+    Key: key,
+    ContentType: contentType,
+  });
+  return getSignedUrl(s3, command, { expiresIn: 900 }); // 15 min
+}
+
+// Client uploads directly to S3
+await fetch(presignedUrl, { method: 'PUT', body: file, headers: { 'Content-Type': file.type } });`,
+  },
+  {
+    category: 'Cloud & File Services', difficulty: 'Beginner',
+    question: 'How do you choose between AWS, Vercel, GCP, and Cloudflare for different parts of the stack in 2026?',
+    answer: `Best-of-breed approach — use each cloud for what it excels at:
+
+AWS (dominant for backend):
+• EKS — production Kubernetes, most mature managed K8s
+• RDS/Aurora — managed PostgreSQL with Multi-AZ
+• S3 — object storage standard, deeply integrated with all services
+• SQS/SNS/Kafka MSK — messaging at any scale
+• Best for: enterprises needing full AWS ecosystem
+
+Vercel (frontend + AI edge):
+• Next.js deployment — first-party support, best DX
+• Edge Functions — fastest global latency for Next.js middleware
+• Vercel AI Gateway — caching + routing for LLMs
+• Preview deployments per PR
+• Best for: frontend teams, AI-heavy apps
+
+Cloudflare (edge compute + security):
+• Workers — serverless edge at 200+ PoPs
+• Pages — static + SSR deployment
+• WAF + DDoS protection — best-in-class security layer
+• R2 — S3-compatible storage with no egress fees
+• Best for: global edge, security layer in front of AWS
+
+GCP / Azure — alternative to AWS, strong for enterprise contracts, AI (Vertex AI, Azure OpenAI).`,
+  },
+  {
+    category: 'Cloud & File Services', difficulty: 'Intermediate',
+    question: 'How does the NestJS + Fastify adapter improve API performance compared to Express?',
+    answer: `By default NestJS uses Express as its HTTP adapter. Swapping to Fastify gives:
+
+Performance gains:
+• Fastify is 2-3× faster than Express on raw throughput (benchmarked at 70k+ req/s vs 30k+ req/s)
+• JSON serialization via fast-json-stringify — Fastify uses compiled serializers vs JSON.stringify
+• Route lookup via Radix Tree (trie) vs Express's RegExp matching
+• Schema validation built in (JSON Schema / Ajv) — request validation before middleware
+
+Minimal migration changes:
+• Replace NestFactory.create with NestFactory.create + FastifyAdapter
+• Replace @nestjs/platform-express with @nestjs/platform-fastify
+• Some Express-specific middleware needs fastify-compatible alternatives
+
+AWS API Gateway in front:
+• Acts as the entry point — handles TLS termination, auth tokens, rate limiting, WAF at edge
+• Routes to K8s services or Lambda
+• Supports HTTP API (lower cost, lower latency) vs REST API (more features)
+
+Cloudflare in front of API Gateway: adds DDoS protection, global CDN caching for public GET endpoints, WAF rules.`,
+    tip: `// main.ts — switch to Fastify adapter
+import { NestFactory } from '@nestjs/core';
+import { FastifyAdapter, NestFastifyApplication } from '@nestjs/platform-fastify';
+
+async function bootstrap() {
+  const app = await NestFactory.create<NestFastifyApplication>(
+    AppModule,
+    new FastifyAdapter({ logger: true }),
+  );
+  app.useGlobalPipes(new ValidationPipe({ whitelist: true }));
+  await app.listen(3000, '0.0.0.0');
+}
+bootstrap();`,
+  },
+
+];
 
 /* ═══════════════════════════════════════════════════════════
    NestJS
@@ -22376,7 +23506,7 @@ const SUBJECTS = {
   'CI/CD':                CICD_CARDS,
   'AI-assist':            AI_ASSIST_CARDS,
   'Third-party generation': THIRD_PARTY_CARDS,
-  'Architecture':         ARCHITECTURE_CARDS,
+  'Enterprise Infrastructure Architectures': ENTERPRISE_INFRASTRUCTURE_ARCHITECTURES_CARDS,
   'Html':                 HTML_CARDS,
   'CSS':            CSS_ONLY_CARDS,
   'npm':            NPM_CARDS,
@@ -22393,10 +23523,10 @@ const SUBJECTS = {
 ═══════════════════════════════════════════════════════════ */
 const SUBJECT_GROUPS = {
   'Cheat Sheet': ['Junior Dev Daily Essentials'],
-  'Core':        ['DSA_JavaScript', 'Internet', 'Linux', 'Tricked Memory'],
+  'Core':        ['DSA_JavaScript', 'Internet', 'Linux', 'Tricked Memory', 'Enterprise Infrastructure Architectures'],
   'Language':    ['Python', 'C#', 'C++', 'TypeScript', 'JavaScript'],
   'Frontend':    ['Html', 'CSS', 'npm', 'Git/Github', 'Tailwind CSS', 'React & SSR', 'Redux'],
-  'Backend':     ['NestJS', 'Node.js', 'Express.js', 'SQL', 'Database', 'PostgreSQL', 'API', 'JWT authentication', 'Redis', 'Testing & Containers', 'CI/CD', 'AI-assist', 'Third-party generation', 'Architecture'],
+  'Backend':     ['NestJS', 'Node.js', 'Express.js', 'SQL', 'Database', 'PostgreSQL', 'API', 'JWT authentication', 'Redis', 'Testing & Containers', 'CI/CD', 'AI-assist', 'Third-party generation'],
   'DevOps':      [],
 };
 
@@ -22446,7 +23576,7 @@ const SUBJECT_COLORS = {
   'CI/CD':                '#f59e0b',
   'AI-assist':            '#10b981',
   'Third-party generation': '#8b5cf6',
-  'Architecture':         '#64748b',
+  'Enterprise Infrastructure Architectures': '#64748b',
   'Tricked Memory': '#f43f5e',
 };
 
@@ -22576,6 +23706,16 @@ const CATEGORY_COLORS = {
   'HTTP & Web':         '#059669',
   'DNS & Domains':      '#34d399',
   'Browsers':           '#065f46',
+  // Enterprise Infrastructure Architectures
+  'Core Infrastructure':      '#ef4444',
+  'AI Runtime Integration':   '#8b5cf6',
+  'Observability & Security': '#f59e0b',
+  'Third-party & SaaS':       '#14b8a6',
+  'Data Layer':               '#16a34a',
+  'Frontend Layer':           '#3b82f6',
+  'CI/CD & GitOps':           '#ea580c',
+  'Scaling & Multi-tenancy':  '#db2777',
+  'Cloud & File Services':    '#0284c7',
   // Tricked Memory
   'SQL':                '#f43f5e',
 };
