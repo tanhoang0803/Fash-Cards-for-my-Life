@@ -24,13 +24,14 @@ Flash Cards Page
 ├── Header
 │   ├── Title ("Dev Flash Cards")
 │   ├── Stats Badge ("N known")
+│   ├── Quiz-Space button (links to interview-quiz-space.vercel.app)
 │   ├── Shuffle & Reset buttons
 │   ├── Progress Bar
 │   └── Progress Indicator ("X of Y")
 │
 ├── Subject Menu (nav#subjectMenu) — 6 grouped bars
 │   ├── [CHEAT SHEET] Junior Dev Daily Essentials
-│   ├── [CORE]        DSA_JavaScript · Internet · Linux · Tricked Memory · Enterprise Infrastructure Architectures
+│   ├── [CORE]        DSA_JavaScript · Internet · Linux · Tricked Memory · Enterprise Infrastructure Architectures · Full-Stack Enterprise Tooling
 │   ├── [LANGUAGE]    Python · C# · C++ · TypeScript · JavaScript
 │   ├── [FRONTEND]    Html · CSS · npm · Git/Github · Tailwind CSS · React & SSR · Redux
 │   ├── [BACKEND]     NestJS · Node.js · Express.js · SQL · Database · PostgreSQL · API · JWT authentication · Redis · Testing & Containers · CI/CD · AI-assist · Third-party generation
@@ -79,6 +80,7 @@ Flash Cards Page
 | Linux | 25 | Linux Basics, Files & Permissions, Processes & System, Networking & SSH, Shell Scripting |
 | Tricked Memory | 3+ | SQL (FJ WGH SOL — execution order mnemonic) |
 | Enterprise Infrastructure Architectures | 38 | Overview, Core Infrastructure, AI Runtime Integration, Observability & Security, Third-party & SaaS, Data Layer, Frontend Layer, CI/CD & GitOps, Scaling & Multi-tenancy, Cloud & File Services |
+| Full-Stack Enterprise Tooling | 17+ | FS Overview, Hosting & CDN, Databases & ORM, Auth & Identity, Payments & Billing, Communication, CMS & Content, Analytics & Observability, CRM & Automation, AI & RAG Tools, Forms & Validation, DevOps & CI/CD, Dev Experience |
 
 ### Language
 | Subject | Cards | Categories |
@@ -117,7 +119,25 @@ Flash Cards Page
 | AI-assist | — | *(in progress)* |
 | Third-party generation | — | *(in progress)* |
 
-**Total: 600+ cards**
+**Total: 620+ cards**
+
+### Full-Stack Enterprise Tooling — Detailed Breakdown
+
+| Category | Cards | Topics |
+|---|---|---|
+| **FS Overview** | 2 | 12-pillar full roadmap · SaaS fast stack vs Enterprise heavy stack |
+| **Hosting & CDN** | 1 | Vercel · Cloudflare · AWS EKS/ECS · Railway/Render |
+| **Databases & ORM** | 3 | PostgreSQL+pgvector · Prisma vs Drizzle · Redis · S3/Cloudinary/UploadThing |
+| **Auth & Identity** | 1 | Clerk · Auth.js · Supabase Auth · Auth0 |
+| **Payments & Billing** | 1 | Stripe · Paddle / Lemon Squeezy |
+| **Communication** | 1 | Resend · SendGrid/Postmark · Twilio · Pusher/Ably |
+| **CMS & Content** | 1 | Payload CMS · Contentful · Sanity.io · Strapi |
+| **Analytics & Observability** | 1 | PostHog · Sentry · Mixpanel/Amplitude |
+| **CRM & Automation** | 1 | HubSpot · Zapier · Make.com · n8n |
+| **AI & RAG Tools** | 2 | Vercel AI SDK · pgvector · Pinecone · LiteLLM · LangChain.js |
+| **Forms & Validation** | 1 | React Hook Form + Zod · UploadThing |
+| **DevOps & CI/CD** | 1 | GitHub Actions · Turborepo+pnpm · Docker+K8s+Terraform · Argo CD |
+| **Dev Experience** | 1 | shadcn/ui + Tailwind · TanStack Query · Zod · Swagger/OpenAPI |
 
 ### Enterprise Infrastructure Architectures — Detailed Breakdown
 
@@ -216,7 +236,7 @@ const SUBJECTS = { 'SubjectName': SUBJECT_CARDS, ... };
 // Subject menu grouped into labeled bars
 const SUBJECT_GROUPS = {
   'Cheat Sheet': ['Junior Dev Daily Essentials'],
-  'Core':        ['DSA_JavaScript', 'Internet', 'Linux', 'Tricked Memory', 'Enterprise Infrastructure Architectures'],
+  'Core':        ['DSA_JavaScript', 'Internet', 'Linux', 'Tricked Memory', 'Enterprise Infrastructure Architectures', 'Full-Stack Enterprise Tooling'],
   'Language':    ['Python', 'C#', 'C++', 'TypeScript', 'JavaScript'],
   'Frontend':    ['Html', 'CSS', 'npm', 'Git/Github', 'Tailwind CSS', 'React & SSR', 'Redux'],
   'Backend':     ['NestJS', 'Node.js', 'Express.js', 'SQL', 'Database', 'PostgreSQL', 'API', 'JWT authentication', 'Redis', 'Testing & Containers', 'CI/CD', 'AI-assist', 'Third-party generation'],
