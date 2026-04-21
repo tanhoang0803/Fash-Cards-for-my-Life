@@ -31,6 +31,8 @@
     --infra-dim: #94a3b822;
     --tooling: #0ea5e9;
     --tooling-dim: #0ea5e922;
+    --docker: #0db7ed;
+    --docker-dim: #0db7ed22;
     --text: #e2e8f0;
     --muted: #8892a4;
     --code: #c9d1e0;
@@ -96,6 +98,7 @@
   .pill-dsa   { background: var(--dsa-dim);   color: var(--dsa);   border: 1px solid #f9731644; }
   .pill-infra { background: var(--infra-dim); color: var(--infra); border: 1px solid #94a3b844; }
   .pill-tooling { background: var(--tooling-dim); color: var(--tooling); border: 1px solid #0ea5e944; }
+  .pill-docker  { background: var(--docker-dim);  color: var(--docker);  border: 1px solid #0db7ed44; }
 
   /* ── GRID ── */
   .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
@@ -135,6 +138,7 @@
   .card.dsa-card   { border-top: 2px solid var(--dsa); }
   .card.infra-card { border-top: 2px solid var(--infra); }
   .card.tooling-card { border-top: 2px solid var(--tooling); }
+  .card.docker-card  { border-top: 2px solid var(--docker); }
 
   .card h3 {
     font-size: 13px;
@@ -152,6 +156,7 @@
   .card h3.dsa   { color: var(--dsa); }
   .card h3.infra { color: var(--infra); }
   .card h3.tooling { color: var(--tooling); }
+  .card h3.docker  { color: var(--docker); }
 
   .card h4 {
     font-size: 12px;
@@ -220,6 +225,7 @@
   .tip.linux-tip { border-color: var(--linux); }
   .tip.infra-tip { border-color: var(--infra); }
   .tip.tooling-tip { border-color: var(--tooling); }
+  .tip.docker-tip  { border-color: var(--docker); }
 
   /* ── DIVIDER ── */
   .divider {
@@ -268,6 +274,8 @@
   .big-label.infra .num { background: var(--infra); color: #fff; }
   .big-label.tooling { color: var(--tooling); }
   .big-label.tooling .num { background: var(--tooling); color: #fff; }
+  .big-label.docker { color: var(--docker); }
+  .big-label.docker .num { background: var(--docker); color: #000; }
 
   /* ── SPAN HELPERS ── */
   .row { display: flex; gap: 12px; margin: 5px 0; }
@@ -296,7 +304,7 @@
 <!-- HEADER -->
 <div class="header">
   <h1>Junior Developer — Daily Essentials</h1>
-  <p>JAVASCRIPT · REACT + REDUX · SQL · LINUX · NESTJS · TYPESCRIPT · DSA · INFRA ARCH · FS TOOLING — QUICK REFERENCE</p>
+  <p>JAVASCRIPT · REACT + REDUX · SQL · LINUX · NESTJS · TYPESCRIPT · DSA · INFRA ARCH · FS TOOLING · DOCKER — QUICK REFERENCE</p>
   <div class="pills">
     <span class="pill pill-js">JS ES6+</span>
     <span class="pill pill-react">React + Redux</span>
@@ -307,6 +315,7 @@
     <span class="pill pill-dsa">DSA</span>
     <span class="pill pill-infra">Infra Arch</span>
     <span class="pill pill-tooling">FS Tooling</span>
+    <span class="pill pill-docker">Docker</span>
   </div>
 </div>
 
@@ -3031,9 +3040,408 @@ queryClient.<span class="f">invalidateQueries</span>(
   </div>
 </div>
 
+<!-- ══════════════════════════════════════════
+     DOCKER
+══════════════════════════════════════════ -->
+<hr class="divider">
+<div class="big-label docker"><span class="num">10</span> Docker</div>
+
+<div class="grid-3">
+
+  <!-- Core Architecture & Image Lifecycle -->
+  <div class="card docker-card">
+    <h3 class="docker">Core Architecture</h3>
+    <h4>Client-Server Model</h4>
+    <pre><span class="cm"># docker run nginx  →  internal flow:</span>
+Docker CLI ──REST API──▶ dockerd
+                              ↓
+                        containerd
+                              ↓
+                           runc (OCI)
+                     ┌────────┴────────┐
+                namespaces         cgroups
+          (pid/net/mnt/uts)    (CPU/mem/PID)</pre>
+    <h4>Linux Primitives</h4>
+    <table class="ref-table">
+      <tr><td>pid namespace</td><td>own PID 1, cannot see host processes</td></tr>
+      <tr><td>net namespace</td><td>own eth0, IP, routing table</td></tr>
+      <tr><td>mnt namespace</td><td>own filesystem tree (pivot_root)</td></tr>
+      <tr><td>cgroups</td><td>CPU/memory/PID limits — kernel-enforced</td></tr>
+    </table>
+    <h4>Image Layers (UnionFS / overlay2)</h4>
+    <pre><span class="cm"># Layers stack bottom → top (read-only):</span>
+  Layer N  ← COPY . .       (your code)
+  Layer 3  ← RUN npm install (deps)
+  Layer 2  ← COPY package.json .
+  Layer 1  ← FROM node:18-alpine
++ Writable ← container adds at runtime (lost on rm)</pre>
+    <div class="tip docker-tip">Copy-on-Write: writes copy the file up to the writable layer. Shared layers = less disk. Cached layers = faster rebuilds.</div>
+    <h4>Image Lifecycle</h4>
+    <pre><span class="cm"># build → tag → push → pull → run</span>
+docker build -t myapp:1.0 .
+docker tag myapp:1.0 ghcr.io/user/myapp:1.0
+docker push ghcr.io/user/myapp:1.0
+docker pull ghcr.io/user/myapp:1.0
+docker run -d -p 3000:3000 myapp:1.0</pre>
+  </div>
+
+  <!-- Dockerfile Mastery -->
+  <div class="card docker-card">
+    <h3 class="docker">Dockerfile Mastery</h3>
+    <h4>Core Instructions</h4>
+    <pre>FROM node:18-alpine          <span class="cm"># base image</span>
+WORKDIR /app                 <span class="cm"># set &amp; create dir</span>
+COPY package*.json ./        <span class="cm"># dep files FIRST</span>
+RUN npm ci --only=production <span class="cm"># cached layer</span>
+COPY . .                     <span class="cm"># source (changes often)</span>
+ENV NODE_ENV=production      <span class="cm"># baked into image</span>
+ARG BUILD_VER                <span class="cm"># build-time only, not in image</span>
+EXPOSE 3000                  <span class="cm"># docs only — not publish</span>
+ENTRYPOINT ["node"]          <span class="cm"># fixed executable</span>
+CMD ["dist/main.js"]         <span class="cm"># default args (overridable)</span></pre>
+    <h4>CMD vs ENTRYPOINT ★ interview classic</h4>
+    <table class="ref-table">
+      <tr><td>ENTRYPOINT</td><td>fixed binary — not replaced by docker run args</td></tr>
+      <tr><td>CMD</td><td>default args — docker run img other.js overrides it</td></tr>
+      <tr><td>exec form</td><td>["node","main.js"] — PID 1 = node, SIGTERM works ✓</td></tr>
+      <tr><td>shell form</td><td>node main.js — PID 1 = /bin/sh, signals broken ✗</td></tr>
+    </table>
+    <h4>Layer Caching Strategy</h4>
+    <pre><span class="cm"># ❌ Bad — npm install reruns on every code change:</span>
+COPY . .
+RUN npm ci
+
+<span class="cm"># ✅ Good — cached unless package.json changes:</span>
+COPY package*.json ./
+RUN npm ci --only=production   <span class="cm"># stable cached layer</span>
+COPY . .                       <span class="cm"># only this rebuilds</span></pre>
+    <h4>Multi-Stage Build</h4>
+    <pre>FROM node:18-alpine <span class="cm">AS builder</span>
+WORKDIR /app
+COPY package*.json ./
+RUN npm ci
+COPY . .
+RUN npm run build
+
+FROM node:18-alpine <span class="cm">AS runtime</span>
+WORKDIR /app
+COPY package*.json ./
+RUN npm ci --only=production
+COPY --from=builder /app/dist ./dist
+USER node
+CMD ["node", "dist/main.js"]
+<span class="cm"># 1GB builder → ~150MB runtime image</span></pre>
+    <div class="tip docker-tip">.dockerignore — always exclude: node_modules/ .git/ .env dist/ coverage/ *.log — prevents bloated build context.</div>
+  </div>
+
+  <!-- Essential Commands -->
+  <div class="card docker-card">
+    <h3 class="docker">Essential Commands</h3>
+    <h4>Build &amp; Run</h4>
+    <pre>docker build -t myapp:1.0 .
+docker build --no-cache -t myapp .
+docker build --build-arg KEY=val .
+docker build -f Dockerfile.prod .
+
+docker run -d \
+  -p 3000:3000 \
+  -e DATABASE_URL=postgres://db:5432/mydb \
+  -v pgdata:/var/lib/postgresql/data \
+  --memory 512m --cpus 0.5 \
+  --rm --name api myapp:1.0</pre>
+    <h4>Inspect &amp; Debug</h4>
+    <pre>docker ps                   <span class="cm"># running</span>
+docker ps -a                <span class="cm"># all (incl stopped)</span>
+docker logs -f myapp        <span class="cm"># stream live logs</span>
+docker logs --tail 50 myapp
+docker exec -it myapp sh    <span class="cm"># enter container</span>
+docker exec myapp env       <span class="cm"># print env vars</span>
+docker inspect myapp        <span class="cm"># full JSON metadata</span>
+docker inspect myapp \
+  --format='{{.State.ExitCode}}'
+docker stats                <span class="cm"># live CPU/mem/net</span></pre>
+    <h4>Exit Codes</h4>
+    <table class="ref-table">
+      <tr><td>0</td><td>success / clean exit</td></tr>
+      <tr><td>1</td><td>app error — check docker logs</td></tr>
+      <tr><td>137</td><td>OOMKilled — increase --memory</td></tr>
+      <tr><td>143</td><td>SIGTERM received (graceful stop)</td></tr>
+    </table>
+    <h4>Cleanup</h4>
+    <pre>docker rm -f myapp          <span class="cm"># force remove running</span>
+docker rmi myapp:1.0
+docker volume rm pgdata
+docker system prune         <span class="cm"># stopped + dangling</span>
+docker system prune -a      <span class="cm"># + all unused images</span>
+docker system prune -a --volumes
+docker system df            <span class="cm"># disk usage per type</span></pre>
+  </div>
+
+</div>
+
+<div class="grid-3">
+
+  <!-- Docker Compose -->
+  <div class="card docker-card">
+    <h3 class="docker">Docker Compose</h3>
+    <h4>Full-Stack Example</h4>
+    <pre>version: '3.9'
+services:
+  api:
+    build: .
+    ports: ['3000:3000']
+    environment:
+      DATABASE_URL: postgres://db:5432/mydb
+      REDIS_URL: redis://redis:6379
+    depends_on:
+      db: { condition: service_healthy }
+    networks: [app-net]
+
+  db:
+    image: postgres:16-alpine
+    volumes: [pgdata:/var/lib/postgresql/data]
+    environment: { POSTGRES_PASSWORD: secret }
+    healthcheck:
+      test: ['CMD-SHELL','pg_isready -U postgres']
+      interval: 5s
+      timeout: 3s
+      retries: 5
+    networks: [app-net]
+
+  redis:
+    image: redis:7-alpine
+    networks: [app-net]
+
+volumes: { pgdata: }
+networks: { app-net: }</pre>
+    <h4>Dev vs Prod Overrides</h4>
+    <pre><span class="cm"># override.yml (auto-loaded — dev only)</span>
+services:
+  api:
+    build: .
+    volumes: [./src:/app/src]  <span class="cm"># hot reload</span>
+    environment: { NODE_ENV: development }
+
+<span class="cm"># prod.yml (explicit — production)</span>
+services:
+  api:
+    restart: always
+    environment: { NODE_ENV: production }
+
+<span class="cm"># docker-compose -f dc.yml -f dc.prod.yml up</span></pre>
+    <div class="tip docker-tip">Secrets: use .env + ${VAR} substitution. Never hardcode secrets in docker-compose.yml — it lives in git.</div>
+  </div>
+
+  <!-- Networking + Volumes -->
+  <div class="card docker-card">
+    <h3 class="docker">Networking &amp; Volumes</h3>
+    <h4>Network Drivers</h4>
+    <table class="ref-table">
+      <tr><td>bridge</td><td>default — custom bridge adds auto DNS by service name</td></tr>
+      <tr><td>host</td><td>shares host network stack — no port mapping, max perf</td></tr>
+      <tr><td>overlay</td><td>multi-host (Docker Swarm)</td></tr>
+      <tr><td>none</td><td>fully isolated — no networking</td></tr>
+    </table>
+    <h4>DNS &amp; Port Mapping</h4>
+    <pre><span class="cm"># Service name = hostname (custom networks only):</span>
+DATABASE_URL: postgres://db:5432/mydb  <span class="cm"># 'db' ✓</span>
+REDIS_URL:    redis://redis:6379       <span class="cm"># 'redis' ✓</span>
+
+<span class="cm"># Port mapping:</span>
+docker run -p 3000:3000 myapp      <span class="cm"># host:container</span>
+docker run -p 8080:3000 myapp      <span class="cm"># remap</span>
+docker run -p 127.0.0.1:3000:3000  <span class="cm"># localhost only</span>
+<span class="cm"># EXPOSE = docs only. -p = actually publishes.</span></pre>
+    <h4>Volumes &amp; Storage ★ interview classic</h4>
+    <table class="ref-table">
+      <tr><td>Named volume</td><td>prod — Docker-managed, persists after rm</td></tr>
+      <tr><td>Bind mount</td><td>dev — host path → container, hot-reload</td></tr>
+      <tr><td>tmpfs</td><td>in-memory only, never on disk, ephemeral</td></tr>
+    </table>
+    <pre><span class="cm"># Named volume (production):</span>
+docker run -v pgdata:/var/lib/postgresql/data postgres
+
+<span class="cm"># Bind mount (dev hot-reload):</span>
+docker run -v $(pwd)/src:/app/src myapp
+
+<span class="cm"># Backup a named volume:</span>
+docker run --rm \
+  -v pgdata:/src:ro -v $(pwd):/bak \
+  alpine tar czf /bak/pgdata.tar.gz -C /src .</pre>
+  </div>
+
+  <!-- Security & Hardening -->
+  <div class="card docker-card">
+    <h3 class="docker">Security &amp; Hardening</h3>
+    <h4>Non-Root User (always in prod)</h4>
+    <pre>FROM node:18-alpine
+WORKDIR /app
+COPY package*.json ./
+RUN npm ci --only=production
+COPY . .
+USER node               <span class="cm"># node user pre-exists in alpine</span>
+EXPOSE 3000
+CMD ["node", "dist/main.js"]
+
+<span class="cm"># Runtime hardening:</span>
+docker run \
+  --cap-drop ALL \
+  --read-only \
+  --security-opt no-new-privileges \
+  myapp</pre>
+    <h4>Minimal Base Images</h4>
+    <table class="ref-table">
+      <tr><td>node:18</td><td>~1GB · full Debian · large attack surface</td></tr>
+      <tr><td>node:18-alpine</td><td>~120MB · minimal OS · recommended</td></tr>
+      <tr><td>distroless/nodejs18</td><td>~90MB · no shell · most hardened</td></tr>
+    </table>
+    <h4>Image Scanning</h4>
+    <pre>docker scout cves myapp:latest
+trivy image --severity CRITICAL myapp:latest
+trivy image --exit-code 1 myapp  <span class="cm"># fail CI on CVE</span></pre>
+    <h4>Resource Limits (cgroups)</h4>
+    <pre>docker run \
+  --memory 512m \       <span class="cm"># OOMKill if exceeded</span>
+  --memory-swap 512m \  <span class="cm"># no swap</span>
+  --cpus 0.5 \          <span class="cm"># 50% of one core</span>
+  --pids-limit 50 \     <span class="cm"># prevent fork bombs</span>
+  myapp</pre>
+    <div class="tip docker-tip">Pin base image by digest for reproducible builds: FROM node:18-alpine@sha256:abc123...</div>
+  </div>
+
+</div>
+
+<div class="grid-3">
+
+  <!-- BuildKit & Advanced -->
+  <div class="card docker-card">
+    <h3 class="docker">BuildKit &amp; Advanced</h3>
+    <h4>Secret Mounts (never in layers)</h4>
+    <pre><span class="cm"># Dockerfile:</span>
+RUN --mount=type=secret,id=npm_token \
+    NPM_TOKEN=$(cat /run/secrets/npm_token) npm ci
+
+<span class="cm"># Build command:</span>
+docker build --secret id=npm_token,src=.npmrc .
+
+<span class="cm"># SSH forwarding (private git repos):</span>
+RUN --mount=type=ssh git clone git@github.com:org/repo
+docker build --ssh default .
+
+<span class="cm"># npm cache between builds:</span>
+RUN --mount=type=cache,target=/root/.npm \
+    npm ci</pre>
+    <h4>Zombie Process Fix</h4>
+    <pre><span class="cm"># Node as PID 1 ignores SIGTERM → docker stop hangs</span>
+
+<span class="cm"># Fix 1: --init flag (auto-adds tini):</span>
+docker run --init myapp
+<span class="cm"># compose: add  init: true  to service</span>
+
+<span class="cm"># Fix 2: Explicit tini in Dockerfile:</span>
+RUN apk add --no-cache tini
+ENTRYPOINT ["/sbin/tini", "--"]
+CMD ["node", "dist/main.js"]</pre>
+    <div class="tip docker-tip">tini as PID 1: forwards SIGTERM to child (graceful shutdown) · reaps zombie processes · exits with child's exit code.</div>
+    <h4>Sidecar Pattern</h4>
+    <pre>services:
+  app:
+    image: myapi
+    volumes: [logs:/var/log/app]
+  log-shipper:             <span class="cm"># ← sidecar</span>
+    image: fluent/fluent-bit
+    volumes: [logs:/var/log/app:ro]
+volumes: { logs: }</pre>
+    <h4>Swarm vs Kubernetes</h4>
+    <table class="ref-table">
+      <tr><td>Docker Swarm</td><td>built-in, Compose syntax, simple — small teams</td></tr>
+      <tr><td>Kubernetes</td><td>HPA, GitOps, service mesh — enterprise scale</td></tr>
+    </table>
+  </div>
+
+  <!-- CI/CD & Registry -->
+  <div class="card docker-card">
+    <h3 class="docker">CI/CD &amp; Registry</h3>
+    <h4>GitHub Actions Pipeline</h4>
+    <pre>- uses: docker/setup-buildx-action@v3
+
+- uses: docker/login-action@v3
+  with:
+    registry: ghcr.io
+    username: ${{ github.actor }}
+    password: ${{ secrets.GITHUB_TOKEN }}
+
+- uses: docker/build-push-action@v5
+  with:
+    push: true
+    tags: |
+      ghcr.io/${{ github.repository }}:latest
+      ghcr.io/${{ github.repository }}:${{ github.sha }}
+    cache-from: type=registry,ref=.../cache
+    cache-to:   type=registry,ref=.../cache,mode=max</pre>
+    <h4>Image Tagging Strategy</h4>
+    <table class="ref-table">
+      <tr><td>:latest</td><td>❌ avoid in prod — mutable, no rollback possible</td></tr>
+      <tr><td>:git-sha</td><td>✅ immutable, traceable, precise rollback</td></tr>
+      <tr><td>:v1.2.3</td><td>✅ semver for releases — human readable</td></tr>
+    </table>
+    <h4>Cloud Deployment</h4>
+    <table class="ref-table">
+      <tr><td>GCP Cloud Run</td><td>serverless, auto-scale to zero, simplest ops</td></tr>
+      <tr><td>AWS ECS Fargate</td><td>managed, no servers, AWS-native</td></tr>
+      <tr><td>AWS EKS / GKE</td><td>managed Kubernetes, enterprise scale</td></tr>
+      <tr><td>Railway / Render</td><td>push Dockerfile → URL — small projects</td></tr>
+    </table>
+    <div class="tip docker-tip">Enable ECR tag immutability (IMMUTABLE) — prevents accidental tag overwrite in production.</div>
+    <h4>Developer Learning Path</h4>
+    <pre><span class="cm"># Level 1: Containerize a NestJS app</span>
+<span class="cm"># Level 2: Compose with PostgreSQL + Redis</span>
+<span class="cm"># Level 3: Multi-stage builds → &lt;200MB image</span>
+<span class="cm"># Level 4: Deploy to AWS ECS/EKS + CI/CD</span></pre>
+  </div>
+
+  <!-- Interview Scenarios -->
+  <div class="card docker-card">
+    <h3 class="docker">Interview Scenarios</h3>
+    <h4>Container vs VM</h4>
+    <table class="ref-table">
+      <tr><td>Container</td><td>shared kernel · namespaces · ms startup · MBs</td></tr>
+      <tr><td>VM</td><td>full OS · hypervisor · min startup · GBs · stronger isolation</td></tr>
+    </table>
+    <h4>Giant Image (2GB) Fix</h4>
+    <pre><span class="cm"># Diagnose:</span>
+docker history myapp:latest   <span class="cm"># find big layers</span>
+<span class="cm"># Fix checklist:</span>
+<span class="cm"># 1. node:18-alpine instead of node:18</span>
+<span class="cm"># 2. .dockerignore: node_modules/ .git/ dist/</span>
+<span class="cm"># 3. Multi-stage (devDeps stay in builder)</span>
+<span class="cm"># 4. npm ci --only=production in runtime</span>
+<span class="cm"># Result: 2GB → ~150MB</span></pre>
+    <h4>Secrets in Containers</h4>
+    <pre><span class="cm"># ❌ Never — visible in docker history:</span>
+ENV JWT_SECRET=supersecret
+
+<span class="cm"># ✅ Runtime — inject from external source:</span>
+docker run --env-file .env myapp   <span class="cm"># .env not in git</span>
+
+<span class="cm"># ✅ Build-time — BuildKit secret mount:</span>
+RUN --mount=type=secret,id=token \
+    TOKEN=$(cat /run/secrets/token) npm ci</pre>
+    <h4>Debug: Container Starts Then Crashes</h4>
+    <pre>docker logs myapp                <span class="cm"># read the error</span>
+docker inspect myapp \
+  --format='{{.State.ExitCode}}' <span class="cm"># 137 = OOMKilled</span>
+docker run -it \
+  --entrypoint sh myapp          <span class="cm"># poke around</span>
+docker run --memory 1g myapp     <span class="cm"># fix OOM</span></pre>
+    <div class="tip docker-tip">Full-stack compose: Next.js (frontend) + NestJS (backend) + PostgreSQL (db) + Redis (cache) — all managed by docker-compose.yml.</div>
+  </div>
+
+</div>
+
 <!-- Footer -->
 <div style="text-align:center; color: var(--comment); font-family:'JetBrains Mono',monospace; font-size:12px; margin-top:20px; padding-top:16px; border-top:1px solid var(--border);">
-  Junior Developer Daily Essentials · JavaScript · React + Redux · SQL · Linux · NestJS · TypeScript · DSA · Enterprise Infra Architecture · Full-Stack Enterprise Tooling · 2026
+  Junior Developer Daily Essentials · JavaScript · React + Redux · SQL · Linux · NestJS · TypeScript · DSA · Enterprise Infra Architecture · Full-Stack Enterprise Tooling · Docker · 2026
 </div>
 
 </body>
