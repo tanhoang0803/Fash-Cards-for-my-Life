@@ -35,7 +35,7 @@ Flash Cards Page
 │   ├── [LANGUAGE]    Python · C# · C++ · TypeScript · JavaScript
 │   ├── [FRONTEND]    Html · CSS · npm · Git/Github · Tailwind CSS · React & SSR · Redux
 │   ├── [BACKEND]     NestJS · Node.js · Express.js · SQL · Database · PostgreSQL · API · JWT authentication · Redis · Testing & Containers · CI/CD · AI-assist · Third-party generation
-│   └── [DEVOPS]      (in progress)
+│   └── [DEVOPS]      Docker
 │
 ├── Category Filter (nav#categoryFilter)
 │   └── "All" + one button per category in the active subject
@@ -240,7 +240,7 @@ const SUBJECT_GROUPS = {
   'Language':    ['Python', 'C#', 'C++', 'TypeScript', 'JavaScript'],
   'Frontend':    ['Html', 'CSS', 'npm', 'Git/Github', 'Tailwind CSS', 'React & SSR', 'Redux'],
   'Backend':     ['NestJS', 'Node.js', 'Express.js', 'SQL', 'Database', 'PostgreSQL', 'API', 'JWT authentication', 'Redis', 'Testing & Containers', 'CI/CD', 'AI-assist', 'Third-party generation'],
-  'DevOps':      [],
+  'DevOps':      ['Docker'],
 };
 
 // Subjects that open a separate page instead of loading flash cards
