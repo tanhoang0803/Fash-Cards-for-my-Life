@@ -31,7 +31,7 @@ Flash Cards Page
 │
 ├── Subject Menu (nav#subjectMenu) — 6 grouped bars
 │   ├── [CHEAT SHEET] Junior Dev Daily Essentials
-│   ├── [CORE]        DSA_JavaScript · Internet · Linux · Tricked Memory · Enterprise Infrastructure Architectures · Full-Stack Enterprise Tooling
+│   ├── [CORE]        DSA_JavaScript · Internet · Linux · Tricked Memory · Enterprise Infrastructure Architectures · Full-Stack Enterprise Tooling · Next.js
 │   ├── [LANGUAGE]    Python · C# · C++ · TypeScript · JavaScript
 │   ├── [FRONTEND]    Html · CSS · npm · Git/Github · Tailwind CSS · React & SSR · Redux
 │   ├── [BACKEND]     NestJS · Node.js · Express.js · SQL · Database · PostgreSQL · API · JWT authentication · Redis · Testing & Containers · CI/CD · AI-assist · Third-party generation
@@ -81,6 +81,7 @@ Flash Cards Page
 | Tricked Memory | 3+ | SQL (FJ WGH SOL — execution order mnemonic) |
 | Enterprise Infrastructure Architectures | 38 | Overview, Core Infrastructure, AI Runtime Integration, Observability & Security, Third-party & SaaS, Data Layer, Frontend Layer, CI/CD & GitOps, Scaling & Multi-tenancy, Cloud & File Services |
 | Full-Stack Enterprise Tooling | 17+ | FS Overview, Hosting & CDN, Databases & ORM, Auth & Identity, Payments & Billing, Communication, CMS & Content, Analytics & Observability, CRM & Automation, AI & RAG Tools, Forms & Validation, DevOps & CI/CD, Dev Experience |
+| Next.js | 21 | Next.js Overview, Rendering Strategies, App Router, Server vs Client Components, Data Fetching, Server Actions, Streaming & Suspense, Performance, Middleware & API Routes, State Management, Next.js Ecosystem, Advanced Patterns, Best Practices, Next.js Interview |
 
 ### Language
 | Subject | Cards | Categories |
@@ -119,7 +120,7 @@ Flash Cards Page
 | AI-assist | — | *(in progress)* |
 | Third-party generation | — | *(in progress)* |
 
-**Total: 620+ cards**
+**Total: 640+ cards**
 
 ### Full-Stack Enterprise Tooling — Detailed Breakdown
 
@@ -236,7 +237,7 @@ const SUBJECTS = { 'SubjectName': SUBJECT_CARDS, ... };
 // Subject menu grouped into labeled bars
 const SUBJECT_GROUPS = {
   'Cheat Sheet': ['Junior Dev Daily Essentials'],
-  'Core':        ['DSA_JavaScript', 'Internet', 'Linux', 'Tricked Memory', 'Enterprise Infrastructure Architectures', 'Full-Stack Enterprise Tooling'],
+  'Core':        ['DSA_JavaScript', 'Internet', 'Linux', 'Tricked Memory', 'Enterprise Infrastructure Architectures', 'Full-Stack Enterprise Tooling', 'Next.js'],
   'Language':    ['Python', 'C#', 'C++', 'TypeScript', 'JavaScript'],
   'Frontend':    ['Html', 'CSS', 'npm', 'Git/Github', 'Tailwind CSS', 'React & SSR', 'Redux'],
   'Backend':     ['NestJS', 'Node.js', 'Express.js', 'SQL', 'Database', 'PostgreSQL', 'API', 'JWT authentication', 'Redis', 'Testing & Containers', 'CI/CD', 'AI-assist', 'Third-party generation'],

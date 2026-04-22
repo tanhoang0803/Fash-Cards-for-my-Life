@@ -25342,6 +25342,622 @@ env:
 ];
 
 /* ═══════════════════════════════════════════════════════════
+   NEXT.JS CARDS
+═══════════════════════════════════════════════════════════ */
+const NEXTJS_CARDS = [
+
+  // ── OVERVIEW ────────────────────────────────────────────
+  {
+    category: 'Next.js Overview',
+    difficulty: 'Beginner',
+    question: 'Next.js full mindmap — 10-area overview',
+    answer: 'Next.js is a React framework for full-stack web apps. 10 areas: 1) Rendering Strategies — SSR/SSG/ISR/CSR/PPR. 2) App Router Architecture — file conventions, layouts, routing patterns. 3) Server vs Client Components — the core App Router decision. 4) Data Fetching & Caching — 4 cache layers, Server Components. 5) Server Actions — mutations without API routes. 6) Streaming & Suspense — progressive rendering, PPR. 7) Performance — next/image, next/font, Turbopack. 8) Middleware & API Routes — Edge execution, Route Handlers. 9) State Management — TanStack Query, Zustand, URL state. 10) Ecosystem — Auth, AI SDK, CMS, Vercel.',
+    tip: `Next.js — 10-area mindmap
+│
+├─ 1. Rendering Strategies (MUST KNOW ★)
+│   ├─ SSR: per-request HTML — dynamic, personalized, always fresh
+│   ├─ SSG: build-time HTML — CDN-cached, ultra-fast, zero server cost
+│   ├─ ISR: SSG + revalidation window — freshness without SSR cost
+│   ├─ CSR: browser-only — dashboards, TanStack Query
+│   └─ PPR (v15+): static shell CDN instantly + dynamic holes stream in
+│
+├─ 2. App Router Architecture
+│   ├─ layout.tsx · page.tsx · loading.tsx · error.tsx · not-found.tsx
+│   ├─ [id] dynamic · [...slug] catch-all · (group) route groups
+│   └─ @slot parallel routes · (..) intercepted routes
+│
+├─ 3. Server vs Client Components (core decision)
+│   ├─ Server (default): async data, DB, no hooks, no browser APIs
+│   └─ 'use client': useState/useEffect, events, browser APIs, leaf only
+│
+├─ 4. Data Fetching & Caching (4 layers)
+│   ├─ fetch() in Server Components — no useEffect needed
+│   ├─ cache: 'no-store' (SSR) · next.revalidate (ISR) · next.tags (tag)
+│   └─ revalidatePath() · revalidateTag() — on-demand invalidation
+│
+├─ 5. Server Actions
+│   ├─ 'use server' — async functions that run on server
+│   ├─ Form actions (progressive enhancement, no JS needed)
+│   └─ useActionState + useOptimistic — pending + optimistic UI
+│
+├─ 6. Streaming & Suspense
+│   ├─ loading.tsx — automatic Suspense boundary per segment
+│   ├─ Granular <Suspense> — parallel streams, no waterfall
+│   └─ PPR — static shell instant + Suspense boundaries stream
+│
+├─ 7. Performance
+│   ├─ next/image: WebP/AVIF, lazy, CLS=0, priority for hero
+│   ├─ next/font: self-hosted, zero layout shift, CSS variables
+│   ├─ next/dynamic: code splitting, ssr: false for client-only
+│   └─ Turbopack: next dev --turbo — 10x faster (Rust, stable 2026)
+│
+├─ 8. Middleware & API Routes
+│   ├─ middleware.ts — Edge, auth redirects, geo, A/B, CSP
+│   └─ Route Handlers app/api — webhooks, REST for external clients
+│
+├─ 9. State Management
+│   ├─ TanStack Query: server state, useQuery/useMutation
+│   ├─ Zustand: global UI state, no Provider, no hydration issues
+│   └─ URL state (nuqs): filter/sort, shareable, back-button works
+│
+└─ 10. Ecosystem
+    ├─ Auth: Clerk (SaaS) · Auth.js (OSS)
+    ├─ AI: Vercel AI SDK — useChat, streaming Server Actions
+    ├─ CMS: Sanity/Payload webhook → revalidateTag()
+    └─ Deploy: Vercel (native) · standalone Docker output`,
+  },
+
+  // ── RENDERING STRATEGIES ────────────────────────────────
+  {
+    category: 'Rendering Strategies',
+    difficulty: 'Intermediate',
+    question: 'What are the 5 rendering strategies in Next.js and when do you use each?',
+    answer: 'SSR (Server-Side Rendering): per-request HTML — use for personalized, always-fresh, dynamic data (user dashboard, live prices). SSG (Static Site Generation): build-time HTML — use for blogs, docs, marketing pages (fastest, CDN-cached). ISR (Incremental Static Regeneration): SSG + revalidation window — use for product listings, news (freshness without SSR cost). CSR (Client-Side Rendering): browser-only — use for interactive dashboards, TanStack Query user-specific data. PPR (Partial Pre-Rendering, v15+): static shell from CDN instantly + dynamic islands stream in — best of all worlds, game-changer.',
+    tip: `// SSR — fresh per request:
+export const dynamic = 'force-dynamic'
+async function Page() {
+  const data = await fetch(url, { cache: 'no-store' })
+}
+
+// ISR — revalidate every hour:
+const data = await fetch(url, { next: { revalidate: 3600 } })
+
+// SSG — generate static params at build:
+export async function generateStaticParams() {
+  return [{ id: '1' }, { id: '2' }]
+}
+
+// PPR (v15+):
+export const experimental_ppr = true
+// Wrap dynamic parts in <Suspense> — rest is static shell`,
+  },
+
+  {
+    category: 'Rendering Strategies',
+    difficulty: 'Intermediate',
+    question: 'What is PPR (Partial Pre-Rendering) in Next.js 15 and why is it better than SSR?',
+    answer: 'PPR (Partial Pre-Rendering): static shell served from CDN instantly + dynamic holes stream in via Suspense. Traditional SSR waits for the slowest data fetch before sending any HTML. PPR sends the cached static shell immediately, then streams dynamic content as it resolves — eliminating the SSR vs SSG tradeoff entirely. Enable per-route with `export const experimental_ppr = true` and wrap dynamic parts in `<Suspense>`. Requires `experimental: { ppr: true }` in next.config.ts.',
+    tip: `// next.config.ts:
+experimental: { ppr: true }
+
+// page.tsx:
+export const experimental_ppr = true
+
+async function Page() {
+  return (
+    <>
+      <StaticNav />          // CDN edge — served instantly
+      <Suspense fallback={<Spinner />}>
+        <DynamicFeed />      // streams in after static shell
+      </Suspense>
+    </>
+  )
+}
+// SSR: wait for ALL data before any HTML
+// PPR: static shell NOW, dynamic streams IN`,
+  },
+
+  // ── APP ROUTER ──────────────────────────────────────────
+  {
+    category: 'App Router',
+    difficulty: 'Beginner',
+    question: 'What are the special file conventions in Next.js App Router?',
+    answer: 'layout.tsx: shared UI wrapping child routes — persists across navigation, never re-renders. page.tsx: route content, makes URL publicly accessible. loading.tsx: automatic Suspense fallback skeleton shown while page.tsx loads. error.tsx: error boundary — must be "use client". not-found.tsx: 404 UI for the segment. route.ts: API Route Handler (GET, POST, PATCH, DELETE) — no UI, just API. template.tsx: like layout but re-mounts on navigation.',
+    tip: `app/
+├── layout.tsx              // root layout (wraps all routes)
+├── page.tsx                // / (home)
+├── loading.tsx             // global Suspense fallback
+├── error.tsx               // global error boundary
+├── not-found.tsx           // 404 page
+├── blog/
+│   ├── layout.tsx          // blog layout (persists across /blog/*)
+│   ├── page.tsx            // /blog
+│   └── [slug]/
+│       └── page.tsx        // /blog/:slug
+├── (auth)/                 // route group — no URL segment
+│   ├── login/page.tsx      // /login
+│   └── register/page.tsx   // /register
+└── api/
+    └── posts/
+        └── route.ts        // /api/posts — GET, POST handlers`,
+  },
+
+  {
+    category: 'App Router',
+    difficulty: 'Intermediate',
+    question: 'What are the advanced routing patterns in Next.js App Router?',
+    answer: '[id]: dynamic segment — /blog/[id]. [...slug]: catch-all route — /docs/a/b/c. [[...slug]]: optional catch-all — matches /docs AND /docs/a/b. (group): route group — organizes routes without URL impact, supports multiple root layouts (marketing vs app). @slot: parallel routes — two sections render simultaneously in one layout (dashboard with @analytics @team). (..)/path: intercepted routes — show photo modal while keeping background URL. Combine (group) + layout.tsx for separate nav per section.',
+    tip: `app/
+├── blog/[slug]/page.tsx        // /blog/:slug
+├── docs/[...slug]/page.tsx     // /docs/a/b/c (catch-all)
+├── docs/[[...slug]]/page.tsx   // /docs AND /docs/a (optional)
+├── (marketing)/                // route group — no URL segment
+│   └── layout.tsx              // marketing layout
+├── (app)/                      // separate layout
+│   └── dashboard/
+│       ├── layout.tsx          // receives @analytics @team slots
+│       ├── @analytics/page.tsx // parallel route slot
+│       └── @team/page.tsx      // parallel route slot
+└── shop/
+    └── (..)cart/page.tsx       // intercepted route (modal)
+
+// Route group tip: (auth) shares a layout without URL impact
+// Use for multi-layout apps: marketing vs dashboard vs auth`,
+  },
+
+  // ── SERVER VS CLIENT COMPONENTS ─────────────────────────
+  {
+    category: 'Server vs Client Components',
+    difficulty: 'Intermediate',
+    question: 'What is the decision rule for Server Components vs Client Components in Next.js?',
+    answer: 'Server Components (default): async data fetching, DB/ORM calls, no useState/useEffect, no browser APIs, no event handlers — zero client bundle cost, no hydration. Client Components ("use client"): useState/useEffect, onClick/onChange, browser APIs (localStorage, window, document), third-party client libs, interactive UI. Rule: push "use client" to the deepest leaf component. "use client" is a boundary marker — everything in that subtree becomes a client component. Keep layouts and pages as Server Components; only wrap interactive islands.',
+    tip: `// ❌ Pollutes entire subtree — avoids server benefits:
+'use client'
+export default function Page() {
+  const data = await db.query()  // ERROR: can't do this
+}
+
+// ✅ Push 'use client' to leaf — tree stays server:
+// page.tsx (Server Component — fetches data):
+async function Page() {
+  const data = await db.user.findMany()
+  return <LikeButton count={data.likes} />
+}
+
+// LikeButton.tsx (leaf Client Component):
+'use client'
+export function LikeButton({ count }) {
+  const [liked, setLiked] = useState(false)
+  return <button onClick={() => setLiked(true)}>{count}</button>
+}
+
+// Pass Server Component as children — it STAYS server:
+<ClientLayout><ServerSidebar /></ClientLayout>`,
+  },
+
+  {
+    category: 'Server vs Client Components',
+    difficulty: 'Advanced',
+    question: 'What does "use client" precisely mean in Next.js App Router?',
+    answer: '"use client" is a boundary directive, not "this runs only on client." It tells the bundler: everything below this file is a Client Component (included in JS bundle, hydrated). Above the boundary = Server Component (server-only, never in bundle). "use server" means Server Actions only — async functions that run on server, callable from Client Components. Common mistake: thinking "use client" means the code never runs on server — in SSR it does run on server for initial HTML, but it IS included in the client bundle. Server Components NEVER run in browser.',
+    tip: `// 'use client' = boundary marker (NOT "client only")
+// Code below runs: server (SSR hydration) + client (interactions)
+// Code IS in the JS bundle → adds to bundle size
+
+// 'use server' = Server Actions ONLY (not a component directive)
+'use server'
+export async function deletePost(id: string) {
+  await db.post.delete({ where: { id } })
+  revalidatePath('/blog')
+}
+
+// Calling Server Action from Client Component:
+'use client'
+export function DeleteButton({ id }) {
+  return (
+    <form action={() => deletePost(id)}>
+      <button type="submit">Delete</button>
+    </form>
+  )
+}
+// deletePost runs on SERVER even though called from client`,
+  },
+
+  // ── DATA FETCHING ────────────────────────────────────────
+  {
+    category: 'Data Fetching',
+    difficulty: 'Intermediate',
+    question: 'How do you fetch data in Next.js App Router and what are the fetch() caching options?',
+    answer: 'In Server Components: use async/await directly, no useEffect needed. fetch() options: `{ cache: "no-store" }` = SSR (fresh per request, never cached). `{ next: { revalidate: 3600 } }` = ISR (cache for 1 hour, then regenerate). `{ next: { tags: ["posts"] } }` = tagged for on-demand revalidation. Default (no options) = static/SSG (cached until redeploy). For parallel fetches use Promise.all() to avoid waterfall. For ORM/DB: use React cache() for request memoization.',
+    tip: `// Static (SSG, cached at build):
+const data = await fetch(url)
+
+// ISR — revalidate every hour:
+const data = await fetch(url, { next: { revalidate: 3600 } })
+
+// SSR — fresh per request:
+const data = await fetch(url, { cache: 'no-store' })
+
+// Tagged (on-demand revalidation):
+const data = await fetch(url, { next: { tags: ['posts'] } })
+
+// Parallel fetches — no waterfall (Promise.all):
+const [user, posts] = await Promise.all([
+  fetch('/api/user').then(r => r.json()),
+  fetch('/api/posts').then(r => r.json()),
+])
+
+// ORM/DB — memoize per request (React cache):
+import { cache } from 'react'
+export const getUser = cache(async (id: string) =>
+  db.user.findUnique({ where: { id } })
+)`,
+  },
+
+  {
+    category: 'Data Fetching',
+    difficulty: 'Advanced',
+    question: 'What are the 4 caching layers in Next.js and how do you invalidate them?',
+    answer: '1. Request Memoization (React): same fetch() URL called multiple times in one render tree → deduplicated automatically. 2. Data Cache (Next.js server): persistent fetch() cache across requests and deployments on server. 3. Full Route Cache (Next.js server): pre-rendered HTML + RSC payload stored on disk for static/ISR routes. 4. Router Cache (browser): client-side prefetch cache — stores visited route payloads in memory during session. Invalidation: revalidatePath("/blog") clears routes 2+3. revalidateTag("posts") clears tagged fetches in layers 2+3. Router cache (4) clears on hard navigation or after 30s (dynamic) / 5min (static).',
+    tip: `// 4 Caching Layers:
+// 1. Request Memo   — React, per render, automatic dedup
+// 2. Data Cache     — Next.js server, persists across requests
+// 3. Full Route Cache — HTML+RSC on disk (Next.js)
+// 4. Router Cache   — browser memory, client-side prefetch
+
+// On-demand invalidation (in Server Action or Route Handler):
+import { revalidatePath, revalidateTag } from 'next/cache'
+
+revalidatePath('/blog')               // all /blog routes
+revalidatePath('/blog/[slug]', 'page') // specific page type
+revalidateTag('posts')                // all tagged fetches
+
+// CMS webhook pattern:
+// Sanity/Contentful publish → POST /api/revalidate
+// → revalidateTag('posts') → stale pages regenerated`,
+  },
+
+  // ── SERVER ACTIONS ───────────────────────────────────────
+  {
+    category: 'Server Actions',
+    difficulty: 'Intermediate',
+    question: 'What are Server Actions and how do you use them for mutations in Next.js?',
+    answer: 'Server Actions are async functions marked with "use server" that execute on the server — called directly from components, no /api route needed. Use for form submissions, mutations, DB writes. Progressive enhancement: form action={serverFn} works without JavaScript. After mutation: call revalidatePath() or redirect(). For loading/error state: useActionState(action, initialState) → returns [state, action, isPending]. For instant UI: useOptimistic(data) shows optimistic state immediately, rolls back on error. Server Actions replace most CRUD API routes.',
+    tip: `// actions.ts:
+'use server'
+export async function createPost(formData: FormData) {
+  const title = formData.get('title') as string
+  const parsed = schema.safeParse({ title })
+  if (!parsed.success) return { error: parsed.error }
+  await db.post.create({ data: { title } })
+  revalidatePath('/blog')
+  redirect('/blog')
+}
+
+// Form — progressive enhancement (works without JS!):
+<form action={createPost}>
+  <input name="title" required />
+  <button type="submit">Create</button>
+</form>
+
+// Client Component with pending state:
+'use client'
+const [state, action, pending] = useActionState(createPost, null)
+
+// Optimistic UI:
+const [optimisticPosts, addOptimistic] = useOptimistic(posts)
+async function handleAdd(formData: FormData) {
+  addOptimistic({ title: formData.get('title'), pending: true })
+  await createPost(formData)  // rolls back on error
+}`,
+  },
+
+  // ── STREAMING & SUSPENSE ─────────────────────────────────
+  {
+    category: 'Streaming & Suspense',
+    difficulty: 'Intermediate',
+    question: 'How does streaming with Suspense work in Next.js App Router?',
+    answer: 'loading.tsx automatically wraps page.tsx in a Suspense boundary — shows skeleton immediately while page loads. Granular Suspense: wrap individual slow components in <Suspense fallback={<Skeleton/>}> — they stream independently, no waterfall. Multiple Suspense boundaries fetch in parallel. PPR (v15+): static parts of the page are pre-rendered and served from CDN instantly; only Suspense-wrapped dynamic islands stream in. Streaming eliminates the "white screen wait" of traditional SSR — users see content progressively.',
+    tip: `// loading.tsx — automatic Suspense for entire segment:
+export default function Loading() {
+  return <DashboardSkeleton />  // shows instantly
+}
+
+// Granular Suspense — parallel streaming (recommended):
+import { Suspense } from 'react'
+async function Page() {
+  return (
+    <div>
+      <StaticHeader />             // renders immediately
+      <Suspense fallback={<Skeleton />}>
+        <SlowUserProfile />        // streams when ready
+      </Suspense>
+      <Suspense fallback={<Skeleton />}>
+        <SlowActivityFeed />       // streams in parallel
+      </Suspense>
+    </div>
+  )
+}
+// Both slow components fetch simultaneously — no waterfall
+// User sees StaticHeader + skeletons, then content streams in`,
+  },
+
+  // ── PERFORMANCE ─────────────────────────────────────────
+  {
+    category: 'Performance',
+    difficulty: 'Beginner',
+    question: 'What Core Web Vitals optimizations do next/image and next/font provide?',
+    answer: 'next/image: auto WebP/AVIF format conversion (smaller files), lazy loading by default (LCP), CLS=0 (requires width+height or fill), blur placeholder, priority prop for above-fold hero images (disables lazy). next/font: self-hosts Google fonts — no external network request, zero layout shift (reserves space with font-display: swap), CSS variable output for Tailwind integration. Both are zero-config CWV wins — LCP, CLS, FCP improvements out of the box.',
+    tip: `import Image from 'next/image'
+import { Inter } from 'next/font/google'
+
+// Fixed size (explicit dimensions):
+<Image src="/hero.jpg" width={800} height={400} alt="..." />
+
+// Above-fold hero (priority = no lazy load):
+<Image src="/hero.jpg" fill priority sizes="100vw" alt="..." />
+
+// Responsive with sizes hint:
+<Image src="/photo.jpg" fill
+  sizes="(max-width: 768px) 100vw, 50vw" alt="..." />
+// Auto: WebP/AVIF · lazy load · CLS=0 · blur placeholder
+
+// Font — self-hosted, zero layout shift:
+const inter = Inter({
+  subsets: ['latin'],
+  variable: '--font-inter',   // CSS variable for Tailwind
+  display: 'swap',
+})
+// No external request · reserves font space · zero CLS`,
+  },
+
+  {
+    category: 'Performance',
+    difficulty: 'Intermediate',
+    question: 'How do dynamic imports, next/dynamic, and Turbopack improve Next.js performance?',
+    answer: 'next/dynamic(): lazy-loads a component, creates a separate bundle chunk. `ssr: false` for client-only components (charts, maps, rich editors — use browser APIs). `loading` prop for skeleton. next/script: controls third-party script loading — beforeInteractive (consent banners, blocks render), afterInteractive (analytics, after hydration), lazyOnload (chat widgets, lowest priority, idle time). Turbopack: Rust-based bundler replacing Webpack — 10× faster HMR and builds, stable in Next.js 2026. Enable with `next dev --turbo`.',
+    tip: `import dynamic from 'next/dynamic'
+
+// Client-only (ssr: false — uses browser APIs):
+const Chart = dynamic(() => import('./Chart'), {
+  loading: () => <Skeleton />,
+  ssr: false,       // skip SSR entirely
+})
+
+// Lazy load with loading state:
+const Modal = dynamic(() => import('./Modal'))
+
+// next/script loading strategies:
+import Script from 'next/script'
+// beforeInteractive: consent banner — blocks render
+// afterInteractive:  analytics (GA, PostHog) — after hydration
+// lazyOnload:        chat widget (Intercom) — browser idle
+<Script src="..." strategy="afterInteractive" />
+
+// Turbopack (stable 2026):
+// next dev --turbo   → 10x faster HMR
+// Rust-based, replaces Webpack — no config change needed`,
+  },
+
+  // ── MIDDLEWARE & API ROUTES ──────────────────────────────
+  {
+    category: 'Middleware & API Routes',
+    difficulty: 'Intermediate',
+    question: 'What is Next.js Middleware and what are its main use cases?',
+    answer: 'middleware.ts runs at the Edge (CDN) before every request matching the `matcher` config — before cache is checked, extremely fast. Main uses: auth redirects (check token → redirect /login), geo-based routing (serve locale-specific content), A/B testing (assign variant in cookie), CSP headers injection, rate limiting, tenant detection for multi-tenant apps. Returns NextResponse.redirect(), NextResponse.rewrite(), or NextResponse.next(). Keep it lightweight — runs on every matched request globally.',
+    tip: `// middleware.ts (project root):
+import { NextRequest, NextResponse } from 'next/server'
+
+export function middleware(req: NextRequest) {
+  const token = req.cookies.get('auth-token')?.value
+  if (!token) {
+    return NextResponse.redirect(
+      new URL('/login', req.url)
+    )
+  }
+  return NextResponse.next()
+}
+
+// Matcher — only run on these paths:
+export const config = {
+  matcher: ['/dashboard/:path*', '/admin/:path*'],
+}
+
+// Geo routing example:
+const country = req.geo?.country ?? 'US'
+if (country === 'DE') {
+  return NextResponse.rewrite(new URL('/de', req.url))
+}
+// Uses: auth · geo · A/B · CSP · multi-tenant · rate limit`,
+  },
+
+  {
+    category: 'Middleware & API Routes',
+    difficulty: 'Intermediate',
+    question: 'When do you use Route Handlers vs Server Actions vs NestJS API in Next.js?',
+    answer: 'Route Handlers (app/api/*/route.ts): webhooks from external services (Stripe, GitHub), REST API endpoints for mobile apps/external clients, third-party callbacks. Server Actions ("use server"): in-app mutations, form submissions, DB writes from components — no /api endpoint needed, progressive enhancement. NestJS (separate backend): complex domain logic, microservices architecture, team separation, complex auth flows, when Next.js API routes become a bottleneck. BFF pattern: Next.js Route Handler aggregates multiple microservice calls → one optimized response to client.',
+    tip: `// Route Handler (app/api/posts/route.ts):
+import { NextRequest, NextResponse } from 'next/server'
+
+export async function GET(req: NextRequest) {
+  const posts = await db.post.findMany()
+  return NextResponse.json(posts)
+}
+
+export async function POST(req: NextRequest) {
+  const body = await req.json()
+  const post = await db.post.create({ data: body })
+  return NextResponse.json(post, { status: 201 })
+}
+
+// Decision guide:
+// Route Handler → webhooks, mobile REST, third-party callbacks
+// Server Action → forms, in-app mutations, no /api needed
+// NestJS        → complex domain, microservices, team split
+
+// BFF pattern: Next.js → aggregates NestJS + Stripe + DB
+// One fetch to Next.js replaces 3 client fetches`,
+  },
+
+  // ── STATE MANAGEMENT ─────────────────────────────────────
+  {
+    category: 'State Management',
+    difficulty: 'Intermediate',
+    question: 'What are the recommended state management patterns in Next.js App Router?',
+    answer: 'Server state: TanStack Query — useQuery for reading (stale-while-revalidate, cache, prefetch on server), useMutation for writes + cache invalidation. Global UI state: Zustand — lightweight, no Provider needed, no hydration mismatch risk (unlike Redux). URL state (nuqs): filter/sort/search in URL searchParams — shareable, browser back-button works, no extra state needed. Rule: if data comes from server → TanStack Query; if global UI (modal open, theme) → Zustand; if shareable/bookmarkable state → URL params.',
+    tip: `// TanStack Query (server state):
+'use client'
+const { data, isPending } = useQuery({
+  queryKey: ['posts'],
+  queryFn: () => fetch('/api/posts').then(r => r.json()),
+  staleTime: 60_000,
+})
+const { mutate } = useMutation({
+  mutationFn: (data) => fetch('/api/posts', {
+    method: 'POST', body: JSON.stringify(data)
+  }),
+  onSuccess: () => qc.invalidateQueries({ queryKey: ['posts'] }),
+})
+
+// Zustand (global UI state — no Provider):
+const useStore = create<State>((set) => ({
+  isModalOpen: false,
+  openModal: () => set({ isModalOpen: true }),
+}))
+
+// URL state with nuqs (shareable filters):
+import { useQueryState } from 'nuqs'
+const [search, setSearch] = useQueryState('q')
+// /products?q=shoes — shareable + back-button works`,
+  },
+
+  // ── ECOSYSTEM ────────────────────────────────────────────
+  {
+    category: 'Next.js Ecosystem',
+    difficulty: 'Intermediate',
+    question: 'What are the essential third-party integrations for a production Next.js app?',
+    answer: 'Auth: Clerk (SaaS — currentUser() in RSC, middleware protection, best DX) vs Auth.js/NextAuth (OSS — all providers, self-hosted, auth() in RSC). AI: Vercel AI SDK — useChat/useCompletion hooks, AI Server Actions, streaming SSE responses. CMS + ISR: Contentful/Sanity/Payload webhook → revalidateTag("posts") for on-demand regeneration. UI: shadcn/ui + Tailwind — CSS variables, Radix primitives, dark mode, copy-paste components. ORM: Prisma (type-safe, great DX) or Drizzle (faster, SQL-like). Deploy: Vercel (native, Edge SSR, AI SDK, preview URLs per PR) or standalone Docker output for AWS/GCP.',
+    tip: `// Clerk auth in Server Component:
+import { currentUser } from '@clerk/nextjs/server'
+const user = await currentUser()
+
+// Auth.js in Server Component:
+import { auth } from '@/auth'
+const session = await auth()
+
+// Vercel AI SDK — streaming chat:
+'use client'
+import { useChat } from 'ai/react'
+const { messages, input, handleSubmit } = useChat()
+
+// CMS webhook → ISR revalidation:
+// POST /api/revalidate (Sanity webhook)
+export async function POST(req: NextRequest) {
+  revalidateTag('posts')
+  return NextResponse.json({ revalidated: true })
+}
+
+// Standalone Docker (self-host):
+// next.config.ts:
+output: 'standalone'
+// docker build → minimal image, only needed files`,
+  },
+
+  // ── ADVANCED PATTERNS ────────────────────────────────────
+  {
+    category: 'Advanced Patterns',
+    difficulty: 'Advanced',
+    question: 'What are advanced Next.js patterns for enterprise applications?',
+    answer: 'Multi-tenancy: detect subdomain in middleware → rewrite to tenant-specific route, per-tenant layout, Row Level Security in DB. Security: taintObjectReference() (React 19) prevents server-only data leaking to client bundle; CSP headers in middleware; env variables never exposed to client (no NEXT_PUBLIC_ prefix). Standalone Docker output: `output: "standalone"` in next.config.ts creates minimal self-hosted Docker image for AWS/GCP. i18n: next-intl library + locale detection in middleware + locale segment routing. React Compiler (stable 2026): auto-memoizes all components, eliminates need for useMemo/useCallback.',
+    tip: `// Multi-tenant middleware:
+export function middleware(req: NextRequest) {
+  const hostname = req.headers.get('host') ?? ''
+  const tenant = hostname.split('.')[0]  // acme.app.com → acme
+  return NextResponse.rewrite(
+    new URL('/tenant/' + tenant + req.nextUrl.pathname, req.url)
+  )
+}
+
+// Security — taint server data (React 19):
+import { experimental_taintObjectReference } from 'react'
+experimental_taintObjectReference(
+  'Do not pass secret to client', secretConfig
+)
+
+// Standalone Docker output (next.config.ts):
+const nextConfig = {
+  output: 'standalone',  // minimal image — only needed files
+}
+
+// React Compiler (stable 2026):
+// Automatically memoizes — no useMemo/useCallback needed
+// babel plugin or next.config.ts: experimental.reactCompiler: true`,
+  },
+
+  // ── BEST PRACTICES ───────────────────────────────────────
+  {
+    category: 'Best Practices',
+    difficulty: 'Intermediate',
+    question: 'What are the core best practices for Next.js App Router development?',
+    answer: '1. Server Components by default — smaller bundle, no hydration cost, direct DB access. 2. Push "use client" to leaf components only — keep layouts and pages as Server Components. 3. Use Server Actions for mutations — no /api route needed, progressive enhancement. 4. Choose rendering by data freshness: SSG (blogs) → ISR (product catalog) → SSR (user dashboard) → PPR (hybrid v15+). 5. Parallel fetch with Promise.all() in Server Components — no waterfall. 6. Use loading.tsx + granular Suspense for progressive rendering. 7. Move to NestJS when: complex domain logic, microservices, team boundary needed.',
+    tip: `// Rendering decision guide:
+// SSG:  blogs, docs, marketing — never changes after build
+// ISR:  e-commerce products, news — changes but can be stale
+// SSR:  user dashboard, cart — must be fresh + personalized
+// CSR:  real-time, user-specific, highly interactive
+// PPR:  hybrid — static shell + dynamic islands (v15+)
+
+// Good: Server Component tree, Client leaf:
+async function ProductPage({ id }) {          // Server
+  const product = await db.product.findById(id)
+  return (
+    <div>
+      <ProductInfo product={product} />       // Server
+      <AddToCartButton productId={id} />      // Client leaf
+    </div>
+  )
+}
+
+// Anti-patterns:
+// ❌ 'use client' on pages/layouts
+// ❌ fetch() in useEffect when Server Component works
+// ❌ /api route when Server Action is sufficient
+// ❌ Waterfall fetches (sequential awaits vs Promise.all)`,
+  },
+
+  // ── INTERVIEW ────────────────────────────────────────────
+  {
+    category: 'Next.js Interview',
+    difficulty: 'Advanced',
+    question: 'Top Next.js interview topics for 2026 — what must you master?',
+    answer: '1. SSR vs SSG vs ISR vs PPR — trade-offs, when to use each. 2. Server vs Client Components — boundary semantics, composition patterns, "use client" is NOT client-only. 3. 4 caching layers: Request Memoization → Data Cache → Full Route Cache → Router Cache. 4. Server Actions vs Route Handlers vs NestJS — decision matrix. 5. PPR deep dive: static shell CDN + Suspense holes stream in. 6. revalidatePath() vs revalidateTag() — on-demand ISR. 7. React Compiler (2026): auto-memoizes, no more useMemo. 8. App Router file conventions: layout/page/loading/error/route. 9. Middleware at Edge — auth, geo, A/B. 10. Parallel + intercepted routes.',
+    tip: `// Interview quick-fire answers:
+
+// Q: What does 'use client' mean?
+// A: Boundary marker — subtree becomes Client Component + in JS bundle
+
+// Q: Why is PPR better than SSR?
+// A: SSR waits for slowest fetch. PPR: static shell instant + stream
+
+// Q: 4 caching layers?
+// A: Request Memo (React) → Data Cache → Full Route Cache → Router Cache
+
+// Q: Server Action vs Route Handler?
+// A: Action = in-app mutations (forms). Handler = external/webhook/REST
+
+// Q: When move to NestJS?
+// A: Complex domain, microservices, team separation, auth complexity
+
+// Q: React Compiler in 2026?
+// A: Auto-memoizes all components — no useMemo/useCallback needed
+
+// Q: How to implement ISR on-demand?
+// A: revalidateTag('posts') in webhook Route Handler`,
+  },
+
+];
+
+/* ═══════════════════════════════════════════════════════════
    SUBJECTS
 ═══════════════════════════════════════════════════════════ */
 const SUBJECTS = {
@@ -25377,6 +25993,7 @@ const SUBJECTS = {
   'Testing & Containers': DEVOPS_CARDS,
   'Tricked Memory': TRICKED_CARDS,
   'Docker':         DOCKER_CARDS,
+  'Next.js':        NEXTJS_CARDS,
 };
 
 /* ═══════════════════════════════════════════════════════════
@@ -25384,7 +26001,7 @@ const SUBJECTS = {
 ═══════════════════════════════════════════════════════════ */
 const SUBJECT_GROUPS = {
   'Cheat Sheet': ['Junior Dev Daily Essentials'],
-  'Core':        ['DSA_JavaScript', 'Internet', 'Linux', 'Tricked Memory', 'Enterprise Infrastructure Architectures', 'Full-Stack Enterprise Tooling'],
+  'Core':        ['DSA_JavaScript', 'Internet', 'Linux', 'Tricked Memory', 'Enterprise Infrastructure Architectures', 'Full-Stack Enterprise Tooling', 'Next.js'],
   'Language':    ['Python', 'C#', 'C++', 'TypeScript', 'JavaScript'],
   'Frontend':    ['Html', 'CSS', 'npm', 'Git/Github', 'Tailwind CSS', 'React & SSR', 'Redux'],
   'Backend':     ['NestJS', 'Node.js', 'Express.js', 'SQL', 'Database', 'PostgreSQL', 'API', 'JWT authentication', 'Redis', 'Testing & Containers', 'CI/CD', 'AI-assist', 'Third-party generation'],
@@ -25441,6 +26058,7 @@ const SUBJECT_COLORS = {
   'Full-Stack Enterprise Tooling': '#0ea5e9',
   'Tricked Memory': '#f43f5e',
   'Docker':         '#0db7ed',
+  'Next.js':        '#e2e8f0',
 };
 
 const CATEGORY_COLORS = {
@@ -25603,6 +26221,18 @@ const CATEGORY_COLORS = {
   'AI & RAG Tools':          '#a855f7',
   'Forms & Validation':      '#14b8a6',
   'Dev Experience':          '#38bdf8',
+  // Next.js
+  'Next.js Overview':              '#e2e8f0',
+  'Rendering Strategies':          '#ef4444',
+  'App Router':                    '#f59e0b',
+  'Server vs Client Components':   '#3b82f6',
+  'Data Fetching':                 '#8b5cf6',
+  'Server Actions':                '#10b981',
+  'Streaming & Suspense':          '#06b6d4',
+  'State Management':              '#22c55e',
+  'Next.js Ecosystem':             '#f97316',
+  'Advanced Patterns':             '#7c3aed',
+  'Next.js Interview':             '#e0234e',
   // Tricked Memory
   'SQL':                '#f43f5e',
 };

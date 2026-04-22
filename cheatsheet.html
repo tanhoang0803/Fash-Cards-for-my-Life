@@ -33,6 +33,8 @@
     --tooling-dim: #0ea5e922;
     --docker: #0db7ed;
     --docker-dim: #0db7ed22;
+    --nextjs: #e2e8f0;
+    --nextjs-dim: #e2e8f018;
     --text: #e2e8f0;
     --muted: #8892a4;
     --code: #c9d1e0;
@@ -99,6 +101,7 @@
   .pill-infra { background: var(--infra-dim); color: var(--infra); border: 1px solid #94a3b844; }
   .pill-tooling { background: var(--tooling-dim); color: var(--tooling); border: 1px solid #0ea5e944; }
   .pill-docker  { background: var(--docker-dim);  color: var(--docker);  border: 1px solid #0db7ed44; }
+  .pill-nextjs  { background: var(--nextjs-dim);  color: var(--nextjs);  border: 1px solid #e2e8f030; }
 
   /* ── GRID ── */
   .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
@@ -139,6 +142,7 @@
   .card.infra-card { border-top: 2px solid var(--infra); }
   .card.tooling-card { border-top: 2px solid var(--tooling); }
   .card.docker-card  { border-top: 2px solid var(--docker); }
+  .card.nextjs-card  { border-top: 2px solid var(--nextjs); }
 
   .card h3 {
     font-size: 13px;
@@ -157,6 +161,7 @@
   .card h3.infra { color: var(--infra); }
   .card h3.tooling { color: var(--tooling); }
   .card h3.docker  { color: var(--docker); }
+  .card h3.nextjs  { color: var(--nextjs); }
 
   .card h4 {
     font-size: 12px;
@@ -226,6 +231,7 @@
   .tip.infra-tip { border-color: var(--infra); }
   .tip.tooling-tip { border-color: var(--tooling); }
   .tip.docker-tip  { border-color: var(--docker); }
+  .tip.nextjs-tip  { border-color: var(--nextjs); }
 
   /* ── DIVIDER ── */
   .divider {
@@ -276,6 +282,8 @@
   .big-label.tooling .num { background: var(--tooling); color: #fff; }
   .big-label.docker { color: var(--docker); }
   .big-label.docker .num { background: var(--docker); color: #000; }
+  .big-label.nextjs { color: var(--nextjs); }
+  .big-label.nextjs .num { background: var(--nextjs); color: #000; }
 
   /* ── SPAN HELPERS ── */
   .row { display: flex; gap: 12px; margin: 5px 0; }
@@ -304,7 +312,7 @@
 <!-- HEADER -->
 <div class="header">
   <h1>Junior Developer — Daily Essentials</h1>
-  <p>JAVASCRIPT · REACT + REDUX · SQL · LINUX · NESTJS · TYPESCRIPT · DSA · INFRA ARCH · FS TOOLING · DOCKER — QUICK REFERENCE</p>
+  <p>JAVASCRIPT · REACT + REDUX · SQL · LINUX · NESTJS · TYPESCRIPT · DSA · INFRA ARCH · FS TOOLING · DOCKER · NEXT.JS — QUICK REFERENCE</p>
   <div class="pills">
     <span class="pill pill-js">JS ES6+</span>
     <span class="pill pill-react">React + Redux</span>
@@ -316,6 +324,7 @@
     <span class="pill pill-infra">Infra Arch</span>
     <span class="pill pill-tooling">FS Tooling</span>
     <span class="pill pill-docker">Docker</span>
+    <span class="pill pill-nextjs">Next.js</span>
   </div>
 </div>
 
@@ -3439,9 +3448,374 @@ docker run --memory 1g myapp     <span class="cm"># fix OOM</span></pre>
 
 </div>
 
+<!-- ══════════════════════════════════════════
+     NEXT.JS
+══════════════════════════════════════════ -->
+<hr class="divider">
+<div class="big-label nextjs"><span class="num">11</span> Next.js — App Router · React 19 · 2026</div>
+
+<div class="grid-3">
+
+  <!-- Rendering Strategies -->
+  <div class="card nextjs-card">
+    <h3 class="nextjs">Rendering Strategies</h3>
+    <h4>When to Use Each</h4>
+    <table class="ref-table">
+      <tr><td>SSR</td><td>per-request HTML — personalized, always fresh, dynamic</td></tr>
+      <tr><td>SSG</td><td>build-time HTML — ultra-fast, CDN-cached, no server cost</td></tr>
+      <tr><td>ISR</td><td>static + revalidate window — best of SSG + freshness</td></tr>
+      <tr><td>CSR</td><td>browser-only — dashboards, TanStack Query, user-specific</td></tr>
+      <tr><td>PPR ★</td><td>static shell CDN instant + dynamic holes stream in (v15+)</td></tr>
+    </table>
+    <h4>Code Patterns</h4>
+    <pre><span class="cm">// SSR — force fresh per request:</span>
+<span class="k">export const</span> dynamic = <span class="s">'force-dynamic'</span>
+<span class="k">async function</span> <span class="f">Page</span>() { <span class="k">const</span> data = <span class="k">await</span> <span class="f">fetch</span>(url) }
+
+<span class="cm">// ISR — revalidate every hour:</span>
+<span class="k">const</span> data = <span class="k">await</span> <span class="f">fetch</span>(url, { next: { revalidate: <span class="f">3600</span> } })
+
+<span class="cm">// SSG + dynamic routes:</span>
+<span class="k">export async function</span> <span class="f">generateStaticParams</span>() {
+  <span class="k">return</span> [{ id: <span class="s">'1'</span> }, { id: <span class="s">'2'</span> }]
+}
+
+<span class="cm">// PPR (Next.js 15):</span>
+<span class="k">export const</span> experimental_ppr = <span class="k">true</span>
+<span class="cm">// Wrap dynamic parts in &lt;Suspense&gt; — rest is static</span></pre>
+    <div class="tip nextjs-tip">PPR = static shell from CDN instantly + dynamic islands stream in. Eliminates SSR vs SSG tradeoff entirely.</div>
+  </div>
+
+  <!-- App Router Architecture -->
+  <div class="card nextjs-card">
+    <h3 class="nextjs">App Router Architecture</h3>
+    <h4>File Conventions</h4>
+    <table class="ref-table">
+      <tr><td>layout.tsx</td><td>shared UI, persists across route changes</td></tr>
+      <tr><td>page.tsx</td><td>route content — makes route publicly accessible</td></tr>
+      <tr><td>loading.tsx</td><td>automatic Suspense fallback for the segment</td></tr>
+      <tr><td>error.tsx</td><td>error boundary — must be Client Component</td></tr>
+      <tr><td>not-found.tsx</td><td>404 UI for the segment</td></tr>
+      <tr><td>route.ts</td><td>API route handler (GET, POST, PATCH, DELETE)</td></tr>
+    </table>
+    <h4>Routing Patterns</h4>
+    <pre>app/
+├── layout.tsx              <span class="cm"># root layout (wraps all)</span>
+├── page.tsx                <span class="cm"># /</span>
+├── blog/[slug]/page.tsx    <span class="cm"># /blog/:slug</span>
+├── docs/[...slug]/page.tsx <span class="cm"># /docs/a/b/c (catch-all)</span>
+├── (auth)/login/page.tsx   <span class="cm"># /login (group, no URL segment)</span>
+├── (auth)/register/page.tsx <span class="cm"># /register</span>
+├── @modal/page.tsx         <span class="cm"># parallel route slot</span>
+└── shop/(..)cart/page.tsx  <span class="cm"># intercepted route</span></pre>
+    <div class="tip nextjs-tip">Route groups (auth) share a layout without appearing in URL. Use for multi-layout apps (marketing vs dashboard).</div>
+    <h4>Nested Layouts</h4>
+    <pre><span class="cm">// app/dashboard/layout.tsx</span>
+<span class="k">export default function</span> <span class="f">DashboardLayout</span>({
+  children
+}: { children: React.ReactNode }) {
+  <span class="k">return</span> (
+    &lt;div&gt;
+      &lt;Sidebar /&gt;      <span class="cm">// persists — never re-renders</span>
+      &lt;main&gt;{children}&lt;/main&gt;
+    &lt;/div&gt;
+  )
+}</pre>
+  </div>
+
+  <!-- Server vs Client Components -->
+  <div class="card nextjs-card">
+    <h3 class="nextjs">Server vs Client Components</h3>
+    <h4>Decision Table ★ core concept</h4>
+    <table class="ref-table">
+      <tr><td>Server (default)</td><td>async data, DB/ORM, no useState, no events, no browser API</td></tr>
+      <tr><td>'use client'</td><td>useState/useEffect, onClick, browser APIs — only when needed</td></tr>
+    </table>
+    <h4>Composition Pattern</h4>
+    <pre><span class="cm">// ❌ "use client" at top pollutes entire subtree:</span>
+<span class="s">'use client'</span>
+<span class="k">export default function</span> <span class="f">Page</span>() {
+  <span class="k">const</span> data = <span class="k">await</span> db.<span class="f">query</span>()  <span class="cm">// ✗ can't do this</span>
+}
+
+<span class="cm">// ✅ Push 'use client' to leaf — tree stays server:</span>
+<span class="cm">// page.tsx (server component):</span>
+<span class="k">async function</span> <span class="f">Page</span>() {
+  <span class="k">const</span> data = <span class="k">await</span> db.<span class="f">query</span>()       <span class="cm">// ✓ server only</span>
+  <span class="k">return</span> &lt;ClientButton data={data} /&gt;  <span class="cm">// serialize → client</span>
+}
+
+<span class="cm">// ClientButton.tsx:</span>
+<span class="s">'use client'</span>
+<span class="k">export function</span> <span class="f">ClientButton</span>({ data }) {
+  <span class="k">const</span> [open, setOpen] = <span class="f">useState</span>(<span class="k">false</span>)
+  ...
+}
+
+<span class="cm">// Pass server component as children — stays server ✓:</span>
+&lt;ClientWrapper&gt;&lt;ServerComponent /&gt;&lt;/ClientWrapper&gt;</pre>
+    <div class="tip nextjs-tip">Boundary rule: 'use client' marks the boundary — not "runs on client only." Everything in the subtree below becomes a Client Component.</div>
+  </div>
+
+</div>
+
+<div class="grid-3">
+
+  <!-- Data Fetching & Caching -->
+  <div class="card nextjs-card">
+    <h3 class="nextjs">Data Fetching &amp; Caching</h3>
+    <h4>Fetch Patterns in Server Components</h4>
+    <pre><span class="cm">// Cached (ISR — revalidate every hour):</span>
+<span class="k">const</span> data = <span class="k">await</span> <span class="f">fetch</span>(url, {
+  next: { revalidate: <span class="f">3600</span> }
+})
+
+<span class="cm">// No cache (SSR — fresh per request):</span>
+<span class="k">const</span> data = <span class="k">await</span> <span class="f">fetch</span>(url, { cache: <span class="s">'no-store'</span> })
+
+<span class="cm">// Tagged for on-demand revalidation:</span>
+<span class="k">const</span> data = <span class="k">await</span> <span class="f">fetch</span>(url, {
+  next: { tags: [<span class="s">'posts'</span>] }
+})
+
+<span class="cm">// Parallel fetches — no waterfall:</span>
+<span class="k">const</span> [user, posts] = <span class="k">await</span> Promise.<span class="f">all</span>([
+  <span class="f">fetch</span>(<span class="s">'/api/user'</span>).<span class="f">then</span>(r =&gt; r.<span class="f">json</span>()),
+  <span class="f">fetch</span>(<span class="s">'/api/posts'</span>).<span class="f">then</span>(r =&gt; r.<span class="f">json</span>()),
+])</pre>
+    <h4>4 Caching Layers ★ deep dive</h4>
+    <table class="ref-table">
+      <tr><td>1. Request Memoization</td><td>same fetch URL in one render → deduplicated (React)</td></tr>
+      <tr><td>2. Data Cache</td><td>persistent across requests, server-side (Next.js)</td></tr>
+      <tr><td>3. Full Route Cache</td><td>pre-rendered HTML+RSC payload on disk (Next.js)</td></tr>
+      <tr><td>4. Router Cache</td><td>client-side prefetch cache in browser (Next.js)</td></tr>
+    </table>
+    <h4>On-Demand Revalidation</h4>
+    <pre><span class="cm">// In Server Action or Route Handler:</span>
+<span class="f">revalidatePath</span>(<span class="s">'/blog'</span>)        <span class="cm">// purge all blog routes</span>
+<span class="f">revalidatePath</span>(<span class="s">'/blog/[slug]'</span>, <span class="s">'page'</span>)
+<span class="f">revalidateTag</span>(<span class="s">'posts'</span>)         <span class="cm">// purge tagged fetches</span></pre>
+  </div>
+
+  <!-- Server Actions -->
+  <div class="card nextjs-card">
+    <h3 class="nextjs">Server Actions &amp; Mutations</h3>
+    <h4>Basic Server Action</h4>
+    <pre><span class="cm">// actions.ts</span>
+<span class="s">'use server'</span>
+
+<span class="k">export async function</span> <span class="f">createPost</span>(formData: FormData) {
+  <span class="k">const</span> title = formData.<span class="f">get</span>(<span class="s">'title'</span>) <span class="k">as</span> <span class="f">string</span>
+  <span class="cm">// Validate with Zod:</span>
+  <span class="k">const</span> parsed = schema.<span class="f">safeParse</span>({ title })
+  <span class="k">if</span> (!parsed.success) <span class="k">return</span> { error: parsed.error }
+  <span class="k">await</span> db.post.<span class="f">create</span>({ data: { title } })
+  <span class="f">revalidatePath</span>(<span class="s">'/blog'</span>)
+  <span class="f">redirect</span>(<span class="s">'/blog'</span>)
+}</pre>
+    <h4>Form Action (progressive enhancement)</h4>
+    <pre><span class="cm">// page.tsx — works without JS!</span>
+&lt;form action={createPost}&gt;
+  &lt;input name=<span class="s">"title"</span> required /&gt;
+  &lt;button type=<span class="s">"submit"</span>&gt;Create&lt;/button&gt;
+&lt;/form&gt;</pre>
+    <h4>useActionState + useOptimistic</h4>
+    <pre><span class="s">'use client'</span>
+<span class="k">import</span> { useActionState, useOptimistic } <span class="k">from</span> <span class="s">'react'</span>
+
+<span class="k">const</span> [state, action, pending] = <span class="f">useActionState</span>(
+  createPost, <span class="k">null</span>
+)
+<span class="cm">// pending = true while action runs</span>
+
+<span class="k">const</span> [optimisticPosts, addOptimistic] = <span class="f">useOptimistic</span>(posts)
+
+<span class="k">async function</span> <span class="f">handleAdd</span>(formData: FormData) {
+  <span class="f">addOptimistic</span>({ title: formData.<span class="f">get</span>(<span class="s">'title'</span>), pending: <span class="k">true</span> })
+  <span class="k">await</span> <span class="f">createPost</span>(formData)     <span class="cm">// rolls back on error</span>
+}</pre>
+    <div class="tip nextjs-tip">Server Actions replace API routes for mutations. No /api endpoint needed — call directly from components. Progressive enhancement built-in.</div>
+  </div>
+
+  <!-- Streaming & Suspense -->
+  <div class="card nextjs-card">
+    <h3 class="nextjs">Streaming &amp; Suspense</h3>
+    <h4>loading.tsx — Automatic Suspense</h4>
+    <pre><span class="cm">// app/dashboard/loading.tsx</span>
+<span class="k">export default function</span> <span class="f">Loading</span>() {
+  <span class="k">return</span> &lt;DashboardSkeleton /&gt;  <span class="cm">// shows instantly</span>
+}
+<span class="cm">// Wraps page.tsx in &lt;Suspense&gt; automatically</span></pre>
+    <h4>Granular Suspense (recommended)</h4>
+    <pre><span class="k">import</span> { Suspense } <span class="k">from</span> <span class="s">'react'</span>
+
+<span class="k">async function</span> <span class="f">Page</span>() {
+  <span class="k">return</span> (
+    &lt;div&gt;
+      &lt;StaticHeader /&gt;            <span class="cm">// renders immediately</span>
+      &lt;Suspense fallback={&lt;Skeleton /&gt;}&gt;
+        &lt;SlowUserProfile /&gt;       <span class="cm">// streams when ready</span>
+      &lt;/Suspense&gt;
+      &lt;Suspense fallback={&lt;Skeleton /&gt;}&gt;
+        &lt;SlowFeed /&gt;              <span class="cm">// streams in parallel</span>
+      &lt;/Suspense&gt;
+    &lt;/div&gt;
+  )
+}
+<span class="cm">// No waterfall — both slow components fetch in parallel</span></pre>
+    <h4>PPR — Partial Pre-Rendering</h4>
+    <pre><span class="cm">// next.config.ts:</span>
+experimental: { ppr: <span class="k">true</span> }
+
+<span class="cm">// page.tsx:</span>
+<span class="k">export const</span> experimental_ppr = <span class="k">true</span>
+
+<span class="k">async function</span> <span class="f">Page</span>() {
+  <span class="k">return</span> (
+    &lt;&gt;
+      &lt;StaticNav /&gt;           <span class="cm">// CDN edge — instant</span>
+      &lt;Suspense fallback={&lt;Spinner /&gt;}&gt;
+        &lt;DynamicFeed /&gt;       <span class="cm">// streams after</span>
+      &lt;/Suspense&gt;
+    &lt;/&gt;
+  )
+}
+<span class="cm">// SSR waits for ALL data</span>
+<span class="cm">// PPR: static shell NOW + dynamic streams IN</span></pre>
+  </div>
+
+</div>
+
+<div class="grid-3">
+
+  <!-- Performance -->
+  <div class="card nextjs-card">
+    <h3 class="nextjs">Performance</h3>
+    <h4>next/image — Core Web Vitals</h4>
+    <pre><span class="k">import</span> Image <span class="k">from</span> <span class="s">'next/image'</span>
+
+<span class="cm">// Fixed size (width+height required):</span>
+&lt;Image src=<span class="s">"/hero.jpg"</span> width={<span class="f">800</span>} height={<span class="f">400</span>}
+  alt=<span class="s">"..."</span> /&gt;
+
+<span class="cm">// Above-the-fold hero (priority = no lazy):</span>
+&lt;Image src=<span class="s">"/hero.jpg"</span> fill priority
+  sizes=<span class="s">"100vw"</span> alt=<span class="s">"..."</span> /&gt;
+
+<span class="cm">// Responsive:</span>
+&lt;Image src=<span class="s">"/photo.jpg"</span> fill
+  sizes=<span class="s">"(max-width: 768px) 100vw, 50vw"</span>
+  alt=<span class="s">"..."</span> /&gt;
+<span class="cm">// Auto: WebP/AVIF · lazy load · CLS=0 · blur placeholder</span></pre>
+    <h4>next/font — Zero Layout Shift</h4>
+    <pre><span class="k">import</span> { Inter } <span class="k">from</span> <span class="s">'next/font/google'</span>
+<span class="k">const</span> inter = <span class="f">Inter</span>({
+  subsets: [<span class="s">'latin'</span>],
+  variable: <span class="s">'--font-inter'</span>,
+  display: <span class="s">'swap'</span>,
+})
+<span class="cm">// Self-hosted — no external request, zero CLS ✓</span></pre>
+    <h4>Dynamic Imports + next/script</h4>
+    <pre><span class="k">import</span> dynamic <span class="k">from</span> <span class="s">'next/dynamic'</span>
+
+<span class="k">const</span> Chart = <span class="f">dynamic</span>(() =&gt; <span class="k">import</span>(<span class="s">'./Chart'</span>), {
+  loading: () =&gt; &lt;Skeleton /&gt;,
+  ssr: <span class="k">false</span>,       <span class="cm">// client-only, skip SSR</span>
+})
+<span class="k">const</span> Modal = <span class="f">dynamic</span>(() =&gt; <span class="k">import</span>(<span class="s">'./Modal'</span>))  <span class="cm">// lazy load</span></pre>
+    <table class="ref-table">
+      <tr><td>beforeInteractive</td><td>critical (consent) — blocks render</td></tr>
+      <tr><td>afterInteractive</td><td>analytics — loads after hydration</td></tr>
+      <tr><td>lazyOnload</td><td>chat widgets, ads — lowest priority</td></tr>
+    </table>
+    <div class="tip nextjs-tip">Turbopack: next dev --turbo — 10× faster HMR (Rust-based bundler, stable in 2026 — replaces Webpack).</div>
+  </div>
+
+  <!-- Middleware & API Routes -->
+  <div class="card nextjs-card">
+    <h3 class="nextjs">Middleware &amp; API Routes</h3>
+    <h4>middleware.ts — Runs at Edge</h4>
+    <pre><span class="k">import</span> { NextRequest, NextResponse } <span class="k">from</span> <span class="s">'next/server'</span>
+
+<span class="k">export function</span> <span class="f">middleware</span>(req: NextRequest) {
+  <span class="k">const</span> token = req.cookies.<span class="f">get</span>(<span class="s">'auth-token'</span>)?.value
+  <span class="k">if</span> (!token) {
+    <span class="k">return</span> NextResponse.<span class="f">redirect</span>(
+      <span class="k">new</span> <span class="f">URL</span>(<span class="s">'/login'</span>, req.url)
+    )
+  }
+  <span class="k">return</span> NextResponse.<span class="f">next</span>()
+}
+
+<span class="k">export const</span> config = {
+  matcher: [<span class="s">'/dashboard/:path*'</span>, <span class="s">'/admin/:path*'</span>],
+}
+<span class="cm">// Uses: auth redirects · geo routing · A/B tests · CSP</span></pre>
+    <h4>Route Handlers (app/api)</h4>
+    <pre><span class="cm">// app/api/posts/route.ts</span>
+<span class="k">import</span> { NextRequest, NextResponse } <span class="k">from</span> <span class="s">'next/server'</span>
+
+<span class="k">export async function</span> <span class="f">GET</span>(req: NextRequest) {
+  <span class="k">const</span> posts = <span class="k">await</span> db.post.<span class="f">findMany</span>()
+  <span class="k">return</span> NextResponse.<span class="f">json</span>(posts)
+}
+
+<span class="k">export async function</span> <span class="f">POST</span>(req: NextRequest) {
+  <span class="k">const</span> body = <span class="k">await</span> req.<span class="f">json</span>()
+  <span class="k">const</span> post = <span class="k">await</span> db.post.<span class="f">create</span>({ data: body })
+  <span class="k">return</span> NextResponse.<span class="f">json</span>(post, { status: <span class="f">201</span> })
+}</pre>
+    <h4>Route Handler vs Server Action</h4>
+    <table class="ref-table">
+      <tr><td>Route Handler</td><td>webhooks, third-party callbacks, REST API for mobile</td></tr>
+      <tr><td>Server Action</td><td>in-app mutations, form submissions, no /api needed</td></tr>
+    </table>
+    <div class="tip nextjs-tip">BFF pattern: Next.js server aggregates multiple microservice calls → one optimized response to client. Next.js → NestJS for complex domain logic.</div>
+  </div>
+
+  <!-- State + Ecosystem -->
+  <div class="card nextjs-card">
+    <h3 class="nextjs">State &amp; Ecosystem</h3>
+    <h4>TanStack Query (server state)</h4>
+    <pre><span class="s">'use client'</span>
+<span class="k">const</span> { data, isPending } = <span class="f">useQuery</span>({
+  queryKey: [<span class="s">'posts'</span>],
+  queryFn: () =&gt; <span class="f">fetch</span>(<span class="s">'/api/posts'</span>).<span class="f">then</span>(r =&gt; r.<span class="f">json</span>()),
+  staleTime: <span class="f">60_000</span>,
+})
+<span class="k">const</span> { mutate } = <span class="f">useMutation</span>({
+  mutationFn: (data) =&gt; <span class="f">fetch</span>(<span class="s">'/api/posts'</span>, {
+    method: <span class="s">'POST'</span>, body: <span class="f">JSON.stringify</span>(data)
+  }),
+  onSuccess: () =&gt; qc.<span class="f">invalidateQueries</span>({ queryKey: [<span class="s">'posts'</span>] }),
+})</pre>
+    <h4>Zustand + URL State</h4>
+    <pre><span class="cm">// Zustand (global client state):</span>
+<span class="k">const</span> useStore = <span class="f">create</span>&lt;State&gt;((set) =&gt; ({
+  count: <span class="f">0</span>,
+  increment: () =&gt; <span class="f">set</span>((s) =&gt; ({ count: s.count + <span class="f">1</span> })),
+}))
+<span class="cm">// No Provider, no hydration mismatch ✓</span>
+
+<span class="cm">// URL state (nuqs — shareable filters):</span>
+<span class="k">import</span> { useQueryState } <span class="k">from</span> <span class="s">'nuqs'</span>
+<span class="k">const</span> [search, setSearch] = <span class="f">useQueryState</span>(<span class="s">'q'</span>)
+<span class="cm">// /products?q=shoes — shareable, back-button works</span></pre>
+    <h4>Auth + AI + CMS</h4>
+    <table class="ref-table">
+      <tr><td>Clerk</td><td>SaaS DX — currentUser() in RSC, middleware protect</td></tr>
+      <tr><td>Auth.js</td><td>OSS self-hosted — auth() in RSC, all providers</td></tr>
+      <tr><td>Vercel AI SDK</td><td>useChat/useCompletion — streaming AI Server Actions</td></tr>
+      <tr><td>CMS + ISR</td><td>Sanity/Payload webhook → revalidateTag('posts')</td></tr>
+    </table>
+    <div class="tip nextjs-tip">React Compiler (stable 2026): auto-memoizes all components — no more useMemo/useCallback needed for performance.</div>
+  </div>
+
+</div>
+
 <!-- Footer -->
 <div style="text-align:center; color: var(--comment); font-family:'JetBrains Mono',monospace; font-size:12px; margin-top:20px; padding-top:16px; border-top:1px solid var(--border);">
-  Junior Developer Daily Essentials · JavaScript · React + Redux · SQL · Linux · NestJS · TypeScript · DSA · Enterprise Infra Architecture · Full-Stack Enterprise Tooling · Docker · 2026
+  Junior Developer Daily Essentials · JavaScript · React + Redux · SQL · Linux · NestJS · TypeScript · DSA · Enterprise Infra Architecture · Full-Stack Enterprise Tooling · Docker · Next.js · 2026
 </div>
 
 </body>
