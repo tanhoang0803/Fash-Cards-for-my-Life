@@ -70,7 +70,7 @@ Flash Cards Page
 ### Cheat Sheet
 | Subject | Description |
 |---|---|
-| Junior Dev Daily Essentials | Interactive cheatsheet — opens `cheatsheet.html` (JS, React+Redux, SQL, Linux, NestJS, TypeScript, DSA, Enterprise Infra Arch) |
+| Junior Dev Daily Essentials | Interactive cheatsheet — opens `cheatsheet.html` (JS, React+Redux, SQL, Linux, NestJS, TypeScript, DSA, Enterprise Infra Arch, FS Tooling, Docker, Next.js) |
 
 ### Core
 | Subject | Cards | Categories |
@@ -210,6 +210,25 @@ Backend Developer:    Fundamentals → ES6 → Async → Node.js → API → Dat
 | **Ecosystem** | 3 | React Router · Redux / Zustand / Context · Testing (Jest, RTL) |
 | **Advanced** | 3 | SSR & Next.js (CSR/SSR/SSG/ISR) · Concurrent rendering · Suspense & Error Boundaries |
 | **Interview** | 6 | Declarative · Component-based architecture · State vs Props · Hooks · Virtual DOM · One-way data flow |
+
+### Next.js — Detailed Breakdown
+
+| Category | Cards | Topics |
+|---|---|---|
+| **Next.js Overview** | 1 | Full 10-area ASCII mindmap |
+| **Rendering Strategies** | 2 | SSR/SSG/ISR/CSR/PPR trade-offs · PPR deep dive (static shell + streaming dynamic holes) |
+| **App Router** | 2 | File conventions (layout/page/loading/error/route) · dynamic, catch-all, route groups, parallel & intercepted routes |
+| **Server vs Client Components** | 2 | Decision table · composition patterns · "use client" boundary semantics |
+| **Data Fetching** | 2 | fetch() options · 4 caching layers (Request Memo → Data Cache → Full Route Cache → Router Cache) · revalidatePath/Tag |
+| **Server Actions** | 1 | "use server", form actions, progressive enhancement, useActionState, useOptimistic |
+| **Streaming & Suspense** | 1 | loading.tsx · granular Suspense · parallel streams · PPR |
+| **Performance** | 2 | next/image · next/font · next/dynamic · Turbopack |
+| **Middleware & API Routes** | 2 | Edge middleware · Route Handlers · Server Action vs Route Handler vs NestJS |
+| **State Management** | 1 | TanStack Query · Zustand · URL state (nuqs) |
+| **Next.js Ecosystem** | 1 | Clerk vs Auth.js · Vercel AI SDK · CMS + ISR · shadcn/ui · standalone Docker |
+| **Advanced Patterns** | 1 | Multi-tenancy · taintObjectReference · standalone Docker · i18n · React Compiler 2026 |
+| **Best Practices** | 1 | Rendering decision guide · anti-patterns |
+| **Next.js Interview** | 1 | PPR · 4 cache layers · boundary semantics · React Compiler · decision matrix |
 
 ---
 

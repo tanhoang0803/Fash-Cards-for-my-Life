@@ -13,7 +13,7 @@ A multi-subject developer flash card web app built with vanilla HTML, CSS, and J
 ### Cheat Sheet
 | Subject | Description |
 |---|---|
-| **Junior Dev Daily Essentials** | Interactive cheatsheet — JS, React+Redux, SQL, Linux, NestJS, TypeScript, DSA, Enterprise Infra Architecture |
+| **Junior Dev Daily Essentials** | Interactive cheatsheet — JS, React+Redux, SQL, Linux, NestJS, TypeScript, DSA, Enterprise Infra Arch, FS Tooling, Docker, Next.js |
 
 ### Core
 | Subject | Cards | Categories |
@@ -24,6 +24,7 @@ A multi-subject developer flash card web app built with vanilla HTML, CSS, and J
 | **Tricked Memory** | 3+ | SQL (FJ WGH SOL — execution order mnemonic) |
 | **Enterprise Infrastructure Architectures** | 38 | Overview, Core Infrastructure, AI Runtime Integration, Observability & Security, Third-party & SaaS, Data Layer, Frontend Layer, CI/CD & GitOps, Scaling & Multi-tenancy, Cloud & File Services |
 | **Full-Stack Enterprise Tooling** | 17+ | FS Overview, Hosting & CDN, Databases & ORM, Auth & Identity, Payments & Billing, Communication, CMS & Content, Analytics & Observability, CRM & Automation, AI & RAG Tools, Forms & Validation, DevOps & CI/CD, Dev Experience |
+| **Next.js** | 20 | Next.js Overview, Rendering Strategies, App Router, Server vs Client Components, Data Fetching, Server Actions, Streaming & Suspense, Performance, Middleware & API Routes, State Management, Next.js Ecosystem, Advanced Patterns, Best Practices, Next.js Interview |
 
 ### Language
 | Subject | Cards | Categories |
@@ -62,7 +63,7 @@ A multi-subject developer flash card web app built with vanilla HTML, CSS, and J
 | **AI-assist** | — | *(in progress)* |
 | **Third-party generation** | — | *(in progress)* |
 
-**Total: 620+ cards**
+**Total: 640+ cards**
 
 ---
 
@@ -189,6 +190,33 @@ Backend Developer:    Fundamentals → ES6 → Async → Node.js → API → Dat
 
 ---
 
+### Next.js — Detailed Breakdown
+
+| Category | Cards | Topics |
+|---|---|---|
+| **Next.js Overview** | 1 | Full 10-area ASCII mindmap — rendering, routing, data fetching, performance, ecosystem |
+| **Rendering Strategies** | 2 | SSR/SSG/ISR/CSR/PPR trade-offs · PPR deep dive (static shell + streaming dynamic holes) |
+| **App Router** | 2 | File conventions (layout/page/loading/error/route) · dynamic, catch-all, route groups, parallel & intercepted routes |
+| **Server vs Client Components** | 2 | Decision table · composition patterns · "use client" boundary semantics · "use server" = Server Actions only |
+| **Data Fetching** | 2 | fetch() options (no-store/revalidate/tags) · 4 caching layers · revalidatePath vs revalidateTag |
+| **Server Actions** | 1 | "use server", form actions, progressive enhancement, useActionState, useOptimistic |
+| **Streaming & Suspense** | 1 | loading.tsx · granular Suspense · parallel streams · PPR pattern |
+| **Performance** | 2 | next/image (WebP/CLS=0) · next/font (zero layout shift) · next/dynamic · Turbopack (`next dev --turbo`) |
+| **Middleware & API Routes** | 2 | Edge middleware (auth/geo/A/B) · Route Handlers · Server Action vs Route Handler vs NestJS decision |
+| **State Management** | 1 | TanStack Query · Zustand · URL state with nuqs |
+| **Next.js Ecosystem** | 1 | Clerk vs Auth.js · Vercel AI SDK · CMS + ISR webhooks · shadcn/ui · standalone Docker |
+| **Advanced Patterns** | 1 | Multi-tenancy · taintObjectReference (React 19) · standalone Docker output · i18n · React Compiler 2026 |
+| **Best Practices** | 1 | Rendering decision guide · Server Component by default · anti-patterns |
+| **Next.js Interview** | 1 | 10 deep-dive topics: PPR, 4 cache layers, boundary semantics, React Compiler, decision matrix |
+
+#### Next.js Learning Path
+```
+App Router basics → Server vs Client Components → Data Fetching & Caching
+→ Server Actions → Streaming & Suspense → Performance → Middleware → Ecosystem
+```
+
+---
+
 ## Features
 
 - Multi-subject navigation grouped into **Cheat Sheet / Core / Language / Frontend / Backend / DevOps** bars
@@ -203,7 +231,7 @@ Backend Developer:    Fundamentals → ES6 → Async → Node.js → API → Dat
 - Keyboard shortcuts: `←` `→` navigate · `Space` flip · `K` mark known
 - Difficulty badges: Beginner / Intermediate / Advanced
 - Code tip blocks with syntax-highlighted snippets on answer cards
-- **Cheatsheet page** (`cheatsheet.html`) — dense printable reference for JS, React, SQL, Linux, NestJS, TypeScript, DSA, and Enterprise Infra Architecture
+- **Cheatsheet page** (`cheatsheet.html`) — dense printable reference for JS, React+Redux, SQL, Linux, NestJS, TypeScript, DSA, Enterprise Infra Arch, FS Tooling, Docker, and Next.js
 
 ---
 
