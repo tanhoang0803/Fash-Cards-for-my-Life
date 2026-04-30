@@ -20586,7 +20586,1105 @@ const { data } = await supabase.from('users').select('*').eq('active', true);`,
 ];
 const JWT_CARDS           = [];
 const REDIS_CARDS         = [];
-const CICD_CARDS          = [];
+
+/* ═══════════════════════════════════════════════════════════
+   CI/CD  (Backend group)
+═══════════════════════════════════════════════════════════ */
+const CICD_CARDS = [
+
+  // ── OVERVIEW ─────────────────────────────────────────
+  {
+    category: 'CI/CD Overview',
+    difficulty: 'Beginner',
+    question: 'CI/CD full mindmap — 8 pillars overview',
+    answer: 'CI/CD automates software delivery from code commit to production. 8 pillars: 1) CI — Build & Quality (branching, build stages, testing pyramid, quality gates, artifacts). 2) Tools & Platforms (GitHub Actions, GitLab CI, Jenkins, Vercel). 3) DevSecOps (SCA/SAST/DAST security gates, secrets management). 4) Deployment Strategies (blue-green, canary, rolling, feature flags). 5) Infrastructure as Code (Terraform, AWS CDK, GitOps with Argo CD). 6) Observability & Feedback Loop (Prometheus+Grafana, Sentry, health checks, DORA metrics). 7) Monorepo CI/CD (Turborepo affected builds, Nx). 8) Rollback & Self-healing (auto-rollback on error rate, kubectl rollout undo, semver).',
+    tip: `CI/CD — 8-pillar mindmap
+│
+├─ 1. CI — Build & Quality
+│   ├─ Branching (trunk-based vs GitFlow)
+│   ├─ Build stage (npm ci · tsc · bundle)
+│   ├─ Testing pyramid (unit → integration → E2E)
+│   ├─ Quality gates (ESLint · SonarQube · coverage)
+│   └─ Artifacts (Docker → ECR/GHCR · semver · git SHA)
+│
+├─ 2. Tools & Platforms
+│   ├─ GitHub Actions — YAML workflows, matrix, caching
+│   ├─ GitLab CI — .gitlab-ci.yml, self-hosted runners
+│   ├─ Jenkins — Jenkinsfile, legacy enterprise
+│   └─ Vercel — Next.js native, PR preview URLs
+│
+├─ 3. DevSecOps
+│   ├─ SCA — Snyk / npm audit (dependency CVEs)
+│   ├─ SAST — Semgrep / SonarQube (source code)
+│   ├─ DAST — OWASP ZAP (live runtime app)
+│   └─ Secrets — GitHub Secrets / HashiCorp Vault
+│
+├─ 4. Deployment Strategies
+│   ├─ Blue-green (instant switch, zero downtime)
+│   ├─ Canary (5%→100% traffic, auto-rollback)
+│   ├─ Rolling (K8s default, maxSurge + maxUnavailable)
+│   ├─ Feature flags (decouple deploy from release)
+│   └─ Recreate (stop→start, has downtime, dev only)
+│
+├─ 5. Infrastructure as Code
+│   ├─ Terraform (plan in PR, apply on merge, S3 state)
+│   ├─ AWS CDK (TypeScript IaC, CloudFormation)
+│   └─ GitOps — Argo CD (Git = source of truth)
+│
+├─ 6. Observability & Feedback
+│   ├─ Prometheus + Grafana (metrics, deploy markers)
+│   ├─ Sentry (error rate → auto-rollback trigger)
+│   ├─ Health checks (readiness + liveness probes)
+│   └─ DORA metrics (freq, lead time, CFR, MTTR)
+│
+├─ 7. Monorepo CI/CD
+│   ├─ Turborepo (affected builds, remote cache)
+│   ├─ Nx (nx affected:test, dependency graph)
+│   └─ Benefits (shared TS types, atomic commits)
+│
+└─ 8. Rollback & Self-healing
+    ├─ Auto-rollback (error rate threshold, rollout undo)
+    ├─ Self-healing (K8s restart policy, HPA scaling)
+    └─ Versioning (semver, conventional commits)`,
+  },
+
+  // ── CI FUNDAMENTALS ──────────────────────────────────
+  {
+    category: 'CI Fundamentals',
+    difficulty: 'Beginner',
+    question: 'CI vs Continuous Delivery vs Continuous Deployment — precise differences',
+    answer: `**Continuous Integration (CI):** Auto build + test on every commit. Prevents "works on my machine." Catches bugs early before merge. Core: push → install → lint → unit test → integration test.
+
+**Continuous Delivery:** Code is always in a deployable state. Pipeline runs all the way to a staging environment, but a **human approves** the final push to production. Manual "deploy" click or approval gate. Good for regulated industries needing sign-off.
+
+**Continuous Deployment:** Every green commit **automatically ships to production** without human intervention. Requires strong test coverage (>80%), feature flags, monitoring, and auto-rollback. Netflix, Amazon, Google use this.
+
+**Key distinction:** Delivery = human gate before prod. Deployment = fully automated to prod. Both require CI as foundation.
+
+**Rule of thumb:** Start with CI + Delivery. Graduate to Deployment once confidence in tests and monitoring is high.`,
+    tip: `git push
+  ↓ CI (always — required foundation)
+  install → lint → unit tests → integration → scan
+  ↓
+  Docker build → push to registry
+
+  Continuous Delivery:        Continuous Deployment:
+  deploy to staging           deploy to staging
+  ↓ E2E tests                 ↓ E2E tests
+  ↓ HUMAN approves            ↓ AUTO-deploys
+  deploy to production        deploy to production
+  (manual click)              (no human gate)
+
+Key: Delivery ⊂ Deployment
+     Deployment = Delivery + auto-prod-push`,
+  },
+
+  {
+    category: 'CI Fundamentals',
+    difficulty: 'Beginner',
+    question: 'Real-world CI/CD pipeline stages — what runs at each step?',
+    answer: `**1. Source trigger:** git push / PR open → webhook fires CI runner.
+
+**2. Install + compile:** 'npm ci' (clean install from lockfile — reproducible), 'tsc --build' (TypeScript), bundle with Vite/Webpack.
+
+**3. Lint + format:** ESLint, Prettier — fail on violations. Code style gate, runs fast (<30s).
+
+**4. Unit tests:** Jest/Vitest — fast, isolated, many. Target >70% coverage. Fail pipeline if coverage drops below threshold.
+
+**5. Integration tests:** Real DB/API tests — run on PR merge or on every push (depends on speed).
+
+**6. Security scan:** Snyk/npm audit (SCA), Semgrep (SAST) — fail if high/critical CVE found.
+
+**7. Docker build + push:** Multi-stage build → tag with git SHA → push to ECR/GHCR. Image built once, used in all following stages.
+
+**8. Staging deploy + E2E:** Deploy to staging, run Playwright/Cypress E2E against critical user paths.
+
+**9. Manual or auto approval:** Human gate (Delivery) or fully automated (Deployment).
+
+**10. Production deploy:** Blue-green / canary / rolling — depending on risk tolerance.
+
+**11. Monitor + rollback:** Watch error rate and latency for 15-30 min. Auto-rollback if threshold breached.
+
+**Fail fast:** Run fast gates first. Unit tests (1 min) before E2E (10 min). Abort on first failure.`,
+    tip: `Pipeline speed targets:
+  lint             ~30 sec
+  unit tests       ~1-2 min
+  integration      ~3-5 min
+  docker build     ~2-3 min
+  E2E tests        ~5-15 min
+  total CI         ~10-25 min
+
+git push → PR
+  [fast gates: every commit]
+  npm ci | tsc | lint | unit | scan
+  [on merge]
+  integration | docker build+push
+  [staging]
+  deploy staging | E2E | smoke tests
+  [approval / auto]
+  production deploy
+  [post-deploy 15 min window]
+  monitor error_rate | auto-rollback`,
+  },
+
+  {
+    category: 'CI Fundamentals',
+    difficulty: 'Intermediate',
+    question: 'Trunk-based development vs GitFlow — which is better for CI/CD and why?',
+    answer: `**Trunk-Based Development (TBD) — recommended:**
+- Everyone pushes to 'main' via short-lived feature branches (<1-2 days)
+- Merges happen frequently (multiple times/day), conflicts are tiny
+- Use feature flags to hide incomplete features in production
+- Small PRs = faster review, faster CI, faster feedback
+- Used by Google, Meta, Netflix — enables high deployment frequency (DORA)
+- Branch protection: require CI pass + code review before merge
+
+**GitFlow — complex, slower for CI:**
+- Long-lived 'feature/', 'develop', 'release/', 'hotfix/' branches
+- Feature branches live for weeks → large merge conflicts
+- CI runs less often → larger integration surface → more bugs missed
+- Pipeline runs on many branches but integrations only tested at end
+- Better for: scheduled-release apps, mobile apps, regulated software
+
+**Best practices regardless of strategy:**
+- Branch protection rules on main: require status checks + PR review
+- Require branches to be up-to-date before merge (reduces conflicts)
+- Prevent direct push to main
+- Signed commits for audit trail
+
+**The rule:** The shorter-lived the branch, the more effective CI becomes. Trunk-based + feature flags = maximum CI/CD velocity.`,
+    tip: `Trunk-Based (RECOMMENDED for CI/CD):
+main ─────────────────────────────────▶
+  └─ feature/login (1-2 days max, small PR)
+  └─ feature/payment (1-2 days max)
+  └─ hotfix/crash → merge immediately
+Small PRs → fast review → fast CI → high frequency
+
+GitFlow (complex, slower CI):
+main ─────────────────────────────────────▶
+develop ──────────────────────────────────▶
+  └─ feature/big-redesign (2 weeks!)
+     [massive merge conflicts on PR open]
+     [CI only validates integration at the end]
+  └─ release/1.2.0 → cherry-pick hotfixes
+  └─ hotfix/1.1.1 → merge to main + develop
+
+Rule: shorter branch lifetime = better CI effectiveness`,
+  },
+
+  {
+    category: 'CI Fundamentals',
+    difficulty: 'Beginner',
+    question: 'Testing pyramid in CI/CD — what tests run at which stage?',
+    answer: `**Unit tests — base (many, fast, cheap):**
+- Test individual functions/classes in isolation. Mock all external deps.
+- Jest, Vitest — run in milliseconds per test
+- Target: 70% of tests, >70% code coverage
+- Run on every commit push — must pass before any other step
+
+**Integration tests — middle (fewer, slower, real deps):**
+- Test how modules interact: API handler + real PostgreSQL in Docker
+- Supertest for HTTP endpoints, actual DB queries
+- Slower (need DB startup) but catch real integration bugs
+- Run on PR merge to main or on every push (if fast enough)
+
+**E2E tests — top (few, slowest, highest confidence):**
+- Simulate real user actions in a real browser against staging
+- Playwright / Cypress — full browser automation
+- Only cover critical business paths: auth, checkout, core features
+- Run after staging deployment — 10-15 min
+
+**Fail fast strategy:**
+Order: lint (30s) → unit (1-2 min) → integration (3-5 min) → docker build → E2E (10 min)
+If lint fails, skip unit tests. If unit fails, skip E2E. Save CI compute.
+
+**Contract tests (bonus):**
+Pact testing between microservices — consumer defines expected API shape, provider verifies. Run in CI to prevent breaking API changes.`,
+    tip: `Testing Pyramid:
+         /-------\
+        /   E2E   \      few, slow, expensive
+       /   (10%)   \     Playwright/Cypress
+      /─────────────\    → against staging env
+     / Integration   \   medium, real DB/API
+    /     (20%)       \  Supertest + real PG
+   /───────────────────\ → on PR merge
+  /   Unit Tests        \ many, fast, isolated
+ /        (70%)          \Jest/Vitest · mocked deps
+/────────────────────────\ → every commit
+
+Fail fast order:
+  lint (30s) → unit (1min) → integration (3min)
+  → docker build (2min) → E2E (10min)
+  abort on first failure → save compute ✓`,
+  },
+
+  {
+    category: 'CI Fundamentals',
+    difficulty: 'Intermediate',
+    question: 'Docker image tagging in CI/CD — why avoid :latest, semver + git SHA strategy',
+    answer: `**Problem with :latest:**
+Non-deterministic — "docker pull app:latest" today vs next month may pull different images. Makes rollbacks unreliable (you cannot rollback to a moving target). K8s 'imagePullPolicy: IfNotPresent' with :latest causes stale image issues.
+
+**Best practice: Immutable tags**
+- Tag with git SHA: 'ghcr.io/myorg/api:a3f9b2c' — exact commit, 100% traceable
+- Tag with semver: 'ghcr.io/myorg/api:1.4.2' — human readable for releases
+- Combine both: push SHA tag always, push semver on release
+
+**Registries:**
+- **GHCR** (GitHub Container Registry): free, integrated with GitHub Actions, uses GITHUB_TOKEN — no extra auth config
+- **AWS ECR**: private, pay-per-storage, integrates with EKS pod identity
+- **Docker Hub**: rate-limited (100 pulls/6h anonymous), public repos free
+
+**Semantic versioning with conventional commits:**
+fix: → patch 1.2.3 → 1.2.4
+feat: → minor 1.2.3 → 1.3.0
+feat!: / BREAKING CHANGE → major 1.2.3 → 2.0.0
+Tool: semantic-release auto-bumps version + generates CHANGELOG from commit messages.
+
+**Multi-stage builds:** Keep final image minimal (only runtime files). Dev deps in builder stage, not final. Reduces attack surface and image size.`,
+    tip: `# GitHub Actions — image tagging:
+- name: Build and push
+  run: |
+    IMAGE=ghcr.io/\${GITHUB_REPOSITORY}
+    TAG=\${GITHUB_SHA::8}       # short SHA (8 chars)
+    docker build -t \${IMAGE}:\${TAG} .
+    docker push \${IMAGE}:\${TAG}
+    # on release: also tag with semver
+    # docker tag \${IMAGE}:\${TAG} \${IMAGE}:v1.4.2
+
+# K8s manifest — use immutable tag:
+containers:
+  - name: api
+    image: ghcr.io/myorg/api:a3f9b2c  ✓ immutable
+    # image: ghcr.io/myorg/api:latest  ✗ avoid in prod
+
+# Multi-stage build — small final image:
+FROM node:22-alpine AS builder
+COPY . .
+RUN npm ci && npm run build
+
+FROM node:22-alpine AS runner   # only runtime
+COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/node_modules ./node_modules
+# dev deps NOT included → smaller attack surface`,
+  },
+
+  // ── GITHUB ACTIONS ───────────────────────────────────
+  {
+    category: 'GitHub Actions',
+    difficulty: 'Intermediate',
+    question: 'GitHub Actions — YAML anatomy, jobs, steps, matrix builds, caching, secrets',
+    answer: `**Workflow structure:**
+'on:' → triggers (push, pull_request, schedule, workflow_dispatch)
+'jobs:' → parallel by default. Use 'needs: [job]' to sequence.
+'steps:' → sequential within a job. Use 'uses:' (action) or 'run:' (shell)
+
+**Key concepts:**
+
+**Matrix builds:** Run same job across Node 18/20/22 or ubuntu/windows simultaneously. 'strategy.matrix.node: [20, 22]' — if one fails, others continue.
+
+**Caching:** 'actions/setup-node' with 'cache: npm' auto-caches ~/.npm between runs. 'actions/cache' for custom paths. Cache key includes lockfile hash — invalidates when deps change.
+
+**Secrets:** Set in repo Settings → Secrets → Actions. Access as '\${{ secrets.MY_SECRET }}'. Never echo secrets in run: steps (auto-masked in logs, but still avoid).
+
+**Environments:** 'environment: production' — requires manual approval from designated reviewers before job runs. Use for production deployment gates.
+
+**Artifacts:** 'actions/upload-artifact' saves files from one job. 'actions/download-artifact' retrieves in a later job (build output → test job).
+
+**GITHUB_TOKEN:** Auto-provided — scoped to repo, expires after job. Use for pushing to GHCR, commenting on PRs, creating releases. No extra setup.`,
+    tip: `name: CI/CD
+on:
+  push: { branches: [main] }
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node: [20, 22]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: \${{ matrix.node }}
+          cache: 'npm'                   # cache node_modules
+      - run: npm ci
+      - run: npm test -- --coverage
+      - uses: actions/upload-artifact@v4
+        with:
+          name: coverage-\${{ matrix.node }}
+          path: coverage/
+
+  deploy:
+    needs: test                          # waits for ALL matrix jobs
+    runs-on: ubuntu-latest
+    environment: production              # requires manual approval
+    if: github.ref == 'refs/heads/main' # only on main branch
+    steps:
+      - run: echo "Deploying \${{ github.sha }}"
+        env:
+          API_KEY: \${{ secrets.API_KEY }}`,
+  },
+
+  {
+    category: 'GitHub Actions',
+    difficulty: 'Advanced',
+    question: 'GitHub Actions: reusable workflows, composite actions, OIDC, self-hosted runners',
+    answer: `**Reusable workflows (workflow_call):**
+DRY principle across repos. Define a workflow once, call it from multiple other workflows. Pass typed inputs and secrets. Good for: shared deploy logic, security scanning, standardized CI across microservices.
+
+**Composite actions:**
+Bundle multiple steps into one reusable unit (action.yml in a repo). No separate workflow file needed — used as a step with 'uses:'. Good for: "setup app" step that installs Node, runs npm ci, caches deps.
+
+**OIDC (OpenID Connect) — keyless auth:**
+Instead of storing AWS_ACCESS_KEY_ID as a secret, use OIDC. GitHub mints a short-lived token, AWS/GCP/Azure exchange it for temporary credentials. No static secrets, no rotation needed. Best practice for cloud deployments.
+
+**Self-hosted runners:**
+Run GitHub Actions on your own servers or K8s cluster. Use for: private network access, GPU jobs (ML model training), faster machines (less CI wait), cost optimization for high-volume repos. Register with config.sh. Label runners to target specific jobs.
+
+**Security best practices:**
+- Pin actions to full commit SHA ('actions/checkout@a12a394...') not just version tag (tags can be moved)
+- Set minimal permissions at workflow level ('permissions: contents: read')
+- Use OIDC instead of stored cloud credentials
+- Never use 'pull_request_target' with untrusted PR code (injection risk)`,
+    tip: `# Reusable workflow — define once (deploy.yml):
+on:
+  workflow_call:
+    inputs:
+      environment: { type: string, required: true }
+    secrets:
+      DEPLOY_KEY: { required: true }
+
+# Call it from another workflow:
+jobs:
+  deploy-prod:
+    uses: ./.github/workflows/deploy.yml
+    with:
+      environment: production
+    secrets:
+      DEPLOY_KEY: \${{ secrets.DEPLOY_KEY }}
+
+# OIDC — keyless AWS auth (no stored keys):
+- uses: aws-actions/configure-aws-credentials@v4
+  with:
+    role-to-assume: arn:aws:iam::123:role/github-actions
+    aws-region: us-east-1
+    # No AWS_ACCESS_KEY_ID needed! GitHub mints short-lived token
+
+# Minimal permissions at workflow level:
+permissions:
+  contents: read
+  packages: write   # only what this workflow needs`,
+  },
+
+  // ── DEPLOYMENT STRATEGIES ────────────────────────────
+  {
+    category: 'Deployment Strategies',
+    difficulty: 'Intermediate',
+    question: 'Blue-green deployment — zero downtime, instant rollback, trade-offs',
+    answer: `**Concept:** Maintain two identical production environments: BLUE (current live) and GREEN (new version). Switch traffic between them at the load balancer level.
+
+**Deploy process:**
+1. Deploy new version to GREEN (idle — not serving traffic)
+2. Run full smoke tests and health checks against GREEN
+3. Switch load balancer / Ingress to route 100% traffic to GREEN
+4. BLUE stays running as instant rollback target
+5. After confidence period (15-30 min), BLUE can be torn down or used for next deploy
+
+**Rollback:** Instant — switch load balancer back to BLUE. No redeploy, no waiting. Seconds to restore.
+
+**Advantages:**
+- Zero downtime (switch is atomic at LB level)
+- Full test of new version before any user traffic
+- Instant rollback in seconds
+- No mixed-version traffic (either all v1 or all v2)
+
+**Disadvantages:**
+- 2× infrastructure cost during transition (two full environments)
+- Database migrations must be backward-compatible — both BLUE and GREEN must work with the same DB schema
+- Stateful sessions: if user session tied to BLUE instance, switch causes re-login
+
+**In K8s:** Use two Deployments (blue + green) + one Service. Change the Service selector from 'version: blue' to 'version: green'.`,
+    tip: `Blue-Green deploy sequence:
+                  Load Balancer
+                       |
+           ┌───────────┴───────────┐
+        BLUE (v1)             GREEN (v2)
+      [100% traffic]          [0% traffic]
+      [serving users]         [deploy here]
+
+Step 1: deploy v2 to GREEN (smoke test)
+Step 2: GREEN healthy? → switch LB
+                  Load Balancer
+                       |
+           ┌───────────┴───────────┐
+        BLUE (v1)             GREEN (v2)
+      [0% traffic]            [100% traffic]
+      [rollback ready]        [serving users]
+
+Rollback: flip LB back to BLUE → instant ✓
+
+K8s implementation:
+apiVersion: v1
+kind: Service
+spec:
+  selector:
+    app: myapp
+    version: green    # change to 'blue' to rollback
+
+DB rule: DB schema must support both v1 and v2 simultaneously`,
+  },
+
+  {
+    category: 'Deployment Strategies',
+    difficulty: 'Intermediate',
+    question: 'Canary release — progressive traffic, Argo Rollouts, auto-rollback on metrics',
+    answer: `**Concept:** Release new version to a small percentage of users first. Monitor error rate and latency. Gradually increase if stable. Auto-rollback if metrics spike.
+
+**Traffic progression:**
+5% → wait 10 min + check metrics → 25% → 50% → 100%
+Each step: observe HTTP 5xx error rate, P99 latency, business conversion rate.
+
+**Auto-rollback trigger:**
+error_rate > 1% OR latency_p99 > 500ms → automatically rollback to previous version.
+
+**Tools:**
+- **Argo Rollouts:** K8s CRD with canary strategy. Integrates with Prometheus for metric-based auto-rollback. 'kubectl argo rollouts get rollout myapp'
+- **Flagger:** Progressive delivery operator. Works with Istio/Linkerd service mesh for fine-grained traffic splitting.
+- **Nginx Ingress annotations:** 'nginx.ingress.kubernetes.io/canary-weight: "10"' — simple 10% canary without Argo.
+
+**Dark launching:**
+Deploy code behind a feature flag (0% of users see it). Enable flag for internal users first. Test in production without risk. Enable for 5% → 100% users when confident.
+
+**Canary vs A/B test:**
+- **Canary:** Same feature, testing stability (infrastructure/ops concern)
+- **A/B test:** Different UI/features, testing user behavior (product concern)
+
+**Best use cases:** High-traffic services, DB-touching changes, third-party integrations with unknown behavior.`,
+    tip: `# Argo Rollouts — canary strategy:
+spec:
+  strategy:
+    canary:
+      steps:
+      - setWeight: 5
+      - pause: { duration: 10m }
+      - analysis:
+          templates:
+          - templateName: error-rate-check
+      - setWeight: 25
+      - pause: { duration: 10m }
+      - setWeight: 100
+
+# AnalysisTemplate — auto-rollback:
+spec:
+  metrics:
+  - name: error-rate-check
+    successCondition: result < 0.01  # <1% errors = success
+    failureLimit: 3
+    provider:
+      prometheus:
+        address: http://prometheus:9090
+        query: |
+          sum(rate(http_requests_total{status=~"5.."}[5m]))
+          /
+          sum(rate(http_requests_total[5m]))
+
+# Commands:
+kubectl argo rollouts get rollout myapp
+kubectl argo rollouts promote myapp   # advance to next step
+kubectl argo rollouts abort myapp     # manual rollback`,
+  },
+
+  {
+    category: 'Deployment Strategies',
+    difficulty: 'Intermediate',
+    question: 'Rolling deployment in K8s — maxSurge, maxUnavailable, readiness probes',
+    answer: `**Concept:** K8s default deployment strategy. Gradually replace old pods with new pods. Never takes all pods down at once.
+
+**Key parameters:**
+- **maxSurge:** Max extra pods above desired count during update. '1' means 'replicas+1' pods temporarily (costs extra).
+- **maxUnavailable:** Max pods that can be unavailable during update. '0' means always maintain full desired pod count.
+
+**Recommended for zero downtime:** maxSurge: 1, maxUnavailable: 0
+K8s starts 1 new pod → waits for readiness probe → removes 1 old pod → repeat.
+
+**Why readiness probe is critical:**
+Without readiness probe, K8s removes old pods as soon as new pod is Running (not ready). Requests hit the app before it's warmed up. With readiness probe: K8s only routes traffic to pod after probe passes.
+
+**Rollback:**
+'kubectl rollout undo deployment/api' → instantly reverts to previous ReplicaSet.
+'kubectl rollout history deployment/api' → see all revisions.
+'kubectl rollout undo deployment/api --to-revision=3' → rollback to specific revision.
+
+**vs Blue-Green:**
+Rolling: no extra infra cost, brief mixed-version period, default K8s behavior
+Blue-Green: 2× infra cost, atomic switch, no mixed-version period
+
+**vs Recreate:**
+Recreate: stop all old → start all new. Has downtime. Only for dev environments where downtime is acceptable.`,
+    tip: `# deployment.yaml — rolling update config:
+spec:
+  replicas: 3
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1           # temporarily 4 pods
+      maxUnavailable: 0     # always 3 serving traffic
+  template:
+    spec:
+      containers:
+      - name: api
+        image: myapp:v2
+        readinessProbe:     # CRITICAL: determines when pod is ready
+          httpGet:
+            path: /health
+            port: 3000
+          initialDelaySeconds: 10
+          periodSeconds: 5
+          failureThreshold: 3
+        livenessProbe:      # restart pod if unhealthy
+          httpGet:
+            path: /health
+            port: 3000
+          initialDelaySeconds: 30
+          failureThreshold: 3
+
+# Rollback commands:
+kubectl rollout undo deployment/api
+kubectl rollout status deployment/api   # watch progress
+kubectl rollout history deployment/api  # see revisions`,
+  },
+
+  {
+    category: 'Deployment Strategies',
+    difficulty: 'Intermediate',
+    question: 'Feature flags in CI/CD — decouple deploy from release, dark launch, tools',
+    answer: `**Core concept:** Feature flags (toggles) let you ship code to production hidden behind a flag. Deploy any time → release (enable flag) when business is ready. Rollback = toggle off, no redeploy.
+
+**Deploy vs Release:**
+- **Deploy:** Push code to production (flag is OFF — users don't see it)
+- **Release:** Enable the flag (no code change needed, instant)
+This decoupling means every commit can be safely deployed. Release timing is a product decision.
+
+**Use cases:**
+- **Dark launch:** Deploy code, enable only for internal users/testers first
+- **Gradual rollout:** 0% → 5% → 25% → 100% of users (controlled rollout without K8s traffic splitting)
+- **A/B testing:** 50% see feature-A, 50% see feature-B — measure conversion
+- **Kill switch:** Instantly disable broken feature without rollback/redeploy
+- **Beta testing:** Enable for specific user IDs, email domains, or org accounts
+
+**Tools:**
+- **LaunchDarkly:** Enterprise, real-time toggle, per-user targeting, SDKs for all languages, ~$100/month
+- **PostHog:** Open-source, analytics + feature flags + A/B testing, self-hostable
+- **Unleash:** Open-source, self-hosted, good for GDPR compliance, free
+- **GrowthBook:** Open-source, A/B testing + feature flags, free tier
+
+**Cleanup:** Flag debt accumulates. Remove old flags after full rollout — flag count should be in single digits for a healthy codebase.`,
+    tip: `// PostHog feature flag in NestJS:
+import { PostHog } from 'posthog-node';
+const posthog = new PostHog(process.env.POSTHOG_KEY);
+
+const enabled = await posthog.isFeatureEnabled(
+  'new-checkout-flow',    // flag key
+  userId,                 // user identifier
+);
+if (enabled) {
+  return newCheckoutFlow(cart);
+} else {
+  return legacyCheckoutFlow(cart);
+}
+
+// LaunchDarkly in Next.js (server-side):
+const variant = await ldClient.variation(
+  'new-dashboard',
+  { key: userId, email: user.email },
+  false    // default if flag not found
+);
+
+// Feature flag lifecycle:
+// 1. deploy code (flag OFF)     → 0% users ✓
+// 2. enable for internal team   → test in prod ✓
+// 3. gradual rollout 5→25→100%  → monitor ✓
+// 4. full rollout → remove flag → clean code ✓`,
+  },
+
+  // ── GITOPS & IAC ─────────────────────────────────────
+  {
+    category: 'GitOps & IaC',
+    difficulty: 'Advanced',
+    question: 'GitOps with Argo CD — pull model, Git as source of truth, drift detection',
+    answer: `**GitOps principle:** The desired state of your Kubernetes cluster is stored in Git. An agent (Argo CD) continuously syncs the cluster to match Git. Any manual change to the cluster is detected as "drift" and corrected.
+
+**Push model (traditional CI/CD):**
+CI runner → 'kubectl apply' → K8s cluster
+Problem: CI runner holds cluster credentials (security risk). Hard to audit "who changed what." Drift not detected.
+
+**Pull model (Argo CD):**
+Git repo ← Argo CD polls → K8s cluster (inside cluster)
+Argo CD runs INSIDE K8s. It polls Git every 3 min. Detects diff between Git (desired) and running cluster (actual). Applies updates automatically.
+
+**Advantages:**
+- No cluster credentials in CI runner (Argo CD is inside the cluster)
+- Automatic drift detection — someone 'kubectl apply'd manually? Argo syncs it back
+- Full audit trail — every K8s change = a Git commit with author + timestamp
+- Rollback = 'git revert' → Argo syncs to previous state in minutes
+- Multi-cluster: manage 10 clusters from one Argo CD instance
+
+**GitOps CI/CD workflow:**
+1. CI builds image, pushes to registry, updates image tag in Git repo (kustomize overlay or Helm values.yaml)
+2. Argo CD detects Git change
+3. Argo CD applies new manifests to cluster
+4. Health status visible in Argo CD UI
+
+**Flux** is an alternative to Argo CD with similar pull model, more lightweight.`,
+    tip: `GitOps flow with Argo CD:
+Developer
+  | git push (app code)
+  ▼
+GitHub (CI pipeline)
+  | npm test → docker build → docker push myapp:abc123
+  | git clone k8s-config-repo
+  | sed -i 's/image:.*/image: myapp:abc123/' values.yaml
+  | git commit -m 'chore: bump image to abc123'
+  | git push k8s-config-repo
+  ▼
+k8s-config-repo (Git = source of truth)
+  | Argo CD polls every 3 minutes
+  ▼
+Argo CD (runs INSIDE K8s cluster)
+  | diff: cluster has myapp:aaa111
+  |       Git says:  myapp:abc123
+  | kubectl apply -f deployment.yaml
+  ▼
+K8s cluster (now matches Git)
+
+Key rules:
+  kubectl apply in prod = NEVER (Argo owns this)
+  rollback = git revert + push → Argo auto-syncs`,
+  },
+
+  {
+    category: 'GitOps & IaC',
+    difficulty: 'Advanced',
+    question: 'Terraform in CI/CD — plan on PR, apply on merge, state management, drift',
+    answer: `**Infrastructure as Code:** Define AWS resources (EKS, RDS, VPC, S3, IAM) in HCL files. Version-controlled in Git. Reproducible, auditable, peer-reviewed infra changes.
+
+**Terraform CI/CD workflow (GitOps for infra):**
+1. Developer writes .tf files, opens PR
+2. CI runs 'terraform fmt --check' (format gate)
+3. CI runs 'terraform validate' (syntax check)
+4. CI runs 'terraform plan' → posts formatted diff as PR comment ("+ will create 2 resources, ~ will modify 1, - will destroy 0")
+5. Team reviews infra change in PR like code change
+6. Merge to main → CI runs 'terraform apply -auto-approve' (automated)
+
+**State management — critical:**
+- 'terraform.tfstate' tracks what AWS resources Terraform manages
+- Store remotely in S3 + DynamoDB (lock table prevents concurrent apply)
+- Never commit tfstate to Git (contains secrets, IDs, sensitive data!)
+- State locking: DynamoDB prevents two engineers running 'apply' simultaneously
+
+**Key commands:**
+- 'terraform init' — download providers (aws, kubernetes, github)
+- 'terraform plan' — show what WOULD change (safe, no changes made)
+- 'terraform apply' — make the changes
+- 'terraform destroy' — tear down all managed resources
+
+**AWS CDK alternative:** Write infra in TypeScript (compiles to CloudFormation). Better for JS teams — type-safe constructs, IDE autocomplete, reusable patterns.`,
+    tip: `# S3 backend + DynamoDB lock:
+terraform {
+  backend "s3" {
+    bucket         = "myorg-tf-state"
+    key            = "prod/api/terraform.tfstate"
+    region         = "us-east-1"
+    dynamodb_table = "terraform-lock"
+    encrypt        = true
+  }
+}
+
+# GitHub Actions — plan on PR:
+- name: Terraform Plan
+  run: |
+    terraform init -backend-config=prod.tfbackend
+    terraform plan -out=plan.tfplan
+  env:
+    AWS_ROLE_ARN: \${{ secrets.AWS_ROLE_ARN }}
+
+# Post plan as PR comment (atlantis or manual):
+- name: Comment Plan
+  uses: actions/github-script@v7
+  with:
+    script: |
+      github.rest.issues.createComment({
+        issue_number: context.issue.number,
+        body: plan_output
+      })
+
+# Apply on merge to main:
+- name: Terraform Apply
+  if: github.ref == 'refs/heads/main'
+  run: terraform apply plan.tfplan`,
+  },
+
+  // ── DEVSECOPS ────────────────────────────────────────
+  {
+    category: 'DevSecOps',
+    difficulty: 'Intermediate',
+    question: 'DevSecOps in CI/CD — SCA vs SAST vs DAST, shift-left security',
+    answer: `**"Shift left security":** Add security scanning early in the pipeline (left = early), not just at deployment time. Fix cheap bugs early, not expensive breaches late.
+
+**SCA — Software Composition Analysis:**
+- Scans your npm/pip/maven dependencies for known CVEs in public databases (NVD)
+- Tools: **Snyk** (best), **npm audit** (built-in), **Dependabot** (auto PRs)
+- When: after 'npm ci', on every commit
+- Finds: lodash 4.17.4 has prototype pollution CVE-2021-23337 (severity: high)
+- Dependabot: automatically opens PRs to bump vulnerable packages to safe versions
+
+**SAST — Static Application Security Testing:**
+- Analyzes YOUR source code without running it (static analysis)
+- Tools: **Semgrep** (fast, pattern-based, free OSS rules), **SonarQube** (comprehensive, code smell + security)
+- When: on every PR, after code compile
+- Finds: eval() with user input (XSS), hardcoded API keys, SQL injection patterns, path traversal
+
+**DAST — Dynamic Application Security Testing:**
+- Runs against a LIVE running application (staging env), simulates attacker
+- Tools: **OWASP ZAP** (open source), Burp Suite, Nuclei
+- When: after staging deployment, before production promotion
+- Finds: XSS, CSRF, authentication bypasses, security misconfigs (headers, CORS)
+
+**Pipeline placement:**
+Install → [SCA] → Build → [SAST] → Push image → Deploy staging → [DAST] → Deploy prod`,
+    tip: `CI/CD Security Pipeline:
+
+git push
+  ↓ npm ci
+  [SCA] npx snyk test --severity-threshold=high
+        npm audit --audit-level=high
+        → FAIL if high/critical CVE found
+  ↓ tsc + build
+  [SAST] npx semgrep --config=auto src/
+         sonar-scanner -Dsonar.projectKey=myapp
+         → FAIL on security hotspots / high findings
+  ↓ docker build + push
+  ↓ deploy to staging
+  [DAST] docker run owasp/zap2docker-stable \
+           zap-baseline.py -t https://staging.myapp.com
+         → FAIL on high-risk findings
+  ↓ deploy to production ✓
+
+Tool summary:
+  Snyk    = SCA (dep CVEs, paid, best DX)
+  Semgrep = SAST (source code, fast, free OSS)
+  ZAP     = DAST (live app, open source)
+  Dependabot = auto-creates PRs to fix CVEs`,
+  },
+
+  {
+    category: 'DevSecOps',
+    difficulty: 'Intermediate',
+    question: 'Secrets management in CI/CD — GitHub Secrets, HashiCorp Vault, Docker BuildKit',
+    answer: `**The rule:** Never commit secrets to Git. Not even in private repos. Git history is permanent — a secret leaked once is compromised forever. Secret scanning (TruffleHog, detect-secrets) catches violations in CI.
+
+**GitHub Secrets:**
+- Encrypted at rest, injected as env vars at runtime
+- Masked in CI logs (never printed even if you echo them)
+- Scoped to: repository, environment (staging/prod), or organization
+- Access: '\${{ secrets.DATABASE_URL }}' in workflow YAML
+- Limitation: cannot be read back after setting (write-only UI)
+
+**HashiCorp Vault (enterprise):**
+- Centralized secret management — one place to rotate, all services get new creds
+- Dynamic secrets: Vault generates short-lived DB credentials (auto-expire in 1 hour)
+- Audit log: every secret read is logged with who, when, why
+- Kubernetes auth: pods authenticate with K8s service account, no static creds needed
+- Integrate with GitHub Actions via OIDC or Vault GitHub Action
+
+**Docker multi-stage + BuildKit secrets:**
+Problem: 'ENV NPM_TOKEN=...' bakes the secret into the image layer (visible in 'docker history')
+Solution: BuildKit '--mount=type=secret' — secret available only during that RUN step, not in final image.
+
+**Secret detection (pre-commit + CI):**
+- **TruffleHog:** Scans git history, S3, GitHub PRs for secrets
+- **detect-secrets:** Baseline file — fails CI if new secrets are added vs baseline
+- **Gitleaks:** High-performance secret scanner, SARIF output`,
+    tip: `# GitHub Actions — secrets usage:
+jobs:
+  deploy:
+    steps:
+    - name: Deploy to production
+      env:
+        DATABASE_URL: \${{ secrets.DATABASE_URL }}
+        JWT_SECRET: \${{ secrets.JWT_SECRET }}
+        STRIPE_KEY: \${{ secrets.STRIPE_SECRET_KEY }}
+      run: npm run deploy
+
+# Docker BuildKit secret (NOT baked into image):
+# syntax=docker/dockerfile:1
+FROM node:22-alpine AS builder
+RUN --mount=type=secret,id=npmrc,target=/root/.npmrc \
+    npm install   # secret only exists during this step
+
+FROM node:22-alpine AS runner  # secret gone in final image ✓
+COPY --from=builder /app/dist .
+
+# Build: docker build --secret id=npmrc,src=.npmrc .
+
+# TruffleHog in CI:
+- name: Scan for secrets
+  run: |
+    docker run --rm \
+      ghcr.io/trufflesecurity/trufflehog:latest \
+      git file://. --only-verified --fail
+
+# detect-secrets baseline (check-in .secrets.baseline):
+detect-secrets scan > .secrets.baseline
+detect-secrets audit .secrets.baseline`,
+  },
+
+  // ── OBSERVABILITY & DORA ─────────────────────────────
+  {
+    category: 'Observability & DORA',
+    difficulty: 'Advanced',
+    question: 'DORA metrics — 4 KPIs for CI/CD maturity, elite team benchmarks',
+    answer: `**DORA (DevOps Research and Assessment):** The only research-backed, validated metrics for measuring software delivery performance. Published by Google Cloud since 2014. Based on survey data from 30,000+ professionals.
+
+**1. Deployment Frequency — how often do you deploy?**
+Elite: Multiple deploys per day
+High: Between once/day and once/week
+Medium: Once/week to once/month
+Low: Less than once/month
+Improve: Smaller PRs, trunk-based dev, feature flags, automated pipeline
+
+**2. Lead Time for Changes — commit → prod how fast?**
+Elite: Less than 1 hour
+High: 1 day to 1 week
+Medium: 1 month
+Low: 1-6 months
+Improve: Smaller PRs, fewer approval stages, faster CI, automated testing
+
+**3. Change Failure Rate — % of deploys causing incidents:**
+Elite: 0-5% of deployments cause failures
+High: 5-10%
+Medium: 10-15%
+Low: Greater than 15%
+Improve: Testing pyramid, canary releases, feature flags, code review
+
+**4. Mean Time to Restore (MTTR) — how fast to recover:**
+Elite: Less than 1 hour
+High: Less than 1 day
+Medium: 1 day to 1 week
+Low: More than 1 week
+Improve: Observability, runbooks, auto-rollback, on-call culture
+
+**Key insight:** Speed and stability are NOT trade-offs. Elite teams are both fast AND stable.`,
+    tip: `DORA Elite Benchmarks:
+┌──────────────────────────────┬────────────────┐
+│ Deployment Frequency         │ Multiple/day   │
+│ Lead Time for Changes        │ < 1 hour       │
+│ Change Failure Rate          │ 0-5%           │
+│ Mean Time to Restore (MTTR)  │ < 1 hour       │
+└──────────────────────────────┴────────────────┘
+
+How to improve:
+  Deploy Frequency: CI/CD automation + trunk-based
+                    + feature flags
+  Lead Time:        Smaller PRs + fewer approvals
+                    + faster test suite
+  Failure Rate:     Testing pyramid + canary
+                    + feature flags + review
+  MTTR:             Observability (Prometheus/Sentry)
+                    + runbooks + auto-rollback
+                    + on-call rotation
+
+Track with:
+  GitHub: Insights > Deployment frequency
+  LinearB, Sleuth: DORA metrics from git+CI
+  DORA survey: dora.dev/quickcheck`,
+  },
+
+  {
+    category: 'Observability & DORA',
+    difficulty: 'Intermediate',
+    question: 'Post-deploy monitoring and auto-rollback — health checks, metrics, self-healing',
+    answer: `**Health checks — critical before serving traffic:**
+K8s readiness probe hits 'GET /health'. Pod only receives requests when probe returns 200. During rolling update: new pod must pass readiness before old pod is removed.
+Liveness probe: if it fails N times → K8s automatically restarts the pod (self-healing).
+
+**NestJS health endpoint:** Use '@nestjs/terminus' module. Health endpoint checks: DB connection, Redis, disk space, memory. Returns '{status: "ok", info: {db: {status: "up"}}}' or 503 on failure.
+
+**Post-deploy monitoring window (15-30 min):**
+After each deploy, watch key signals:
+- HTTP 5xx error rate (threshold: >1%)
+- P99 response time (threshold: >500ms)
+- Memory/CPU usage (sudden spike)
+- Business metrics: order conversion rate, checkout completion rate
+
+**Prometheus + Grafana:**
+'@nestjs/prometheus' exposes /metrics endpoint. Prometheus scrapes every 15s. Grafana dashboards show error rate, latency, throughput. Add vertical "deploy annotation" markers to correlate deploys with metric changes.
+
+**Sentry release tracking:**
+Each deploy creates a Sentry release. Sentry shows error count per release. "Release health" view immediately shows if new release has increased error rate.
+
+**Auto-rollback trigger:**
+Argo Rollouts AnalysisTemplate → if Prometheus query returns error_rate > 0.01 → auto-rollback canary. Or: AlertManager → webhook → 'kubectl rollout undo'.`,
+    tip: `# NestJS health endpoint:
+import { TerminusModule, HttpHealthIndicator,
+         PrismaHealthIndicator } from '@nestjs/terminus';
+
+@Controller('health')
+export class HealthController {
+  @Get()
+  @HealthCheck()
+  check() {
+    return this.health.check([
+      () => this.db.pingCheck('database'),
+      () => this.http.pingCheck('api', 'https://api.myapp.com'),
+    ]);
+  }
+}
+// GET /health:
+// { status: 'ok', info: { database: { status: 'up' } } }
+
+# K8s probes:
+readinessProbe:   # stop traffic to unhealthy pod
+  httpGet: { path: /health, port: 3000 }
+  initialDelaySeconds: 10
+  periodSeconds: 5
+livenessProbe:    # restart crashed/stuck pod
+  httpGet: { path: /health, port: 3000 }
+  initialDelaySeconds: 30
+  failureThreshold: 3
+
+# Manual rollback:
+kubectl rollout undo deployment/api
+kubectl rollout status deployment/api`,
+  },
+
+  // ── MONOREPO CI/CD ────────────────────────────────────
+  {
+    category: 'Monorepo CI/CD',
+    difficulty: 'Advanced',
+    question: 'Monorepo CI/CD with Turborepo — affected builds, remote caching, advantages',
+    answer: `**Problem with naive monorepo CI:**
+If apps/frontend, apps/backend, packages/ui all live in one repo, every push rebuilds and re-tests EVERYTHING — even if only one app changed. Slow, wasteful, expensive.
+
+**Turborepo solution:**
+Builds a dependency graph of all packages. Only runs tasks for packages that changed OR depend on what changed.
+- Changed 'packages/ui': rebuild ui + frontend (which imports ui). Backend: skip.
+- Changed 'apps/backend': rebuild backend only. Frontend: skip.
+- Changed 'packages/types': rebuild EVERYTHING (shared types affect all apps).
+
+**Remote cache:**
+Build artifacts cached in cloud (Vercel Remote Cache or self-hosted). If input files + env haven't changed since last build, return cached output in 0 seconds. Team-wide: if your colleague already built the same code, your CI run hits the cache.
+
+**turbo.json pipeline:**
+Define task dependencies. 'dependsOn: ["^build"]' means "build all deps first." Turborepo runs in parallel where possible, sequences where needed.
+
+**Turborepo vs Nx:**
+- **Turborepo:** Simpler, Vercel-hosted cache, minimal config, great for Next.js + NestJS mono
+- **Nx:** More powerful generators, plugins, 'nx affected' commands, fine-grained cache, self-hosted Nx Cloud
+
+**Monorepo advantages:**
+- Atomic commits: frontend + backend API change in one PR (never out of sync)
+- Shared TypeScript types between Next.js and NestJS ('packages/shared')
+- Single pipeline, consistent tooling across all apps
+- Easier cross-package refactoring with IDE support`,
+    tip: `# turbo.json:
+{
+  "tasks": {
+    "build": {
+      "dependsOn": ["^build"],       # build deps first
+      "outputs": [".next/**", "dist/**"]
+    },
+    "test": {
+      "dependsOn": ["^build"],       # test after dep build
+      "outputs": ["coverage/**"]
+    },
+    "lint": { "outputs": [] }
+  }
+}
+
+# GitHub Actions — full monorepo CI:
+- name: Run CI
+  run: npx turbo run build test lint
+  env:
+    TURBO_TOKEN: \${{ secrets.TURBO_TOKEN }}  # Vercel Remote Cache
+    TURBO_TEAM: myorg
+
+# Affected-only run (what changed vs main):
+npx turbo run test --filter=...[HEAD^1]
+
+# What Turborepo does per push:
+# changed: apps/api → only runs api:test, api:build
+# cached:  apps/web → SKIP (nothing changed)
+# cached:  packages/ui → SKIP (nothing changed)
+# Result: 3-min CI instead of 15-min CI ✓
+
+# Monorepo structure:
+# apps/web (Next.js), apps/api (NestJS)
+# packages/shared (TS types, both import)
+# packages/ui (components, web imports)`,
+  },
+
+  // ── CI/CD INTERVIEW ──────────────────────────────────
+  {
+    category: 'CI/CD Interview',
+    difficulty: 'Advanced',
+    question: 'CI/CD interview — top 8 questions with precise, senior-level answers',
+    answer: `**1. CI vs Continuous Delivery vs Continuous Deployment?**
+CI = auto build+test every commit. Delivery = code always deployable, human clicks to release. Deployment = every green commit auto-ships to prod without human gate.
+
+**2. How do you handle secrets in a CI/CD pipeline?**
+GitHub Secrets or HashiCorp Vault. Never committed to Git. Injected as env vars at runtime. Docker multi-stage + BuildKit '--mount=type=secret' for build-time secrets. Add TruffleHog secret scanning as CI step.
+
+**3. Blue-green vs canary vs rolling — when to use each?**
+Blue-green: instant switch, instant rollback, 2× infra cost. Canary: gradual 5%→100% with auto-rollback on Prometheus metrics. Rolling: K8s default, gradual pod swap, zero extra cost but brief mixed-version period.
+
+**4. What is GitOps and why use Argo CD?**
+GitOps: Git = source of truth for K8s. Argo CD (pull model) runs inside cluster, detects diff from Git, auto-syncs. No cluster credentials in CI runner. Drift detection. Rollback = git revert.
+
+**5. What are DORA metrics and elite scores?**
+Deployment frequency (multiple/day), Lead time (<1h), Change failure rate (<5%), MTTR (<1h). Speed and stability are not trade-offs — elite teams excel at both.
+
+**6. Why use Turborepo in a monorepo?**
+Affected builds (only test what changed → saves CI compute), remote caching (instant on cache hit), shared TypeScript types between Next.js and NestJS, atomic commits.
+
+**7. SCA vs SAST vs DAST?**
+SCA = npm dep CVEs (Snyk). SAST = your source code static analysis (Semgrep). DAST = live staging app pentest (OWASP ZAP). Order: SCA after install → SAST after build → DAST after staging deploy.
+
+**8. Zero-downtime deployment in K8s?**
+Rolling update with maxSurge:1 + maxUnavailable:0 + proper readiness probe. OR Blue-green. Readiness probe is the critical piece — K8s won't route traffic until probe passes.`,
+    tip: `Senior answer patterns:
+
+CI/CD:
+  "CI automates build+test (every commit).
+   Delivery: human approves prod push.
+   Deployment: fully automated, no human gate."
+
+Secrets:
+  "Never in code or .env. GitHub Secrets for CI,
+   Vault for enterprise dynamic creds. BuildKit
+   for Docker build-time secrets. TruffleHog scans."
+
+Deploy strategy:
+  "Blue-green: instant switch + rollback, 2x cost.
+   Canary: Argo Rollouts, Prometheus auto-rollback,
+   5%→100% progressive. Rolling: K8s default,
+   readiness probe prevents traffic to unready pods."
+
+GitOps:
+  "Argo CD pulls from Git, syncs K8s state.
+   Pull model = no credentials in CI runner.
+   Rollback = git revert. Drift auto-corrected."
+
+DORA elite:
+  "Multiple deploys/day, <1h lead time,
+   <5% CFR, <1h MTTR. Speed + stability
+   are not trade-offs — measure and improve both."`,
+  },
+
+];
+
 const AI_ASSIST_CARDS     = [];
 const THIRD_PARTY_CARDS   = [];
 const ENTERPRISE_INFRASTRUCTURE_ARCHITECTURES_CARDS = [
@@ -26233,6 +27331,16 @@ const CATEGORY_COLORS = {
   'Next.js Ecosystem':             '#f97316',
   'Advanced Patterns':             '#7c3aed',
   'Next.js Interview':             '#e0234e',
+  // CI/CD
+  'CI/CD Overview':      '#22c55e',
+  'CI Fundamentals':     '#3b82f6',
+  'GitHub Actions':      '#f97316',
+  'Deployment Strategies':'#a855f7',
+  'GitOps & IaC':        '#14b8a6',
+  'DevSecOps':           '#ef4444',
+  'Observability & DORA':'#06b6d4',
+  'Monorepo CI/CD':      '#f59e0b',
+  'CI/CD Interview':     '#e0234e',
   // Tricked Memory
   'SQL':                '#f43f5e',
 };

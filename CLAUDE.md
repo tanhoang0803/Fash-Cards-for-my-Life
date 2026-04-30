@@ -70,7 +70,7 @@ Flash Cards Page
 ### Cheat Sheet
 | Subject | Description |
 |---|---|
-| Junior Dev Daily Essentials | Interactive cheatsheet — opens `cheatsheet.html` (JS, React+Redux, SQL, Linux, NestJS, TypeScript, DSA, Enterprise Infra Arch, FS Tooling, Docker, Next.js) |
+| Junior Dev Daily Essentials | Interactive cheatsheet — opens `cheatsheet.html` (JS, React+Redux, SQL, Linux, NestJS, TypeScript, DSA, Enterprise Infra Arch, FS Tooling, Docker, Next.js, CI/CD) |
 
 ### Core
 | Subject | Cards | Categories |
@@ -116,7 +116,7 @@ Flash Cards Page
 | JWT authentication | — | *(in progress)* |
 | Redis | — | *(in progress)* |
 | Testing & Containers | 20 | Testing, Docker, Kubernetes |
-| CI/CD | — | *(in progress)* |
+| CI/CD | 20 | CI/CD Overview, CI Fundamentals, GitHub Actions, Deployment Strategies, GitOps & IaC, DevSecOps, Observability & DORA, Monorepo CI/CD, CI/CD Interview |
 | AI-assist | — | *(in progress)* |
 | Third-party generation | — | *(in progress)* |
 
@@ -125,7 +125,21 @@ Flash Cards Page
 |---|---|---|
 | Docker | 37 | Overview, Core Architecture, Dockerfile Mastery, Essential Commands, Docker Compose, Networking, Volumes & Storage, Security & Hardening, Advanced Concepts, CI/CD & Registry, Interview Scenarios |
 
-**Total: 680+ cards**
+**Total: 700+ cards**
+
+### CI/CD — Detailed Breakdown
+
+| Category | Cards | Topics |
+|---|---|---|
+| **CI/CD Overview** | 1 | Full 8-pillar ASCII mindmap |
+| **CI Fundamentals** | 5 | CI vs Delivery vs Deployment · pipeline stages · trunk-based vs GitFlow · testing pyramid · Docker image tagging |
+| **GitHub Actions** | 2 | YAML anatomy, matrix, caching, secrets, environments · reusable workflows, composite actions, OIDC, self-hosted runners |
+| **Deployment Strategies** | 4 | Blue-green · Canary (Argo Rollouts, Prometheus auto-rollback) · Rolling (maxSurge, readiness probes) · Feature flags |
+| **GitOps & IaC** | 2 | Argo CD pull model · Terraform plan/apply, S3 state, AWS CDK |
+| **DevSecOps** | 2 | SCA/SAST/DAST · Secrets (GitHub Secrets, Vault, BuildKit, TruffleHog) |
+| **Observability & DORA** | 2 | DORA 4 metrics · health checks, Prometheus, Sentry, auto-rollback |
+| **Monorepo CI/CD** | 1 | Turborepo affected builds, remote cache, Nx |
+| **CI/CD Interview** | 1 | Top 8 senior interview questions |
 
 ### Docker — Detailed Breakdown
 
