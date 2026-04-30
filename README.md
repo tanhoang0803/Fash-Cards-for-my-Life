@@ -24,7 +24,7 @@ A multi-subject developer flash card web app built with vanilla HTML, CSS, and J
 | **Tricked Memory** | 3+ | SQL (FJ WGH SOL — execution order mnemonic) |
 | **Enterprise Infrastructure Architectures** | 38 | Overview, Core Infrastructure, AI Runtime Integration, Observability & Security, Third-party & SaaS, Data Layer, Frontend Layer, CI/CD & GitOps, Scaling & Multi-tenancy, Cloud & File Services |
 | **Full-Stack Enterprise Tooling** | 17+ | FS Overview, Hosting & CDN, Databases & ORM, Auth & Identity, Payments & Billing, Communication, CMS & Content, Analytics & Observability, CRM & Automation, AI & RAG Tools, Forms & Validation, DevOps & CI/CD, Dev Experience |
-| **Next.js** | 20 | Next.js Overview, Rendering Strategies, App Router, Server vs Client Components, Data Fetching, Server Actions, Streaming & Suspense, Performance, Middleware & API Routes, State Management, Next.js Ecosystem, Advanced Patterns, Best Practices, Next.js Interview |
+| **Next.js** | 21 | Next.js Overview, Rendering Strategies, App Router, Server vs Client Components, Data Fetching, Server Actions, Streaming & Suspense, Performance, Middleware & API Routes, State Management, Next.js Ecosystem, Advanced Patterns, Best Practices, Next.js Interview |
 
 ### Language
 | Subject | Cards | Categories |
@@ -63,7 +63,12 @@ A multi-subject developer flash card web app built with vanilla HTML, CSS, and J
 | **AI-assist** | — | *(in progress)* |
 | **Third-party generation** | — | *(in progress)* |
 
-**Total: 640+ cards**
+### DevOps
+| Subject | Cards | Categories |
+|---|---|---|
+| **Docker** | 37 | Overview, Core Architecture, Dockerfile Mastery, Essential Commands, Docker Compose, Networking, Volumes & Storage, Security & Hardening, Advanced Concepts, CI/CD & Registry, Interview Scenarios |
+
+**Total: 680+ cards**
 
 ---
 
@@ -214,6 +219,24 @@ Backend Developer:    Fundamentals → ES6 → Async → Node.js → API → Dat
 App Router basics → Server vs Client Components → Data Fetching & Caching
 → Server Actions → Streaming & Suspense → Performance → Middleware → Ecosystem
 ```
+
+---
+
+### Docker — Detailed Breakdown
+
+| Category | Cards | Topics |
+|---|---|---|
+| **Overview** | 1 | Full 10-pillar mindmap — architecture, Dockerfile, commands, Compose, networking, volumes, security, CI/CD |
+| **Core Architecture** | 3+ | Client-server model · images & layers (UnionFS/overlay2) · namespaces & cgroups |
+| **Dockerfile Mastery** | 5+ | Instruction set · CMD vs ENTRYPOINT · layer caching · multi-stage builds · ARG vs ENV |
+| **Essential Commands** | 3+ | build/run/exec/inspect · image management · container lifecycle · prune & cleanup |
+| **Docker Compose** | 4+ | Multi-container apps · override files · health checks · depends_on · env vars |
+| **Networking** | 3+ | Bridge / host / overlay drivers · DNS service discovery · port mapping |
+| **Volumes & Storage** | 3+ | Named volumes · bind mounts · tmpfs · data persistence patterns |
+| **Security & Hardening** | 3+ | Non-root users · minimal base images · image scanning · resource limits |
+| **Advanced Concepts** | 3+ | BuildKit · Swarm vs Kubernetes · sidecar pattern · Docker-in-Docker |
+| **CI/CD & Registry** | 3+ | GitHub Actions pipeline · image tagging strategies · ECR / GHCR push |
+| **Interview Scenarios** | 3+ | Giant image debugging · zombie processes · secrets management · production troubleshooting |
 
 ---
 

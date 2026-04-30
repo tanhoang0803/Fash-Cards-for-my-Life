@@ -120,7 +120,28 @@ Flash Cards Page
 | AI-assist | — | *(in progress)* |
 | Third-party generation | — | *(in progress)* |
 
-**Total: 640+ cards**
+### DevOps
+| Subject | Cards | Categories |
+|---|---|---|
+| Docker | 37 | Overview, Core Architecture, Dockerfile Mastery, Essential Commands, Docker Compose, Networking, Volumes & Storage, Security & Hardening, Advanced Concepts, CI/CD & Registry, Interview Scenarios |
+
+**Total: 680+ cards**
+
+### Docker — Detailed Breakdown
+
+| Category | Cards | Topics |
+|---|---|---|
+| **Overview** | 1 | Full 10-pillar mindmap — architecture, Dockerfile, commands, Compose, networking, volumes, security, CI/CD |
+| **Core Architecture** | 3+ | Client-server model · images & layers (UnionFS/overlay2) · namespaces & cgroups |
+| **Dockerfile Mastery** | 5+ | Instruction set · CMD vs ENTRYPOINT · layer caching · multi-stage builds · ARG vs ENV |
+| **Essential Commands** | 3+ | build/run/exec/inspect · image management · container lifecycle · prune & cleanup |
+| **Docker Compose** | 4+ | Multi-container apps · override files · health checks · depends_on · env vars |
+| **Networking** | 3+ | Bridge / host / overlay drivers · DNS service discovery · port mapping |
+| **Volumes & Storage** | 3+ | Named volumes · bind mounts · tmpfs · data persistence patterns |
+| **Security & Hardening** | 3+ | Non-root users · minimal base images · image scanning · resource limits |
+| **Advanced Concepts** | 3+ | BuildKit · Swarm vs Kubernetes · sidecar pattern · Docker-in-Docker |
+| **CI/CD & Registry** | 3+ | GitHub Actions pipeline · image tagging strategies · ECR / GHCR push |
+| **Interview Scenarios** | 3+ | Giant image debugging · zombie processes · secrets management · production troubleshooting |
 
 ### Full-Stack Enterprise Tooling — Detailed Breakdown
 
