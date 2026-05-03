@@ -70,7 +70,7 @@ Flash Cards Page
 ### Cheat Sheet
 | Subject | Description |
 |---|---|
-| Junior Dev Daily Essentials | Interactive cheatsheet — opens `cheatsheet.html` (JS, React+Redux, SQL, Linux, NestJS, TypeScript, DSA, Enterprise Infra Arch, FS Tooling, Docker, Next.js, CI/CD) |
+| Junior Dev Daily Essentials | Interactive cheatsheet — opens `cheatsheet.html` (JS, React+Redux, SQL, Linux, NestJS, TypeScript, DSA, Enterprise Infra Arch, FS Tooling, Docker, Next.js, CI/CD, Redis) |
 
 ### Core
 | Subject | Cards | Categories |
@@ -114,7 +114,7 @@ Flash Cards Page
 | PostgreSQL | 20+ | Overview, Fundamentals, Core Concepts, Daily Tools, Advanced Features, Performance & Security, Ecosystem |
 | API | 30+ | JSON Basics, REST Fundamentals, REST Design, API in Practice, JWT, OAuth2 |
 | JWT authentication | — | *(in progress)* |
-| Redis | — | *(in progress)* |
+| Redis | 34 | Redis Overview, Redis Architecture, Redis Data Structures, Caching Patterns, Redis Use Cases, Scaling & HA, Transactions & Atomicity, Pub/Sub & Streams, Cache Problems, Redis Operations, Redis Interview |
 | Testing & Containers | 20 | Testing, Docker, Kubernetes |
 | CI/CD | 20 | CI/CD Overview, CI Fundamentals, GitHub Actions, Deployment Strategies, GitOps & IaC, DevSecOps, Observability & DORA, Monorepo CI/CD, CI/CD Interview |
 | AI-assist | — | *(in progress)* |
@@ -125,7 +125,7 @@ Flash Cards Page
 |---|---|---|
 | Docker | 37 | Overview, Core Architecture, Dockerfile Mastery, Essential Commands, Docker Compose, Networking, Volumes & Storage, Security & Hardening, Advanced Concepts, CI/CD & Registry, Interview Scenarios |
 
-**Total: 700+ cards**
+**Total: 770+ cards**
 
 ### CI/CD — Detailed Breakdown
 
@@ -140,6 +140,22 @@ Flash Cards Page
 | **Observability & DORA** | 2 | DORA 4 metrics · health checks, Prometheus, Sentry, auto-rollback |
 | **Monorepo CI/CD** | 1 | Turborepo affected builds, remote cache, Nx |
 | **CI/CD Interview** | 1 | Top 8 senior interview questions |
+
+### Redis — Detailed Breakdown
+
+| Category | Cards | Topics |
+|---|---|---|
+| **Redis Overview** | 1 | Full 10-pillar ASCII mindmap |
+| **Redis Architecture** | 3 | Single-threaded event loop + epoll · RDB vs AOF vs Hybrid persistence · TTL & key expiration (lazy + active) |
+| **Redis Data Structures** | 4 | String + List · Set + Sorted Set · Hash + Stream · HyperLogLog + Bitmap + Geo |
+| **Caching Patterns** | 4 | Cache-aside (lazy loading) · Write-through vs Write-back · Pipelining (10× throughput) · Cache invalidation strategies |
+| **Redis Use Cases** | 4 | Rate limiting (fixed + sliding window) · Session store · Leaderboard (Sorted Set) · BullMQ job queue in NestJS |
+| **Scaling & HA** | 4 | Replication (read scaling) · Sentinel (auto-failover, quorum) · Cluster (16,384 hash slots, write scaling) · Eviction policies |
+| **Transactions & Atomicity** | 3 | MULTI/EXEC · WATCH (optimistic lock) + Redlock · Lua EVAL (atomic conditional logic) |
+| **Pub/Sub & Streams** | 3 | Pub/Sub (fire-and-forget) · Streams (persistent + consumer groups + XACK) · BullMQ vs Streams vs Kafka |
+| **Cache Problems** | 4 | Avalanche (random TTL jitter) · Penetration (Bloom Filter + null cache) · Breakdown (mutex lock + logical expiry) · Stale data consistency |
+| **Redis Operations** | 2 | Security (ACL, TLS, requirepass, rename-command) · Monitoring (SLOWLOG, INFO, RedisInsight, bigkeys) |
+| **Redis Interview** | 2 | Core senior Q&A (fast, zero loss, Sentinel vs Cluster, 3 cache problems) · Distributed sliding window rate limiter design |
 
 ### Docker — Detailed Breakdown
 
