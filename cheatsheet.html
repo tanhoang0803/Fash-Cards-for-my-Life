@@ -3981,9 +3981,184 @@ Rule: no manual kubectl in prod. Git = truth</pre>
 
 </div>
 
+<!-- ══════════════════════════════════════════
+     REDIS
+══════════════════════════════════════════ -->
+<hr class="divider">
+<div class="big-label redis"><span class="num">13</span> Redis — Cache · Pub/Sub · Streams · Scaling · 2026</div>
+
+<div class="grid-4">
+
+  <!-- Card 1: Architecture & Data Structures -->
+  <div class="card redis-card">
+    <h3 class="redis">Core Architecture</h3>
+    <h4>Why Redis is Fast</h4>
+    <table class="ref-table">
+      <tr><td>In-memory</td><td>Data in RAM — &lt;1ms reads, 1000× faster than disk</td></tr>
+      <tr><td>Single-threaded</td><td>Event loop + I/O multiplexing (epoll). No locks, no context switching</td></tr>
+      <tr><td>100k+ ops/sec</td><td>Network I/O is bottleneck, not CPU. epoll handles 1000s of connections</td></tr>
+      <tr><td>Redis 6+ threads</td><td>Threaded socket I/O — event loop (command processing) stays single-threaded</td></tr>
+    </table>
+    <h4>Persistence — RDB vs AOF vs Hybrid</h4>
+    <table class="ref-table">
+      <tr><td>RDB (snapshot)</td><td>Periodic BGSAVE. Fast recovery, compact. May lose data since last snapshot</td></tr>
+      <tr><td>AOF (log)</td><td>Logs every write. fsync: always (zero loss) / everysec (≤1s loss) / no</td></tr>
+      <tr><td>Hybrid ✓ prod</td><td>aof-use-rdb-preamble yes — RDB fast start + AOF tail for durability</td></tr>
+    </table>
+    <h4>TTL &amp; Key Expiration</h4>
+    <pre><span class="f">EXPIRE</span>   key <span class="f">3600</span>        <span class="cm"># set TTL in seconds</span>
+<span class="f">PERSIST</span>  key             <span class="cm"># remove TTL (permanent)</span>
+<span class="f">TTL</span>      key             <span class="cm"># -1=no TTL  -2=gone</span>
+<span class="f">SET</span> cache:k val <span class="k">EX</span> <span class="f">300</span>  <span class="cm"># set + TTL atomically</span>
+<span class="cm"># Lazy expiry: delete on access</span>
+<span class="cm"># Active expiry: random 20-key scan every 100ms</span></pre>
+    <h4>Data Structures — choose the right one</h4>
+    <table class="ref-table">
+      <tr><td>String</td><td>GET SET INCR SETEX — cache, atomic counters, rate limiting</td></tr>
+      <tr><td>List</td><td>LPUSH RPOP BLPOP — FIFO queue (LPUSH+RPOP), recent feed</td></tr>
+      <tr><td>Set</td><td>SADD SINTER SUNION — unique items, tags, mutual friends</td></tr>
+      <tr><td>Sorted Set</td><td>ZADD ZREVRANGE ZRANK — leaderboard, priority queue, range queries</td></tr>
+      <tr><td>Hash</td><td>HSET HGET HGETALL — user profiles, session objects</td></tr>
+      <tr><td>Stream</td><td>XADD XREADGROUP XACK — persistent event log, reliable queue</td></tr>
+      <tr><td>HyperLogLog</td><td>PFADD PFCOUNT — ±0.81% error, ~12KB for millions of unique values</td></tr>
+      <tr><td>Bitmap / Geo</td><td>SETBIT BITCOUNT / GEOADD GEOSEARCH — analytics, location queries</td></tr>
+    </table>
+    <div class="tip redis-tip">Cache-aside flow: client → check Redis → HIT: return &lt;1ms / MISS: query DB (~100ms) → SET Redis + TTL → return. Always set TTL. Cache null values to prevent penetration.</div>
+  </div>
+
+  <!-- Card 2: Caching Patterns -->
+  <div class="card redis-card">
+    <h3 class="redis">Caching Patterns</h3>
+    <h4>Cache-aside (most common) — app manages cache</h4>
+    <pre><span class="k">const</span> cached = <span class="k">await</span> redis.<span class="f">get</span>(key);
+<span class="k">if</span> (cached) <span class="k">return</span> <span class="f">JSON.parse</span>(cached);   <span class="cm">// HIT</span>
+<span class="k">const</span> data = <span class="k">await</span> db.user.<span class="f">findUnique</span>(id); <span class="cm">// MISS</span>
+<span class="k">await</span> redis.<span class="f">set</span>(key, <span class="f">JSON.stringify</span>(data), <span class="s">'EX'</span>, <span class="f">300</span>);
+<span class="k">return</span> data;
+<span class="cm">// On update: await redis.del(key) to invalidate</span></pre>
+    <h4>Write Strategies</h4>
+    <table class="ref-table">
+      <tr><td>Write-through</td><td>Write DB + cache together. Always consistent. 2 ops per write</td></tr>
+      <tr><td>Write-back</td><td>Cache first, sync DB async. Fast writes. Risk: loss on crash</td></tr>
+      <tr><td>Write-around</td><td>Bypass cache on write. Cache populated on read miss only</td></tr>
+    </table>
+    <h4>Cache Invalidation Strategies</h4>
+    <table class="ref-table">
+      <tr><td>TTL expiry</td><td>Simplest. Stale up to TTL window. Best for read-heavy low-sensitivity</td></tr>
+      <tr><td>Delete on write</td><td>redis.del(key) after db.update(). Strong consistency</td></tr>
+      <tr><td>Versioned keys</td><td>cache:user:42:v3 — old version auto-expires, zero staleness</td></tr>
+    </table>
+    <h4>Pipelining — N commands in 1 RTT</h4>
+    <pre><span class="k">const</span> pipe = redis.<span class="f">pipeline</span>();
+items.<span class="f">forEach</span>(i =&gt; pipe.<span class="f">set</span>(i.key, i.val, <span class="s">'EX'</span>, <span class="f">300</span>));
+<span class="k">await</span> pipe.<span class="f">exec</span>();  <span class="cm">// 1 RTT for N cmds → 10× faster</span>
+<span class="cm">// Pipeline = reduced RTT, NOT atomic</span>
+<span class="cm">// MULTI/EXEC = atomic batch (use for correctness)</span></pre>
+    <h4>Rate Limiting — INCR + EXPIRE (fixed window)</h4>
+    <pre><span class="k">const</span> key = <span class="s">`rate:<span class="f">${userId}</span>`</span>;
+<span class="k">const</span> count = <span class="k">await</span> redis.<span class="f">incr</span>(key);
+<span class="k">if</span> (count === <span class="f">1</span>) <span class="k">await</span> redis.<span class="f">expire</span>(key, <span class="f">60</span>);
+<span class="k">if</span> (count &gt; <span class="f">100</span>) <span class="k">throw new</span> <span class="f">TooManyRequestsException</span>();
+<span class="cm">// Sliding window: Sorted Set ZADD + ZREMRANGEBYSCORE</span></pre>
+    <h4>Session Store — Hash + TTL</h4>
+    <pre><span class="k">await</span> redis.<span class="f">hset</span>(<span class="s">`session:<span class="f">${userId}</span>`</span>,
+  <span class="s">'email'</span>, email, <span class="s">'role'</span>, role);
+<span class="k">await</span> redis.<span class="f">expire</span>(<span class="s">`session:<span class="f">${userId}</span>`</span>, <span class="f">1800</span>);   <span class="cm">// 30 min</span>
+<span class="cm">// Refresh TTL on each request (sliding expiry)</span>
+<span class="cm">// Advantage: stateless services, instant revoke</span></pre>
+    <div class="tip redis-tip">Random TTL jitter prevents cache avalanche: TTL = base + Math.floor(Math.random() * 600). Spread expiry over a window instead of all keys expiring at once.</div>
+  </div>
+
+  <!-- Card 3: Use Cases & Scaling -->
+  <div class="card redis-card">
+    <h3 class="redis">Use Cases &amp; Scaling</h3>
+    <h4>Leaderboard — Sorted Set</h4>
+    <pre><span class="f">ZADD</span>  board <span class="k">INCR</span> <span class="f">150</span> <span class="s">"alice"</span>   <span class="cm"># atomic +150 pts</span>
+<span class="f">ZREVRANGE</span> board <span class="f">0</span> <span class="f">9</span> <span class="k">WITHSCORES</span>  <span class="cm"># top 10</span>
+<span class="f">ZREVRANK</span>  board <span class="s">"alice"</span>           <span class="cm"># rank (0=first)</span>
+<span class="cm"># O(log N) — fast for millions of entries</span>
+<span class="cm"># Weekly reset: EXPIREAT board nextMondayTimestamp</span></pre>
+    <h4>Pub/Sub — real-time fire-and-forget</h4>
+    <pre><span class="f">PUBLISH</span>   channel <span class="s">'{"type":"ORDER"}'</span>
+<span class="f">SUBSCRIBE</span> channel  <span class="cm"># dedicated connection!</span>
+<span class="cm"># All subscribers get every message</span>
+<span class="cm"># Offline subscriber = message LOST (no persistence)</span></pre>
+    <h4>BullMQ — job queue in NestJS (built on Redis)</h4>
+    <pre><span class="k">await</span> this.emailQueue.<span class="f">add</span>(<span class="s">'welcome'</span>, { userId }, {
+  delay: <span class="f">5000</span>,           <span class="cm">// start after 5s</span>
+  priority: <span class="f">1</span>,           <span class="cm">// higher = more urgent</span>
+  attempts: <span class="f">3</span>,           <span class="cm">// retry on failure</span>
+  backoff: { type: <span class="s">'exponential'</span>, delay: <span class="f">1000</span> },
+});
+<span class="cm">// Worker: @Processor('email') + @Process('welcome')</span></pre>
+    <h4>Scaling — Replication · Sentinel · Cluster</h4>
+    <table class="ref-table">
+      <tr><td>Replication</td><td>master → N replicas. Async. Read scaling. REPLICAOF cmd</td></tr>
+      <tr><td>Sentinel ✓ HA</td><td>Monitors master, auto-promotes replica on failure. Quorum votes. Need 3+ sentinels. No write scaling</td></tr>
+      <tr><td>Cluster ✓ Scale</td><td>16,384 hash slots across N masters. Write scaling. Hash tags {key} for co-location. MOVED redirects</td></tr>
+    </table>
+    <h4>Eviction Policies (maxmemory reached)</h4>
+    <table class="ref-table">
+      <tr><td>allkeys-lru</td><td>Evict LRU from ALL keys — best for general caches</td></tr>
+      <tr><td>volatile-lru</td><td>Evict LRU from TTL keys only — mixed cache + persistent</td></tr>
+      <tr><td>allkeys-lfu</td><td>Evict least-frequently-used — best for hot-key workloads</td></tr>
+      <tr><td>noeviction</td><td>Error on write — use for sessions, queues (data must survive)</td></tr>
+    </table>
+    <div class="tip redis-tip">Sentinel = HA failover (1 master). Cluster = write scaling (N masters). Start with Sentinel — add Cluster only when single master is the write throughput bottleneck.</div>
+  </div>
+
+  <!-- Card 4: Advanced — Transactions · Pub/Sub vs Streams · Cache Problems · Security -->
+  <div class="card redis-card">
+    <h3 class="redis">Transactions · Streams · Cache Problems</h3>
+    <h4>MULTI/EXEC — atomic batch (no rollback on runtime error)</h4>
+    <pre><span class="k">await</span> redis.<span class="f">multi</span>()
+  .<span class="f">set</span>(<span class="s">'user:42:name'</span>, <span class="s">'Alice'</span>)
+  .<span class="f">incr</span>(<span class="s">'user:42:logins'</span>)
+  .<span class="f">expire</span>(<span class="s">'user:42:session'</span>, <span class="f">1800</span>)
+  .<span class="f">exec</span>();  <span class="cm">// atomic: no interleaving — but errors don't rollback others</span></pre>
+    <h4>WATCH — optimistic locking (compare-and-swap)</h4>
+    <pre><span class="k">await</span> redis.<span class="f">watch</span>(<span class="s">`balance:<span class="f">${from}</span>`</span>);
+<span class="k">const</span> result = <span class="k">await</span> redis.<span class="f">multi</span>()
+  .<span class="f">decrby</span>(<span class="s">`balance:<span class="f">${from}</span>`</span>, amount)
+  .<span class="f">incrby</span>(<span class="s">`balance:<span class="f">${to}</span>`</span>, amount).<span class="f">exec</span>();
+<span class="cm">// null = another client changed key → retry</span></pre>
+    <h4>Distributed Lock — Redlock</h4>
+    <pre><span class="f">SET</span> lock:resource token <span class="k">NX EX</span> <span class="f">30</span>   <span class="cm"># NX=only if absent</span>
+<span class="cm">-- Release: Lua (check token + delete atomically)</span>
+<span class="k">if</span> redis.<span class="f">call</span>(<span class="s">'GET'</span>,KEYS[<span class="f">1</span>])==ARGV[<span class="f">1</span>] <span class="k">then</span>
+  <span class="k">return</span> redis.<span class="f">call</span>(<span class="s">'DEL'</span>,KEYS[<span class="f">1</span>]) <span class="k">else return</span> <span class="f">0</span> <span class="k">end</span>
+<span class="cm">-- Redlock: acquire on &gt;N/2 masters simultaneously</span></pre>
+    <h4>Pub/Sub vs Streams ★ interview classic</h4>
+    <table class="ref-table">
+      <tr><td>Pub/Sub</td><td>fire-and-forget · broadcast ALL · offline = lost · no persistence</td></tr>
+      <tr><td>Streams ✓</td><td>persistent · consumer groups (1 msg → 1 worker) · XACK · replayable</td></tr>
+    </table>
+    <pre><span class="f">XADD</span>  orders <span class="k">*</span> orderId <span class="f">42</span> userId alice  <span class="cm"># auto-ID</span>
+<span class="f">XGROUP</span> CREATE orders workers <span class="k">$</span> MKSTREAM
+<span class="f">XREADGROUP</span> GROUP workers w1 COUNT <span class="f">5</span> STREAMS orders <span class="k">&gt;</span>
+<span class="f">XACK</span>  orders workers <span class="f">1735000000000-0</span></pre>
+    <h4>Three Cache Failure Modes ★ must know</h4>
+    <table class="ref-table">
+      <tr><td>Avalanche</td><td>Mass TTL expiry → DB overload. Fix: random TTL jitter + background refresh</td></tr>
+      <tr><td>Penetration</td><td>Non-existent keys → always DB hit. Fix: Bloom Filter + cache null with short TTL</td></tr>
+      <tr><td>Breakdown</td><td>Single hot key expires → stampede. Fix: mutex (SET NX) + logical expiry (never expire)</td></tr>
+    </table>
+    <h4>Security &amp; Operations</h4>
+    <table class="ref-table">
+      <tr><td>ACL</td><td>ACL SETUSER app on &gt;pw ~cache:* +@read +@write -@admin</td></tr>
+      <tr><td>Harden</td><td>bind 127.0.0.1 · requirepass · rename-command FLUSHALL ""</td></tr>
+      <tr><td>maxmemory</td><td>Always set + eviction policy — prevents OOM kill</td></tr>
+      <tr><td>SLOWLOG</td><td>SLOWLOG GET 10 — find slow cmds (&gt;10ms threshold)</td></tr>
+      <tr><td>INFO stats</td><td>hit_rate = hits/(hits+misses). Target &gt;95%. RedisInsight = GUI</td></tr>
+    </table>
+    <div class="tip redis-tip">Lua EVAL = atomic conditional logic (if/else + result chaining). Better than MULTI/EXEC when you need "read → decide → write" atomically. EVALSHA caches script by SHA1.</div>
+  </div>
+
+</div>
+
 <!-- Footer -->
 <div style="text-align:center; color: var(--comment); font-family:'JetBrains Mono',monospace; font-size:12px; margin-top:20px; padding-top:16px; border-top:1px solid var(--border);">
-  Junior Developer Daily Essentials · JavaScript · React + Redux · SQL · Linux · NestJS · TypeScript · DSA · Enterprise Infra Architecture · Full-Stack Enterprise Tooling · Docker · Next.js · CI/CD · 2026
+  Junior Developer Daily Essentials · JavaScript · React + Redux · SQL · Linux · NestJS · TypeScript · DSA · Enterprise Infra Architecture · Full-Stack Enterprise Tooling · Docker · Next.js · CI/CD · Redis · 2026
 </div>
 
 </body>
