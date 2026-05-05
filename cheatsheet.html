@@ -107,6 +107,7 @@
   .pill-docker  { background: var(--docker-dim);  color: var(--docker);  border: 1px solid #0db7ed44; }
   .pill-nextjs  { background: var(--nextjs-dim);  color: var(--nextjs);  border: 1px solid #e2e8f030; }
   .pill-cicd    { background: var(--cicd-dim);    color: var(--cicd);    border: 1px solid #22c55e44; }
+  .pill-redis   { background: var(--redis-dim);   color: var(--redis);   border: 1px solid #dc382d44; }
 
   /* ── GRID ── */
   .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
@@ -149,6 +150,7 @@
   .card.docker-card  { border-top: 2px solid var(--docker); }
   .card.nextjs-card  { border-top: 2px solid var(--nextjs); }
   .card.cicd-card    { border-top: 2px solid var(--cicd); }
+  .card.redis-card   { border-top: 2px solid var(--redis); }
 
   .card h3 {
     font-size: 13px;
@@ -169,6 +171,7 @@
   .card h3.docker  { color: var(--docker); }
   .card h3.nextjs  { color: var(--nextjs); }
   .card h3.cicd    { color: var(--cicd); }
+  .card h3.redis   { color: var(--redis); }
 
   .card h4 {
     font-size: 12px;
@@ -240,6 +243,7 @@
   .tip.docker-tip  { border-color: var(--docker); }
   .tip.nextjs-tip  { border-color: var(--nextjs); }
   .tip.cicd-tip    { border-color: var(--cicd); }
+  .tip.redis-tip   { border-color: var(--redis); }
 
   /* ── DIVIDER ── */
   .divider {
@@ -294,6 +298,8 @@
   .big-label.nextjs .num { background: var(--nextjs); color: #000; }
   .big-label.cicd { color: var(--cicd); }
   .big-label.cicd .num { background: var(--cicd); color: #000; }
+  .big-label.redis { color: var(--redis); }
+  .big-label.redis .num { background: var(--redis); color: #fff; }
 
   /* ── SPAN HELPERS ── */
   .row { display: flex; gap: 12px; margin: 5px 0; }
@@ -3065,8 +3071,9 @@ queryClient.<span class="f">invalidateQueries</span>(
      DOCKER
 ══════════════════════════════════════════ -->
 <hr class="divider">
-<div class="big-label docker"><span class="num">10</span> Docker</div>
+<div class="big-label docker"><span class="num">10</span> Docker — Containers · Compose · CI/CD · 2026</div>
 
+<div class="section-title docker" style="background:var(--docker-dim); color:var(--docker);">1 · Core Architecture &amp; Dockerfile Mastery</div>
 <div class="grid-3">
 
   <!-- Core Architecture & Image Lifecycle -->
@@ -3200,6 +3207,7 @@ docker system df            <span class="cm"># disk usage per type</span></pre>
 
 </div>
 
+<div class="section-title docker" style="background:var(--docker-dim); color:var(--docker);">2 · Compose · Networking · Volumes · Security</div>
 <div class="grid-3">
 
   <!-- Docker Compose -->
@@ -3332,6 +3340,7 @@ trivy image --exit-code 1 myapp  <span class="cm"># fail CI on CVE</span></pre>
 
 </div>
 
+<div class="section-title docker" style="background:var(--docker-dim); color:var(--docker);">3 · BuildKit · Advanced · CI/CD &amp; Registry · Interview Scenarios</div>
 <div class="grid-3">
 
   <!-- BuildKit & Advanced -->
@@ -3466,6 +3475,7 @@ docker run --memory 1g myapp     <span class="cm"># fix OOM</span></pre>
 <hr class="divider">
 <div class="big-label nextjs"><span class="num">11</span> Next.js — App Router · React 19 · 2026</div>
 
+<div class="section-title nextjs" style="background:var(--nextjs-dim); color:var(--nextjs);">1 · Rendering Strategies · App Router · Server vs Client Components</div>
 <div class="grid-3">
 
   <!-- Rendering Strategies -->
@@ -3571,11 +3581,12 @@ docker run --memory 1g myapp     <span class="cm"># fix OOM</span></pre>
 
 </div>
 
+<div class="section-title nextjs" style="background:var(--nextjs-dim); color:var(--nextjs);">2 · Data Fetching · 4 Caching Layers · Server Actions · Streaming &amp; PPR</div>
 <div class="grid-3">
 
   <!-- Data Fetching & Caching -->
   <div class="card nextjs-card">
-    <h3 class="nextjs">Data Fetching &amp; Caching</h3>
+    <h3 class="nextjs">Data Fetching &amp; 4 Caching Layers</h3>
     <h4>Fetch Patterns in Server Components</h4>
     <pre><span class="cm">// Cached (ISR — revalidate every hour):</span>
 <span class="k">const</span> data = <span class="k">await</span> <span class="f">fetch</span>(url, {
@@ -3698,11 +3709,12 @@ experimental: { ppr: <span class="k">true</span> }
 
 </div>
 
+<div class="section-title nextjs" style="background:var(--nextjs-dim); color:var(--nextjs);">3 · Performance · Middleware &amp; API Routes · State · Ecosystem &amp; Interview</div>
 <div class="grid-3">
 
   <!-- Performance -->
   <div class="card nextjs-card">
-    <h3 class="nextjs">Performance</h3>
+    <h3 class="nextjs">Performance &amp; Optimization</h3>
     <h4>next/image — Core Web Vitals</h4>
     <pre><span class="k">import</span> Image <span class="k">from</span> <span class="s">'next/image'</span>
 
@@ -3829,18 +3841,19 @@ experimental: { ppr: <span class="k">true</span> }
      CI/CD
 ══════════════════════════════════════════ -->
 <hr class="divider">
-<div class="big-label cicd"><span class="num">12</span> CI/CD — Pipelines · GitOps · DevSecOps · 2026</div>
+<div class="big-label cicd"><span class="num">12</span> CI/CD — Pipelines · GitOps · DevSecOps · DORA · 2026</div>
 
-<div class="grid-4">
+<div class="section-title cicd" style="background:var(--cicd-dim); color:var(--cicd);">1 · CI Fundamentals · GitHub Actions · Branching Strategy</div>
+<div class="grid-3">
 
-  <!-- CI Pipeline & Branching -->
+  <!-- CI Pipeline & Fundamentals -->
   <div class="card cicd-card">
-    <h3 class="cicd">Pipeline & Branching</h3>
-    <h4>CI vs CD vs CD</h4>
+    <h3 class="cicd">CI Fundamentals</h3>
+    <h4>CI vs Continuous Delivery vs Continuous Deployment</h4>
     <table class="ref-table">
-      <tr><td>CI</td><td>Auto build + test every commit. Early bug detection</td></tr>
-      <tr><td>Delivery</td><td>Code always deployable. Human approves prod push</td></tr>
-      <tr><td>Deployment</td><td>Every green commit auto-ships. No human gate</td></tr>
+      <tr><td>CI</td><td>Auto build + test on every commit. Prevents "works on my machine"</td></tr>
+      <tr><td>Delivery</td><td>Code always production-ready. Human gate before prod release</td></tr>
+      <tr><td>Deployment</td><td>Every green commit auto-ships to prod. No human intervention</td></tr>
     </table>
     <h4>Real Pipeline Flow</h4>
     <pre>git push / PR
@@ -3852,16 +3865,22 @@ experimental: { ppr: <span class="k">true</span> }
   → <span class="f">monitor + rollback</span>  Prometheus · Sentry</pre>
     <h4>Branching Strategy</h4>
     <table class="ref-table">
-      <tr><td>Trunk-based ✓</td><td>Short-lived branches (&lt;2 days) → merge to main daily. Best for CI. Use feature flags</td></tr>
-      <tr><td>GitFlow</td><td>Long-lived feature/develop/release branches. Higher merge conflict risk. Slower feedback</td></tr>
+      <tr><td>Trunk-based ✓</td><td>Short-lived branches (&lt;2 days) → merge main daily. Use feature flags. Best for CI</td></tr>
+      <tr><td>GitFlow</td><td>Long-lived feature/develop/release branches. High merge conflict risk</td></tr>
     </table>
     <h4>Testing Pyramid</h4>
     <table class="ref-table">
-      <tr><td>Unit (70%)</td><td>Jest/Vitest — fast, isolated. Run every commit</td></tr>
+      <tr><td>Unit (70%)</td><td>Jest/Vitest — fast, isolated. Run every commit (~1 min)</td></tr>
       <tr><td>Integration (20%)</td><td>Real API + DB. Run on PR merge</td></tr>
-      <tr><td>E2E (10%)</td><td>Playwright — slow, critical paths. Run on staging</td></tr>
+      <tr><td>E2E (10%)</td><td>Playwright — critical paths only. Run on staging (~10 min)</td></tr>
     </table>
-    <div class="tip cicd-tip">Fail fast: run unit tests first (1 min). Only run E2E (10 min) after all fast gates pass. Abort pipeline on first failure.</div>
+    <h4>Docker Image Tagging</h4>
+    <table class="ref-table">
+      <tr><td>:latest</td><td>❌ mutable, no rollback — avoid in prod</td></tr>
+      <tr><td>:git-sha</td><td>✅ immutable, traceable, precise rollback</td></tr>
+      <tr><td>:v1.2.3</td><td>✅ semver releases — human readable</td></tr>
+    </table>
+    <div class="tip cicd-tip">Fail fast: unit tests first (1 min) → integration → E2E (10 min). Abort pipeline on first failure. Cache node_modules between runs.</div>
   </div>
 
   <!-- GitHub Actions -->
@@ -3878,43 +3897,87 @@ experimental: { ppr: <span class="k">true</span> }
     <span class="k">runs-on:</span> <span class="s">ubuntu-latest</span>
     <span class="k">strategy:</span>
       <span class="k">matrix:</span>
-        <span class="k">node:</span> <span class="c">[20, 22]</span>     <span class="cm"># run on 2 versions</span>
+        <span class="k">node:</span> <span class="c">[20, 22]</span>     <span class="cm"># matrix across 2 versions</span>
     <span class="k">steps:</span>
       - <span class="k">uses:</span> <span class="s">actions/checkout@v4</span>
       - <span class="k">uses:</span> <span class="s">actions/setup-node@v4</span>
         <span class="k">with:</span>
           <span class="k">node-version:</span> <span class="c">$&#123;&#123; matrix.node &#125;&#125;</span>
-          <span class="k">cache:</span> <span class="s">'npm'</span>      <span class="cm"># cache node_modules</span>
+          <span class="k">cache:</span> <span class="s">'npm'</span>         <span class="cm"># auto-cache node_modules</span>
       - <span class="k">run:</span> <span class="s">npm ci</span>
       - <span class="k">run:</span> <span class="s">npm test -- --coverage</span>
       - <span class="k">run:</span> <span class="s">npm run build</span>
 
   <span class="f">docker:</span>
-    <span class="k">needs:</span> <span class="s">test</span>            <span class="cm"># waits for test job</span>
+    <span class="k">needs:</span> <span class="s">test</span>               <span class="cm"># waits for test job</span>
     <span class="k">runs-on:</span> <span class="s">ubuntu-latest</span>
-    <span class="k">environment:</span> <span class="s">production</span> <span class="cm"># approval gate</span>
+    <span class="k">environment:</span> <span class="s">production</span>  <span class="cm"># requires manual approval</span>
     <span class="k">steps:</span>
       - <span class="k">uses:</span> <span class="s">actions/checkout@v4</span>
+      - <span class="k">uses:</span> <span class="s">docker/setup-buildx-action@v3</span>
       - <span class="k">uses:</span> <span class="s">docker/login-action@v3</span>
         <span class="k">with:</span>
           <span class="k">registry:</span> <span class="s">ghcr.io</span>
           <span class="k">username:</span> <span class="c">$&#123;&#123; github.actor &#125;&#125;</span>
           <span class="k">password:</span> <span class="c">$&#123;&#123; secrets.GITHUB_TOKEN &#125;&#125;</span>
-      - <span class="k">run:</span> <span class="c">|</span>
-          <span class="c">IMAGE=ghcr.io/$&#123;&#123; github.repository &#125;&#125;</span>
-          <span class="c">docker build -t $IMAGE:$&#123;&#123; github.sha &#125;&#125; .</span>
-          <span class="c">docker push $IMAGE:$&#123;&#123; github.sha &#125;&#125;</span></pre>
-    <h4>Key Concepts</h4>
+      - <span class="k">uses:</span> <span class="s">docker/build-push-action@v5</span>
+        <span class="k">with:</span>
+          <span class="k">push:</span> <span class="s">true</span>
+          <span class="k">tags:</span> <span class="c">ghcr.io/$&#123;&#123; github.repository &#125;&#125;:$&#123;&#123; github.sha &#125;&#125;</span>
+          <span class="k">cache-from:</span> <span class="s">type=gha</span>  <span class="cm"># GitHub Actions cache</span>
+          <span class="k">cache-to:</span> <span class="s">type=gha,mode=max</span></pre>
+    <h4>Key GitHub Actions Concepts</h4>
     <table class="ref-table">
-      <tr><td>needs:</td><td>Job dependency — sequences jobs</td></tr>
+      <tr><td>needs:</td><td>Job dependency — sequences jobs in order</td></tr>
       <tr><td>matrix:</td><td>Run same job on multiple Node/OS versions</td></tr>
-      <tr><td>cache: npm</td><td>Auto-cache node_modules across runs</td></tr>
-      <tr><td>github.sha</td><td>Image tag = commit SHA — avoid :latest</td></tr>
       <tr><td>environment:</td><td>Requires manual reviewers before deploy</td></tr>
-      <tr><td>secrets.X</td><td>Set in repo Settings → Secrets, never in code</td></tr>
+      <tr><td>secrets.X</td><td>Set in repo Settings → Secrets — never in code</td></tr>
+      <tr><td>workflow_call</td><td>Reusable workflow — define once, call from many repos</td></tr>
+      <tr><td>OIDC</td><td>Keyless AWS auth — no long-lived credentials in secrets</td></tr>
     </table>
-    <div class="tip cicd-tip">Reusable workflows: on: workflow_call — define once, reuse across repos. Composite actions: bundle steps into a single reusable unit.</div>
+    <div class="tip cicd-tip">Composite actions: bundle repeated steps into one reusable action. OIDC + IAM roles = no AWS_ACCESS_KEY_ID in secrets — prefer this for AWS deployments.</div>
   </div>
+
+  <!-- Code Quality & Security Gates -->
+  <div class="card cicd-card">
+    <h3 class="cicd">Quality &amp; Security Gates</h3>
+    <h4>Code Quality Pipeline</h4>
+    <pre><span class="cm"># Run these in parallel — all in the test job:</span>
+- <span class="k">run:</span> <span class="s">npm run lint</span>         <span class="cm"># ESLint rules</span>
+- <span class="k">run:</span> <span class="s">npm run typecheck</span>     <span class="cm"># tsc --noEmit</span>
+- <span class="k">run:</span> <span class="s">npm test -- --coverage</span>
+- <span class="k">run:</span> <span class="s">npx sonarqube-scanner</span> <span class="cm"># code smell</span></pre>
+    <h4>DevSecOps Security Gates</h4>
+    <table class="ref-table">
+      <tr><td>SCA</td><td>Snyk / npm audit — scan npm deps for CVEs. Run after install</td></tr>
+      <tr><td>SAST</td><td>Semgrep / SonarQube — scan source code for security bugs</td></tr>
+      <tr><td>DAST</td><td>OWASP ZAP — live pentest against staging. Run last</td></tr>
+      <tr><td>Container scan</td><td>trivy image --exit-code 1 — fail CI on critical CVE</td></tr>
+      <tr><td>Secret detect</td><td>TruffleHog / git-secrets — scan for leaked credentials</td></tr>
+    </table>
+    <h4>Secrets Management</h4>
+    <pre><span class="cm"># ❌ Never — committed to git history:</span>
+DATABASE_URL=postgres://...  <span class="cm"># in .env</span>
+
+<span class="cm"># ✅ GitHub Secrets — encrypted at rest:</span>
+<span class="c">$&#123;&#123; secrets.DATABASE_URL &#125;&#125;</span>  <span class="cm"># in workflow</span>
+
+<span class="cm"># ✅ HashiCorp Vault — dynamic secrets:</span>
+vault kv get secret/myapp/db
+<span class="cm"># Rotates automatically, audit trail</span></pre>
+    <h4>Monorepo CI/CD (Turborepo)</h4>
+    <pre><span class="cm"># Only test what changed:</span>
+npx turbo run test --filter=[HEAD^1]
+npx turbo run build --filter=[HEAD^1]
+<span class="cm"># Remote cache: skip already-built tasks</span>
+<span class="cm"># Nx: nx affected:test --base=main</span></pre>
+    <div class="tip cicd-tip">SCA → SAST → DAST: run in that order. SCA is fastest (run always). DAST needs a live app (run against staging). Fail pipeline early on critical findings.</div>
+  </div>
+
+</div>
+
+<div class="section-title cicd" style="background:var(--cicd-dim); color:var(--cicd);">2 · Deployment Strategies · GitOps · IaC · Observability &amp; DORA</div>
+<div class="grid-3">
 
   <!-- Deployment Strategies -->
   <div class="card cicd-card">
@@ -3923,61 +3986,107 @@ experimental: { ppr: <span class="k">true</span> }
     <pre>Load Balancer
     ├─ BLUE v1 [LIVE 100%]  ← switch ─┐
     └─ GREEN v2 [IDLE 0%]  →  [LIVE] ─┘
-Switch: instant · Rollback: flip LB back
-DB: migrations must be backward-compatible</pre>
+Instant switch · Rollback: flip LB back
+DB: migrations must be backward-compatible
+Cost: 2× infra running at all times</pre>
     <h4>Canary — Progressive Traffic</h4>
-    <pre>v2 → 5% → monitor (error rate, p99)
+    <pre>v2 → 5% → monitor (error rate, p99 latency)
      → 25% → 50% → 100%
-auto-rollback if error_rate &gt; 1%</pre>
+auto-rollback if error_rate &gt; 1%
+<span class="cm"># Argo Rollouts: declarative canary in K8s</span>
+<span class="cm"># Weight: 5 → 25 → 50 → 100 with pause steps</span></pre>
     <h4>Rolling — K8s Default</h4>
     <pre><span class="k">strategy:</span>
   <span class="k">type:</span> <span class="s">RollingUpdate</span>
   <span class="k">rollingUpdate:</span>
-    <span class="k">maxSurge:</span> <span class="f">1</span>         <span class="cm"># extra pods during update</span>
-    <span class="k">maxUnavailable:</span> <span class="f">0</span>   <span class="cm"># always full capacity</span>
-<span class="cm"># readinessProbe REQUIRED — K8s waits before</span>
+    <span class="k">maxSurge:</span> <span class="f">1</span>        <span class="cm"># extra pods during update</span>
+    <span class="k">maxUnavailable:</span> <span class="f">0</span>  <span class="cm"># always full capacity</span>
+<span class="cm"># readinessProbe required — K8s waits before</span>
 <span class="cm"># removing old pod. Rollback: kubectl rollout undo</span></pre>
     <h4>Strategy Comparison</h4>
     <table class="ref-table">
-      <tr><td>Recreate</td><td>Stop all → start new. Has downtime. Dev only</td></tr>
-      <tr><td>Rolling</td><td>Gradual pod swap. K8s default. No extra cost</td></tr>
-      <tr><td>Blue-green</td><td>Instant switch. 2× infra. Best rollback</td></tr>
+      <tr><td>Recreate</td><td>Stop all → start new. Downtime. Dev/staging only</td></tr>
+      <tr><td>Rolling</td><td>Gradual pod swap. K8s default. No extra infra cost</td></tr>
+      <tr><td>Blue-green</td><td>Instant switch. 2× infra. Best rollback speed</td></tr>
       <tr><td>Canary</td><td>Gradual %. Best risk reduction. Needs metrics</td></tr>
+      <tr><td>Feature flags</td><td>Decouple deploy from release — no redeploy to rollback</td></tr>
     </table>
-    <div class="tip cicd-tip">Feature flags (LaunchDarkly / PostHog): decouple code deploy from feature release. Deploy code hidden behind flag → enable flag when ready → no redeploy for rollback.</div>
+    <div class="tip cicd-tip">Feature flags (LaunchDarkly / PostHog): ship code dark → enable flag when ready → disable flag to roll back instantly. No redeployment needed.</div>
   </div>
 
-  <!-- GitOps · DevSecOps · DORA -->
+  <!-- GitOps & IaC -->
   <div class="card cicd-card">
-    <h3 class="cicd">GitOps · DevSecOps · DORA</h3>
+    <h3 class="cicd">GitOps &amp; IaC</h3>
     <h4>GitOps — Argo CD (pull model)</h4>
     <pre>Git repo  →  Argo CD  →  K8s cluster
 (desired)    (polls, detects drift)  (actual)
 
-CI: build image → update image tag in Git
+<span class="cm"># CI pipeline: build image → update image tag in Git</span>
+CI: docker build → push → <span class="f">git commit image tag</span>
+<span class="cm"># Argo CD: watches Git, applies to cluster</span>
 Argo CD: detects change → kubectl apply
-Rollback: git revert → Argo syncs back ✓
-Rule: no manual kubectl in prod. Git = truth</pre>
-    <h4>DevSecOps Security Gates</h4>
+Rollback: <span class="f">git revert</span> → Argo syncs back ✓
+Rule: <span class="k">no manual kubectl in prod. Git = truth</span></pre>
+    <h4>Argo CD vs Flux</h4>
     <table class="ref-table">
-      <tr><td>SCA</td><td>Snyk / npm audit — scan npm deps for CVEs. Run after install</td></tr>
-      <tr><td>SAST</td><td>Semgrep / SonarQube — scan source code for security bugs</td></tr>
-      <tr><td>DAST</td><td>OWASP ZAP — live pentest against staging app. Run last</td></tr>
-      <tr><td>Secrets</td><td>GitHub Secrets / Vault — never in .env committed to Git</td></tr>
+      <tr><td>Argo CD</td><td>UI dashboard, multi-cluster, RBAC, app sync — most popular</td></tr>
+      <tr><td>Flux</td><td>GitOps toolkit, Helm native, lighter — good for simple setups</td></tr>
     </table>
     <h4>Terraform in CI/CD</h4>
-    <pre><span class="cm"># PR: terraform plan → post diff as comment</span>
-<span class="cm"># Merge to main: terraform apply (auto)</span>
-<span class="cm"># State: S3 bucket + DynamoDB lock</span>
-<span class="cm"># Never commit terraform.tfstate to Git</span></pre>
-    <h4>DORA Metrics — Elite Scores</h4>
+    <pre><span class="cm"># On PR: plan + post diff as comment</span>
+terraform init
+terraform plan -out=tfplan
+<span class="cm"># On merge to main: auto apply</span>
+terraform apply tfplan
+
+<span class="cm"># State management:</span>
+<span class="cm"># S3 bucket (backend) + DynamoDB (lock)</span>
+<span class="cm"># Never commit terraform.tfstate to Git!</span></pre>
+    <h4>AWS CDK vs Terraform</h4>
     <table class="ref-table">
-      <tr><td>Deploy frequency</td><td>Multiple times / day</td></tr>
-      <tr><td>Lead time</td><td>&lt; 1 hour (commit → prod)</td></tr>
-      <tr><td>Change failure rate</td><td>&lt; 5%</td></tr>
-      <tr><td>MTTR</td><td>&lt; 1 hour (mean time to restore)</td></tr>
+      <tr><td>Terraform</td><td>HCL, multi-cloud, huge ecosystem, explicit plan/apply</td></tr>
+      <tr><td>AWS CDK</td><td>TypeScript constructs → CloudFormation. Type-safe, AWS-native</td></tr>
+      <tr><td>Pulumi</td><td>Real TS/Python code → any cloud. Best DX for polyglot teams</td></tr>
     </table>
-    <div class="tip cicd-tip">Auto-rollback: monitor error_rate > 1% → kubectl rollout undo / Argo CD revert. Readiness probe prevents traffic to unready pods during rolling updates.</div>
+    <div class="tip cicd-tip">GitOps golden rule: if it's not in Git, it doesn't exist. Any manual kubectl change will be overwritten by Argo CD on next sync. Enforce this with RBAC.</div>
+  </div>
+
+  <!-- Observability & DORA -->
+  <div class="card cicd-card">
+    <h3 class="cicd">Observability &amp; DORA Metrics</h3>
+    <h4>Post-Deploy Monitoring</h4>
+    <pre><span class="cm"># Health check endpoint (NestJS):</span>
+<span class="k">GET</span> /health → { status: <span class="s">'ok'</span>, db: <span class="s">'ok'</span>, redis: <span class="s">'ok'</span> }
+
+<span class="cm"># K8s probes:</span>
+<span class="k">readinessProbe:</span>         <span class="cm"># gate traffic</span>
+  <span class="k">httpGet:</span> { path: <span class="s">/health</span>, port: <span class="f">3000</span> }
+  <span class="k">initialDelaySeconds:</span> <span class="f">5</span>
+<span class="k">livenessProbe:</span>          <span class="cm"># restart if hung</span>
+  <span class="k">httpGet:</span> { path: <span class="s">/health</span>, port: <span class="f">3000</span> }
+  <span class="k">periodSeconds:</span> <span class="f">10</span></pre>
+    <h4>Auto-Rollback Strategy</h4>
+    <table class="ref-table">
+      <tr><td>Error rate</td><td>Sentry alert → error_rate &gt; 1% → trigger rollback</td></tr>
+      <tr><td>K8s rollback</td><td>kubectl rollout undo deployment/myapp</td></tr>
+      <tr><td>Argo CD</td><td>git revert → Argo syncs cluster back to prev tag</td></tr>
+      <tr><td>Canary abort</td><td>Argo Rollouts: abort → promote old version back to 100%</td></tr>
+    </table>
+    <h4>DORA Metrics — Elite Team Scores</h4>
+    <table class="ref-table">
+      <tr><td>Deploy frequency</td><td>Multiple deploys / day (elite) vs monthly (low)</td></tr>
+      <tr><td>Lead time</td><td>&lt; 1 hour commit → prod (elite) vs months (low)</td></tr>
+      <tr><td>Change fail rate</td><td>&lt; 5% of deploys cause incidents (elite)</td></tr>
+      <tr><td>MTTR</td><td>&lt; 1 hour to restore service (elite)</td></tr>
+    </table>
+    <h4>Observability Stack</h4>
+    <table class="ref-table">
+      <tr><td>Prometheus</td><td>Metrics scraping — error rate, latency p99, throughput</td></tr>
+      <tr><td>Grafana</td><td>Dashboard — deploy markers show before/after impact</td></tr>
+      <tr><td>Sentry</td><td>Error tracking — release tracking + auto-rollback trigger</td></tr>
+      <tr><td>OpenTelemetry</td><td>Distributed traces — see where requests slow down</td></tr>
+    </table>
+    <div class="tip cicd-tip">DORA is the CI/CD health scorecard. Elite teams deploy multiple times daily with &lt;1hr MTTR. Start tracking deploy frequency — it forces you to fix the pipeline bottlenecks.</div>
   </div>
 
 </div>
@@ -3988,7 +4097,8 @@ Rule: no manual kubectl in prod. Git = truth</pre>
 <hr class="divider">
 <div class="big-label redis"><span class="num">13</span> Redis — Cache · Pub/Sub · Streams · Scaling · 2026</div>
 
-<div class="grid-4">
+<div class="section-title redis" style="background:var(--redis-dim); color:var(--redis);">1 · Core Architecture · Data Structures · Caching Patterns</div>
+<div class="grid-2">
 
   <!-- Card 1: Architecture & Data Structures -->
   <div class="card redis-card">
@@ -4069,6 +4179,11 @@ items.<span class="f">forEach</span>(i =&gt; pipe.<span class="f">set</span>(i.k
 <span class="cm">// Advantage: stateless services, instant revoke</span></pre>
     <div class="tip redis-tip">Random TTL jitter prevents cache avalanche: TTL = base + Math.floor(Math.random() * 600). Spread expiry over a window instead of all keys expiring at once.</div>
   </div>
+
+</div>
+
+<div class="section-title redis" style="background:var(--redis-dim); color:var(--redis);">2 · Use Cases · Scaling &amp; HA · Transactions · Streams · Cache Failure Modes</div>
+<div class="grid-2">
 
   <!-- Card 3: Use Cases & Scaling -->
   <div class="card redis-card">
