@@ -288,7 +288,7 @@ App Router basics → Server vs Client Components → Data Fetching & Caching
 - Keyboard shortcuts: `←` `→` navigate · `Space` flip · `K` mark known
 - Difficulty badges: Beginner / Intermediate / Advanced
 - Code tip blocks with syntax-highlighted snippets on answer cards
-- **Cheatsheet page** (`cheatsheet.html`) — dense printable reference for JS, React+Redux, SQL, Linux, NestJS, TypeScript, DSA, Enterprise Infra Arch, FS Tooling, Docker, Next.js, CI/CD, and Redis
+- **Cheatsheet page** (`cheatsheet.html`) — 13-section dense reference (JS, React+Redux, SQL, Linux, NestJS, TypeScript, DSA, Enterprise Infra Arch, FS Tooling, Docker, Next.js, CI/CD, Redis). Sections 8–13 use labeled sub-section dividers for deep-dive topics
 
 ---
 

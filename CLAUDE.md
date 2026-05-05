@@ -409,8 +409,27 @@ const state = {
 3. Add `<span class="pill pill-foo">Label</span>` to the header pills div
 4. Update the `<p>` subtitle in the header
 5. Add `<div class="big-label foo"><span class="num">N</span> Title</div>` before the section HTML
-6. Add section HTML using `grid-2 / grid-3 / grid-4` layouts with `class="card foo-card"`
-7. Update the footer text
+6. Add `<div class="section-title foo" style="background:var(--foo-dim); color:var(--foo);">N · Sub-section title</div>` before each grid (sections 8+ use inline styles for section-title)
+7. Add section HTML using `grid-2 / grid-3 / grid-4` layouts with `class="card foo-card"`
+8. Update the footer text
+
+### Cheatsheet Structure — 13 Sections
+
+| # | Topic | Sub-sections | Grids |
+|---|---|---|---|
+| 1 | JavaScript | — | grid-4 × 2 |
+| 2 | React + Redux | — | grid-3 × 3 |
+| 3 | SQL / PostgreSQL | — | grid-3 × 2 |
+| 4 | Linux CLI | — | grid-3 × 2 |
+| 5 | NestJS | — | grid-3 × 3 |
+| 6 | TypeScript | — | grid-3 × 2 |
+| 7 | DSA — JavaScript | — | grid-3 × 2 |
+| 8 | Enterprise Infra Arch | 8 titled sub-sections | grid-3 × 8 |
+| 9 | Full-Stack Enterprise Tooling | 5 titled sub-sections | grid-3 × 5 |
+| 10 | Docker | 3 titled sub-sections | grid-3 × 3 |
+| 11 | Next.js | 3 titled sub-sections | grid-3 × 3 |
+| 12 | CI/CD | 2 titled sub-sections | grid-3 × 2 (6 cards) |
+| 13 | Redis | 2 titled sub-sections | grid-2 × 2 (4 cards) |
 
 ---
 
