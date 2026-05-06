@@ -425,7 +425,7 @@ const state = {
 | 6 | TypeScript | — | grid-3 × 2 |
 | 7 | DSA — JavaScript | — | grid-3 × 2 |
 | 8 | Enterprise Infra Arch | 8 titled sub-sections | grid-3 × 8 |
-| 9 | Full-Stack Enterprise Tooling | 5 titled sub-sections | grid-3 × 5 |
+| 9 | Full-Stack Enterprise Tooling | — | grid-2 × 1, grid-4 × 3 |
 | 10 | Docker | 3 titled sub-sections | grid-3 × 3 |
 | 11 | Next.js | 3 titled sub-sections | grid-3 × 3 |
 | 12 | CI/CD | 2 titled sub-sections | grid-3 × 2 (6 cards) |
